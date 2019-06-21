@@ -11,8 +11,6 @@ import { NotificationManager } from 'react-notifications';
 // components
 import SupportPage from '../Support/Support';
 
-// redux action
-import { logoutUserFromFirebase } from 'Actions';
 
 // intl messages
 import IntlMessages from 'Util/IntlMessages';
@@ -28,7 +26,7 @@ class UserBlock extends Component {
 	 * Logout User
 	 */
 	logoutUser() {
-		this.props.logoutUserFromFirebase();
+
 	}
 
 	/**
@@ -145,5 +143,5 @@ const mapStateToProps = ({ settings }) => {
 }
 
 export default connect(mapStateToProps, {
-	logoutUserFromFirebase
+
 })(UserBlock);

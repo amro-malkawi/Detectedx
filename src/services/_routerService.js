@@ -18,7 +18,11 @@ import ImageCropper from 'Routes/image-cropper';
 import VideoPlayer from 'Routes/video-player';
 import Dropzone from 'Routes/dropzone';
 
-import Admin from 'Routes/Admin';
+////front end
+import Home from 'Routes/home';
+import Instructions from 'Routes/instructions';
+import Test from 'Routes/test';
+
 // async component
 import {
 	AsyncAboutUsComponent,
@@ -117,7 +121,15 @@ export default [
 		component: Dropzone
 	},
 	{
-		path: 'admin',
-		component: Admin
+		path: 'home',
+		component: Home
+	},
+	{
+		path: 'instructions',
+		component: Instructions
+	},
+	{
+		path: 'test',
+		component: Test
 	}
 ]

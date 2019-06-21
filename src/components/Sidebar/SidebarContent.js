@@ -32,13 +32,6 @@ class SidebarContent extends Component {
 					<List
 						className="rct-mainMenu p-0 m-0 list-unstyled"
 					>
-						{sidebarMenus.category.map((menu, key) => (
-							<NavMenuItem
-								menu={menu}
-								key={key}
-								onToggleMenu={() => this.toggleMenu(menu, 'category2')}
-							/>
-						))}
 					</List>
 				</nav>
 			</div>

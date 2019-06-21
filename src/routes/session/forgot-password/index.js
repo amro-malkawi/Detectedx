@@ -55,7 +55,7 @@ export default class Forgotpwd extends Component {
                               <FormGroup>
                                  <Button variant="contained" className="btn-info text-white btn-block btn-large w-100">Reset Password</Button>
                               </FormGroup>
-                              <Button component={Link} to="/session/login" className="btn-dark btn-block btn-large text-white w-100">Already having account?  Login</Button>
+                              <Button component={Link} to="/signin" className="btn-dark btn-block btn-large text-white w-100">Already having account?  Login</Button>
                            </Form>
                         </div>
                      </div>

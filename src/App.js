@@ -10,8 +10,6 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 // css
 import './lib/reactifyCss';
 
-// firebase
-import './firebase';
 
 // app component
 import App from './container/App';

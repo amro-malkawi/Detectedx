@@ -1,27 +1,29 @@
 /**
- * App Routes
+ * News App
  */
 import React, { Component } from 'react';
-import { Route, withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { Route, withRouter, Redirect } from 'react-router-dom';
 
-// app default layout
-import RctAppLayout from 'Components/RctAppLayout';
+// Agency layout
+import RctAgencyLayout from 'Components/RctAgencyLayout';
 
 // router service
-import routerService from "../services/_routerService";
+import routerService from '../services/_routerService';
 
-class DefaultLayout extends Component {
+class RctNewsApp extends Component {
 	render() {
-		const { match } = this.props;
+		const { match, location } = this.props;
+		if (location.pathname === '/app') {
+			return (<Redirect to={'/app/home'} />);
+		}
 		return (
-			<RctAppLayout>
+			<RctAgencyLayout enableBgImage>
 				{routerService && routerService.map((route,key)=>
 					<Route key={key} path={`${match.url}/${route.path}`} component={route.component} />
 				)}
-			</RctAppLayout>
+			</RctAgencyLayout>
 		);
 	}
 }
 
-export default withRouter(connect(null)(DefaultLayout));
+export default withRouter(RctNewsApp);

@@ -1,5 +1,5 @@
 /**
- * Signin Firebase
+ * Signin
  */
 
 import React, {Component} from 'react';
@@ -24,10 +24,6 @@ import AppConfig from 'Constants/AppConfig';
 // redux action
 import {
     signinUserInEmail,
-    signinUserWithFacebook,
-    signinUserWithGoogle,
-    signinUserWithGithub,
-    signinUserWithTwitter
 } from 'Actions';
 
 //Auth File
@@ -149,8 +145,4 @@ const mapStateToProps = ({authUser}) => {
 
 export default connect(mapStateToProps, {
     signinUserInEmail,
-    signinUserWithFacebook,
-    signinUserWithGoogle,
-    signinUserWithGithub,
-    signinUserWithTwitter
 })(Signin);

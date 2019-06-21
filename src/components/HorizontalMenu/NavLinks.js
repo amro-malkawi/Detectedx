@@ -114,14 +114,6 @@ export default {
          "menu_icon": "zmdi zmdi-time",
          "child_routes": [
             {
-               "path": "/session/login",
-               "menu_title": "sidebar.login"
-            },
-            {
-               "path": "/session/register",
-               "menu_title": "sidebar.register"
-            },
-            {
                "path": "/session/lock-screen",
                "menu_title": "sidebar.lockScreen"
             },

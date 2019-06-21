@@ -52,15 +52,15 @@ class RctAgencyLayout extends Component {
 
    render() {
       return (
-         <div className={`app-boxed ${this.getActiveLayoutBg()}`} >
+         <div className={`app-boxed ${this.getActiveLayoutBg()}`} style={{ height: '100%' }}>
             <div className="app-container">
                <div className="rct-page-wrapper">
                   <div className="rct-app-content">
                      <div className="app-header">
                         <Header agencyMenu />
                      </div>
-                     <div className="rct-page">
-                        <AgencyMenu />
+                     <div className="rct-page p-20">
+                        {/*<AgencyMenu />*/}
                         {this.renderPage()}
                      </div>
                   </div>

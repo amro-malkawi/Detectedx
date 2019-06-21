@@ -1,74 +1,5 @@
 // sidebar nav links
 export default {
-   category: [
-      {
-         "menu_title": "admin.Dashboard",
-         "menu_icon": "zmdi zmdi-view-dashboard",
-         "path": "/app/admin/dashboard",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.Clinics",
-         "menu_icon": "zmdi zmdi-book",
-         "path": "/app/admin/clinics",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.Images",
-         "menu_icon": "zmdi zmdi-collection-image",
-         "path": "/app/admin/images",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.Metrics",
-         "menu_icon": "zmdi zmdi-time-interval",
-         "path": "/app/admin/metrics",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.Modalities",
-         "menu_icon": "zmdi zmdi-view-carousel",
-         "path": "/app/admin/modalities",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.Roles",
-         "menu_icon": "zmdi zmdi-chart-donut",
-         "path": "/app/admin/roles",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.TestCases",
-         "menu_icon": "zmdi zmdi-view-web",
-         "path": "/app/admin/testCases",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.TestSetAssignments",
-         "menu_icon": "zmdi zmdi-map",
-         "path": "/app/admin/testSetAssignments",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.TestSetCases",
-         "menu_icon": "zmdi zmdi-view-web",
-         "path": "/app/admin/testSetCases",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.TestSets",
-         "menu_icon": "zmdi zmdi-grid",
-         "path": "/app/admin/testSets",
-         "child_routes": null
-      },
-      {
-         "menu_title": "admin.Users",
-         "menu_icon": "zmdi zmdi-accounts",
-         "path": "/app/admin/users",
-         "child_routes": null
-      }
-   ]
-   /*
    category1: [
       {
          "menu_title": "sidebar.dashboard",
@@ -185,14 +116,6 @@ export default {
          "menu_title": "sidebar.session",
          "menu_icon": "zmdi zmdi-time-interval",
          "child_routes": [
-            {
-               "path": "/session/login",
-               "menu_title": "sidebar.login"
-            },
-            {
-               "path": "/session/register",
-               "menu_title": "sidebar.register"
-            },
             {
                "path": "/session/lock-screen",
                "menu_title": "sidebar.lockScreen"
@@ -549,5 +472,4 @@ export default {
          "child_routes": null
       }
    ]
-    */
 }

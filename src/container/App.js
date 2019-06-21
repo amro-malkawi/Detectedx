@@ -27,13 +27,12 @@ import AppSignUp from './Signup';
 
 // async components
 import {
-	AsyncSessionLoginComponent,
-	AsyncSessionRegisterComponent,
 	AsyncSessionLockScreenComponent,
 	AsyncSessionForgotPasswordComponent,
 	AsyncSessionPage404Component,
 	AsyncSessionPage500Component,
-	AsyncTermsConditionComponent
+	AsyncTermsConditionComponent,
+	AsyncAdvanceTestViewComponent
 } from 'Components/AsyncComponent/AsyncComponent';
 
 //Auth0
@@ -54,7 +53,7 @@ const handleAuthentication = ({ location }) => {
 /**
  * Initial Path To Check Whether User Is Logged In Or Not
  */
-const InitialPath = ({ component: Component, ...rest, authUser }) =>
+const PrivateRoute = ({ component: Component, ...rest, authUser }) =>
 	<Route
 		{...rest}
 		render={props =>
@@ -75,25 +74,26 @@ class App extends Component {
 			if (user === null) {
 				return (<Redirect to={'/signin'} />);
 			} else {
-				// return (<Redirect to={'/app/dashboard/ecommerce'} />);
-				return (<Redirect to={'/app/admin/dashboard'} />);
+				return (<Redirect to={'/app/home'} />);
 			}
 		}
 		return (
 			<RctThemeProvider>
 				<NotificationContainer />
-				<InitialPath
+				<PrivateRoute
 					path={`${match.url}app`}
 					authUser={user}
 					component={RctDefaultLayout}
 				/>
+				<PrivateRoute path="/test-view/:test_sets/:attempts/:test_cases" component={AsyncAdvanceTestViewComponent} authUser={user}/>
+
+
+
 				<Route path="/horizontal" component={HorizontalLayout} />
 				<Route path="/agency" component={AgencyLayout} />
 				<Route path="/boxed" component={RctBoxedLayout} />
 				<Route path="/signin" component={AppSignIn} />
 				<Route path="/signup" component={AppSignUp} />
-				<Route path="/session/login" component={AsyncSessionLoginComponent} />
-				<Route path="/session/register" component={AsyncSessionRegisterComponent} />
 				<Route path="/session/lock-screen" component={AsyncSessionLockScreenComponent} />
 				<Route
 					path="/session/forgot-password"

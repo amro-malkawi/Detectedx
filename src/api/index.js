@@ -204,6 +204,11 @@ export function testSetAssignmentsDelete(id) {
    return instance.delete(url).then((response) => response.data);
 }
 
+export function currentTestSets() {
+    const url = '/test_set_assignments/current_set_tests?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * roles operation
  */

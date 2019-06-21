@@ -22,11 +22,6 @@ import AppConfig from 'Constants/AppConfig';
 // redux action
 import {
     signupUserInEmail,
-    signupUserInFirebase,
-    signinUserWithFacebook,
-    signinUserWithGoogle,
-    signinUserWithGithub,
-    signinUserWithTwitter
 } from 'Actions';
 
 class Signup extends Component {
@@ -159,9 +154,4 @@ const mapStateToProps = ({authUser}) => {
 
 export default connect(mapStateToProps, {
     signupUserInEmail,
-    signupUserInFirebase,
-    signinUserWithFacebook,
-    signinUserWithGoogle,
-    signinUserWithGithub,
-    signinUserWithTwitter
 })(Signup);

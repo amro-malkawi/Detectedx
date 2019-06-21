@@ -272,20 +272,6 @@ const AsyncCustomComponent = Loadable({
     loading: () => <RctPageLoader/>,
 });
 
-/*---------------- Session ------------------*/
-
-// Session Login
-const AsyncSessionLoginComponent = Loadable({
-    loader: () => import("Routes/session/login"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Session Register
-const AsyncSessionRegisterComponent = Loadable({
-    loader: () => import("Routes/session/register"),
-    loading: () => <RctPageLoader/>,
-});
-
 // Session Lock Screen
 const AsyncSessionLockScreenComponent = Loadable({
     loader: () => import("Routes/session/lock-screen"),
@@ -510,73 +496,20 @@ const AsyncAdvanceUIAutoCompleteComponent = Loadable({
     loading: () => <RctPageLoader/>,
 });
 
-////////////////////////// admin
+////// frontend
 
-// Admin Clinics Table
-const AsyncClinicsComponent = Loadable({
-    loader: () => import("Routes/admin/clinics"),
+// advance components TestList
+const AsyncAdvanceTestListComponent = Loadable({
+    loader: () => import("Routes/test/list"),
     loading: () => <RctPageLoader/>,
 });
 
-// Admin Dashborad Table
-const AsyncDashboardComponent = Loadable({
-    loader: () => import("Routes/admin/dashboard"),
+// advance components TestView
+const AsyncAdvanceTestViewComponent = Loadable({
+    loader: () => import("Routes/test-view"),
     loading: () => <RctPageLoader/>,
 });
 
-// Admin Images Table
-const AsyncImagesComponent = Loadable({
-    loader: () => import("Routes/admin/images"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Metrics Table
-const AsyncMetricsComponent = Loadable({
-    loader: () => import("Routes/admin/metrics"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Modalities Table
-const AsyncModalitiesComponent = Loadable({
-    loader: () => import("Routes/admin/modalities"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Roles Table
-const AsyncRolesComponent = Loadable({
-    loader: () => import("Routes/admin/roles"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Test Cases Table
-const AsyncTestCasesComponent = Loadable({
-    loader: () => import("Routes/admin/testCases"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Test Set Assignments Table
-const AsyncSetAssignmentsComponent = Loadable({
-    loader: () => import("Routes/admin/testSetAssignments"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Test Set Cases Table
-const AsyncTestSetCasesComponent = Loadable({
-    loader: () => import("Routes/admin/testSetCases"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Test Sets Table
-const AsyncTestSetsComponent = Loadable({
-    loader: () => import("Routes/admin/testSets"),
-    loading: () => <RctPageLoader/>,
-});
-
-// Admin Users Table
-const AsyncUsersComponent = Loadable({
-    loader: () => import("Routes/admin/users"),
-    loading: () => <RctPageLoader/>,
-});
 
 
 export {
@@ -617,8 +550,6 @@ export {
     AsyncCulturesComponent,
     AsyncSelectableComponent,
     AsyncCustomComponent,
-    AsyncSessionLoginComponent,
-    AsyncSessionRegisterComponent,
     AsyncSessionLockScreenComponent,
     AsyncSessionForgotPasswordComponent,
     AsyncSessionPage404Component,
@@ -662,16 +593,6 @@ export {
     AsyncSaasDashboardComponent,
     AsyncAgencyDashboardComponent,
     AsyncNewsDashboardComponent,
-    ////////////////
-    AsyncClinicsComponent,
-    AsyncDashboardComponent,
-    AsyncImagesComponent,
-    AsyncMetricsComponent,
-    AsyncModalitiesComponent,
-    AsyncRolesComponent,
-    AsyncTestCasesComponent,
-    AsyncSetAssignmentsComponent,
-    AsyncTestSetCasesComponent,
-    AsyncTestSetsComponent,
-    AsyncUsersComponent
+    AsyncAdvanceTestListComponent,
+    AsyncAdvanceTestViewComponent
 };

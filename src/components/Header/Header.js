@@ -17,6 +17,9 @@ import $ from 'jquery';
 
 // actions
 import { collapsedSidebarAction } from 'Actions';
+// helpers
+import { getAppLayout } from "Helpers/helpers";
+
 import DashboardOverlay from '../DashboardOverlay/DashboardOverlay';
 import Cart from './Cart';
 
@@ -79,10 +82,7 @@ class Header extends Component {
                   {(horizontalMenu || agencyMenu) &&
                      <div className="site-logo">
                         <Link to="/" className="logo-mini">
-                           <img src={require('Assets/img/appLogo.png')} className="mr-15" alt="site logo" width="35" height="35" />
-                        </Link>
-                        <Link to="/" className="logo-normal">
-                           <img src={require('Assets/img/appLogoText.png')} className="img-fluid" alt="site-logo" width="67" height="17" />
+                           <img src={require('Assets/img/white-logo.png')} className="mr-15" alt="site logo" width="115" height="35" />
                         </Link>
                      </div>
                   }
@@ -108,6 +108,20 @@ class Header extends Component {
                   }
                </div>
                <ul className="navbar-right list-inline mb-0">
+                  <li className="list-inline-item">
+                     <Tooltip title="Tests" placement="bottom">
+                        <Button component={Link} to={`/${getAppLayout(location)}/test`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
+                           Tests
+                        </Button>
+                     </Tooltip>
+                  </li>
+                  <li className="list-inline-item">
+                     <Tooltip title="Instructions" placement="bottom">
+                        <Button component={Link} to={`/${getAppLayout(location)}/instructions`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
+                           Instructions
+                        </Button>
+                     </Tooltip>
+                  </li>
                   <UserInfo />
                   <Logout />
                </ul>
