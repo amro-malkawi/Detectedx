@@ -1,0 +1,179 @@
+$toolbar-height: 80px;
+$normal-colour: #9ccef9;
+$active-colour: #20a5d6;
+
+div.viewer {
+  #toolbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: $toolbar-height;
+    background-color: black;
+
+    #tools {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+
+      .tool {
+        display: inline-block;
+        text-align: center;
+        min-width: 30px;
+        margin-right: 15px;
+        cursor: pointer;
+
+        svg {
+          width: 21px;
+          height: 21px;
+          stroke: $normal-colour;
+          fill: $normal-colour;
+        }
+
+        p {
+          color: $normal-colour;
+          font-size: 13px;
+          text-align: center;
+          margin: 5px 0px 0px 0px;
+        }
+
+        &.active {
+          svg {
+            stroke: $active-colour;
+            fill: $active-colour;
+          }
+
+          p {
+            color: $active-colour;
+          }
+        }
+      }
+    }
+
+    h1 {
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: $toolbar-height;
+      height: $toolbar-height;
+      margin: 0px;
+    }
+
+    nav {
+      position: absolute;
+      right: 20px;
+      top: 25px;
+
+      a {
+        background-color: $normal-colour;
+        text-decoration: none;
+        color: black;
+
+        &:visited {
+          color: black;
+        }
+
+        &:active {
+          color: black;
+        }
+      }
+    }
+  }
+
+  #images {
+    position: fixed;
+    top: $toolbar-height;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: flex;
+    flex-flow: row nowrap;
+
+    .image {
+      box-sizing: border-box;
+      height: 100%;
+      position: relative;
+      border: 1px solid #00a4d9;
+      width: 25%;
+
+      .dicom {
+        height: 100%;
+      }
+
+      .window, .zoom {
+        position: absolute;
+        left: 10px;
+        color: white;
+        font-size: 14px;
+      }
+
+      .window {
+        bottom: 10px;
+      }
+
+      .zoom {
+        bottom: 25px;
+      }
+
+      button {
+        position: absolute;
+        bottom: 10px;
+      }
+
+      .invert {
+        right: 10px;
+      }
+
+      .reset {
+        right: 90px;
+      }
+    }
+  }
+
+  #cover {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0,0,0,0.5);
+
+    #mark-details {
+      width: 300px;
+      margin: 150px auto 0px auto;
+      background-color: black;
+      border: 1px solid $normal-colour;
+      padding: 25px;
+      border-radius: 5px;
+      color: white;
+
+      .rating {
+        margin-bottom: 10px;
+      }
+
+      .lesion-type {
+        margin-top: 5px;
+      }
+
+      .actions {
+        margin-top: 20px;
+        display: flex;
+        flex-flow: row nowrap;
+
+        > div {
+          flex-grow: 1;
+        }
+
+        .left {
+          text-align: left;
+        }
+
+        .right {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
