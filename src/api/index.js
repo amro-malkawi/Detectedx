@@ -88,6 +88,16 @@ export function testSetsDelete(id) {
    return instance.delete(url).then((response) => response.data);
 }
 
+export function testSetsInfo(id) {
+   const url = '/test_sets/' + id + '?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function testSetsModality(id) {
+   const url = '/test_sets/' + id + '/modalities?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
 /**
  * modalities operation
  */
@@ -173,6 +183,16 @@ export function testCasesUpdate(id, data) {
 export function testCasesDelete(id) {
    const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
    return instance.delete(url).then((response) => response.data);
+}
+
+export function testCasesInfo(id) {
+   const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function testCasesImagesList(id) {
+   const url = '/test_cases/' + id + '/images?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
 }
 
 /**
@@ -340,6 +360,11 @@ export function dicomImagesUpload(data) {
    return instance.post(url, formData, config).then((response) => response.data);
 }
 
+export function imagesUrlTemplate(id) {
+   const url = '/images/urlTemplate?id=' + id + '&access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
 /**
  * truths operation
  */
@@ -468,3 +493,11 @@ export function lesionTypesTruthsBatchAdd(data) {
    return instance.post(url, data).then((response) => response.data);
 }
 
+/**
+ * attempt operation
+ */
+
+export function attemptsRatingScale(id) {
+   const url = '/attempts/' + id + '/rating_scales?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}

@@ -85,7 +85,7 @@ class App extends Component {
 					authUser={user}
 					component={RctDefaultLayout}
 				/>
-				<PrivateRoute path="/test-view/:test_sets/:attempts/:test_cases" component={AsyncAdvanceTestViewComponent} authUser={user}/>
+				<PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={user}/>
 
 
 
