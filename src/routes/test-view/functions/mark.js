@@ -1,12 +1,13 @@
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
+import * as Apis from 'Api';
 import axios from "axios";
 
 export default class Mark {
-    constructor(data) {
+    constructor(imageId, data) {
         if (data == undefined)
             throw 'data is required';
-        let {x, y, imageId, active} = data;
+        let {x, y, active} = data;
 
         // cornerstone tool data
         this.visible = true;
@@ -43,37 +44,41 @@ export default class Mark {
 
         // when loading existing marks, the object
         // adds itself to the marker tool's data
-        if (!this.isNew)
+        if (!this.isNew) {
             cornerstoneTools.addToolState(this.imageElement, 'Marker', this);
+        }
     }
 
 
     // ----------------------
     // public static
     // ----------------------
-    static get urlPrefix() {
-        if (this._urlPrefix == undefined)
-            throw 'Mark.urlPrefix is required';
-        return this._urlPrefix;
+    static get test_case_id() {
+        if (this._test_case_id == undefined)
+            throw 'Mark.test_case_id is required';
+        return this._test_case_id;
     }
 
-    static set urlPrefix(prefix) {
-        this._urlPrefix = prefix;
+    static set test_case_id(test_case_id) {
+        this._test_case_id = test_case_id;
+    }
+
+    static get attempt_id() {
+        if (this._attempt_id == undefined)
+            throw 'Mark.attempt_id is required';
+        return this._attempt_id;
+    }
+
+    static set attempt_id(attempt_id) {
+        this._attempt_id = attempt_id;
     }
 
     static loadMarks() {
-        axios.get(Mark.urlPrefix).then((response) => {
-            response = response.data;
-            if (!response || !response.success) {
-                alert('An error occurred loading the marks for this test case');
-                return;
-            }
-
-            for (let image of response.images) {
-                image.answers.forEach(mark => new Mark(mark));
-
+        Apis.testCasesAnswers(Mark.test_case_id, Mark.attempt_id).then((images) => {
+            for (let image of images) {
+                image.answers.forEach(mark => new Mark(image.id, mark));
                 if (image.truths) {
-                    image.truths.forEach(mark => new Mark(mark));
+                    image.truths.forEach(mark => new Mark(image.id, mark));
                 }
 
                 let imageElement = Mark._imageElement(image.id);
@@ -81,10 +86,10 @@ export default class Mark {
             }
         })
         .catch(e => {
+            console.warn(e);
             alert('An error occurred loading the marks for this test case');
         })
     }
-
 
     // ----------------------
     // private static
@@ -147,8 +152,9 @@ export default class Mark {
             image_id: this.imageId
         }
 
-        for (let id of this.lesionTypes)
+        for (let id of this.lesionTypes) {
             data[`lesion_types[${id}]`] = 'on';
+        }
 
         // run request    post or put
         axios.post(url, data).then((response) => response.data).then(response => {

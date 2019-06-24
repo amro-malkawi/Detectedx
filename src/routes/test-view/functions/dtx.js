@@ -4,8 +4,9 @@ import Popup from './popup';
 import Mark from './mark';
 
 export default class Dtx {
-    static init(urlPrefix) {
-        Mark.urlPrefix = urlPrefix;
+    static init(test_case_id, attempt_id) {
+        Mark.test_case_id = test_case_id;
+        Mark.attempt_id = attempt_id;
         this._popup = new Popup();
         this._toolbar = new Toolbar();
         this._viewers = [];

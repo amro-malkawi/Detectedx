@@ -5,9 +5,11 @@ export default axios.create({
    timeout: 2000
 });
 
+export const apiAddress = 'http://127.0.0.1:3000';
+// export const apiAddress = 'http://demo.detectedx.com:3000';
+
 const instance = axios.create({
-   // baseURL: 'http://demo.detectedx.com:3000/api/',
-   baseURL: 'http://127.0.0.1:3000/api/',
+   baseURL: apiAddress + '/api/',
    timeout: 20000
 });
 
@@ -157,7 +159,7 @@ export function testSetCasesDelete(id) {
 }
 
 /**
- * test_cases operation
+ * test cases operation
  */
 
 export function testCasesList(page) {
@@ -192,6 +194,11 @@ export function testCasesInfo(id) {
 
 export function testCasesImagesList(id) {
    const url = '/test_cases/' + id + '/images?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function testCasesAnswers(id, attempt_id) {
+   const url = '/test_cases/' + id + '/attempt/' + attempt_id + '/answers?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 
@@ -361,7 +368,7 @@ export function dicomImagesUpload(data) {
 }
 
 export function imagesUrlTemplate(id) {
-   const url = '/images/urlTemplate?id=' + id + '&access_token=' + getAccessToken();
+   const url = '/images/urlTemplate/' + id + '?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 
@@ -498,6 +505,6 @@ export function lesionTypesTruthsBatchAdd(data) {
  */
 
 export function attemptsRatingScale(id) {
-   const url = '/attempts/' + id + '/rating_scales?access_token=' + getAccessToken();
+   const url = '/attempts/' + id + '/ratingScales?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }

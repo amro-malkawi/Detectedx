@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react'
 import PageTitleBar from "Components/PageTitleBar/PageTitleBar";
-import {Card, CardBody} from "reactstrap";
+import {Card, CardBody, Col, FormGroup, Input, Label} from "reactstrap";
 import AppBar from "@material-ui/core/AppBar";
 import Button from '@material-ui/core/Button';
 import Toolbar from "@material-ui/core/Toolbar";
@@ -17,6 +17,7 @@ import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './functions/loader';
 import Dtx from './functions/dtx';
+import IntlMessages from "Util/IntlMessages";
 
 export default class TestView extends Component {
 
@@ -26,7 +27,7 @@ export default class TestView extends Component {
             test_case: {},
             images: [],
             modality: {},
-            rating_scale: {},
+            rating_scale: {lesion_types: []},
         };
     }
 
@@ -73,7 +74,7 @@ export default class TestView extends Component {
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
                 cornerstoneTools.init();
                 cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init('http://demo.detectedx.com/test_sets/1/attempts/10/test_cases/1/answers');
+                Dtx.init(params.test_cases_id, params.attempts_id);
             });
         });
     }
@@ -107,7 +108,7 @@ export default class TestView extends Component {
                             </svg>
                             <p>Zoom</p>
                         </div>
-                        <div className="tool active" data-tool="Wwwc">
+                        <div className="tool" data-tool="Wwwc">
                             <svg id="icon-tools-levels" viewBox="0 0 18 18">
                                 <title>Window / Level</title>
                                 <g id="icon-tools-levels-group">
@@ -151,41 +152,37 @@ export default class TestView extends Component {
                 <div id="cover" style={{display: 'none'}}>
                     <div id="mark-details">
                         <form>
-                            <p className="rating">
-                                <label>Rating:</label>
-                                <select name="rating">
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
-                            </p>
-
-                            <p className="lesion-type">
-                                <label>
-                                    <input type="checkbox" data-lesion-type-id="1" />
-                                    <span>Stellate</span>
-                                </label>
-                            </p>
-                            <p className="lesion-type">
-                                <label>
-                                    <input type="checkbox" data-lesion-type-id="2" />
-                                    <span>Calcification</span>
-                                </label>
-                            </p>
-                            <p className="lesion-type">
-                                <label>
-                                    <input type="checkbox" data-lesion-type-id="3" />
-                                    <span>Discrete Mass</span>
-                                </label>
-                            </p>
+                            <FormGroup row>
+                                <Label for="occupation" sm={3}>Rating:</Label>
+                                <Col sm={9}>
+                                    <Input type="select" name="rating">
+                                        {
+                                            Array.from(Array(this.state.rating_scale.max_rating).keys()).map((v) => {   // [0, 1, 2, 3...]
+                                                return v + 1 === this.state.rating_scale.default_rating ? null : <option value={v + 1} key={v + 1}>{v + 1}</option>;
+                                            })
+                                        }
+                                    </Input>
+                                </Col>
+                            </FormGroup>
+                            {
+                                this.state.rating_scale.lesion_types.map((v, i) => {
+                                    return (
+                                        <FormGroup check key={i} className={"lesion-type"}>
+                                            <Label check>
+                                                <Input type="checkbox" data-lesion-type-id={v.id} />{' '}
+                                                {v.name}
+                                            </Label>
+                                        </FormGroup>
+                                    )
+                                })
+                            }
 
                             <div className="actions">
                                 <div className="left">
                                     <button className="cancel">Cancel</button>
                                 </div>
                                 <div className="right">
-                                    <button className="delete">Delete</button>
+                                    <button className="mr-15 delete">Delete</button>
                                     <button className="save">Save</button>
                                 </div>
                             </div>

@@ -1,5 +1,6 @@
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
+import * as Apis from "Api";
 
 export default class Tile {
     constructor(options) {
@@ -16,11 +17,12 @@ export default class Tile {
 
         // an Image object is used to load the tile image
         this.image    = new Image();
+        this.image.crossOrigin="anonymous";
         this.isLoaded = false;
         this.image.onload = _ => this._loaded();
 
         // construct the url for this tile
-        this.url = urlTemplate.replace('[depth]', level.depth)
+        this.url = Apis.apiAddress + urlTemplate.replace('[depth]', level.depth)
                               .replace('[col]', col)
                               .replace('[row]', row);
     }

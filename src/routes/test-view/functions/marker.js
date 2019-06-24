@@ -34,8 +34,7 @@ export default class MarkerTool extends BaseAnnotationTool {
         if (!eventData.element.viewer)
             throw 'Target element has no viewer object';
 
-        let mark = new Mark({
-            imageId: eventData.element.viewer.imageId,
+        let mark = new Mark(eventData.element.viewer.imageId, {
             x: eventData.currentPoints.image.x,
             y: eventData.currentPoints.image.y,
             active: true
