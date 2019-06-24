@@ -74,8 +74,14 @@ export default class TestView extends Component {
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
                 cornerstoneTools.init();
                 cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init(params.test_cases_id, params.attempts_id);
+                Dtx.init(params.test_cases_id, params.attempts_id, values[3].id);
             });
+        });
+    }
+
+    onComplete() {
+        Apis.attemptsComplete(this.props.match.params.attempts_id).then((resp) => {
+            this.props.history.push('/app/test/list');
         });
     }
 
@@ -130,8 +136,8 @@ export default class TestView extends Component {
                     <h1>1 / 1</h1>
 
                     <nav>
-                        <Button className='mr-10' variant="contained" color="primary"> Finish</Button>
-                        <Button variant="contained" color="primary">Home</Button>
+                        <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onComplete()}> Finish</Button>
+                        <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
                     </nav>
                 </div>
                 <div id="images">

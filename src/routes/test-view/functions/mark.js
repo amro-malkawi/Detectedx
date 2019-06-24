@@ -26,7 +26,7 @@ export default class Mark {
         this.id = data.id;
         this.isTruth = !!data.isTruth;
         this.rating = data.rating;
-        this.lesionTypes = data.lesionTypes || [];
+        this.lesionTypes = data.answers_lesion_types !== undefined ? data.answers_lesion_types.map((v) => v.lesion_type_id) : [];
 
         // since the rating and lesion type values are used
         // to set the values of inputs (which are strings)
@@ -73,6 +73,16 @@ export default class Mark {
         this._attempt_id = attempt_id;
     }
 
+    static get rating_scale_id() {
+        if (this._rating_scale_id == undefined)
+            throw 'Mark.rating_scale_id is required';
+        return this._rating_scale_id;
+    }
+
+    static set rating_scale_id(rating_scale_id) {
+        this._rating_scale_id = rating_scale_id;
+    }
+
     static loadMarks() {
         Apis.testCasesAnswers(Mark.test_case_id, Mark.attempt_id).then((images) => {
             for (let image of images) {
@@ -85,10 +95,10 @@ export default class Mark {
                 cornerstone.invalidate(imageElement);
             }
         })
-        .catch(e => {
-            console.warn(e);
-            alert('An error occurred loading the marks for this test case');
-        })
+            .catch(e => {
+                console.warn(e);
+                alert('An error occurred loading the marks for this test case');
+            })
     }
 
     // ----------------------
@@ -135,42 +145,37 @@ export default class Mark {
 
     // create or update
     save(callback) {
-        // create or update URL and method
-        let url = Mark.urlPrefix;
-        let method = 'POST';
-
-        if (!this.isNew) {
-            url += '/' + this.id;
-            method = 'PUT';
-        }
 
         // capture mark data
         let data = {
             x: this.x,
             y: this.y,
             rating: this.rating,
-            image_id: this.imageId
-        }
+            image_id: this.imageId,
+            rating_scale_id: Mark.rating_scale_id,
+            attempt_id: Mark.attempt_id,
+            test_case_id: Mark.test_case_id,
+            answer_lesion_types: [],
+        };
 
         for (let id of this.lesionTypes) {
-            data[`lesion_types[${id}]`] = 'on';
+            data.answer_lesion_types.push(id);
         }
 
-        // run request    post or put
-        axios.post(url, data).then((response) => response.data).then(response => {
-            if (response && response.success) {
-                if (this.isNew)
-                    this.id = response.id;
-            } else {
-                // FIXME: revert to previous state
-                alert('An error occurred saving this mark');
-            }
-        })
-        .catch(e_ => {
+        // run request    create or update
+        let act = 'answersAdd';
+        if (!this.isNew) {
+            act = 'answersUpdate';
+            data.id = this.id;
+        }
+
+        Apis[act](data).then(response => {
+            if (this.isNew)
+                this.id = response.id;
+        }).catch(e_ => {
             // FIXME: revert to previous state
             alert('An error occurred saving this mark');
-        })
-        .finally(() => {
+        }).finally(() => {
             callback();
         });
     }
@@ -179,16 +184,12 @@ export default class Mark {
     delete(callback) {
         if (this.isNew)
             throw "Cannot delete a mark which hasn't yet been saved";
-        axios.delete(Mark.urlPrefix + '/' + this.id).then((response) => response.data).then(response => {
-            if (response && response.success)
-                this._removeFromToolData();
-            else
-                alert('An error occurred deleting this mark');
-        })
-        .catch(e => {
+
+        Apis.answersDelete(this.id).then((resp) => {
+            this._removeFromToolData();
+        }).catch(e => {
             alert('An error occurred deleting this mark');
-        })
-        .finally(() => {
+        }).finally(() => {
             callback();
         });
     }

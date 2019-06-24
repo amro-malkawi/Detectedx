@@ -5,8 +5,8 @@ export default axios.create({
    timeout: 2000
 });
 
-export const apiAddress = 'http://127.0.0.1:3000';
-// export const apiAddress = 'http://demo.detectedx.com:3000';
+// export const apiAddress = 'http://127.0.0.1:3000';
+export const apiAddress = 'http://demo.detectedx.com:3000';
 
 const instance = axios.create({
    baseURL: apiAddress + '/api/',
@@ -507,4 +507,28 @@ export function lesionTypesTruthsBatchAdd(data) {
 export function attemptsRatingScale(id) {
    const url = '/attempts/' + id + '/ratingScales?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
+}
+
+
+export function attemptsComplete(id) {
+   const url = '/attempts/' + id + '/complete?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * answer operation
+ */
+export function answersAdd(data) {
+   const url = '/answers?access_token=' + getAccessToken();
+   return instance.post(url, data).then((response) => response.data);
+}
+
+export function answersUpdate(data) {
+   const url = '/answers/' + data.id + '?access_token=' + getAccessToken();
+   return instance.put(url, data).then((response) => response.data);
+}
+
+export function answersDelete(id) {
+   const url = '/answers/' + id + '?access_token=' + getAccessToken();
+   return instance.delete(url).then((response) => response.data);
 }
