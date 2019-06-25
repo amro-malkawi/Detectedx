@@ -264,7 +264,7 @@ export default {
                "menu_title": "sidebar.sweetAlert"
             },
             {
-               "path": "/horizontal/advanced-component/auto-complete",
+               "path": "/horizontal/advanced-component/auto-complete-list",
                "menu_title": "sidebar.autoComplete"
             }
          ]

@@ -5,8 +5,8 @@ export default axios.create({
    timeout: 2000
 });
 
-// export const apiAddress = 'http://127.0.0.1:3000';
-export const apiAddress = 'http://demo.detectedx.com:3000';
+export const apiAddress = 'http://127.0.0.1:3000';
+// export const apiAddress = 'http://demo.detectedx.com:3000';
 
 const instance = axios.create({
    baseURL: apiAddress + '/api/',
@@ -504,14 +504,30 @@ export function lesionTypesTruthsBatchAdd(data) {
  * attempt operation
  */
 
+export function attemptsUpdate(id, data) {
+   const url = '/attempts/' + id + '?access_token=' + getAccessToken();
+   delete data["created_at"];
+   delete data["updated_at"];
+   return instance.patch(url, data).then((response) => response.data);
+}
+
 export function attemptsRatingScale(id) {
    const url = '/attempts/' + id + '/ratingScales?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 
-
 export function attemptsComplete(id) {
    const url = '/attempts/' + id + '/complete?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsDetail(id) {
+   const url = '/attempts/' + id + '/detail?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsCompleteList() {
+   const url = '/attempts/complete_list?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 

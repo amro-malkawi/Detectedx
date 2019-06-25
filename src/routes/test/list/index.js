@@ -9,7 +9,7 @@ import * as Apis from 'Api';
 import {Link} from "react-router-dom";
 import {getAppLayout} from "Helpers/helpers";
 
-export default class home extends Component {
+export default class list extends Component {
 
     constructor(props) {
         super(props);
@@ -30,15 +30,23 @@ export default class home extends Component {
         });
     }
 
+    onRestart(item) {
+        let path = '/test-view/' + item.test_set_id + '/' + item.attempts.id + '/' + item.attempts.current_test_case_id;
+        Apis.attemptsUpdate(item.attempts.id, {complete: false}).then(resp => {
+            this.props.history.push(path);
+        });
+    }
+
     renderButton(item) {
         let path = '/test-view/' + item.test_set_id + '/' + item.attempts.id + '/' + item.attempts.current_test_case_id;
+        let completePath = '/app/test/complete-list/' + item.attempts.id;
         if(item.attempts === null) {
             return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>Start</Button>);
         } else if( item.attempts.complete) {
             return (
                 <div>
-                    <Button className="mr-10 mt-5 mb-5" outline color="info" size="sm">Scores</Button>
-                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>Re-Start</Button>
+                    <Button className="mr-10 mt-5 mb-5" outline color="info" size="sm" onClick={() => this.props.history.push(completePath)}>Scores</Button>
+                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onRestart(item)}>Re-Start</Button>
                 </div>
             );
         } else {

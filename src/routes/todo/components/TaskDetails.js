@@ -101,7 +101,7 @@ class TaskDetails extends Component {
 		this.props.addLabelsIntoTheTaskAction(label);
 	}
 	/**
-	 * Function to complete task
+	 * Function to complete-list task
 	 */
 	completeTask() {
 		this.props.completeTask();

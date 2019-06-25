@@ -272,7 +272,7 @@ export default {
                "menu_title": "sidebar.sweetAlert"
             },
             {
-               "path": "/advanced-component/auto-complete",
+               "path": "/advanced-component/auto-complete-list",
                "menu_title": "sidebar.autoComplete"
             }
          ]

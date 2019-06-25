@@ -243,7 +243,7 @@ export default (state = INIT_STATE, action) => {
         case CLOSE_SNACKBAR:
             return { ...state, showMessage: false };
 
-        // complete task
+        // complete-list task
         case COMPLETE_TASK:
             for (let i = 0; i < state.allToDos.length; i++) {
                 const todo = state.allToDos[i];

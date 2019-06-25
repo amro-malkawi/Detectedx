@@ -24,6 +24,7 @@ export default class TestView extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            attemptDetail: {},
             test_case: {},
             images: [],
             modality: {},
@@ -65,9 +66,16 @@ export default class TestView extends Component {
                 reject(e);
             });
         });
+        let promise5 = new Promise(function (resolve, reject) {
+            Apis.attemptsDetail(params.attempts_id).then(data => {
+                resolve(data);
+            }).catch(e => {
+                reject(e);
+            });
+        });
         const that = this;
-        Promise.all([promise1, promise2, promise3, promise4]).then(function (values) {
-            that.setState({test_case: values[0], images: values[1], modality: values[2], rating_scale: values[3]}, () => {
+        Promise.all([promise1, promise2, promise3, promise4, promise5]).then(function (values) {
+            that.setState({test_case: values[0], images: values[1], modality: values[2], rating_scale: values[3], attemptDetail: values[4]}, () => {
                 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
                 cornerstoneTools.external.cornerstone = cornerstone;
                 cornerstoneTools.external.Hammer = Hammer;
@@ -86,6 +94,7 @@ export default class TestView extends Component {
     }
 
     render() {
+        let disabled = this.state.attemptDetail.complete ? {'disabled' : 'disabled'} : {};
         return (
             <div className="viewer">
                 <div id="toolbar">
@@ -136,7 +145,9 @@ export default class TestView extends Component {
                     <h1>1 / 1</h1>
 
                     <nav>
-                        <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onComplete()}> Finish</Button>
+                        {
+                            this.state.attemptDetail.complete ? null : <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onComplete()}> Finish</Button>
+                        }
                         <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
                     </nav>
                 </div>
@@ -161,7 +172,7 @@ export default class TestView extends Component {
                             <FormGroup row>
                                 <Label for="occupation" sm={3}>Rating:</Label>
                                 <Col sm={9}>
-                                    <Input type="select" name="rating">
+                                    <Input type="select" name="rating" {...disabled}>
                                         {
                                             Array.from(Array(this.state.rating_scale.max_rating).keys()).map((v) => {   // [0, 1, 2, 3...]
                                                 return v + 1 === this.state.rating_scale.default_rating ? null : <option value={v + 1} key={v + 1}>{v + 1}</option>;
@@ -175,7 +186,7 @@ export default class TestView extends Component {
                                     return (
                                         <FormGroup check key={i} className={"lesion-type"}>
                                             <Label check>
-                                                <Input type="checkbox" data-lesion-type-id={v.id} />{' '}
+                                                <Input type="checkbox" data-lesion-type-id={v.id} {...disabled}/>{' '}
                                                 {v.name}
                                             </Label>
                                         </FormGroup>
@@ -185,12 +196,18 @@ export default class TestView extends Component {
 
                             <div className="actions">
                                 <div className="left">
-                                    <button className="cancel">Cancel</button>
+                                    <button className="cancel" {...disabled}>Cancel</button>
                                 </div>
-                                <div className="right">
-                                    <button className="mr-15 delete">Delete</button>
-                                    <button className="save">Save</button>
-                                </div>
+                                {
+                                    this.state.attemptDetail.complete ?
+                                        <div className="right">
+                                            <button className="mr-15 ok">&nbsp;&nbsp;Ok&nbsp;&nbsp;</button>
+                                        </div> :
+                                        <div className="right">
+                                            <button className="mr-15 delete">Delete</button>
+                                            <button className="save">Save</button>
+                                        </div>
+                                }
                             </div>
                         </form>
                     </div>
