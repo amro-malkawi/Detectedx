@@ -31,8 +31,15 @@ export default class list extends Component {
     }
 
     onRestart(item) {
-        let path = '/test-view/' + item.test_set_id + '/' + item.attempts.id + '/' + item.attempts.current_test_case_id;
-        Apis.attemptsUpdate(item.attempts.id, {complete: false}).then(resp => {
+        let newData = {
+            user_id: item.attempts.user_id,
+            current_test_case_id: item.attempts.current_test_case_id,
+            rating_scale_id: item.attempts.rating_scale_id,
+            test_set_id: item.attempts.test_set_id,
+            complete: false,
+        };
+        Apis.attemptsAdd(newData).then(resp => {
+            let path = '/test-view/' + item.test_set_id + '/' + resp.id + '/' + item.attempts.current_test_case_id;
             this.props.history.push(path);
         });
     }

@@ -504,6 +504,11 @@ export function lesionTypesTruthsBatchAdd(data) {
  * attempt operation
  */
 
+export function attemptsAdd(data) {
+   const url = '/attempts?access_token=' + getAccessToken();
+   return instance.post(url, data).then((response) => response.data);
+}
+
 export function attemptsUpdate(id, data) {
    const url = '/attempts/' + id + '?access_token=' + getAccessToken();
    delete data["created_at"];
