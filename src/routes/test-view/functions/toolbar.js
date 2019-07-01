@@ -21,10 +21,11 @@ class Tool {
     deactivate() {
         this.element.classList.remove('active');
 
-        if (this.name != 'Marker')
+        if (this.name != 'Marker') {
             cornerstoneTools.setToolDisabled(this.name);
-        else
+        }else {
             cornerstoneTools.setToolPassive(this.name);
+        }
     }
 }
 

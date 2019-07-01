@@ -69,11 +69,6 @@ const ProjectManagement = Loadable({
    loading: MyLoadingComponent
 });
 
-const ProjectTaskManagement = Loadable({
-   loader: () => import("./ProjectTaskManagement"),
-   loading: MyLoadingComponent
-})
-
 const LatestPost = Loadable({
    loader: () => import("./LatestPost"),
    loading: MyLoadingComponent
@@ -359,11 +354,6 @@ const SessionSlider = Loadable({
    loading: MyLoadingComponent
 })
 
-const AgencyWelcomeBlock = Loadable({
-   loader: () => import("./AgencyWelcomeBlock"),
-   loading: MyLoadingComponent
-})
-
 const TrendingNews = Loadable({
    loader: () => import("./TrendingNews"),
    loading: MyLoadingComponent
@@ -417,7 +407,6 @@ export {
    NewEmailsWidget,
    EmployeePayrollWidget,
    ProjectManagement,
-   ProjectTaskManagement,
    LatestPost,
    ActivityBoard,
    TrafficChannel,
@@ -475,7 +464,6 @@ export {
    TodayOrdersStatsWidget,
    ActivityWidget,
    SessionSlider,
-   AgencyWelcomeBlock,
    TrendingNews,
    TopHeadlines,
    Visitors,

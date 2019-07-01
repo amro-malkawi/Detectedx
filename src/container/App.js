@@ -86,26 +86,9 @@ class App extends Component {
 					component={RctDefaultLayout}
 				/>
 				<PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={user}/>
-
-
-
-				<Route path="/horizontal" component={HorizontalLayout} />
-				<Route path="/agency" component={AgencyLayout} />
-				<Route path="/boxed" component={RctBoxedLayout} />
 				<Route path="/signin" component={AppSignIn} />
 				<Route path="/signup" component={AppSignUp} />
-				<Route path="/session/lock-screen" component={AsyncSessionLockScreenComponent} />
-				<Route
-					path="/session/forgot-password"
-					component={AsyncSessionForgotPasswordComponent}
-				/>
-				<Route path="/session/404" component={AsyncSessionPage404Component} />
-				<Route path="/session/500" component={AsyncSessionPage500Component} />
-				<Route path="/terms-condition" component={AsyncTermsConditionComponent} />
-				<Route path="/callback" render={(props) => {
-					handleAuthentication(props);
-					return <Callback {...props} />
-				}} />
+
 			</RctThemeProvider>
 		);
 	}
