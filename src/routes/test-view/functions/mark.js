@@ -86,6 +86,9 @@ export default class Mark {
     static loadMarks() {
         Apis.testCasesAnswers(Mark.test_case_id, Mark.attempt_id).then((images) => {
             for (let image of images) {
+                let clearElement = Mark._imageElement(image.id);
+                if(clearElement !== undefined) cornerstoneTools.clearToolState(clearElement, 'Marker');
+
                 image.answers.forEach(mark => new Mark(image.id, mark));
                 if (image.truths) {
                     image.truths.forEach(mark => new Mark(image.id, mark));
@@ -94,11 +97,10 @@ export default class Mark {
                 let imageElement = Mark._imageElement(image.id);
                 cornerstone.invalidate(imageElement);
             }
+        }).catch(e => {
+            console.warn(e);
+            alert('An error occurred loading the marks for this test case');
         })
-            .catch(e => {
-                console.warn(e);
-                alert('An error occurred loading the marks for this test case');
-            })
     }
 
     // ----------------------

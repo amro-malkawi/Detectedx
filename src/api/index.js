@@ -5,8 +5,9 @@ export default axios.create({
    timeout: 2000
 });
 
-export const apiAddress = 'http://127.0.0.1:3000';
+// export const apiAddress = 'http://127.0.0.1:3000';
 // export const apiAddress = 'http://demo.detectedx.com:3000';
+export const apiAddress = window.location.protocol + '//' + window.location.hostname + ':3000';
 
 const instance = axios.create({
    baseURL: apiAddress + '/api/',
@@ -97,6 +98,11 @@ export function testSetsInfo(id) {
 
 export function testSetsModality(id) {
    const url = '/test_sets/' + id + '/modalities?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function testSetsCases(id) {
+   const url = '/test_sets/' + id + '/test_set_cases?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 

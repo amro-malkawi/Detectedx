@@ -30,33 +30,30 @@ export default class list extends Component {
         });
     }
 
-    onRestart(item) {
+    onStart(test_set_id) {
         let newData = {
-            user_id: item.attempts.user_id,
-            current_test_case_id: item.attempts.current_test_case_id,
-            rating_scale_id: item.attempts.rating_scale_id,
-            test_set_id: item.attempts.test_set_id,
-            complete: false,
+            test_set_id: test_set_id,
         };
         Apis.attemptsAdd(newData).then(resp => {
-            let path = '/test-view/' + item.test_set_id + '/' + resp.id + '/' + item.attempts.current_test_case_id;
+            let path = '/test-view/' + test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
             this.props.history.push(path);
         });
     }
 
-    renderButton(item) {
-        let path = '/test-view/' + item.test_set_id + '/' + item.attempts.id + '/' + item.attempts.current_test_case_id;
-        let completePath = '/app/test/complete-list/' + item.attempts.id;
-        if(item.attempts === null) {
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>Start</Button>);
-        } else if( item.attempts.complete) {
+    renderButton(test_set_id, attempts) {
+        let attempt = attempts[0];
+        if(attempt === undefined) {
+            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id)}>Start</Button>);
+        } else if( attempt.complete) {
+            let completePath = '/app/test/complete-list/' + attempt.id;
             return (
                 <div>
                     <Button className="mr-10 mt-5 mb-5" outline color="info" size="sm" onClick={() => this.props.history.push(completePath)}>Scores</Button>
-                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onRestart(item)}>Re-Start</Button>
+                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id)}>Re-Start</Button>
                 </div>
             );
         } else {
+            let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             return ( <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>Continue</Button> );
         }
     }
@@ -76,7 +73,7 @@ export default class list extends Component {
                                                 <p className="fs-14 fw-bold mb-5">{item.test_sets.name}</p>
                                                 <span className="fs-12 d-block text-muted">{item.test_sets.modalities.name}</span>
                                             </div>
-                                            {this.renderButton(item)}
+                                            {this.renderButton(item.test_sets.id, item.test_sets.attempts)}
                                         </CardBody>
                                     </Card>
                                 </div>

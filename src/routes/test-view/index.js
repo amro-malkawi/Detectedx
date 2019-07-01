@@ -18,16 +18,22 @@ import Hammer from 'hammerjs';
 import Loader from './functions/loader';
 import Dtx from './functions/dtx';
 import IntlMessages from "Util/IntlMessages";
+import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 
 export default class TestView extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            test_cases_id: this.props.match.params.test_cases_id,
+            test_sets_id: this.props.match.params.test_sets_id,
+            attempts_id: this.props.match.params.attempts_id,
+
+            loading: true,
             attemptDetail: {},
             test_case: {},
             images: [],
-            modality: {},
+            test_set_cases: [],
             rating_scale: {lesion_types: []},
         };
     }
@@ -37,182 +43,219 @@ export default class TestView extends Component {
     }
 
     getData() {
-        const { params } = this.props.match;
+        const that = this;
+        let promise0 = new Promise(function (resolve, reject) {
+            Apis.testCasesInfo(that.state.test_cases_id).then((data) => {
+                resolve(data);
+            }).catch(e => {
+                reject(e);
+            });
+        });
         let promise1 = new Promise(function (resolve, reject) {
-            Apis.testCasesInfo(params.test_cases_id).then((data) => {
+            Apis.testCasesImagesList(that.state.test_cases_id).then((data) => {
                 resolve(data);
             }).catch(e => {
                 reject(e);
             });
         });
         let promise2 = new Promise(function (resolve, reject) {
-            Apis.testCasesImagesList(params.test_cases_id).then((data) => {
+            Apis.testSetsCases(that.state.test_sets_id).then((data) => {
+                data = data.map((v) => v.test_case_id);
                 resolve(data);
             }).catch(e => {
                 reject(e);
             });
         });
         let promise3 = new Promise(function (resolve, reject) {
-            Apis.testSetsModality(params.test_sets_id).then((data) => {
+            Apis.attemptsRatingScale(that.state.attempts_id).then((data) => {
                 resolve(data);
             }).catch(e => {
                 reject(e);
             });
         });
         let promise4 = new Promise(function (resolve, reject) {
-            Apis.attemptsRatingScale(params.attempts_id).then((data) => {
+            Apis.attemptsDetail(that.state.attempts_id).then(data => {
                 resolve(data);
             }).catch(e => {
                 reject(e);
             });
         });
-        let promise5 = new Promise(function (resolve, reject) {
-            Apis.attemptsDetail(params.attempts_id).then(data => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        const that = this;
-        Promise.all([promise1, promise2, promise3, promise4, promise5]).then(function (values) {
-            that.setState({test_case: values[0], images: values[1], modality: values[2], rating_scale: values[3], attemptDetail: values[4]}, () => {
+        Promise.all([promise0, promise1, promise2, promise3, promise4]).then(function (values) {
+            that.setState({test_case: values[0], images: values[1], test_set_cases: values[2], rating_scale: values[3], attemptDetail: values[4], loading: false}, () => {
                 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
                 cornerstoneTools.external.cornerstone = cornerstone;
                 cornerstoneTools.external.Hammer = Hammer;
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
                 cornerstoneTools.init();
                 cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init(params.test_cases_id, params.attempts_id, values[3].id);
+                console.warn('init again');
+                Dtx.init(that.state.test_cases_id, that.state.attempts_id, values[3].id);   //test_cases_id, attempts_id, rating_scale_id
+            });
+        });
+    }
+
+    onMove(seek) { // previous -1, next 1
+        let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+        let next_test_case_id = this.state.test_set_cases[test_case_index + seek];
+        this.setState({test_cases_id: next_test_case_id, loading: true}, () => {
+            let url = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + next_test_case_id;
+            Apis.attemptsUpdate(this.state.attempts_id, {current_test_case_id: next_test_case_id}).then((resp) => {
+                this.getData();
+                this.props.history.push(url);
             });
         });
     }
 
     onComplete() {
-        Apis.attemptsComplete(this.props.match.params.attempts_id).then((resp) => {
+        Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
             this.props.history.push('/app/test/list');
         });
     }
 
-    render() {
-        let disabled = this.state.attemptDetail.complete ? {'disabled' : 'disabled'} : {};
+    renderNav() {
+        let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+        let test_case_length = this.state.test_set_cases.length;
+        console.warn(test_case_index);
         return (
-            <div className="viewer">
-                <div id="toolbar">
-                    <div id="tools">
-                        <div className="tool" data-tool="Pan">
-                            <svg id="icon-tools-pan" viewBox="0 0 18 18">
-                                <title>Pan</title>
-                                <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path id="icon-tools-pan-line-v" d="M9,1 L9,17"></path>
-                                    <path id="icon-tools-pan-line-h" d="M1,9 L17,9"></path>
-                                    <polyline id="icon-tools-pan-caret-t" points="7 3 9 1 11 3"></polyline>
-                                    <polyline id="icon-tools-pan-caret-r" points="15 11 17 9 15 7"></polyline>
-                                    <polyline id="icon-tools-pan-caret-b" points="11 15 9 17 7 15"></polyline>
-                                    <polyline id="icon-tools-pan-caret-l" points="3 7 1 9 3 11"></polyline>
-                                </g>
-                            </svg>
-                            <p>Pan</p>
-                        </div>
-                        <div className="tool" data-tool="Zoom">
-                            <svg id="icon-tools-zoom" viewBox="0 0 17 17">
-                                <title>Zoom</title>
-                                <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
-                                    <path id="icon-tools-zoom-path" d="m11.5,11.5 4.5,4.5" />
-                                    <circle id="icon-tools-zoom-circle" cx="7" cy="7" r="6" />
-                                </g>
-                            </svg>
-                            <p>Zoom</p>
-                        </div>
-                        <div className="tool" data-tool="Wwwc">
-                            <svg id="icon-tools-levels" viewBox="0 0 18 18">
-                                <title>Window / Level</title>
-                                <g id="icon-tools-levels-group">
-                                    <path id="icon-tools-levels-path" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8" />
-                                    <circle id="icon-tools-levels-circle" cx="9" cy="9" r="8" fill="none" strokeWidth="2" />
-                                </g>
-                            </svg>
-                            <p>Window</p>
-                        </div>
-                        <div className="tool" data-tool="Marker">
-                            <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
-                                <title>Elliptical ROI</title>
-                                <path d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"></path>
-                            </svg>
-                            <p>Mark</p>
-                        </div>
-                    </div>
+            <nav>
+                {
+                    test_case_index > 0 ?
+                        <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(-1)}> Previous</Button> : null
+                }
+                {
+                    this.state.attemptDetail.complete || test_case_index + 1 !== test_case_length ?
+                        null : <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onComplete()}> Finish</Button>
+                }
+                {
+                    test_case_index + 1 < test_case_length ?
+                        <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(1)}> Next</Button> : null
+                }
+                <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
+            </nav>
+        );
+    }
 
-                    <h1>1 / 1</h1>
-
-                    <nav>
-                        {
-                            this.state.attemptDetail.complete ? null : <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onComplete()}> Finish</Button>
-                        }
-                        <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
-                    </nav>
-                </div>
-                <div id="images">
-                    {
-                        this.state.images.map((item, index) => {
-                            return (
-                                <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} key={item.id}>
-                                    <div className="dicom"></div>
-                                    <div className="zoom status"></div>
-                                    <div className="window status"></div>
-                                    <button className="invert">Invert</button>
-                                    <button className="reset">Reset</button>
-                                </div>
-                            )
-                        })
-                    }
-                </div>
-                <div id="cover" style={{display: 'none'}}>
-                    <div id="mark-details">
-                        <form>
-                            <FormGroup row>
-                                <Label for="occupation" sm={3}>Rating:</Label>
-                                <Col sm={9}>
-                                    <Input type="select" name="rating" {...disabled}>
-                                        {
-                                            Array.from(Array(this.state.rating_scale.max_rating).keys()).map((v) => {   // [0, 1, 2, 3...]
-                                                return v + 1 === this.state.rating_scale.default_rating ? null : <option value={v + 1} key={v + 1}>{v + 1}</option>;
-                                            })
-                                        }
-                                    </Input>
-                                </Col>
-                            </FormGroup>
-                            {
-                                this.state.rating_scale.lesion_types.map((v, i) => {
-                                    return (
-                                        <FormGroup check key={i} className={"lesion-type"}>
-                                            <Label check>
-                                                <Input type="checkbox" data-lesion-type-id={v.id} {...disabled}/>{' '}
-                                                {v.name}
-                                            </Label>
-                                        </FormGroup>
-                                    )
-                                })
-                            }
-
-                            <div className="actions">
-                                <div className="left">
-                                    <button className="cancel" {...disabled}>Cancel</button>
-                                </div>
-                                {
-                                    this.state.attemptDetail.complete ?
-                                        <div className="right">
-                                            <button className="mr-15 ok">&nbsp;&nbsp;Ok&nbsp;&nbsp;</button>
-                                        </div> :
-                                        <div className="right">
-                                            <button className="mr-15 delete">Delete</button>
-                                            <button className="save">Save</button>
-                                        </div>
-                                }
+    render() {
+        if (!this.state.loading) {
+            let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
+            let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+            return (
+                <div className="viewer">
+                    <div id="toolbar">
+                        <div id="tools">
+                            <div className="tool" data-tool="Pan">
+                                <svg id="icon-tools-pan" viewBox="0 0 18 18">
+                                    <title>Pan</title>
+                                    <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path id="icon-tools-pan-line-v" d="M9,1 L9,17"></path>
+                                        <path id="icon-tools-pan-line-h" d="M1,9 L17,9"></path>
+                                        <polyline id="icon-tools-pan-caret-t" points="7 3 9 1 11 3"></polyline>
+                                        <polyline id="icon-tools-pan-caret-r" points="15 11 17 9 15 7"></polyline>
+                                        <polyline id="icon-tools-pan-caret-b" points="11 15 9 17 7 15"></polyline>
+                                        <polyline id="icon-tools-pan-caret-l" points="3 7 1 9 3 11"></polyline>
+                                    </g>
+                                </svg>
+                                <p>Pan</p>
                             </div>
-                        </form>
+                            <div className="tool" data-tool="Zoom">
+                                <svg id="icon-tools-zoom" viewBox="0 0 17 17">
+                                    <title>Zoom</title>
+                                    <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
+                                        <path id="icon-tools-zoom-path" d="m11.5,11.5 4.5,4.5"/>
+                                        <circle id="icon-tools-zoom-circle" cx="7" cy="7" r="6"/>
+                                    </g>
+                                </svg>
+                                <p>Zoom</p>
+                            </div>
+                            <div className="tool" data-tool="Wwwc">
+                                <svg id="icon-tools-levels" viewBox="0 0 18 18">
+                                    <title>Window / Level</title>
+                                    <g id="icon-tools-levels-group">
+                                        <path id="icon-tools-levels-path" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8"/>
+                                        <circle id="icon-tools-levels-circle" cx="9" cy="9" r="8" fill="none" strokeWidth="2"/>
+                                    </g>
+                                </svg>
+                                <p>Window</p>
+                            </div>
+                            <div className="tool" data-tool="Marker">
+                                <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
+                                    <title>Elliptical ROI</title>
+                                    <path
+                                        d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"></path>
+                                </svg>
+                                <p>Mark</p>
+                            </div>
+                        </div>
+
+                        <h1>{test_case_index + 1} / {this.state.test_set_cases.length}</h1>
+
+                        {this.renderNav()}
+                    </div>
+                    <div id="images">
+                        {
+                            this.state.images.map((item, index) => {
+                                return (
+                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} key={item.id}>
+                                        <div className="dicom"></div>
+                                        <div className="zoom status"></div>
+                                        <div className="window status"></div>
+                                        <button className="invert">Invert</button>
+                                        <button className="reset">Reset</button>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                    <div id="cover" style={{display: 'none'}}>
+                        <div id="mark-details">
+                            <form>
+                                <FormGroup row>
+                                    <Label for="occupation" sm={3}>Rating:</Label>
+                                    <Col sm={9}>
+                                        <Input type="select" name="rating" {...disabled}>
+                                            {
+                                                Array.from(Array(this.state.rating_scale.max_rating).keys()).map((v) => {   // [0, 1, 2, 3...]
+                                                    return v + 1 === this.state.rating_scale.default_rating ? null : <option value={v + 1} key={v + 1}>{v + 1}</option>;
+                                                })
+                                            }
+                                        </Input>
+                                    </Col>
+                                </FormGroup>
+                                {
+                                    this.state.rating_scale.lesion_types.map((v, i) => {
+                                        return (
+                                            <FormGroup check key={i} className={"lesion-type"}>
+                                                <Label check>
+                                                    <Input type="checkbox" data-lesion-type-id={v.id} {...disabled}/>{' '}
+                                                    {v.name}
+                                                </Label>
+                                            </FormGroup>
+                                        )
+                                    })
+                                }
+
+                                <div className="actions">
+                                    <div className="left">
+                                        <button className="cancel" {...disabled}>Cancel</button>
+                                    </div>
+                                    {
+                                        this.state.attemptDetail.complete ?
+                                            <div className="right">
+                                                <button className="mr-15 ok">&nbsp;&nbsp;Ok&nbsp;&nbsp;</button>
+                                            </div> :
+                                            <div className="right">
+                                                <button className="mr-15 delete">Delete</button>
+                                                <button className="save">Save</button>
+                                            </div>
+                                    }
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            );
+        } else {
+            return (<RctSectionLoader/>);
+        }
     }
 }
