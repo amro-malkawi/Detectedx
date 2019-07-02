@@ -13,6 +13,7 @@ import * as Apis from 'Api';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
+import dicomParser from 'dicom-parser';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './functions/loader';
@@ -83,6 +84,7 @@ export default class TestView extends Component {
         Promise.all([promise0, promise1, promise2, promise3, promise4]).then(function (values) {
             that.setState({test_case: values[0], images: values[1], test_set_cases: values[2], rating_scale: values[3], attemptDetail: values[4], loading: false}, () => {
                 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+                cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
                 cornerstoneTools.external.cornerstone = cornerstone;
                 cornerstoneTools.external.Hammer = Hammer;
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
@@ -157,7 +159,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Pan</p>
                             </div>
-                            <div className="tool" data-tool="Zoom">
+                            <div className="tool" data-tool="Zoom" data-synchronize="true">
                                 <svg id="icon-tools-zoom" viewBox="0 0 17 17">
                                     <title>Zoom</title>
                                     <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">

@@ -1,3 +1,5 @@
+import cornerstoneTools from 'cornerstone-tools';
+
 import Toolbar from './toolbar';
 import Viewer from './viewer';
 import Popup from './popup';
@@ -8,12 +10,21 @@ export default class Dtx {
         Mark.test_case_id = test_case_id;
         Mark.attempt_id = attempt_id;
         Mark.rating_scale_id = rating_scale_id;
+        this._synchronizer = this.initSynchronizer();
         this._popup = new Popup();
-        this._toolbar = new Toolbar();
+        this._toolbar = new Toolbar(this._synchronizer);
         this._viewers = [];
-
         for (let element of document.querySelectorAll('#images .image'))
-            this._viewers.push(new Viewer(element));
+            this._viewers.push(new Viewer(element, this._synchronizer));
+    }
+
+    static initSynchronizer() {
+        const synchronizer = new cornerstoneTools.Synchronizer(
+            'cornerstoneimagerendered',
+            cornerstoneTools.panZoomSynchronizer
+        );
+        synchronizer.enabled = false;
+        return synchronizer;
     }
 
     static get popup() {
@@ -26,6 +37,10 @@ export default class Dtx {
 
     static get viewers() {
         return this._viewers;
+    }
+
+    static get synchronizer() {
+        return this._synchronizer;
     }
 
     static loadMarks() {

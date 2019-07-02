@@ -9,7 +9,7 @@ const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
 
 export default class Viewer {
-    constructor(element) {
+    constructor(element, synchronizer) {
         this.imageId = element.dataset.imageId;
         this.imageURL  = `dtx://${element.dataset.url}`;
 
@@ -21,6 +21,7 @@ export default class Viewer {
         this.zoomOverlay   = element.querySelector('.zoom');
         this.resetButton   = element.querySelector('.reset');
         this.invertButton  = element.querySelector('.invert');
+        this.synchronizer = synchronizer;
 
         this.imageElement.viewer = this;
         this.originalViewport = {};
@@ -91,6 +92,9 @@ export default class Viewer {
         cornerstoneTools.setToolActiveForElement(this.imageElement, window.viewerToolbar.currentTool.name, {
             mouseButtonMask: 1
         });
+
+        //add synchronizer
+        this.synchronizer.add(this.imageElement);
 
         // render the first appropriate level of the pyramid
         this._renderPyramid(this.originalViewport);

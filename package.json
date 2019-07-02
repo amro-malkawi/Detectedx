@@ -56,6 +56,7 @@
       "cornerstone-math": "^0.1.8",
       "cornerstone-tools": "^3.13.0",
       "cornerstone-wado-image-loader": "^2.2.3",
+      "dicom-parser": "^1.8.3",
       "downshift": "^3.2.2",
       "draft-js": "0.10.5",
       "firebase": "^5.7.0",
