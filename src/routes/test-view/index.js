@@ -21,6 +21,52 @@ import Dtx from './functions/dtx';
 import IntlMessages from "Util/IntlMessages";
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 
+import Switch from "@material-ui/core/Switch";
+import {withStyles} from '@material-ui/core/styles';
+
+
+const AntSwitch = withStyles(theme => ({
+    root: {
+        width: 27,
+        height: 16,
+        padding: 0,
+        margin: 0,
+    },
+    switchBase: {
+        color: '#7da5c7',
+        marginTop: -23,
+        marginLeft: -14,
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+            easing: theme.transitions.easing.sharp,
+        }),
+    },
+    checked: {
+        transform: 'translateX(15px)',
+        opacity: 1,
+        border: 'none',
+    },
+    bar: {
+        borderRadius: 7.5,
+        width: 28,
+        height: 16,
+        marginTop: -15,
+        marginLeft: -11.5,
+        border: 'solid 1px',
+        borderColor: theme.palette.grey[400],
+        backgroundColor: theme.palette.grey[50],
+        opacity: 1,
+        transition: theme.transitions.create(['background-color', 'border']),
+    },
+    icon: {
+        width: 16,
+        height: 16,
+    },
+    iconChecked: {
+        boxShadow: theme.shadows[1],
+    },
+}))(Switch);
+
 export default class TestView extends Component {
 
     constructor(props) {
@@ -114,6 +160,10 @@ export default class TestView extends Component {
         });
     }
 
+    onChangeSynchonize(e) {
+        Dtx.enableSynchronize(e.target.checked);
+    }
+
     renderNav() {
         let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
         let test_case_length = this.state.test_set_cases.length;
@@ -145,7 +195,7 @@ export default class TestView extends Component {
                 <div className="viewer">
                     <div id="toolbar">
                         <div id="tools">
-                            <div className="tool" data-tool="Pan">
+                            <div className="tool option" data-tool="Pan">
                                 <svg id="icon-tools-pan" viewBox="0 0 18 18">
                                     <title>Pan</title>
                                     <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -159,7 +209,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Pan</p>
                             </div>
-                            <div className="tool" data-tool="Zoom" data-synchronize="true">
+                            <div className="tool option" data-tool="Zoom" data-synchronize="true">
                                 <svg id="icon-tools-zoom" viewBox="0 0 17 17">
                                     <title>Zoom</title>
                                     <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
@@ -169,7 +219,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Zoom</p>
                             </div>
-                            <div className="tool" data-tool="Wwwc">
+                            <div className="tool option" data-tool="Wwwc">
                                 <svg id="icon-tools-levels" viewBox="0 0 18 18">
                                     <title>Window / Level</title>
                                     <g id="icon-tools-levels-group">
@@ -179,13 +229,20 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Window</p>
                             </div>
-                            <div className="tool" data-tool="Marker">
+                            <div className="tool option" data-tool="Marker">
                                 <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
                                     <title>Elliptical ROI</title>
                                     <path
                                         d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"></path>
                                 </svg>
                                 <p>Mark</p>
+                            </div>
+                            <div className="tool">
+                                <AntSwitch
+                                    onChange={(e) => this.onChangeSynchonize(e)}
+                                    value="checkedB"
+                                />
+                                <p>&nbsp;Sync</p>
                             </div>
                         </div>
 

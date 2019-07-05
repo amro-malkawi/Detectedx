@@ -20,11 +20,15 @@ export default class Dtx {
 
     static initSynchronizer() {
         const synchronizer = new cornerstoneTools.Synchronizer(
-            'cornerstoneimagerendered',
+            'cornerstonetoolsmousewheel',
             cornerstoneTools.panZoomSynchronizer
         );
         synchronizer.enabled = false;
         return synchronizer;
+    }
+
+    static enableSynchronize(value) {
+        this._synchronizer.enabled = value;
     }
 
     static get popup() {

@@ -1,7 +1,6 @@
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
 import * as Apis from 'Api';
-import axios from "axios";
 
 export default class Mark {
     constructor(imageId, data) {

@@ -42,7 +42,7 @@ export default class MarkerTool extends BaseAnnotationTool {
 
         this._handleMouseUp(_ => {
             Dtx.popup.show(mark);
-        })
+        });
 
         return mark;
     }

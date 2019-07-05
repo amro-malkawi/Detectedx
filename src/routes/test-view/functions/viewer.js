@@ -1,6 +1,7 @@
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import MarkerTool from './marker';
+import Mark from './mark';
 import Dtx from './dtx';
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
@@ -42,6 +43,17 @@ export default class Viewer {
     initEvents() {
         this.imageElement.addEventListener('cornerstoneimagerendered', (event) => {
             this.wasDrawn(event);
+        });
+
+        this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => {
+            let mark = new Mark(event.detail.element.viewer.imageId, {
+                x: event.detail.currentPoints.image.x,
+                y: event.detail.currentPoints.image.y,
+                active: true
+            });
+            cornerstoneTools.addToolState(this.imageElement, 'Marker', mark);
+            Dtx.popup.show(mark);
+            cornerstone.invalidate(this.imageElement);
         });
 
         this.resetButton.addEventListener('click', _ => {
