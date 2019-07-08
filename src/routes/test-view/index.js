@@ -254,7 +254,7 @@ export default class TestView extends Component {
                         {
                             this.state.images.map((item, index) => {
                                 return (
-                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} key={item.id}>
+                                    <div className="image" id={"image" + item[0].id} data-image-id={item[0].id} data-url={item[0].id} key={item[0].id}>
                                         <div className="dicom"></div>
                                         <div className="zoom status"></div>
                                         <div className="window status"></div>

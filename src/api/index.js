@@ -199,7 +199,7 @@ export function testCasesInfo(id) {
 }
 
 export function testCasesImagesList(id) {
-   const url = '/test_cases/' + id + '/images?access_token=' + getAccessToken();
+   const url = '/test_cases/' + id + '/positionImages?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 
