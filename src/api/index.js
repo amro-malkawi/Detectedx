@@ -5,13 +5,21 @@ export default axios.create({
    timeout: 2000
 });
 
-// export const apiAddress = 'http://127.0.0.1:3000';
-// export const apiAddress = 'http://demo.detectedx.com:3000';
 export const apiAddress = window.location.protocol + '//' + window.location.hostname + ':3000';
 
 const instance = axios.create({
    baseURL: apiAddress + '/api/',
    timeout: 20000
+});
+
+instance.interceptors.response.use(response => {
+   return response;
+}, error => {
+   if (error.response.status === 401) {
+      localStorage.removeItem('user_id');
+      window.location.reload();
+   }
+   return error;
 });
 
 export function getAccessToken() {
@@ -193,13 +201,16 @@ export function testCasesDelete(id) {
    return instance.delete(url).then((response) => response.data);
 }
 
-export function testCasesInfo(id) {
-   const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
+export function testCasesInfo(id, filter) {
+   let url = '/test_cases/' + id + '?access_token=' + getAccessToken();
+   if(filter !== undefined) {
+      url += '&filter=' + encodeURI(JSON.stringify(filter));
+   }
    return instance.get(url).then((response) => response.data);
 }
 
-export function testCasesImagesList(id) {
-   const url = '/test_cases/' + id + '/positionImages?access_token=' + getAccessToken();
+export function testCasesViewInfo(id) {
+   const url = '/test_cases/' + id + '/viewInfo?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 
@@ -520,11 +531,6 @@ export function attemptsUpdate(id, data) {
    delete data["created_at"];
    delete data["updated_at"];
    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function attemptsRatingScale(id) {
-   const url = '/attempts/' + id + '/ratingScales?access_token=' + getAccessToken();
-   return instance.get(url).then((response) => response.data);
 }
 
 export function attemptsComplete(id) {

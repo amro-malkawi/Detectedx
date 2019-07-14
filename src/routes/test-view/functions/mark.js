@@ -72,16 +72,6 @@ export default class Mark {
         this._attempt_id = attempt_id;
     }
 
-    static get rating_scale_id() {
-        if (this._rating_scale_id == undefined)
-            throw 'Mark.rating_scale_id is required';
-        return this._rating_scale_id;
-    }
-
-    static set rating_scale_id(rating_scale_id) {
-        this._rating_scale_id = rating_scale_id;
-    }
-
     static loadMarks() {
         Apis.testCasesAnswers(Mark.test_case_id, Mark.attempt_id).then((images) => {
             for (let image of images) {
@@ -154,7 +144,6 @@ export default class Mark {
             y: this.y,
             rating: this.rating,
             image_id: this.imageId,
-            rating_scale_id: Mark.rating_scale_id,
             attempt_id: Mark.attempt_id,
             test_case_id: Mark.test_case_id,
             answer_lesion_types: [],

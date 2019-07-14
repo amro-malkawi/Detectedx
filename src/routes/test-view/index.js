@@ -79,9 +79,7 @@ export default class TestView extends Component {
             loading: true,
             attemptDetail: {},
             test_case: {},
-            images: [],
             test_set_cases: [],
-            rating_scale: {lesion_types: []},
         };
     }
 
@@ -92,20 +90,13 @@ export default class TestView extends Component {
     getData() {
         const that = this;
         let promise0 = new Promise(function (resolve, reject) {
-            Apis.testCasesInfo(that.state.test_cases_id).then((data) => {
+            Apis.testCasesViewInfo(that.state.test_cases_id).then((data) => {
                 resolve(data);
             }).catch(e => {
                 reject(e);
             });
         });
         let promise1 = new Promise(function (resolve, reject) {
-            Apis.testCasesImagesList(that.state.test_cases_id).then((data) => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        let promise2 = new Promise(function (resolve, reject) {
             Apis.testSetsCases(that.state.test_sets_id).then((data) => {
                 data = data.map((v) => v.test_case_id);
                 resolve(data);
@@ -113,22 +104,15 @@ export default class TestView extends Component {
                 reject(e);
             });
         });
-        let promise3 = new Promise(function (resolve, reject) {
-            Apis.attemptsRatingScale(that.state.attempts_id).then((data) => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        let promise4 = new Promise(function (resolve, reject) {
+        let promise2 = new Promise(function (resolve, reject) {
             Apis.attemptsDetail(that.state.attempts_id).then(data => {
                 resolve(data);
             }).catch(e => {
                 reject(e);
             });
         });
-        Promise.all([promise0, promise1, promise2, promise3, promise4]).then(function (values) {
-            that.setState({test_case: values[0], images: values[1], test_set_cases: values[2], rating_scale: values[3], attemptDetail: values[4], loading: false}, () => {
+        Promise.all([promise0, promise1, promise2]).then(function (values) {
+            that.setState({test_case: values[0], test_set_cases: values[1], attemptDetail: values[2], loading: false}, () => {
                 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
                 cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
                 cornerstoneTools.external.cornerstone = cornerstone;
@@ -136,8 +120,7 @@ export default class TestView extends Component {
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
                 cornerstoneTools.init();
                 cornerstone.registerImageLoader('dtx', Loader);
-                console.warn('init again');
-                Dtx.init(that.state.test_cases_id, that.state.attempts_id, values[3].id);   //test_cases_id, attempts_id, rating_scale_id
+                Dtx.init(that.state.test_cases_id, that.state.attempts_id);
             });
         });
     }
@@ -252,9 +235,9 @@ export default class TestView extends Component {
                     </div>
                     <div id="images">
                         {
-                            this.state.images.map((item, index) => {
+                            this.state.test_case.images.map((item, index) => {
                                 return (
-                                    <div className="image" id={"image" + item[0].id} data-image-id={item[0].id} data-url={item[0].id} key={item[0].id}>
+                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} key={item.id}>
                                         <div className="dicom"></div>
                                         <div className="zoom status"></div>
                                         <div className="window status"></div>
@@ -273,15 +256,15 @@ export default class TestView extends Component {
                                     <Col sm={9}>
                                         <Input type="select" name="rating" {...disabled}>
                                             {
-                                                Array.from(Array(this.state.rating_scale.max_rating).keys()).map((v) => {   // [0, 1, 2, 3...]
-                                                    return v + 1 === this.state.rating_scale.default_rating ? null : <option value={v + 1} key={v + 1}>{v + 1}</option>;
+                                                this.state.test_case.ratings.map((v) => {   // [0, 1, 2, 3...]
+                                                    return <option value={v} key={v}>{v}</option>;
                                                 })
                                             }
                                         </Input>
                                     </Col>
                                 </FormGroup>
                                 {
-                                    this.state.rating_scale.lesion_types.map((v, i) => {
+                                    this.state.test_case.modalities.lesion_types.map((v, i) => {
                                         return (
                                             <FormGroup check key={i} className={"lesion-type"}>
                                                 <Label check>
