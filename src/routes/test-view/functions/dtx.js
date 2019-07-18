@@ -6,15 +6,17 @@ import Popup from './popup';
 import Mark from './mark';
 
 export default class Dtx {
-    static init(test_case_id, attempt_id) {
+    static init(viewComponent, test_case_id, attempt_id) {
         Mark.test_case_id = test_case_id;
         Mark.attempt_id = attempt_id;
+        Popup.viewComponent = viewComponent;
         this._synchronizer = this.initSynchronizer();
         this._popup = new Popup();
         this._toolbar = new Toolbar(this._synchronizer);
         this._viewers = [];
         for (let element of document.querySelectorAll('#images .image'))
             this._viewers.push(new Viewer(element, this._synchronizer));
+        this._synchronizer.enabled = true;
     }
 
     static initSynchronizer() {

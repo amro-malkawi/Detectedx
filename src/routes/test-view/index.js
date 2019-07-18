@@ -3,11 +3,14 @@
  */
 
 import React, {Component} from 'react'
-import PageTitleBar from "Components/PageTitleBar/PageTitleBar";
-import {Card, CardBody, Col, FormGroup, Input, Label} from "reactstrap";
-import AppBar from "@material-ui/core/AppBar";
+import {Col, FormGroup, Input, Label} from "reactstrap";
 import Button from '@material-ui/core/Button';
-import Toolbar from "@material-ui/core/Toolbar";
+import Select from 'react-select';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import yellow from '@material-ui/core/colors/yellow';
+import chroma from 'chroma-js';
 import * as Apis from 'Api';
 
 import cornerstone from 'cornerstone-core';
@@ -18,7 +21,6 @@ import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './functions/loader';
 import Dtx from './functions/dtx';
-import IntlMessages from "Util/IntlMessages";
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 
 import Switch from "@material-ui/core/Switch";
@@ -67,6 +69,83 @@ const AntSwitch = withStyles(theme => ({
     },
 }))(Switch);
 
+const CustomRadio = withStyles(theme => ({
+    root: {
+        color: yellow[600],
+        '&$checked': {
+            color: yellow[500],
+        },
+        '&$disabled': {
+            color: yellow[200],
+        },
+    },
+    checked: {},
+    disabled: {},
+}))(Radio);
+
+const CustomFormControlLabel = withStyles(theme => ({
+    label: {
+        color: yellow[600],
+        fontSize: 15,
+        fontWeight: 600,
+        marginLeft: -10,
+        '&$disabled': {
+            color: yellow[200],
+        },
+    },
+    disabled: {},
+}))(FormControlLabel);
+
+const selectStyles = {
+    control: styles => ({ ...styles, backgroundColor: 'black' }),
+    menu: styles => ({ ...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+        const color = chroma('yellow');
+        return {
+            ...styles,
+            backgroundColor: isDisabled
+                ? null
+                : isSelected
+                    ? 'yellow'
+                    : isFocused
+                        ? color.alpha(0.1).css()
+                        : null,
+            color: isDisabled
+                ? '#ccc'
+                : isSelected
+                    ? chroma.contrast(color, 'white') > 2
+                        ? 'white'
+                        : 'black'
+                    : 'yellow',
+            cursor: isDisabled ? 'not-allowed' : 'default',
+
+            ':active': {
+                ...styles[':active'],
+                backgroundColor: !isDisabled && (isSelected ? 'yellow' : color.alpha(0.3).css()),
+            },
+        };
+    },
+    multiValue: (styles, { data }) => {
+        const color = chroma('yellow');
+        return {
+            ...styles,
+            backgroundColor: color.alpha(0.1).css(),
+        };
+    },
+    multiValueLabel: (styles, { data }) => ({
+        ...styles,
+        color: 'yellow',
+    }),
+    multiValueRemove: (styles, { data }) => ({
+        ...styles,
+        color: 'yellow',
+        ':hover': {
+            backgroundColor: 'yellow',
+            color: 'black',
+        },
+    }),
+};
+
 export default class TestView extends Component {
 
     constructor(props) {
@@ -75,11 +154,13 @@ export default class TestView extends Component {
             test_cases_id: this.props.match.params.test_cases_id,
             test_sets_id: this.props.match.params.test_sets_id,
             attempts_id: this.props.match.params.attempts_id,
-
             loading: true,
             attemptDetail: {},
             test_case: {},
             test_set_cases: [],
+            selectedRating: '2',
+            lesionsValue: [],
+            selectedLesions: [],
         };
     }
 
@@ -120,7 +201,7 @@ export default class TestView extends Component {
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
                 cornerstoneTools.init();
                 cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init(that.state.test_cases_id, that.state.attempts_id);
+                Dtx.init(that, that.state.test_cases_id, that.state.attempts_id);
             });
         });
     }
@@ -150,7 +231,6 @@ export default class TestView extends Component {
     renderNav() {
         let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
         let test_case_length = this.state.test_set_cases.length;
-        console.warn(test_case_index);
         return (
             <nav>
                 {
@@ -170,10 +250,38 @@ export default class TestView extends Component {
         );
     }
 
+    setSelectedRating(value) {
+        if(value === '2') {
+            this.setState({selectedLesions: []});
+        }
+        this.setState({ selectedRating: value });
+    }
+
+    onChangeRating(event) {
+        this.setSelectedRating(event.target.value);
+    }
+
+    setSelectedLesions(lesions) {
+        let lesionsValue = [];
+        lesions = lesions.map(v => v.toString());
+        this.state.test_case.modalities.lesion_types.forEach(v => {
+            if(lesions.indexOf(v.id.toString()) !== -1) {
+                lesionsValue.push({value: v.id, label: v.name});
+            }
+        });
+        console.warn(this.state.test_case.modalities.lesion_types, lesions, lesionsValue);
+        this.setState({selectedLesions: lesionsValue});
+    }
+
+    onChangeLesions(value) {
+        this.setState({selectedLesions: value})
+    }
+
     render() {
         if (!this.state.loading) {
             let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
             let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+            let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {return {label: v.name, value: v.id}});
             return (
                 <div className="viewer">
                     <div id="toolbar">
@@ -222,6 +330,7 @@ export default class TestView extends Component {
                             </div>
                             <div className="tool">
                                 <AntSwitch
+                                    defaultChecked
                                     onChange={(e) => this.onChangeSynchonize(e)}
                                     value="checkedB"
                                 />
@@ -237,7 +346,7 @@ export default class TestView extends Component {
                         {
                             this.state.test_case.images.map((item, index) => {
                                 return (
-                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} key={item.id}>
+                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} key={item.id}>
                                         <div className="dicom"></div>
                                         <div className="zoom status"></div>
                                         <div className="window status"></div>
@@ -251,30 +360,44 @@ export default class TestView extends Component {
                     <div id="cover" style={{display: 'none'}}>
                         <div id="mark-details">
                             <form>
-                                <FormGroup row>
-                                    <Label for="occupation" sm={3}>Rating:</Label>
+                                <FormGroup className={'mb-5'} row>
+                                    <Label sm={3} style={{marginTop: 6}}>Rating:</Label>
                                     <Col sm={9}>
-                                        <Input type="select" name="rating" {...disabled}>
+                                        <RadioGroup
+                                            disabled
+                                            aria-label="position"
+                                            name="position"
+                                            value={this.state.selectedRating}
+                                            onChange={this.onChangeRating.bind(this)}
+                                            row
+                                        >
                                             {
-                                                this.state.test_case.ratings.map((v) => {   // [0, 1, 2, 3...]
-                                                    return <option value={v} key={v}>{v}</option>;
+                                                this.state.test_case.ratings.map((v, i) => {   // [0, 1, 2, 3...]
+                                                    return (
+                                                        <CustomFormControlLabel
+                                                            disabled={this.state.attemptDetail.complete}
+                                                            value={v.toString()}
+                                                            control={<CustomRadio />}
+                                                            label={v}
+                                                            key={i}
+                                                        />
+                                                    )
                                                 })
                                             }
-                                        </Input>
+                                        </RadioGroup>
                                     </Col>
                                 </FormGroup>
-                                {
-                                    this.state.test_case.modalities.lesion_types.map((v, i) => {
-                                        return (
-                                            <FormGroup check key={i} className={"lesion-type"}>
-                                                <Label check>
-                                                    <Input type="checkbox" data-lesion-type-id={v.id} {...disabled}/>{' '}
-                                                    {v.name}
-                                                </Label>
-                                            </FormGroup>
-                                        )
-                                    })
-                                }
+                                <Label >Lesions:</Label>
+                                <Select
+                                    isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
+                                    placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select Lesions' : 'Select Lesions'}
+                                    isMulti
+                                    name="lesions"
+                                    options={lesions}
+                                    value={this.state.selectedLesions}
+                                    styles={selectStyles}
+                                    onChange={this.onChangeLesions.bind(this)}
+                                />
 
                                 <div className="actions">
                                     <div className="left">

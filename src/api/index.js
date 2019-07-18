@@ -384,8 +384,8 @@ export function dicomImagesUpload(data) {
    return instance.post(url, formData, config).then((response) => response.data);
 }
 
-export function imagesUrlTemplate(id) {
-   const url = '/images/urlTemplate/' + id + '?access_token=' + getAccessToken();
+export function imagesUrlTemplate(id, stack) {
+   const url = '/images/' + id + '/urlTemplate/' + stack + '?access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
 }
 

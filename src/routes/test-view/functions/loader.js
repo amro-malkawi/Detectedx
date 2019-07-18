@@ -4,11 +4,13 @@ import Pyramid from './pyramid/pyramid';
 import * as Apis from 'Api';
 
 export default function DtxLoader(imageUrl) {
-    let imageId = imageUrl.replace('dtx://', '');
+    imageUrl = imageUrl.replace('dtx://', '').split('/');
+    let imageId = imageUrl[0];
+    let stack = imageUrl[1];
     var pyramid = null;
 
     const promise = new Promise((resolve, reject) => {
-        Apis.imagesUrlTemplate(imageId).then((response) => {
+        Apis.imagesUrlTemplate(imageId, stack).then((response) => {
             let data = response;
             pyramid = new Pyramid(imageId, data);
 

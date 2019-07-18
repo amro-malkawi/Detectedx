@@ -1,3 +1,5 @@
+import {NotificationManager} from "react-notifications";
+
 export default class Popup {
     constructor() {
         this.cover = document.getElementById('cover');
@@ -5,14 +7,7 @@ export default class Popup {
         this.mark  = null;
 
         // inputs
-        this.ratingInput   = this.form.querySelector('select[name=rating]');
-        this.defaultRating = this.ratingInput.querySelector('option').value;
-        this.lesionTypes   = this.form.querySelectorAll('.lesion-type input');
-        
-        // mapping from lesion type id to checkbox
-        this.lesionTypeIdToInput = {};
-        for (let el of this.lesionTypes)
-            this.lesionTypeIdToInput[el.dataset.lesionTypeId] = el;
+        this.defaultRating = '2';
 
         // buttons
         this.cancelButton = this.form.querySelector('.cancel');
@@ -49,6 +44,16 @@ export default class Popup {
         }
     }
 
+    static get viewComponent() {
+        if (this._viewComponent == undefined)
+            throw 'Image View is required';
+        return this._viewComponent;
+    }
+
+    static set viewComponent(viewComponent) {
+        this._viewComponent = viewComponent;
+    }
+
 
     // ----------------------
     // button handlers
@@ -64,14 +69,16 @@ export default class Popup {
         }
 
         // set lesion types
-        for (let el of this.lesionTypes)
+        /*for (let el of this.lesionTypes)
             el.checked = false;
 
         for (let id of this.mark.lesionTypes)
-            this.lesionTypeIdToInput[id].checked = true;
+            this.lesionTypeIdToInput[id].checked = true;*/
+        Popup.viewComponent.setSelectedLesions(this.mark.lesionTypes);
 
         // set rating
-        this.ratingInput.value = mark.rating || this.defaultRating
+        // this.ratingInput.value = mark.rating || this.defaultRating
+        Popup.viewComponent.setSelectedRating(mark.rating || this.defaultRating);
 
         // show the cover and popup
         this.cover.style.display = 'block';
@@ -79,19 +86,16 @@ export default class Popup {
 
     save() {
         // capture lesion types
-        this.mark.lesionTypes = [];
-
-        for (let el of this.lesionTypes) {
-            if (el.checked) {
-                let lesionTypeId = el.dataset.lesionTypeId;
-                this.mark.lesionTypes.push(lesionTypeId);
-            }
-        }
+        this.mark.lesionTypes = Popup.viewComponent.state.selectedLesions.map((v) => v.value);
 
         // capture rating
-        this.mark.rating = this.ratingInput.value;
-
-        this.mark.save(this._close.bind(this));
+        this.mark.rating = Popup.viewComponent.state.selectedRating;
+        console.log(this.mark.lesionTypes);
+        if(this.mark.rating !== '2' && this.mark.lesionTypes.length === 0) {
+            NotificationManager.error('Please select lesion type');
+        } else {
+            this.mark.save(this._close.bind(this));
+        }
     }
 
     delete() {

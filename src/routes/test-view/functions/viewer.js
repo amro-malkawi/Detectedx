@@ -8,13 +8,18 @@ const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
+const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
 
 export default class Viewer {
     constructor(element, synchronizer) {
         this.imageId = element.dataset.imageId;
-        this.imageURL  = `dtx://${element.dataset.url}`;
-
-        element.oncontextmenu = _ => false
+        this.imageStack = isNaN(element.dataset.stack) ? 1 : Number(element.dataset.stack);
+        this.imageURL = [];
+        Array.from(Array(this.imageStack).keys()).map(v => {
+            this.imageURL.push(`dtx://${element.dataset.url}/${v}`);
+        });
+        console.log(this.imageURL);
+        element.oncontextmenu = _ => false;
         element.onmousedown = _ => false;
 
         this.imageElement  = element.querySelector('.dicom');
@@ -34,7 +39,7 @@ export default class Viewer {
 
     loadImage() {
         cornerstone.enable(this.imageElement);
-        cornerstone.loadImage(this.imageURL).then((image) => {
+        cornerstone.loadImage(this.imageURL[0]).then((image) => {
             cornerstone.displayImage(this.imageElement, image);
             this.initTools();
         });
@@ -107,6 +112,17 @@ export default class Viewer {
 
         //add synchronizer
         this.synchronizer.add(this.imageElement);
+
+        /*//add image stack
+        const stack = {
+            currentImageIdIndex: 0,
+            imageIds: this.imageURL
+        };
+
+        cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
+        cornerstoneTools.addToolState(this.imageElement, 'stack', stack);
+        cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
+        cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});*/
 
         // render the first appropriate level of the pyramid
         this._renderPyramid(this.originalViewport);
