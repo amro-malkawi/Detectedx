@@ -8,6 +8,7 @@ const moveHandleNearImagePoint = cornerstoneTools.import('manipulators/moveHandl
 const BaseAnnotationTool = cornerstoneTools.import('base/BaseAnnotationTool');
 const getNewContext = cornerstoneTools.import('drawing/getNewContext');
 const drawHandles = cornerstoneTools.import('drawing/drawHandles');
+const drawTextBox = cornerstoneTools.import('drawing/drawTextBox');
 const draw = cornerstoneTools.import('drawing/draw');
 
 export default class MarkerTool extends BaseAnnotationTool {
@@ -71,6 +72,10 @@ export default class MarkerTool extends BaseAnnotationTool {
         diameter *= viewport.scale;
         let radius = diameter / 2;
 
+        // check show information
+        let isShowInfo = eventData.element.parentElement.querySelector('.eye').firstElementChild.classList.contains('zmdi-eye');
+
+
         // precondition: toolData.data is an array of Mark objects
         for (let mark of toolData.data) {
             draw(context, context => {
@@ -84,6 +89,24 @@ export default class MarkerTool extends BaseAnnotationTool {
                     handleRadius: radius,
                     color: colour,
                 });
+
+                if(isShowInfo) {
+                    let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
+                    drawTextBox(context, 'rating: ' + mark.rating, textCoords.x, textCoords.y + radius + 15, colour, {fontSize: 100, centering: {x: true, y: true}});
+                    drawTextBox(context, 'x: ' + mark.handles.end.x.toFixed(0) + ' y:' + mark.handles.end.y.toFixed(0), textCoords.x, textCoords.y + radius + 15 + 15, colour, {
+                        centering: {
+                            x: true,
+                            y: true
+                        }
+                    });
+                    let lesionNames = [];
+                    Dtx.lesions.forEach((v) => {
+                        if(mark.lesionTypes.indexOf(v.id.toString()) !== -1) {
+                            lesionNames.push(v.name);
+                        }
+                    });
+                    drawTextBox(context, 'lesions: ' + lesionNames.join(','), textCoords.x, textCoords.y + radius + 15 + 30, colour, {centering: {x: true, y: true}});
+                }
             });
         }
     }

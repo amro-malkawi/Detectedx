@@ -161,6 +161,9 @@ export default class TestView extends Component {
             selectedRating: '2',
             lesionsValue: [],
             selectedLesions: [],
+            isAnswerCancer: undefined,
+            isTruthCancer: undefined,
+            imageAnswers: [],
         };
     }
 
@@ -192,8 +195,23 @@ export default class TestView extends Component {
                 reject(e);
             });
         });
-        Promise.all([promise0, promise1, promise2]).then(function (values) {
-            that.setState({test_case: values[0], test_set_cases: values[1], attemptDetail: values[2], loading: false}, () => {
+        let promise3 = new Promise(function (resolve, reject) {
+            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id).then((imageAnswers) => {
+                resolve(imageAnswers);
+            }).catch(e => {
+                reject(e);
+            })
+        });
+        Promise.all([promise0, promise1, promise2, promise3]).then(function (values) {
+            that.setState({
+                test_case: values[0],
+                test_set_cases: values[1],
+                attemptDetail: values[2],
+                imageAnswers: values[3].images,
+                isAnswerCancer: values[3].isAnswerCancer,
+                isTruthCancer: values[3].isTruthCancer,
+                loading: false
+            }, () => {
                 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
                 cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
                 cornerstoneTools.external.cornerstone = cornerstone;
@@ -201,7 +219,7 @@ export default class TestView extends Component {
                 cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
                 cornerstoneTools.init();
                 cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init(that, that.state.test_cases_id, that.state.attempts_id);
+                Dtx.init(that, that.state.test_cases_id, that.state.attempts_id, that.state.test_case.modalities.lesion_types, that.state.imageAnswers);
             });
         });
     }
@@ -228,6 +246,32 @@ export default class TestView extends Component {
         Dtx.enableSynchronize(e.target.checked);
     }
 
+    setSelectedRating(value) {
+        if(value === '2') {
+            this.setState({selectedLesions: []});
+        }
+        this.setState({ selectedRating: value });
+    }
+
+    onChangeRating(event) {
+        this.setSelectedRating(event.target.value);
+    }
+
+    setSelectedLesions(lesions) {
+        let lesionsValue = [];
+        lesions = lesions.map(v => v.toString());
+        this.state.test_case.modalities.lesion_types.forEach(v => {
+            if(lesions.indexOf(v.id.toString()) !== -1) {
+                lesionsValue.push({value: v.id, label: v.name});
+            }
+        });
+        this.setState({selectedLesions: lesionsValue});
+    }
+
+    onChangeLesions(value) {
+        this.setState({selectedLesions: value})
+    }
+
     renderNav() {
         let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
         let test_case_length = this.state.test_set_cases.length;
@@ -250,31 +294,19 @@ export default class TestView extends Component {
         );
     }
 
-    setSelectedRating(value) {
-        if(value === '2') {
-            this.setState({selectedLesions: []});
+    renderTestResult() {
+        const {isAnswerCancer, isTruthCancer} = this.state;
+        if(isAnswerCancer === undefined || isTruthCancer === undefined) {
+            return null;
+        } else {
+            let isCorrect = isAnswerCancer === isTruthCancer;
+            let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
+            return (
+                <div className={isCorrect ? 'correct-result correct' : 'correct-result wrong'}>
+                    <span style={{color: 'white'}}>{resultStr}</span>
+                </div>
+            );
         }
-        this.setState({ selectedRating: value });
-    }
-
-    onChangeRating(event) {
-        this.setSelectedRating(event.target.value);
-    }
-
-    setSelectedLesions(lesions) {
-        let lesionsValue = [];
-        lesions = lesions.map(v => v.toString());
-        this.state.test_case.modalities.lesion_types.forEach(v => {
-            if(lesions.indexOf(v.id.toString()) !== -1) {
-                lesionsValue.push({value: v.id, label: v.name});
-            }
-        });
-        console.warn(this.state.test_case.modalities.lesion_types, lesions, lesionsValue);
-        this.setState({selectedLesions: lesionsValue});
-    }
-
-    onChangeLesions(value) {
-        this.setState({selectedLesions: value})
     }
 
     render() {
@@ -338,6 +370,8 @@ export default class TestView extends Component {
                             </div>
                         </div>
 
+                        {this.renderTestResult()}
+
                         <h1>{test_case_index + 1} / {this.state.test_set_cases.length}</h1>
 
                         {this.renderNav()}
@@ -347,6 +381,9 @@ export default class TestView extends Component {
                             this.state.test_case.images.map((item, index) => {
                                 return (
                                     <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} key={item.id}>
+                                        <a className="eye">
+                                            <i className="zmdi zmdi-eye fs-23"></i>
+                                        </a>
                                         <div className="dicom"></div>
                                         <div className="zoom status"></div>
                                         <div className="window status"></div>

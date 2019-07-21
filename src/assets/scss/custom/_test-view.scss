@@ -50,6 +50,24 @@ div.viewer {
       }
     }
 
+    .correct-result {
+      position: absolute;
+      top: 24px;
+      left: 350px;
+      border-radius: 20px;
+      padding: 5px 20px;
+      span {
+        color: white;
+        font-size: 16px;
+      }
+      &.correct {
+        background-color: green;
+      }
+      &.wrong {
+        background-color: #f44336;
+      }
+    }
+
     h1 {
       width: 100%;
       text-align: center;
@@ -102,6 +120,22 @@ div.viewer {
         height: 100%;
       }
 
+      .eye {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: transparent;
+        font-size: 14px;
+        i {
+          padding: 5px 6px;
+          border-radius: 15.5px;
+          color: #FFB300;
+          &:hover {
+            background-color: #FFB30033;
+          }
+        }
+      }
+
       .window, .zoom {
         position: absolute;
         left: 10px;
@@ -138,7 +172,7 @@ div.viewer {
     left: 0px;
     right: 0px;
     bottom: 0px;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 
     #mark-details {
       width: 320px;

@@ -27,6 +27,7 @@ export default class Viewer {
         this.zoomOverlay   = element.querySelector('.zoom');
         this.resetButton   = element.querySelector('.reset');
         this.invertButton  = element.querySelector('.invert');
+        this.toggleMarkInfoButton = element.querySelector('.eye');
         this.synchronizer = synchronizer;
 
         this.imageElement.viewer = this;
@@ -67,6 +68,10 @@ export default class Viewer {
 
         this.invertButton.addEventListener('click', _ => {
             this.invert();
+        });
+
+        this.toggleMarkInfoButton.addEventListener('click', _ => {
+            this.toggleMarkInfo();
         });
     }
 
@@ -158,6 +163,19 @@ export default class Viewer {
         let viewport = cornerstone.getViewport(this.imageElement);
         viewport.invert = !viewport.invert;
         cornerstone.setViewport(this.imageElement, viewport);
+    }
+
+    toggleMarkInfo() {
+        let eyeElement = this.toggleMarkInfoButton.firstElementChild;
+        if(eyeElement.classList.contains('zmdi-eye')) {
+            eyeElement.classList.remove('zmdi-eye');
+            eyeElement.classList.add('zmdi-eye-off');
+
+        } else {
+            eyeElement.classList.remove('zmdi-eye-off');
+            eyeElement.classList.add('zmdi-eye');
+        }
+        cornerstone.invalidate(this.imageElement);
     }
 
     reset() {

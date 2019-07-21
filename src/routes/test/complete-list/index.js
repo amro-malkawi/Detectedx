@@ -69,7 +69,7 @@ export default class score extends Component {
                             {
                                 this.state.attemptDetail.scores !== undefined ? this.state.attemptDetail.scores.map((v, i) => {
                                     return (
-                                        <CardText key={i}>{v.metrics.name}: {Number(v.score).toFixed(1)}</CardText>
+                                        <CardText key={i}>{v.metrics.name}: {v.score}</CardText>
                                     );
                                 }) : null
                             }

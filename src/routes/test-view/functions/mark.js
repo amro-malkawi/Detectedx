@@ -25,8 +25,12 @@ export default class Mark {
         this.id = data.id;
         this.isTruth = !!data.isTruth;
         this.rating = data.rating;
-        this.lesionTypes = data.answers_lesion_types !== undefined ? data.answers_lesion_types.map((v) => v.lesion_type_id) : [];
-
+        this.lesionTypes = [];
+        if(data.answers_lesion_types !== undefined) {
+            this.lesionTypes = data.answers_lesion_types.map((v) => v.lesion_type_id);
+        } else if(data.truths_lesion_types !== undefined) {
+            this.lesionTypes = data.truths_lesion_types.map((v) => v.lesion_type_id)
+        }
         // since the rating and lesion type values are used
         // to set the values of inputs (which are strings)
         // convert these values to strings if present
@@ -72,25 +76,20 @@ export default class Mark {
         this._attempt_id = attempt_id;
     }
 
-    static loadMarks() {
-        Apis.testCasesAnswers(Mark.test_case_id, Mark.attempt_id).then((images) => {
-            for (let image of images) {
-                let clearElement = Mark._imageElement(image.id);
-                if(clearElement !== null) {
-                    cornerstoneTools.clearToolState(clearElement, 'Marker');
-                    image.answers.forEach(mark => new Mark(image.id, mark));
-                    if (image.truths) {
-                        image.truths.forEach(mark => new Mark(image.id, mark));
-                    }
-
-                    let imageElement = Mark._imageElement(image.id);
-                    cornerstone.invalidate(imageElement);
+    static loadMarks(imageAnswers) {
+        for (let image of imageAnswers) {
+            let clearElement = Mark._imageElement(image.id);
+            if(clearElement !== null) {
+                cornerstoneTools.clearToolState(clearElement, 'Marker');
+                image.answers.forEach(mark => new Mark(image.id, mark));
+                if (image.truths) {
+                    image.truths.forEach(mark => new Mark(image.id, { ...mark, isTruth: true}));
                 }
+
+                let imageElement = Mark._imageElement(image.id);
+                cornerstone.invalidate(imageElement);
             }
-        }).catch(e => {
-            console.warn(e);
-            alert('An error occurred loading the marks for this test case');
-        })
+        }
     }
 
     // ----------------------

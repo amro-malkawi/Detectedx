@@ -86,11 +86,11 @@ export default class Popup {
 
     save() {
         // capture lesion types
-        this.mark.lesionTypes = Popup.viewComponent.state.selectedLesions.map((v) => v.value);
+        this.mark.lesionTypes = Popup.viewComponent.state.selectedLesions.map((v) => v.value.toString());
 
         // capture rating
         this.mark.rating = Popup.viewComponent.state.selectedRating;
-        console.log(this.mark.lesionTypes);
+        this.mark._redraw();
         if(this.mark.rating !== '2' && this.mark.lesionTypes.length === 0) {
             NotificationManager.error('Please select lesion type');
         } else {
