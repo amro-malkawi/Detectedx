@@ -380,7 +380,7 @@ export default class TestView extends Component {
                         {
                             this.state.test_case.images.map((item, index) => {
                                 return (
-                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} key={item.id}>
+                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} data-index={index} key={item.id}>
                                         <a className="eye">
                                             <i className="zmdi zmdi-eye fs-23"></i>
                                         </a>

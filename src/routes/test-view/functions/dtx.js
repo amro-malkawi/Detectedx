@@ -1,5 +1,5 @@
 import cornerstoneTools from 'cornerstone-tools';
-
+import panZoomSynchronizer from './panZoomSynchronizer';
 import Toolbar from './toolbar';
 import Viewer from './viewer';
 import Popup from './popup';
@@ -23,8 +23,8 @@ export default class Dtx {
 
     static initSynchronizer() {
         const synchronizer = new cornerstoneTools.Synchronizer(
-            'cornerstonetoolsmousewheel',
-            cornerstoneTools.panZoomSynchronizer
+            'cornerstonetoolsmousewheel cornerstonetoolsmousedrag',
+            panZoomSynchronizer //  cornerstoneTools.panZoomSynchronizer
         );
         synchronizer.enabled = false;
         return synchronizer;

@@ -28,25 +28,16 @@ export default class score extends Component {
     }
 
     getData() {
-        let attemptId = this.state.attemptId;
-        let promise1 = new Promise(function (resolve, reject) {
-            Apis.attemptsDetail(attemptId).then(data => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
+        let {attemptId} = this.state;
+        Apis.attemptsDetail(attemptId).then(attemptDetail => {
+            this.setState({attemptDetail: attemptDetail});
+            return attemptDetail;
+        }).then((attemptDetail) => {
+            return Apis.attemptsCompleteList(attemptDetail.test_set_id);
+        }).then((completeList) => {
+            this.setState({completeList: completeList, loading: false});
+        }).catch(e => {
 
-        let promise2 = new Promise(function (resolve, reject) {
-            Apis.attemptsCompleteList().then(data => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        const that = this;
-        Promise.all([promise1, promise2]).then(function (values) {
-            that.setState({attemptDetail: values[0], completeList: values[1], loading: false});
         });
     }
 
@@ -58,8 +49,8 @@ export default class score extends Component {
     }
 
     render() {
-        let reviewPath = '/test-view/' + this.state.attemptDetail.test_set_id + '/' + this.state.attemptDetail.id + '/' + this.state.attemptDetail.current_test_case_id;
         if (!this.state.loading) {
+            let reviewPath = '/test-view/' + this.state.attemptDetail.test_set_id + '/' + this.state.attemptDetail.id + '/' + this.state.attemptDetail.test_sets.test_set_cases[0].test_case_id;
             return (
                 <div className="card-wrapper">
                     <RctCollapsibleCard heading={"Attempt for " + this.state.attemptDetail.test_sets.name}>

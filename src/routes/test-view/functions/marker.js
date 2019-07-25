@@ -79,11 +79,22 @@ export default class MarkerTool extends BaseAnnotationTool {
         // precondition: toolData.data is an array of Mark objects
         for (let mark of toolData.data) {
             draw(context, context => {
+                let lesionNames = [];
+                Dtx.lesions.forEach((v) => {
+                    if(mark.lesionTypes.indexOf(v.id.toString()) !== -1) {
+                        lesionNames.push(v.name);
+                    }
+                });
                 let colour;
-                if (mark.isTruth)
+                let padding;
+                if (mark.isTruth) {
                     colour = this.configuration.truthColour;
-                else
+                    padding = (lesionNames.length > 0 ? -30 : -15) - radius;
+                }
+                else {
                     colour = this.configuration.answerColour;
+                    padding = radius + 15;
+                }
 
                 drawHandles(context, eventData, mark.handles, {
                     handleRadius: radius,
@@ -92,20 +103,10 @@ export default class MarkerTool extends BaseAnnotationTool {
 
                 if(isShowInfo) {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
-                    drawTextBox(context, 'rating: ' + mark.rating, textCoords.x, textCoords.y + radius + 15, colour, {fontSize: 100, centering: {x: true, y: true}});
-                    drawTextBox(context, 'x: ' + mark.handles.end.x.toFixed(0) + ' y:' + mark.handles.end.y.toFixed(0), textCoords.x, textCoords.y + radius + 15 + 15, colour, {
-                        centering: {
-                            x: true,
-                            y: true
-                        }
-                    });
-                    let lesionNames = [];
-                    Dtx.lesions.forEach((v) => {
-                        if(mark.lesionTypes.indexOf(v.id.toString()) !== -1) {
-                            lesionNames.push(v.name);
-                        }
-                    });
-                    drawTextBox(context, 'lesions: ' + lesionNames.join(','), textCoords.x, textCoords.y + radius + 15 + 30, colour, {centering: {x: true, y: true}});
+                    if ( !mark.isTruth ) {
+                        drawTextBox(context, 'Your answer. Rate: ' + mark.rating, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
+                    }
+                    drawTextBox(context, lesionNames.join(','), textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                 }
             });
         }
