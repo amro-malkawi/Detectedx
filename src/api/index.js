@@ -113,7 +113,6 @@ export function testSetsCases(id) {
    const url = '/test_sets/' + id + '/test_set_cases?access_token=' + getAccessToken() + '&filter=' + encodeURI('{"order": "position ASC"}');
    return instance.get(url).then((response) => response.data);
 }
-
 /**
  * modalities operation
  */
@@ -546,6 +545,16 @@ export function attemptsDetail(id) {
 export function attemptsCompleteList(test_set_id) {
    const url = '/attempts/complete_list?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
    return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsQuestionnaire(id) {
+   const url = '/attempts/' + id + '/questionnaire/?access_token=' + getAccessToken();
+   return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsQuestionnaireAnswer(id, data) {
+   const url = '/attempts/' + id + '/questionnaire_answer/?access_token=' + getAccessToken();
+   return instance.post(url, data).then((response) => response.data);
 }
 
 /**

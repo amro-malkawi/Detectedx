@@ -1,8 +1,11 @@
+import React, {Component} from 'react';
+import Button from "@material-ui/core/Button";
+
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
-import MarkerTool from './marker';
-import Mark from './mark';
-import Dtx from './dtx';
+import Mark from "./functions/mark";
+import Dtx from "./functions/dtx";
+import MarkerTool from "./functions/marker";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -10,50 +13,51 @@ const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
 
-export default class Viewer {
-    constructor(element, synchronizer) {
-        this.imageId = element.dataset.imageId;
-        this.imageStack = isNaN(element.dataset.stack) ? 1 : Number(element.dataset.stack);
-        this.imageURL = [];
-        Array.from(Array(this.imageStack).keys()).map(v => {
-            this.imageURL.push(`dtx://${element.dataset.url}/${v}`);
-        });
-        console.log(this.imageURL);
-        element.oncontextmenu = _ => false;
-        element.onmousedown = _ => false;
+export default class ImageViewer extends Component{
 
-        this.imageElement  = element.querySelector('.dicom');
-        this.windowOverlay = element.querySelector('.window');
-        this.zoomOverlay   = element.querySelector('.zoom');
-        this.locationOverlay = element.querySelector('.location');
-        this.resetButton   = element.querySelector('.reset');
-        this.invertButton  = element.querySelector('.invert');
-        this.toggleMarkInfoButton = element.querySelector('.eye');
-        this.synchronizer = synchronizer;
-
-        this.imageElement.viewer = this;
-        this.originalViewport = {};
-        this.loaded = false;
-
-        this.loadImage();
-        this.initEvents();
+    constructor(props) {
+        super(props);
+        this.state = {
+            windowWidth: 1,
+            windowLength: 1,
+            zoom: 1,
+            isShowMarkInfo: true,
+        }
     }
 
-    loadImage() {
+    componentDidMount() {
+        const {imageInfo, viewerRef} = this.props;
+        this.imageElement = viewerRef.current.querySelector('.dicom');
+        let imageURL = Array.from(Array(this.imageStack).keys()).map(v => {
+            return `dtx://${imageInfo.id}/${v}`;
+        });
         cornerstone.enable(this.imageElement);
-        cornerstone.loadImage(this.imageURL[0]).then((image) => {
+        cornerstone.loadImage(imageURL[0]).then((image) => {
             cornerstone.displayImage(this.imageElement, image);
             this.initTools();
         });
+        this.initEvents();
+    }
+
+    // static getDerivedStateFromProps(nextProps, prevState) {
+    //     return null;
+    // }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.props.currentTool !== nextProps.currentTool) {
+            this.resetTool(this.props.currentTool, nextProps.currentTool);
+            return false;
+        }
+        return true;
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+
     }
 
     initEvents() {
         this.imageElement.addEventListener('cornerstoneimagerendered', (event) => {
             this.wasDrawn(event);
-        });
-
-        this.imageElement.addEventListener('cornerstonetoolsmousemove', (event) => {
-            this._updateMouseLocation(event);
         });
 
         this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => {
@@ -65,18 +69,6 @@ export default class Viewer {
             cornerstoneTools.addToolState(this.imageElement, 'Marker', mark);
             Dtx.popup.show(mark);
             cornerstone.invalidate(this.imageElement);
-        });
-
-        this.resetButton.addEventListener('click', _ => {
-            this.reset();
-        });
-
-        this.invertButton.addEventListener('click', _ => {
-            this.invert();
-        });
-
-        this.toggleMarkInfoButton.addEventListener('click', _ => {
-            this.toggleMarkInfo();
         });
     }
 
@@ -110,18 +102,18 @@ export default class Viewer {
 
         // the marker tool is always in passive or active mode (passive so
         // existing marks can be rendered at all times)
-        if (window.viewerToolbar.currentTool.name != 'Marker') {
+        if (this.props.currentTool !== 'Marker') {
             cornerstoneTools.setToolPassiveForElement(this.imageElement, 'Marker');
         }
 
         // enable the current tool as well (used when adding a new image after
         // the toolbar has been loaded)
-        cornerstoneTools.setToolActiveForElement(this.imageElement, window.viewerToolbar.currentTool.name, {
+        cornerstoneTools.setToolActiveForElement(this.imageElement, this.props.currentTool, {
             mouseButtonMask: 1
         });
 
         //add synchronizer
-        this.synchronizer.add(this.imageElement);
+        this.props.synchronizer.add(this.imageElement);
 
         /*//add image stack
         const stack = {
@@ -139,7 +131,18 @@ export default class Viewer {
 
         // render answers and truths
         this.loaded = true;
-        Dtx.loadMarks();
+        this.renderAnswer();
+    }
+
+    renderAnswer() {
+        cornerstoneTools.clearToolState(this.imageElement, 'Marker');
+        this.props.marker.answers.forEach(mark => new Mark(this.props.imageInfo.id, mark));
+        if (this.props.marker.truths) {
+            this.props.marker.truths.forEach(mark => new Mark(this.props.imageInfo.id, { ...mark, isTruth: true}));
+        }
+
+        let imageElement = Mark._imageElement(this.props.imageInfo.id);
+        cornerstone.invalidate(imageElement);
     }
 
     duplicateViewport(viewport) {
@@ -164,26 +167,32 @@ export default class Viewer {
         this._renderPyramid(event.detail.viewport);
     }
 
-    invert() {
+    resetTool(previousName, nextName) {
+        // deactive
+        if (previousName != 'Marker') {
+            cornerstoneTools.setToolDisabled(previousName);
+        }else {
+            cornerstoneTools.setToolPassive(previousName);
+        }
+        //active
+        cornerstoneTools.setToolActive(nextName, {
+            mouseButtonMask: 1
+        });
+    }
+
+    onInvert() {
         let viewport = cornerstone.getViewport(this.imageElement);
         viewport.invert = !viewport.invert;
         cornerstone.setViewport(this.imageElement, viewport);
     }
 
     toggleMarkInfo() {
-        let eyeElement = this.toggleMarkInfoButton.firstElementChild;
-        if(eyeElement.classList.contains('zmdi-eye')) {
-            eyeElement.classList.remove('zmdi-eye');
-            eyeElement.classList.add('zmdi-eye-off');
-
-        } else {
-            eyeElement.classList.remove('zmdi-eye-off');
-            eyeElement.classList.add('zmdi-eye');
-        }
-        cornerstone.invalidate(this.imageElement);
+        this.setState({isShowMarkInfo: !this.state.isShowMarkInfo}, () => {
+            cornerstone.invalidate(this.imageElement);
+        });
     }
 
-    reset() {
+    onReset() {
         // reset the pan, zoom, invert, and windowing levels
         let original = this.duplicateViewport(this.originalViewport);
         cornerstone.setViewport(this.imageElement, original);
@@ -198,14 +207,26 @@ export default class Viewer {
         const windowWidth = Math.round(eventData.viewport.voi.windowWidth);
         const windowLength = Math.round(eventData.viewport.voi.windowCenter);
         const zoom = eventData.viewport.scale.toFixed(2);
-        this.windowOverlay.textContent = `WW/WL: ${windowWidth} / ${windowLength}`;
-        this.zoomOverlay.textContent = `Zoom: ${zoom}`;
+        this.setState({
+            windowWidth,
+            windowLength,
+            zoom,
+        });
     }
 
-    _updateMouseLocation(event) {
-        let point = event.detail.currentPoints.image;
-        const x = point.x.toFixed(0);
-        const y = point.y.toFixed(0);
-        this.locationOverlay.textContent = `(x: ${x}, y: ${y})`;
+    render () {
+        const {imageInfo, viewerRef} = this.props;
+        return (
+            <div className="image" id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
+                <a className="eye" onClick={() => this.toggleMarkInfo()}>
+                    <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"} />
+                </a>
+                <div className="dicom" />
+                <div className="zoom status" >Zoom: {this.state.zoom}</div>
+                <div className="window status" >WW/WL: {this.state.windowWidth + ' / ' + this.state.windowLength}</div>
+                <Button className="invert" variant="contained" onClick={() => this.onInvert()}>Invert</Button>
+                <Button className="reset" variant="contained" onClick={() => this.onReset()}>Reset</Button>
+            </div>
+        )
     }
 }

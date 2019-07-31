@@ -32,7 +32,7 @@ import {
 	AsyncSessionPage404Component,
 	AsyncSessionPage500Component,
 	AsyncTermsConditionComponent,
-	AsyncAdvanceTestViewComponent
+	AsyncAdvanceTestViewComponent,
 } from 'Components/AsyncComponent/AsyncComponent';
 
 //Auth0

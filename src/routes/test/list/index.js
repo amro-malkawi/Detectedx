@@ -33,7 +33,8 @@ export default class list extends Component {
             test_set_id: test_set_id,
         };
         Apis.attemptsAdd(newData).then(resp => {
-            let path = '/test-view/' + test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            // let path = '/test-view/' + test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            let path = '/app/test/questionnaire/' + resp.id;
             this.props.history.push(path);
         });
     }
@@ -45,7 +46,8 @@ export default class list extends Component {
         } else if( attempt.complete) {
             return ( <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id)}>Re-Start</Button> );
         } else {
-            let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+            // let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+            let path = '/app/test/questionnaire/' + attempt.id;
             return ( <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>Continue</Button> );
         }
     }

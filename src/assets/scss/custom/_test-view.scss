@@ -136,7 +136,7 @@ div.viewer {
         }
       }
 
-      .window, .zoom {
+      .window, .zoom, .location {
         position: absolute;
         left: 10px;
         color: white;
@@ -149,6 +149,10 @@ div.viewer {
 
       .zoom {
         bottom: 25px;
+      }
+
+      .location {
+        bottom: 42px;
       }
 
       button {

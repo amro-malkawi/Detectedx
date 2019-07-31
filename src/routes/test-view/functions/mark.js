@@ -24,6 +24,7 @@ export default class Mark {
         // detected x db data
         this.id = data.id;
         this.isTruth = !!data.isTruth;
+        this.lesionNumber = data.number;
         this.rating = data.rating;
         this.lesionTypes = [];
         if(data.answers_lesion_types !== undefined) {

@@ -23,6 +23,12 @@ const AsyncAdvanceTestViewComponent = Loadable({
     loading: () => <RctPageLoader/>,
 });
 
+// advance components TestView
+const AsyncAdvanceTestQuestionnaireComponent = Loadable({
+    loader: () => import("Routes/test/questionnaire"),
+    loading: () => <RctPageLoader/>,
+});
+
 // advance components Score
 const AsyncAdvanceTestCompleteListComponent = Loadable({
     loader: () => import("Routes/test/complete-list"),
@@ -32,5 +38,6 @@ const AsyncAdvanceTestCompleteListComponent = Loadable({
 export {
     AsyncAdvanceTestListComponent,
     AsyncAdvanceTestViewComponent,
+    AsyncAdvanceTestQuestionnaireComponent,
     AsyncAdvanceTestCompleteListComponent
 };

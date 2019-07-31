@@ -1,9 +1,5 @@
-/**
- * News Dashboard
- */
-
 import React, {Component} from 'react'
-import {Col, FormGroup, Input, Label} from "reactstrap";
+import {Col, FormGroup, Label} from "reactstrap";
 import Button from '@material-ui/core/Button';
 import Select from 'react-select';
 import Radio from '@material-ui/core/Radio';
@@ -26,6 +22,9 @@ import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import Switch from "@material-ui/core/Switch";
 import {withStyles} from '@material-ui/core/styles';
 
+import ImageViewer from './ImageViewer'
+import panZoomSynchronizer from "./functions/panZoomSynchronizer";
+
 export default class TestView extends Component {
 
     constructor(props) {
@@ -44,9 +43,27 @@ export default class TestView extends Component {
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
             imageAnswers: [],
-        };
 
-        this.myRef = React.createRef();
+            currentTool: 'Pan',
+        };
+        this.viewers = [];
+        this.synchronizer = null;
+        this.initConerstone();
+    }
+
+    initConerstone() {
+        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+        cornerstoneTools.external.cornerstone = cornerstone;
+        cornerstoneTools.external.Hammer = Hammer;
+        cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+        cornerstoneTools.init();
+        cornerstone.registerImageLoader('dtx', Loader);
+        this.synchronizer = new cornerstoneTools.Synchronizer(
+            'cornerstonetoolsmousewheel cornerstonetoolsmousedrag',
+            panZoomSynchronizer //  cornerstoneTools.panZoomSynchronizer
+        );
+        this.synchronizer.enabled = true;
     }
 
     componentDidMount() {
@@ -94,16 +111,15 @@ export default class TestView extends Component {
                 isTruthCancer: values[3].isTruthCancer,
                 loading: false
             }, () => {
-                cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-                cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
-                cornerstoneTools.external.cornerstone = cornerstone;
-                cornerstoneTools.external.Hammer = Hammer;
-                cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
-                cornerstoneTools.init();
-                cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init(that, that.state.test_cases_id, that.state.attempts_id, that.state.test_case.modalities.lesion_types, that.state.test_case.modalities.circle_size, that.state.imageAnswers);
+                // Dtx.init(that, that.state.test_cases_id, that.state.attempts_id, that.state.test_case.modalities.lesion_types, that.state.imageAnswers);
             });
         });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(this.state.test_case.images !== undefined && this.state.test_case.images !== prevState.test_case.images) {
+
+        }
     }
 
     onMove(seek) { // previous -1, next 1
@@ -120,12 +136,16 @@ export default class TestView extends Component {
 
     onComplete() {
         Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
-            this.props.history.push('/app/test/list');
+
         });
     }
 
     onChangeSynchonize(e) {
-        Dtx.enableSynchronize(e.target.checked);
+        this.synchronizer.enabled = e.target.checked;
+    }
+
+    onChangeCurrentTool(tool) {
+        this.setState({currentTool: tool});
     }
 
     setSelectedRating(value) {
@@ -151,7 +171,6 @@ export default class TestView extends Component {
     }
 
     onChangeLesions(value) {
-        debugger
         this.setState({selectedLesions: value})
     }
 
@@ -192,6 +211,23 @@ export default class TestView extends Component {
         }
     }
 
+    renderImageViewer() {
+        return this.state.test_case.images.map((item, index) => {
+            this.viewers.push(React.createRef());
+            return (
+                <ImageViewer
+                    imageInfo={item}
+                    viewerRef={this.viewers[this.viewers.length - 1]}
+                    currentTool={this.state.currentTool}
+                    synchronizer={this.synchronizer}
+                    index={index}
+                    marker={this.state.imageAnswers[index]}
+                    key={index}
+                />
+            )
+        });
+    }
+
     render() {
         if (!this.state.loading) {
             let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
@@ -201,7 +237,7 @@ export default class TestView extends Component {
                 <div className="viewer">
                     <div id="toolbar">
                         <div id="tools">
-                            <div className="tool option" data-tool="Pan">
+                            <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
                                 <svg id="icon-tools-pan" viewBox="0 0 18 18">
                                     <title>Pan</title>
                                     <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -215,7 +251,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Pan</p>
                             </div>
-                            <div className="tool option" data-tool="Zoom" data-synchronize="true">
+                            <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"  onClick={() => this.onChangeCurrentTool('Zoom')}>
                                 <svg id="icon-tools-zoom" viewBox="0 0 17 17">
                                     <title>Zoom</title>
                                     <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
@@ -225,7 +261,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Zoom</p>
                             </div>
-                            <div className="tool option" data-tool="Wwwc">
+                            <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
                                 <svg id="icon-tools-levels" viewBox="0 0 18 18">
                                     <title>Window / Level</title>
                                     <g id="icon-tools-levels-group">
@@ -235,7 +271,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Window</p>
                             </div>
-                            <div className="tool option" data-tool="Marker">
+                            <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
                                 <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
                                     <title>Elliptical ROI</title>
                                     <path
@@ -260,23 +296,7 @@ export default class TestView extends Component {
                         {this.renderNav()}
                     </div>
                     <div id="images">
-                        {
-                            this.state.test_case.images.map((item, index) => {
-                                return (
-                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} data-index={index} key={item.id}>
-                                        <a className="eye">
-                                            <i className="zmdi zmdi-eye fs-23"/>
-                                        </a>
-                                        <div className="dicom"/>
-                                        <div className="location status"/>
-                                        <div className="zoom status"/>
-                                        <div className="window status"/>
-                                        <button className="invert">Invert</button>
-                                        <button className="reset">Reset</button>
-                                    </div>
-                                )
-                            })
-                        }
+                        { this.renderImageViewer() }
                     </div>
                     <div id="cover" style={{display: 'none'}} ref={this.myRef}>
                         <div id="mark-details">
@@ -345,6 +365,7 @@ export default class TestView extends Component {
         }
     }
 }
+
 
 
 const AntSwitch = withStyles(theme => ({

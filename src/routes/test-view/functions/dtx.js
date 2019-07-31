@@ -6,7 +6,7 @@ import Popup from './popup';
 import Mark from './mark';
 
 export default class Dtx {
-    static init(viewComponent, test_case_id, attempt_id, lesions, imageAnswers) {
+    static init(viewComponent, test_case_id, attempt_id, lesions, radius, imageAnswers) {
         Mark.test_case_id = test_case_id;
         Mark.attempt_id = attempt_id;
         Popup.viewComponent = viewComponent;
@@ -16,6 +16,7 @@ export default class Dtx {
         this._viewers = [];
         this._lesions = lesions;
         this._imageAnswers = imageAnswers;
+        this._radius = Number(radius);
         for (let element of document.querySelectorAll('#images .image'))
             this._viewers.push(new Viewer(element, this._synchronizer));
         this._synchronizer.enabled = true;
@@ -54,6 +55,12 @@ export default class Dtx {
         if (this._lesions == undefined)
             throw 'Marker.lesions is required';
         return this._lesions;
+    }
+
+    static get radius() {
+        if (this._radius == undefined)
+            throw 'Marker Radius is required';
+        return this._radius;
     }
 
     static loadMarks() {

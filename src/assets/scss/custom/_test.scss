@@ -1,0 +1,15 @@
+
+.questionnaire-wrapper {
+  .questionnaire {
+    margin: 20px 0 0 0;
+    border-bottom: 1px solid #9E9E9E;
+    &.error{
+      border-bottom: 1px solid #F44336;
+    }
+
+    input {
+      height: 40px;
+      margin: 10px 0 1px 0;
+    }
+  }
+}

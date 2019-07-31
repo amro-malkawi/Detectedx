@@ -17,7 +17,6 @@ export default class MarkerTool extends BaseAnnotationTool {
             name: 'Marker',
             supportedInteractionTypes: ['Mouse'],
             configuration: {
-                circleSize: 0.058,
                 truthColour: 'red',
                 answerColour: 'yellow'
             }
@@ -68,7 +67,7 @@ export default class MarkerTool extends BaseAnnotationTool {
         // circle size is defined as a % of the image height. since
         // images can be zoomed, the size then needs to be scaled
         // by the current viewport scale (zoom amount).
-        let diameter = eventData.image.height * this.configuration.circleSize;
+        let diameter = Dtx.radius * 2;//eventData.image.height * this.configuration.circleSize;
         diameter *= viewport.scale;
         let radius = diameter / 2;
 
@@ -89,7 +88,7 @@ export default class MarkerTool extends BaseAnnotationTool {
                 let padding;
                 if (mark.isTruth) {
                     colour = this.configuration.truthColour;
-                    padding = (lesionNames.length > 0 ? -30 : -15) - radius;
+                    padding = (lesionNames.length > 0 ? -45 : -30) - radius;
                 }
                 else {
                     colour = this.configuration.answerColour;
@@ -105,8 +104,12 @@ export default class MarkerTool extends BaseAnnotationTool {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
                     if ( !mark.isTruth ) {
                         drawTextBox(context, 'Your answer. Rate: ' + mark.rating, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
+                        drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
+                    } else {
+                        drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {centering: {x: true, y: true}});
+                        drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)}) (R = ${Dtx.radius})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     }
-                    drawTextBox(context, lesionNames.join(','), textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
+                    drawTextBox(context, lesionNames.join(','), textCoords.x, textCoords.y + padding + 30, colour, {centering: {x: true, y: true}});
                 }
             });
         }
