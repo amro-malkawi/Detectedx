@@ -33,12 +33,13 @@ export default class TestQuestionnaire extends Component {
         let promise0 = new Promise(function (resolve, reject) {
             Apis.attemptsQuestionnaire(that.state.attempts_id).then((resp) => {
                 let questionnaires = resp.map((v) => {
+                    let questionAnswer = v.questionnaire.questionnaire_answers[0];
                     if(v.questionnaire.type === 0) {
-                        v.answer = v.questionnaire_answers[0] !== undefined ? v.questionnaire_answers[0].answer.toString() : '';
+                        v.answer = questionAnswer !== undefined ? questionAnswer.answer.toString() : '';
                     } else if (v.questionnaire.type === 1) {
-                        v.answer = v.questionnaire_answers[0] !== undefined ? v.questionnaire_answers[0].answer.split(',') : [];
+                        v.answer = questionAnswer !== undefined ? questionAnswer.answer.split(',') : [];
                     } else if(v.questionnaire.type === 2 ) {
-                        v.answer = v.questionnaire_answers[0] !== undefined ? v.questionnaire_answers[0].answer : '';
+                        v.answer = questionAnswer !== undefined ? questionAnswer.answer : '';
                     }
                     return v;
                 });
@@ -79,22 +80,22 @@ export default class TestQuestionnaire extends Component {
             let answers = [];
             questionnaires.forEach((v, index) => {
                 let obj = {
-                    test_set_questionnaire_id: v.id
+                    questionnaire_id: v.questionnaire.id
                 };
                 if (v.questionnaire.type === 0) {
-                    if (v.answer === '') {
+                    if (v.require && v.answer === '') {
                         isValidate = false;
                         questionnaires[index].error = true;
                     }
                     obj.answer = v.answer;
                 } else if (v.questionnaire.type === 1) {
-                    if (v.answer.length === 0) {
+                    if (v.require && v.answer.length === 0) {
                         isValidate = false;
                         questionnaires[index].error = true;
                     }
                     obj.answer = v.answer.join(',');
                 } else if (v.questionnaire.type === 2) {
-                    if (v.answer === '') {
+                    if (v.require && v.answer === '') {
                         isValidate = false;
                         questionnaires[index].error = true;
                     }
@@ -138,7 +139,8 @@ export default class TestQuestionnaire extends Component {
         this.setState({questionnaires: [...questionnaires], isChanged: true});
     }
 
-    renderQuestionnaire(item, index) {
+    renderQuestionnaireItem(item, index) {
+        if(item === undefined) return null;
         let itemClass = 'row questionnaire ' + (item.error ? "error" : "");
         if (item.questionnaire.type === 0) { //single option
             return (
@@ -216,15 +218,33 @@ export default class TestQuestionnaire extends Component {
         }
     }
 
+    renderQuestionnaire() {
+        let result = [];
+        for (let i = 0; i < this.state.questionnaires.length; i += 2) {
+            result.push(
+                <div className={'row'} key={i}>
+                    <Col sm={6}>
+                        { this.renderQuestionnaireItem(this.state.questionnaires[i], i) }
+                    </Col>
+                    <Col sm={6}>
+                        { this.renderQuestionnaireItem(this.state.questionnaires[i + 1], i + 1) }
+                    </Col>
+                </div>
+            )
+        }
+        return result;
+    }
+
     render() {
         if (!this.state.loading) {
             return (
                 <div className={'questionnaire-wrapper'}>
                     <h1>Questionnaire</h1>
                     {
-                        this.state.questionnaires.map((v, index) => {
-                            return this.renderQuestionnaire(v, index)
-                        })
+                        this.renderQuestionnaire()
+                        // this.state.questionnaires.map((v, index) => {
+                        //     return this.renderQuestionnaireItem(v, index)
+                        // })
                     }
                     <div className={'text-center mt-70'}>
                         <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.props.history.replace('/app/test/list')}>Home</Button>
