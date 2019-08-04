@@ -50,7 +50,8 @@ export default class score extends Component {
 
     render() {
         if (!this.state.loading) {
-            let reviewPath = '/test-view/' + this.state.attemptDetail.test_set_id + '/' + this.state.attemptDetail.id + '/' + this.state.attemptDetail.test_sets.test_set_cases[0].test_case_id;
+            // let reviewPath = '/test-view/' + this.state.attemptDetail.test_set_id + '/' + this.state.attemptDetail.id + '/' + this.state.attemptDetail.test_sets.test_set_cases[0].test_case_id;
+            let reviewPath = '/app/test/attempt/' + this.state.attemptDetail.id;
             return (
                 <div className="card-wrapper">
                     <RctCollapsibleCard heading={"Attempt for " + this.state.attemptDetail.test_sets.name}>

@@ -23,9 +23,9 @@ const AsyncAdvanceTestViewComponent = Loadable({
     loading: () => <RctPageLoader/>,
 });
 
-// advance components TestView
-const AsyncAdvanceTestQuestionnaireComponent = Loadable({
-    loader: () => import("Routes/test/questionnaire"),
+// advance components attempt
+const AsyncAdvanceTestAttemptComponent = Loadable({
+    loader: () => import("Routes/test/attempt"),
     loading: () => <RctPageLoader/>,
 });
 
@@ -38,6 +38,6 @@ const AsyncAdvanceTestCompleteListComponent = Loadable({
 export {
     AsyncAdvanceTestListComponent,
     AsyncAdvanceTestViewComponent,
-    AsyncAdvanceTestQuestionnaireComponent,
+    AsyncAdvanceTestAttemptComponent,
     AsyncAdvanceTestCompleteListComponent
 };
