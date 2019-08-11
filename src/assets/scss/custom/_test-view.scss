@@ -56,13 +56,16 @@ div.viewer {
       left: 350px;
       border-radius: 20px;
       padding: 5px 20px;
+
       span {
         color: white;
         font-size: 16px;
       }
+
       &.correct {
         background-color: green;
       }
+
       &.wrong {
         background-color: #f44336;
       }
@@ -118,6 +121,7 @@ div.viewer {
 
       .dicom {
         height: 100%;
+        background-color: black;
       }
 
       .eye {
@@ -126,10 +130,12 @@ div.viewer {
         left: 10px;
         color: transparent;
         font-size: 14px;
+
         i {
           padding: 5px 6px;
           border-radius: 15.5px;
           color: #FFB300;
+
           &:hover {
             background-color: #FFB30033;
           }
@@ -161,12 +167,45 @@ div.viewer {
       }
 
       .invert {
-        right: 10px;
+        right: 18px;
       }
 
       .reset {
         right: 90px;
       }
+
+      .stack-scrollbar
+      {
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 5px;
+        width: 13px;
+        input {
+          position: absolute;
+          top: 0;
+          left: 12px;
+          height: 12px;
+          width: 500px;
+          padding: 0;
+          transform: rotate(90deg);
+          transform-origin: top left;
+          -webkit-appearance: none;
+          background-color: rgba(0,0,0,0);
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none !important;
+            background-color: #163239;
+            border: none;
+            border-radius: 57px;
+            cursor: pointer;
+            height: 12px;
+            margin-top: -4px;
+            width: 39px;
+          }
+        }
+      }
+
     }
   }
 

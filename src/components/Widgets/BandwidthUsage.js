@@ -2,7 +2,7 @@
  * Bandwidth Usage Widget
  */
 import React, { Component } from 'react';
-import ReactSpeedometer from "react-d3-speedometer";
+import ReactSpeedometer from "Components/GaugeChart";
 
 class BandwidthUsageWidget extends Component {
 

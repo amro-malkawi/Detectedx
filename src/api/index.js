@@ -368,7 +368,6 @@ export function imagesDelete(id) {
 }
 
 export function dicomImagesUpload(data) {
-    console.warn(JSON.stringify(data));
     let url = '/images/upload?access_token=' + getAccessToken() + '&test_case_id=' + data.test_case_id + '&position=' + data.position;
     if (data.id !== undefined) {
         url += '&id=' + data.id;
@@ -577,6 +576,11 @@ export function attemptsCertificatePdf(id) {
             reject(e);
         });
     });
+}
+
+export function attemptsPercentile(id) {
+    const url = '/attempts/' + id + '/percentile?&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 
 /**

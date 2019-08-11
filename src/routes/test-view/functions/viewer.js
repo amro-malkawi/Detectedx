@@ -20,7 +20,7 @@ export default class Viewer {
         });
         console.log(this.imageURL);
         element.oncontextmenu = _ => false;
-        element.onmousedown = _ => false;
+        // element.onmousedown = _ => false;
 
         this.imageElement  = element.querySelector('.dicom');
         this.windowOverlay = element.querySelector('.window');
@@ -29,6 +29,7 @@ export default class Viewer {
         this.resetButton   = element.querySelector('.reset');
         this.invertButton  = element.querySelector('.invert');
         this.toggleMarkInfoButton = element.querySelector('.eye');
+        this.stackSlider = element.querySelector('.stack-scrollbar input');
         this.synchronizer = synchronizer;
 
         this.imageElement.viewer = this;
@@ -67,16 +68,31 @@ export default class Viewer {
             cornerstone.invalidate(this.imageElement);
         });
 
-        this.resetButton.addEventListener('click', _ => {
+        this.resetButton.addEventListener('click', () => {
             this.reset();
         });
 
-        this.invertButton.addEventListener('click', _ => {
+        this.invertButton.addEventListener('click', () => {
             this.invert();
         });
 
-        this.toggleMarkInfoButton.addEventListener('click', _ => {
+        this.toggleMarkInfoButton.addEventListener('click', () => {
             this.toggleMarkInfo();
+        });
+
+
+    }
+
+    static adjustSlideSize() {
+        let sliders = document.querySelectorAll('div .stack-scrollbar input');
+        for( let i = 0; i < sliders.length; i++ ) {
+            sliders[i].style.width=sliders[i].parentNode.clientHeight + 'px';
+        }
+        window.addEventListener('resize', () => {
+            let sliders = document.querySelectorAll('div .stack-scrollbar input');
+            for( let i = 0; i < sliders.length; i++ ) {
+                sliders[i].style.width=sliders[i].parentNode.clientHeight + 'px';
+            }
         });
     }
 
@@ -123,8 +139,8 @@ export default class Viewer {
         //add synchronizer
         this.synchronizer.add(this.imageElement);
 
-        /*//add image stack
-        const stack = {
+        //add image stack
+       /* const stack = {
             currentImageIdIndex: 0,
             imageIds: this.imageURL
         };

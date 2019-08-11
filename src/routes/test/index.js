@@ -17,6 +17,7 @@ const Test = ({ match }) => (
             <Redirect exact from={`${match.url}/`} to={`${match.url}/list`} />
             <Route path={`${match.url}/list`} component={AsyncAdvanceTestListComponent} />
             <Route path={`${match.url}/complete-list/:attempt_id`} component={AsyncAdvanceTestCompleteListComponent} />
+            <Route path={`${match.url}/attempt/:attempt_id/:step`} component={AsyncAdvanceTestAttemptComponent} />
             <Route path={`${match.url}/attempt/:attempt_id`} component={AsyncAdvanceTestAttemptComponent} />
         </Switch>
     </div>

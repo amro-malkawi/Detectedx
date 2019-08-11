@@ -222,6 +222,7 @@ export default class TestView extends Component {
                     synchronizer={this.synchronizer}
                     index={index}
                     marker={this.state.imageAnswers[index]}
+                    radius={this.state.test_case.modalities.circle_size}
                     key={index}
                 />
             )

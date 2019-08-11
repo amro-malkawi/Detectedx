@@ -16,11 +16,13 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    CircularProgress
+    CircularProgress,
+    SnackbarContent
 } from '@material-ui/core';
 import SchoolIcon from '@material-ui/icons/School';
 import {NotificationManager} from 'react-notifications';
 import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
+import ReactSpeedometer from "Components/GaugeChart";
 
 const stepName = {
     mainQuestions: 'Questionnaires',
@@ -41,8 +43,9 @@ export default class TestQuestionnaire extends Component {
             isChangeMainQuestions: false,
             additionalQuestions: [],
             isChangeAdditionalQuestions: false,
+            percentile: {},
             steps: [],
-            stepIndex: 3,
+            stepIndex: this.props.match.params.step === undefined || isNaN(this.props.match.params.step) ? 0 : Number(this.props.match.params.step),
             showConsentModal: false,
             loading: true,
             isDownCert: false,
@@ -71,17 +74,26 @@ export default class TestQuestionnaire extends Component {
             })
         });
 
-        Promise.all([promise0, promise1]).then(function (values) {
+        let promise2 = new Promise(function (resolve, reject) {
+            Apis.attemptsPercentile(that.state.attempts_id).then((resp) => {
+                resolve(resp);
+            }).catch((e) => {
+                reject(e);
+            });
+        });
+
+        Promise.all([promise0, promise1, promise2]).then(function (values) {
             let steps;
-            if(!values[1].complete) {
-                steps =  values[0].additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
+            if (!values[1].complete) {
+                steps = values[0].additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
             } else {
-                steps =  values[0].additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
+                steps = values[0].additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
             }
             that.setState({
                 mainQuestions: values[0].main,
                 additionalQuestions: values[0].additional,
                 attemptInfo: values[1],
+                percentile: values[2],
                 steps: steps,
                 loading: false,
             });
@@ -91,7 +103,12 @@ export default class TestQuestionnaire extends Component {
     }
 
     onTest() {
-        let nextPath = '/test-view/' + this.state.attemptInfo.test_set_id + '/' + this.state.attempts_id + '/' + this.state.attemptInfo.current_test_case_id;
+        let nextPath = '/test-view/' + this.state.attemptInfo.test_set_id + '/' + this.state.attempts_id + '/';
+        if(!this.state.attemptInfo.complete) {
+            nextPath += this.state.attemptInfo.current_test_case_id;
+        } else {
+            nextPath += this.state.attemptInfo.test_sets.test_set_cases[0].test_case_id;
+        }
         this.props.history.push(nextPath);
     }
 
@@ -158,75 +175,24 @@ export default class TestQuestionnaire extends Component {
         }
     }
 
-    save1Questions() {
-        if(this.state.stepIndex === 0 || this.state.stepIndex === 1) {
-            let {isChanged} = this.state;
-            let questionType = this.state.stepIndex === 0 ? 'mainQuestions' : 'additionalQuestions';
-            let questionnaires = this.state[questionType];
-            let isValidate = true;
-            let answers = [];
-            questionnaires.forEach((v, index) => {
-                let obj = {
-                    questionnaire_id: v.questionnaire.id
-                };
-                if (v.questionnaire.type === 0) {
-                    if (v.questionnaire.required && v.answer === '') {
-                        isValidate = false;
-                        questionnaires[index].error = true;
-                    }
-                    obj.answer = v.answer;
-                } else if (v.questionnaire.type === 1) {
-                    if (v.questionnaire.required && v.answer.length === 0) {
-                        isValidate = false;
-                        questionnaires[index].error = true;
-                    }
-                    obj.answer = v.answer.join(',');
-                } else if (v.questionnaire.type === 2) {
-                    if (v.questionnaire.required && v.answer === '') {
-                        isValidate = false;
-                        questionnaires[index].error = true;
-                    }
-                    obj.answer = v.answer;
-                }
-                answers.push(obj);
-            });
-            if (!isValidate) {
-                this.setState({[questionType]: [...questionnaires]});
-            } else {
-                if (isChanged) {
-                    this.setState({loading: true});
-                    Apis.attemptsQuestionnaireAnswer(this.state.attempts_id, answers, questionType === 'mainQuestions' ? "main" : "additional").then(resp => {
-                        this.nextStep();
-                    }).catch((e) => {
-                        NotificationManager.error(e.message);
-                    }).finally(() => {
-                        this.setState({loading: false});
-                    });
-                } else {
-                    this.nextStep();
-                }
-            }
-        }
-    }
-
     onQuestionsNext() {
-        if(!this.validateQuestions()) return true;
+        if (!this.validateQuestions()) return true;
         let questions, type, isChanged;
-        if(this.state.steps[this.state.stepIndex] === 'mainQuestions') {
+        if (this.state.steps[this.state.stepIndex] === 'mainQuestions') {
             type = 'main';
             isChanged = this.state.isChangeMainQuestions;
             questions = this.state.mainQuestions;
-        } else if(this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
+        } else if (this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
             type = 'additional';
             isChanged = this.state.isChangeAdditionalQuestions;
             questions = this.state.additionalQuestions;
         } else {
             return;
         }
-        if(isChanged) {
+        if (isChanged) {
             this.setState({loading: true});
             this.saveQuestions(questions, type).then((resp) => {
-                if((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length === 0) ||
+                if ((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length === 0) ||
                     this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
                     this.setState({showConsentModal: true});
                 } else {
@@ -239,7 +205,7 @@ export default class TestQuestionnaire extends Component {
                 this.setState({loading: false});
             });
         } else {
-            if((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length !== 0) || this.state.attemptInfo.complete) {
+            if ((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length !== 0) || this.state.attemptInfo.complete) {
                 this.setState({stepIndex: this.state.stepIndex + 1});
             } else {
                 this.setState({showConsentModal: true});
@@ -252,17 +218,17 @@ export default class TestQuestionnaire extends Component {
     }
 
     onBack() {
-        if(this.state.stepIndex > 0) {
+        if (this.state.stepIndex > 0) {
             this.setState({stepIndex: this.state.stepIndex - 1});
         }
     }
 
     onChangeValue(index, value, checked) {
         let questionType, isChangeField;
-        if(this.state.steps[this.state.stepIndex] === 'mainQuestions'){
+        if (this.state.steps[this.state.stepIndex] === 'mainQuestions') {
             questionType = 'mainQuestions';
             isChangeField = 'isChangeMainQuestions';
-        }else if (this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
+        } else if (this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
             questionType = 'additionalQuestions';
             isChangeField = 'isChangeAdditionalQuestions';
         } else {
@@ -287,12 +253,12 @@ export default class TestQuestionnaire extends Component {
     }
 
     onClickStep = step => () => {
-        if(this.state.attemptInfo.complete) {
-            this.setState({ stepIndex: step });
+        if (this.state.attemptInfo.complete) {
+            this.setState({stepIndex: step});
         }
     };
 
-    onGetCertPdf(){
+    onGetCertPdf() {
         this.setState({isDownCert: true});
         Apis.attemptsCertificatePdf(this.state.attempts_id).then((resp) => {
         }).catch((e) => {
@@ -382,9 +348,9 @@ export default class TestQuestionnaire extends Component {
     renderQuestionnaire() {
         let result = [];
         let questions;
-        if(this.state.stepIndex === 0) {
+        if (this.state.stepIndex === 0) {
             questions = this.state.mainQuestions;
-        } else if(this.state.stepIndex === 1) {
+        } else if (this.state.stepIndex === 1) {
             questions = this.state.additionalQuestions;
         } else {
             return null;
@@ -424,6 +390,81 @@ export default class TestQuestionnaire extends Component {
         );
     }
 
+    renderGaugeChart() {
+        let specitifity, sensitivity, roc;
+        this.state.attemptInfo.scores.map((v) => {
+            if(v.metrics.name === 'Specificity(%)') {
+                specitifity = Number(v.score);
+            }
+            if(v.metrics.name === 'Sensitivity(%)') {
+                sensitivity = Number(v.score);
+            }
+            if(v.metrics.name === 'ROC') {
+                roc = Number(v.score);
+            }
+        });
+        return (
+            <div>
+                <div className={'gauge-color mb-20'}>
+                    <div>
+                        <span>&#60;25th</span>
+                    </div>
+                    <div>
+                        <span>25th</span>
+                    </div>
+                    <div>
+                        <span>Median</span>
+                    </div>
+                    <div>
+                        <span>75th</span>
+                    </div>
+                </div>
+                {
+                    specitifity !== undefined ?
+                        <div className={'gauge-chart'}>
+                            <ReactSpeedometer
+                                fluidWidth
+                                maxValue={100}
+                                value={specitifity}
+                                labelValues={{0: 0, 100: 100, ...this.state.percentile.specificity}}
+                                segments={4}
+                                ringWidth={30}
+                                currentValueText="Specificity: ${value}%"
+                            />
+                        </div> : null
+                }
+                {
+                    sensitivity !== undefined ?
+                        <div className={'gauge-chart'}>
+                            <ReactSpeedometer
+                                fluidWidth
+                                maxValue={100}
+                                value={sensitivity}
+                                labelValues={{0: 0, 100: 100, ...this.state.percentile.sensitivity}}
+                                segments={4}
+                                ringWidth={30}
+                                currentValueText="Sensitivity: ${value}%"
+                            />
+                        </div> : null
+                }
+                {
+                    roc !== undefined && this.state.percentile.roc ?
+                        <div className={'gauge-chart mb-1'}>
+                            <ReactSpeedometer
+                                fluidWidth
+                                maxValue={1}
+                                labelValues={{0: 0, 1: 1, 0.25: this.state.percentile.roc[25], 0.5: this.state.percentile.roc[50], 0.75: this.state.percentile.roc[75]}}
+                                value={roc}
+                                segments={4}
+                                ringWidth={30}
+                                currentValueText="ROC: ${value}"
+                            />
+                        </div> : null
+                }
+            </div>
+        )
+    }
+
     renderStepContent() {
         switch (this.state.steps[this.state.stepIndex]) {
             case 'mainQuestions':
@@ -453,7 +494,7 @@ export default class TestQuestionnaire extends Component {
                     </div>
                 );
             case 'test':
-                if(!this.state.attemptInfo.complete) {
+                if (!this.state.attemptInfo.complete) {
                     return (
                         <div>
                             <RctCollapsibleCard
@@ -497,31 +538,39 @@ export default class TestQuestionnaire extends Component {
                             <Button variant="contained" color="primary" disabled={this.state.isDownCert} onClick={() => this.onGetCertPdf()}><SchoolIcon className={'mr-10'}/>Certificate</Button>
                             {this.state.isDownCert && <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>}
                         </div>
-                        <RctCollapsibleCard
-                            customClasses="p-20"
-                            fullBlock
-                        >
-                            <table className="table table-middle table-hover mb-0">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Value</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {
-                                    this.state.attemptInfo.scores.map((v, i) => (
-                                        <tr key={i}>
-                                            <td>{v.metrics.name}</td>
-                                            <td>{v.score}</td>
-                                            <td>{v.metrics.description}</td>
-                                        </tr>
-                                    ))
-                                }
-                                </tbody>
-                            </table>
-                        </RctCollapsibleCard>
+                        <div className="row">
+                            <RctCollapsibleCard
+                                customClasses="p-20"
+                                colClasses="col-sm-12 col-lg-9"
+                                fullBlock
+                            >
+                                <table className="table table-middle table-hover mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        this.state.attemptInfo.scores.map((v, i) => (
+                                            <tr key={i}>
+                                                <td>{v.metrics.name}</td>
+                                                <td>{v.score}</td>
+                                                <td className={'fs-13'}>{v.metrics.description}</td>
+                                            </tr>
+                                        ))
+                                    }
+                                    </tbody>
+                                </table>
+                            </RctCollapsibleCard>
+                            <RctCollapsibleCard
+                                colClasses="col-sm-12 col-lg-3"
+                            >
+                                {this.renderGaugeChart()}
+                            </RctCollapsibleCard>
+                        </div>
                     </div>
                 );
             case 'answer':
@@ -555,7 +604,9 @@ export default class TestQuestionnaire extends Component {
                     {this.renderStepper()}
                     {this.renderStepContent()}
                     <Dialog open={this.state.showConsentModal} onClose={() => null} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
-                        <DialogTitle id="alert-dialog-title"><div className={'text-center fs-23'}>Consent</div></DialogTitle>
+                        <DialogTitle id="alert-dialog-title">
+                            <div className={'text-center fs-23'}>Consent</div>
+                        </DialogTitle>
                         <DialogContent>
                             <span className={'fs-17'}>I understand that:</span>
                             <div>

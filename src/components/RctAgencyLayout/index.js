@@ -19,7 +19,7 @@ class RctAgencyLayout extends Component {
       const { children, match } = this.props;
       if (pathname === `${match.url}/chat` || pathname.startsWith(`${match.url}/mail`) || pathname === `${match.url}/todo`) {
          return (
-            <div className="rct-page-content p-0" style={{ height: 'calc(100vh - 15.5rem)' }}>
+            <div className="rct-page-content p-0" style={{ height: 'calc(100vh - 10.5rem)' }}>
                {children}
             </div>
          );
@@ -29,7 +29,7 @@ class RctAgencyLayout extends Component {
             className="rct-scroll"
             autoHide
             autoHideDuration={100}
-            style={{ height: 'calc(100vh - 15.5rem)' }}
+            style={{ height: 'calc(100vh - 10.5rem)' }}
          >
             <div className="rct-page-content">
                {children}

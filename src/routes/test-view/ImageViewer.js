@@ -5,7 +5,7 @@ import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import Mark from "./functions/mark";
 import Dtx from "./functions/dtx";
-import MarkerTool from "./functions/marker";
+import MarkerTool from "./lib/marker";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -58,6 +58,13 @@ export default class ImageViewer extends Component{
     initEvents() {
         this.imageElement.addEventListener('cornerstoneimagerendered', (event) => {
             this.wasDrawn(event);
+        });
+
+        this.imageElement.addEventListener('cornerstonetoolsmousemove', (event) => {
+            let point = event.detail.currentPoints.image;
+            const x = point.x.toFixed(0);
+            const y = point.y.toFixed(0);
+            this.imageElement.parentNode.querySelector('.location').textContent = `(x: ${x}, y: ${y})`;
         });
 
         this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => {
@@ -136,13 +143,55 @@ export default class ImageViewer extends Component{
 
     renderAnswer() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');
-        this.props.marker.answers.forEach(mark => new Mark(this.props.imageInfo.id, mark));
+        let markList = [];
+        this.props.marker.answers.forEach((mark) => {
+            mark.isTruth = false;
+            markList.push(mark);
+        });
+        this.props.marker.truths.forEach((mark) => {
+            mark.isTruth = true;
+            markList.push(mark);
+        });
+
+        markList.forEach((mark) => {
+            let active = true;
+            let lesionTypes;
+            if(mark.answers_lesion_types !== undefined) {
+                lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
+            } else if(mark.truths_lesion_types !== undefined) {
+                lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id)
+            }
+            let markerData = {
+                active: active,
+                handles: {
+                    end: {
+                        x: mark.x,
+                        y: mark.y,
+                        active: active,
+                        highlight: active
+                    }
+                },
+                id: mark.id,
+                isTruth: mark.isTruth,
+                lesionNumber: mark.number,
+                rating: mark.rating,
+                radius: this.props.radius,
+                lesionTypes: lesionTypes,
+                imageElement: this.imageElement,
+                originalX: undefined,
+                originalY: undefined,
+            };
+            cornerstoneTools.addToolState(this.imageElement, 'Marker', markerData);
+        });
+
+
+        /*this.props.marker.answers.forEach(mark => new Mark(this.props.imageInfo.id, mark));
         if (this.props.marker.truths) {
             this.props.marker.truths.forEach(mark => new Mark(this.props.imageInfo.id, { ...mark, isTruth: true}));
         }
 
-        let imageElement = Mark._imageElement(this.props.imageInfo.id);
-        cornerstone.invalidate(imageElement);
+        let imageElement = Mark._imageElement(this.props.imageInfo.id);*/
+        cornerstone.invalidate(this.imageElement);
     }
 
     duplicateViewport(viewport) {
@@ -222,6 +271,7 @@ export default class ImageViewer extends Component{
                     <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"} />
                 </a>
                 <div className="dicom" />
+                <div className="location status"/>
                 <div className="zoom status" >Zoom: {this.state.zoom}</div>
                 <div className="window status" >WW/WL: {this.state.windowWidth + ' / ' + this.state.windowLength}</div>
                 <Button className="invert" variant="contained" onClick={() => this.onInvert()}>Invert</Button>

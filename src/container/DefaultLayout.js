@@ -14,7 +14,8 @@ class RctNewsApp extends Component {
 	render() {
 		const { match, location } = this.props;
 		if (location.pathname === '/app') {
-			return (<Redirect to={'/app/home'} />);
+			// return (<Redirect to={'/app/home'} />);
+			return (<Redirect to={'/app/test/list'} />);
 		}
 		return (
 			<RctAgencyLayout enableBgImage>

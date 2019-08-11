@@ -21,3 +21,43 @@
   border-radius: 30px;
   vertical-align: middle;
 }
+
+.gauge-chart {
+  width: 200px;
+  height: 130px;
+  margin: 0 auto 20px auto;
+  background: white;
+}
+
+.gauge-color {
+  div {
+    display: inline-block;
+    width: 25%;
+    height: 22px;
+    text-align: center;
+    &:nth-child(1) {
+      span {
+        color: black;
+      }
+      background-color: #E3F2FD;
+    }
+    &:nth-child(2) {
+      span {
+        color: white
+      }
+      background-color: #64B5F6;
+    }
+    &:nth-child(3) {
+      span {
+        color: white
+      }
+      background-color: #1565C0;
+    }
+    &:nth-child(4) {
+      span {
+        color: white
+      }
+      background-color: #0D47A1;
+    }
+  }
+}

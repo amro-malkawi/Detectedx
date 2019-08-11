@@ -120,8 +120,20 @@ export default class TestView extends Component {
 
     onComplete() {
         Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
-            this.props.history.push('/app/test/list');
+            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/3');
+        }).catch((e) => {
+            console.warn(e.message);
         });
+    }
+
+    onHome() {
+        let url;
+        if (!this.state.attemptDetail.complete) {
+            url = '/app/test/list';
+        } else {
+            url = '/app/test/complete-list/' + this.state.attempts_id;
+        }
+        this.props.history.replace(url);
     }
 
     onChangeSynchonize(e) {
@@ -129,10 +141,10 @@ export default class TestView extends Component {
     }
 
     setSelectedRating(value) {
-        if(value === '2') {
+        if (value === '2') {
             this.setState({selectedLesions: []});
         }
-        this.setState({ selectedRating: value });
+        this.setState({selectedRating: value});
     }
 
     onChangeRating(event) {
@@ -143,7 +155,7 @@ export default class TestView extends Component {
         let lesionsValue = [];
         lesions = lesions.map(v => v.toString());
         this.state.test_case.modalities.lesion_types.forEach(v => {
-            if(lesions.indexOf(v.id.toString()) !== -1) {
+            if (lesions.indexOf(v.id.toString()) !== -1) {
                 lesionsValue.push({value: v.id, label: v.name});
             }
         });
@@ -172,14 +184,14 @@ export default class TestView extends Component {
                     test_case_index + 1 < test_case_length ?
                         <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(1)}> Next</Button> : null
                 }
-                <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
+                <Button variant="contained" color="primary" onClick={() => this.onHome()}>Home</Button>
             </nav>
         );
     }
 
     renderTestResult() {
         const {isAnswerCancer, isTruthCancer} = this.state;
-        if(isAnswerCancer === undefined || isTruthCancer === undefined) {
+        if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
         } else {
             let isCorrect = isAnswerCancer === isTruthCancer;
@@ -196,7 +208,9 @@ export default class TestView extends Component {
         if (!this.state.loading) {
             let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
             let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
-            let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {return {label: v.name, value: v.id}});
+            let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {
+                return {label: v.name, value: v.id}
+            });
             return (
                 <div className="viewer">
                     <div id="toolbar">
@@ -215,6 +229,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Pan</p>
                             </div>
+
                             <div className="tool option" data-tool="Zoom" data-synchronize="true">
                                 <svg id="icon-tools-zoom" viewBox="0 0 17 17">
                                     <title>Zoom</title>
@@ -268,6 +283,9 @@ export default class TestView extends Component {
                                             <i className="zmdi zmdi-eye fs-23"/>
                                         </a>
                                         <div className="dicom"/>
+                                        <div className="stack-scrollbar">
+                                            <input type="range"/>
+                                        </div>
                                         <div className="location status"/>
                                         <div className="zoom status"/>
                                         <div className="window status"/>
@@ -298,7 +316,7 @@ export default class TestView extends Component {
                                                         <CustomFormControlLabel
                                                             disabled={this.state.attemptDetail.complete}
                                                             value={v.toString()}
-                                                            control={<CustomRadio />}
+                                                            control={<CustomRadio/>}
                                                             label={v}
                                                             key={i}
                                                         />
@@ -308,7 +326,7 @@ export default class TestView extends Component {
                                         </RadioGroup>
                                     </Col>
                                 </FormGroup>
-                                <Label >Lesions:</Label>
+                                <Label>Lesions:</Label>
                                 <Select
                                     isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
                                     placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select Lesions' : 'Select Lesions'}
@@ -341,7 +359,7 @@ export default class TestView extends Component {
                 </div>
             );
         } else {
-            return (<RctSectionLoader/>);
+            return (<RctSectionLoader style={{backgroundColor: 'black'}}/>);
         }
     }
 }
@@ -417,9 +435,9 @@ const CustomFormControlLabel = withStyles(theme => ({
 }))(FormControlLabel);
 
 const selectStyles = {
-    control: styles => ({ ...styles, backgroundColor: 'black' }),
-    menu: styles => ({ ...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    control: styles => ({...styles, backgroundColor: 'black'}),
+    menu: styles => ({...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
+    option: (styles, {data, isDisabled, isFocused, isSelected}) => {
         const color = chroma('yellow');
         return {
             ...styles,
@@ -445,18 +463,18 @@ const selectStyles = {
             },
         };
     },
-    multiValue: (styles, { data }) => {
+    multiValue: (styles, {data}) => {
         const color = chroma('yellow');
         return {
             ...styles,
             backgroundColor: color.alpha(0.1).css(),
         };
     },
-    multiValueLabel: (styles, { data }) => ({
+    multiValueLabel: (styles, {data}) => ({
         ...styles,
         color: 'yellow',
     }),
-    multiValueRemove: (styles, { data }) => ({
+    multiValueRemove: (styles, {data}) => ({
         ...styles,
         color: 'yellow',
         ':hover': {

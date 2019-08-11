@@ -19,6 +19,8 @@ export default class Dtx {
         this._radius = Number(radius);
         for (let element of document.querySelectorAll('#images .image'))
             this._viewers.push(new Viewer(element, this._synchronizer));
+        Viewer.adjustSlideSize();
+
         this._synchronizer.enabled = true;
     }
 
