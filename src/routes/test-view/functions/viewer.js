@@ -140,7 +140,7 @@ export default class Viewer {
         this.synchronizer.add(this.imageElement);
 
         //add image stack
-       /* const stack = {
+        const stack = {
             currentImageIdIndex: 0,
             imageIds: this.imageURL
         };
@@ -148,7 +148,7 @@ export default class Viewer {
         cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
         cornerstoneTools.addToolState(this.imageElement, 'stack', stack);
         cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
-        cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});*/
+        cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
 
         // render the first appropriate level of the pyramid
         this._renderPyramid(this.originalViewport);

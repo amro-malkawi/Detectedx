@@ -1,9 +1,5 @@
-/**
- * News Dashboard
- */
-
 import React, {Component} from 'react'
-import {Col, FormGroup, Input, Label} from "reactstrap";
+import {Col, FormGroup, Label} from "reactstrap";
 import Button from '@material-ui/core/Button';
 import Select from 'react-select';
 import Radio from '@material-ui/core/Radio';
@@ -19,12 +15,17 @@ import cornerstoneMath from 'cornerstone-math';
 import dicomParser from 'dicom-parser';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
-import Loader from './functions/loader';
-import Dtx from './functions/dtx';
+import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 
 import Switch from "@material-ui/core/Switch";
 import {withStyles} from '@material-ui/core/styles';
+
+import ImageViewer from './lib/ImageViewer'
+import Marker from './lib/marker';
+import panZoomSynchronizer from "./lib/panZoomSynchronizer";
+import viewerSynchronizer from "./lib/viewerSynchronizer";
+import {NotificationManager} from "react-notifications";
 
 export default class TestView extends Component {
 
@@ -44,9 +45,33 @@ export default class TestView extends Component {
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
             imageAnswers: [],
+            currentTool: 'Pan',
+            isShowPopup: false,
+            isShowPopupDelete: true,
+            selectedMarkData: {},
         };
 
-        this.myRef = React.createRef();
+        this.popupCancelHandler = null;
+        this.popupDeleteHandler = null;
+        this.popupSaveHandler = null;
+        this.viewers = [];
+        this.synchronizer = null;
+        this.initConerstone();
+    }
+
+    initConerstone() {
+        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+        cornerstoneTools.external.cornerstone = cornerstone;
+        cornerstoneTools.external.Hammer = Hammer;
+        cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+        cornerstoneTools.init();
+        cornerstone.registerImageLoader('dtx', Loader);
+        this.synchronizer = new cornerstoneTools.Synchronizer(
+            'cornerstonetoolsmousewheel cornerstonetoolsmousedrag cornerstonenewimage',
+            viewerSynchronizer //  cornerstoneTools.panZoomSynchronizer
+        );
+        this.synchronizer.enabled = true;
     }
 
     componentDidMount() {
@@ -94,16 +119,16 @@ export default class TestView extends Component {
                 isTruthCancer: values[3].isTruthCancer,
                 loading: false
             }, () => {
-                cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-                cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
-                cornerstoneTools.external.cornerstone = cornerstone;
-                cornerstoneTools.external.Hammer = Hammer;
-                cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
-                cornerstoneTools.init();
-                cornerstone.registerImageLoader('dtx', Loader);
-                Dtx.init(that, that.state.test_cases_id, that.state.attempts_id, that.state.test_case.modalities.lesion_types, that.state.test_case.modalities.circle_size, that.state.imageAnswers);
+                Marker.lesions = that.state.test_case.modalities.lesion_types;
+                ImageViewer.adjustSlideSize();
             });
         });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.test_case.images !== undefined && this.state.test_case.images !== prevState.test_case.images) {
+
+        }
     }
 
     onMove(seek) { // previous -1, next 1
@@ -126,18 +151,66 @@ export default class TestView extends Component {
         });
     }
 
-    onHome() {
-        let url;
-        if (!this.state.attemptDetail.complete) {
-            url = '/app/test/list';
-        } else {
-            url = '/app/test/complete-list/' + this.state.attempts_id;
-        }
-        this.props.history.replace(url);
+    onChangeSynchonize(e) {
+        this.synchronizer.enabled = e.target.checked;
     }
 
-    onChangeSynchonize(e) {
-        Dtx.enableSynchronize(e.target.checked);
+    onChangeCurrentTool(tool) {
+        this.setState({currentTool: tool});
+    }
+
+    handleShowPopup(markData, cancelCallback, deleteCallback, saveCallback) {
+        let isShowDeleteButton = true;
+        if(markData.isNew) {
+            isShowDeleteButton = false;
+        }
+
+        let lesionsValue = [];
+        let lesions = markData.lesionTypes.map(v => v.toString());
+        this.state.test_case.modalities.lesion_types.forEach(v => {
+            if (lesions.indexOf(v.id.toString()) !== -1) {
+                lesionsValue.push({value: v.id, label: v.name});
+            }
+        });
+        let rating = markData.rating || '2';
+        if (rating === '2') {
+            this.setState({selectedLesions: []});
+        }
+        this.setState({isShowPopup: true, selectedMarkData: markData, isShowPopupDelete: isShowDeleteButton, selectedLesions: lesionsValue, selectedRating: rating.toString()});
+        this.popupCancelHandler = cancelCallback;
+        this.popupDeleteHandler = deleteCallback;
+        this.popupSaveHandler = saveCallback;
+    }
+
+    handleClosePopup(type) {
+        if(type === 'save' && this.state.selectedRating !== '2' && (this.state.selectedLesions === null || this.state.selectedLesions.length === 0)) {
+            NotificationManager.error('Please select lesion type');
+            return;
+        }
+        this.setState({isShowPopup: false});
+        switch (type) {
+            case 'cancel':
+            case 'ok':
+                this.popupCancelHandler();
+                break;
+            case 'delete':
+                if (!confirm('Are you sure you want to delete this mark?')) break;
+                this.popupDeleteHandler(this.state.selectedMarkData.id);
+                break;
+            case 'save':
+                let data = {
+                    id: this.state.selectedMarkData.id,
+                    x: this.state.selectedMarkData.handles.end.x,
+                    y: this.state.selectedMarkData.handles.end.y,
+                    attempt_id: this.state.attempts_id,
+                    test_case_id: this.state.test_cases_id,
+                    rating: this.state.selectedRating,
+                    answer_lesion_types: this.state.selectedLesions.map((v) => v.value.toString()),
+                    isNew: this.state.selectedMarkData.isNew,
+                };
+                this.popupSaveHandler(data);
+                break;
+        }
     }
 
     setSelectedRating(value) {
@@ -163,7 +236,6 @@ export default class TestView extends Component {
     }
 
     onChangeLesions(value) {
-        debugger
         this.setState({selectedLesions: value})
     }
 
@@ -184,7 +256,7 @@ export default class TestView extends Component {
                     test_case_index + 1 < test_case_length ?
                         <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(1)}> Next</Button> : null
                 }
-                <Button variant="contained" color="primary" onClick={() => this.onHome()}>Home</Button>
+                <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
             </nav>
         );
     }
@@ -194,14 +266,36 @@ export default class TestView extends Component {
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
         } else {
-            let isCorrect = isAnswerCancer === isTruthCancer;
-            let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
+            // let isCorrect = isAnswerCancer === isTruthCancer;
+            // let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
+            let resultStr = isTruthCancer ? "Cancer Case" : "Normal Case";
             return (
-                <div className={isCorrect ? 'correct-result correct' : 'correct-result wrong'}>
+                <div className={isTruthCancer ? 'correct-result wrong' : 'correct-result correct'}>
                     <span style={{color: 'white'}}>{resultStr}</span>
                 </div>
             );
         }
+    }
+
+    renderImageViewer() {
+        return this.state.test_case.images.map((item, index) => {
+            this.viewers.push(React.createRef());
+            return (
+                <ImageViewer
+                    imageInfo={item}
+                    viewerRef={this.viewers[this.viewers.length - 1]}
+                    currentTool={this.state.currentTool}
+                    synchronizer={this.synchronizer}
+                    index={index}
+                    marker={this.state.imageAnswers[index]}
+                    radius={this.state.test_case.modalities.circle_size}
+                    onShowPopup={this.handleShowPopup.bind(this)}
+                    stackCount={item.stack_count}
+                    complete={this.state.attemptDetail.complete}
+                    key={index}
+                />
+            )
+        });
     }
 
     render() {
@@ -215,7 +309,7 @@ export default class TestView extends Component {
                 <div className="viewer">
                     <div id="toolbar">
                         <div id="tools">
-                            <div className="tool option" data-tool="Pan">
+                            <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
                                 <svg id="icon-tools-pan" viewBox="0 0 18 18">
                                     <title>Pan</title>
                                     <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -229,8 +323,8 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Pan</p>
                             </div>
-
-                            <div className="tool option" data-tool="Zoom" data-synchronize="true">
+                            <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"
+                                 onClick={() => this.onChangeCurrentTool('Zoom')}>
                                 <svg id="icon-tools-zoom" viewBox="0 0 17 17">
                                     <title>Zoom</title>
                                     <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
@@ -240,7 +334,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Zoom</p>
                             </div>
-                            <div className="tool option" data-tool="Wwwc">
+                            <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
                                 <svg id="icon-tools-levels" viewBox="0 0 18 18">
                                     <title>Window / Level</title>
                                     <g id="icon-tools-levels-group">
@@ -250,14 +344,17 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Window</p>
                             </div>
-                            <div className="tool option" data-tool="Marker">
-                                <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
-                                    <title>Elliptical ROI</title>
-                                    <path
-                                        d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"/>
-                                </svg>
-                                <p>Mark</p>
-                            </div>
+                            {
+                                this.state.attemptDetail.complete ? null :
+                                    <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
+                                        <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
+                                            <title>Elliptical ROI</title>
+                                            <path
+                                                d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"/>
+                                        </svg>
+                                        <p>Mark</p>
+                                    </div>
+                            }
                             <div className="tool">
                                 <AntSwitch
                                     defaultChecked
@@ -275,87 +372,74 @@ export default class TestView extends Component {
                         {this.renderNav()}
                     </div>
                     <div id="images">
-                        {
-                            this.state.test_case.images.map((item, index) => {
-                                return (
-                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} data-index={index} key={item.id}>
-                                        <a className="eye">
-                                            <i className="zmdi zmdi-eye fs-23"/>
-                                        </a>
-                                        <div className="dicom"/>
-                                        <div className="stack-scrollbar">
-                                            <input type="range"/>
-                                        </div>
-                                        <div className="location status"/>
-                                        <div className="zoom status"/>
-                                        <div className="window status"/>
-                                        <button className="invert">Invert</button>
-                                        <button className="reset">Reset</button>
-                                    </div>
-                                )
-                            })
-                        }
+                        {this.renderImageViewer()}
                     </div>
-                    <div id="cover" style={{display: 'none'}} ref={this.myRef}>
-                        <div id="mark-details">
-                            <form>
-                                <FormGroup className={'mb-5'} row>
-                                    <Label sm={3} style={{marginTop: 6}}>Rating:</Label>
-                                    <Col sm={9}>
-                                        <RadioGroup
-                                            disabled
-                                            aria-label="position"
-                                            name="position"
-                                            value={this.state.selectedRating}
-                                            onChange={this.onChangeRating.bind(this)}
-                                            row
-                                        >
-                                            {
-                                                this.state.test_case.ratings.map((v, i) => {   // [0, 1, 2, 3...]
-                                                    return (
-                                                        <CustomFormControlLabel
-                                                            disabled={this.state.attemptDetail.complete}
-                                                            value={v.toString()}
-                                                            control={<CustomRadio/>}
-                                                            label={v}
-                                                            key={i}
-                                                        />
-                                                    )
-                                                })
-                                            }
-                                        </RadioGroup>
-                                    </Col>
-                                </FormGroup>
-                                <Label>Lesions:</Label>
-                                <Select
-                                    isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
-                                    placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select Lesions' : 'Select Lesions'}
-                                    isMulti
-                                    name="lesions"
-                                    options={lesions}
-                                    value={this.state.selectedLesions}
-                                    styles={selectStyles}
-                                    onChange={this.onChangeLesions.bind(this)}
-                                />
+                    {
+                        this.state.isShowPopup ?
+                            <div id="cover" ref={this.myRef}>
+                                <div id="mark-details">
+                                    <form>
+                                        <FormGroup className={'mb-5'} row>
+                                            <Label sm={3} style={{marginTop: 6}}>Rating:</Label>
+                                            <Col sm={9}>
+                                                <RadioGroup
+                                                    disabled
+                                                    aria-label="position"
+                                                    name="position"
+                                                    value={this.state.selectedRating}
+                                                    onChange={this.onChangeRating.bind(this)}
+                                                    row
+                                                >
+                                                    {
+                                                        this.state.test_case.ratings.map((v, i) => {   // [0, 1, 2, 3...]
+                                                            return (
+                                                                <CustomFormControlLabel
+                                                                    disabled={this.state.attemptDetail.complete}
+                                                                    value={v.toString()}
+                                                                    control={<CustomRadio/>}
+                                                                    label={v}
+                                                                    key={i}
+                                                                />
+                                                            )
+                                                        })
+                                                    }
+                                                </RadioGroup>
+                                            </Col>
+                                        </FormGroup>
+                                        <Label>Lesions:</Label>
+                                        <Select
+                                            isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
+                                            placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select Lesions' : 'Select Lesions'}
+                                            isMulti
+                                            name="lesions"
+                                            options={lesions}
+                                            value={this.state.selectedLesions}
+                                            styles={selectStyles}
+                                            onChange={this.onChangeLesions.bind(this)}
+                                        />
 
-                                <div className="actions">
-                                    <div className="left">
-                                        <button className="cancel" {...disabled}>Cancel</button>
-                                    </div>
-                                    {
-                                        this.state.attemptDetail.complete ?
-                                            <div className="right">
-                                                <button className="mr-15 ok">&nbsp;&nbsp;Ok&nbsp;&nbsp;</button>
-                                            </div> :
-                                            <div className="right">
-                                                <button className="mr-15 delete">Delete</button>
-                                                <button className="save">Save</button>
+                                        <div className="actions">
+                                            <div className="left">
+                                                <Button variant="contained" className="text-black bg-white cancel" disabled={this.state.attemptDetail.complete} onClick={() => this.handleClosePopup('cancel')}>Cancel</Button>
                                             </div>
-                                    }
+                                            {
+                                                this.state.attemptDetail.complete ?
+                                                    <div className="right">
+                                                        <Button variant="contained" className="ok" onClick={() => this.handleClosePopup('ok')}>&nbsp;&nbsp;Ok&nbsp;&nbsp;</Button>
+                                                    </div> :
+                                                    <div className="right">
+                                                        {
+                                                            this.state.isShowPopupDelete ?
+                                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}>Delete</Button> : null
+                                                        }
+                                                        <Button variant="contained" className="save" onClick={() => this.handleClosePopup('save')}>Save</Button>
+                                                    </div>
+                                            }
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
+                            </div> : null
+                    }
                 </div>
             );
         } else {

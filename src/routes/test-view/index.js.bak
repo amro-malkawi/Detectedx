@@ -1,5 +1,9 @@
+/**
+ * News Dashboard
+ */
+
 import React, {Component} from 'react'
-import {Col, FormGroup, Label} from "reactstrap";
+import {Col, FormGroup, Input, Label} from "reactstrap";
 import Button from '@material-ui/core/Button';
 import Select from 'react-select';
 import Radio from '@material-ui/core/Radio';
@@ -22,9 +26,6 @@ import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import Switch from "@material-ui/core/Switch";
 import {withStyles} from '@material-ui/core/styles';
 
-import ImageViewer from './ImageViewer'
-import panZoomSynchronizer from "./functions/panZoomSynchronizer";
-
 export default class TestView extends Component {
 
     constructor(props) {
@@ -43,27 +44,9 @@ export default class TestView extends Component {
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
             imageAnswers: [],
-
-            currentTool: 'Pan',
         };
-        this.viewers = [];
-        this.synchronizer = null;
-        this.initConerstone();
-    }
 
-    initConerstone() {
-        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
-        cornerstoneTools.external.cornerstone = cornerstone;
-        cornerstoneTools.external.Hammer = Hammer;
-        cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
-        cornerstoneTools.init();
-        cornerstone.registerImageLoader('dtx', Loader);
-        this.synchronizer = new cornerstoneTools.Synchronizer(
-            'cornerstonetoolsmousewheel cornerstonetoolsmousedrag',
-            panZoomSynchronizer //  cornerstoneTools.panZoomSynchronizer
-        );
-        this.synchronizer.enabled = true;
+        this.myRef = React.createRef();
     }
 
     componentDidMount() {
@@ -111,15 +94,16 @@ export default class TestView extends Component {
                 isTruthCancer: values[3].isTruthCancer,
                 loading: false
             }, () => {
-                // Dtx.init(that, that.state.test_cases_id, that.state.attempts_id, that.state.test_case.modalities.lesion_types, that.state.imageAnswers);
+                cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+                cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+                cornerstoneTools.external.cornerstone = cornerstone;
+                cornerstoneTools.external.Hammer = Hammer;
+                cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+                cornerstoneTools.init();
+                cornerstone.registerImageLoader('dtx', Loader);
+                Dtx.init(that, that.state.test_cases_id, that.state.attempts_id, that.state.test_case.modalities.lesion_types, that.state.test_case.modalities.circle_size, that.state.imageAnswers);
             });
         });
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if(this.state.test_case.images !== undefined && this.state.test_case.images !== prevState.test_case.images) {
-
-        }
     }
 
     onMove(seek) { // previous -1, next 1
@@ -136,23 +120,31 @@ export default class TestView extends Component {
 
     onComplete() {
         Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
-
+            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/3');
+        }).catch((e) => {
+            console.warn(e.message);
         });
     }
 
-    onChangeSynchonize(e) {
-        this.synchronizer.enabled = e.target.checked;
+    onHome() {
+        let url;
+        if (!this.state.attemptDetail.complete) {
+            url = '/app/test/list';
+        } else {
+            url = '/app/test/complete-list/' + this.state.attempts_id;
+        }
+        this.props.history.replace(url);
     }
 
-    onChangeCurrentTool(tool) {
-        this.setState({currentTool: tool});
+    onChangeSynchonize(e) {
+        Dtx.enableSynchronize(e.target.checked);
     }
 
     setSelectedRating(value) {
-        if(value === '2') {
+        if (value === '2') {
             this.setState({selectedLesions: []});
         }
-        this.setState({ selectedRating: value });
+        this.setState({selectedRating: value});
     }
 
     onChangeRating(event) {
@@ -163,7 +155,7 @@ export default class TestView extends Component {
         let lesionsValue = [];
         lesions = lesions.map(v => v.toString());
         this.state.test_case.modalities.lesion_types.forEach(v => {
-            if(lesions.indexOf(v.id.toString()) !== -1) {
+            if (lesions.indexOf(v.id.toString()) !== -1) {
                 lesionsValue.push({value: v.id, label: v.name});
             }
         });
@@ -171,6 +163,7 @@ export default class TestView extends Component {
     }
 
     onChangeLesions(value) {
+        debugger
         this.setState({selectedLesions: value})
     }
 
@@ -191,14 +184,14 @@ export default class TestView extends Component {
                     test_case_index + 1 < test_case_length ?
                         <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(1)}> Next</Button> : null
                 }
-                <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
+                <Button variant="contained" color="primary" onClick={() => this.onHome()}>Home</Button>
             </nav>
         );
     }
 
     renderTestResult() {
         const {isAnswerCancer, isTruthCancer} = this.state;
-        if(isAnswerCancer === undefined || isTruthCancer === undefined) {
+        if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
         } else {
             let isCorrect = isAnswerCancer === isTruthCancer;
@@ -211,34 +204,18 @@ export default class TestView extends Component {
         }
     }
 
-    renderImageViewer() {
-        return this.state.test_case.images.map((item, index) => {
-            this.viewers.push(React.createRef());
-            return (
-                <ImageViewer
-                    imageInfo={item}
-                    viewerRef={this.viewers[this.viewers.length - 1]}
-                    currentTool={this.state.currentTool}
-                    synchronizer={this.synchronizer}
-                    index={index}
-                    marker={this.state.imageAnswers[index]}
-                    radius={this.state.test_case.modalities.circle_size}
-                    key={index}
-                />
-            )
-        });
-    }
-
     render() {
         if (!this.state.loading) {
             let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
             let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
-            let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {return {label: v.name, value: v.id}});
+            let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {
+                return {label: v.name, value: v.id}
+            });
             return (
                 <div className="viewer">
                     <div id="toolbar">
                         <div id="tools">
-                            <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
+                            <div className="tool option" data-tool="Pan">
                                 <svg id="icon-tools-pan" viewBox="0 0 18 18">
                                     <title>Pan</title>
                                     <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -252,7 +229,8 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Pan</p>
                             </div>
-                            <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"  onClick={() => this.onChangeCurrentTool('Zoom')}>
+
+                            <div className="tool option" data-tool="Zoom" data-synchronize="true">
                                 <svg id="icon-tools-zoom" viewBox="0 0 17 17">
                                     <title>Zoom</title>
                                     <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
@@ -262,7 +240,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Zoom</p>
                             </div>
-                            <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
+                            <div className="tool option" data-tool="Wwwc">
                                 <svg id="icon-tools-levels" viewBox="0 0 18 18">
                                     <title>Window / Level</title>
                                     <g id="icon-tools-levels-group">
@@ -272,7 +250,7 @@ export default class TestView extends Component {
                                 </svg>
                                 <p>Window</p>
                             </div>
-                            <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
+                            <div className="tool option" data-tool="Marker">
                                 <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
                                     <title>Elliptical ROI</title>
                                     <path
@@ -297,7 +275,26 @@ export default class TestView extends Component {
                         {this.renderNav()}
                     </div>
                     <div id="images">
-                        { this.renderImageViewer() }
+                        {
+                            this.state.test_case.images.map((item, index) => {
+                                return (
+                                    <div className="image" id={"image" + item.id} data-image-id={item.id} data-url={item.id} data-stack={item.stack_count} data-index={index} key={item.id}>
+                                        <a className="eye">
+                                            <i className="zmdi zmdi-eye fs-23"/>
+                                        </a>
+                                        <div className="dicom"/>
+                                        <div className="stack-scrollbar">
+                                            <input type="range"/>
+                                        </div>
+                                        <div className="location status"/>
+                                        <div className="zoom status"/>
+                                        <div className="window status"/>
+                                        <button className="invert">Invert</button>
+                                        <button className="reset">Reset</button>
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                     <div id="cover" style={{display: 'none'}} ref={this.myRef}>
                         <div id="mark-details">
@@ -319,7 +316,7 @@ export default class TestView extends Component {
                                                         <CustomFormControlLabel
                                                             disabled={this.state.attemptDetail.complete}
                                                             value={v.toString()}
-                                                            control={<CustomRadio />}
+                                                            control={<CustomRadio/>}
                                                             label={v}
                                                             key={i}
                                                         />
@@ -329,7 +326,7 @@ export default class TestView extends Component {
                                         </RadioGroup>
                                     </Col>
                                 </FormGroup>
-                                <Label >Lesions:</Label>
+                                <Label>Lesions:</Label>
                                 <Select
                                     isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
                                     placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select Lesions' : 'Select Lesions'}
@@ -362,11 +359,10 @@ export default class TestView extends Component {
                 </div>
             );
         } else {
-            return (<RctSectionLoader/>);
+            return (<RctSectionLoader style={{backgroundColor: 'black'}}/>);
         }
     }
 }
-
 
 
 const AntSwitch = withStyles(theme => ({
@@ -439,9 +435,9 @@ const CustomFormControlLabel = withStyles(theme => ({
 }))(FormControlLabel);
 
 const selectStyles = {
-    control: styles => ({ ...styles, backgroundColor: 'black' }),
-    menu: styles => ({ ...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    control: styles => ({...styles, backgroundColor: 'black'}),
+    menu: styles => ({...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
+    option: (styles, {data, isDisabled, isFocused, isSelected}) => {
         const color = chroma('yellow');
         return {
             ...styles,
@@ -467,18 +463,18 @@ const selectStyles = {
             },
         };
     },
-    multiValue: (styles, { data }) => {
+    multiValue: (styles, {data}) => {
         const color = chroma('yellow');
         return {
             ...styles,
             backgroundColor: color.alpha(0.1).css(),
         };
     },
-    multiValueLabel: (styles, { data }) => ({
+    multiValueLabel: (styles, {data}) => ({
         ...styles,
         color: 'yellow',
     }),
-    multiValueRemove: (styles, { data }) => ({
+    multiValueRemove: (styles, {data}) => ({
         ...styles,
         color: 'yellow',
         ':hover': {

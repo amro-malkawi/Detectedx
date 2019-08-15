@@ -2,14 +2,6 @@ import cornerstoneTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
 import cornerstoneMath from 'cornerstone-math';
 
-class Mark {
-
-}
-
-class Dtx {
-    static lesions = [];
-}
-
 const moveHandleNearImagePoint = cornerstoneTools.import('manipulators/moveHandleNearImagePoint');
 const BaseAnnotationTool = cornerstoneTools.import('base/BaseAnnotationTool');
 const getNewContext = cornerstoneTools.import('drawing/getNewContext');
@@ -31,31 +23,24 @@ export default class MarkerTool extends BaseAnnotationTool {
         const initialConfiguration = Object.assign(defaultConfig, configuration);
         super(initialConfiguration);
         this.initialConfiguration = initialConfiguration;
+        this.addMarkFunc = configuration.addMarkFunc;
+        this.editMarkFunc = configuration.editMarkFunc;
     }
 
     createNewMeasurement(eventData) {
         if (!eventData.currentPoints || !eventData.currentPoints.image)
             throw 'currentPoints.image not supplied to MarkerTool createNewMeasurement';
 
-        if (!eventData.element.viewer)
-            throw 'Target element has no viewer object';
-
-        let mark = new Mark(eventData.element.viewer.imageId, {
-            x: eventData.currentPoints.image.x,
-            y: eventData.currentPoints.image.y,
-            active: true
-        });
-
         this._handleMouseUp(_ => {
-            Dtx.popup.show(mark);
+            this.addMarkFunc(eventData.currentPoints.image);
         });
 
-        return mark;
+        // return mark;
     }
 
     pointNearTool(element, data, coords) {
         // precondition: toolData is a Mark object
-        const markCoords = cornerstone.pixelToCanvas(element, data.handle);
+        const markCoords = cornerstone.pixelToCanvas(element, data.handles.end);
         return cornerstoneMath.point.distance(markCoords, coords) < 10;
     }
 
@@ -83,8 +68,8 @@ export default class MarkerTool extends BaseAnnotationTool {
 
             draw(context, context => {
                 let lesionNames = [];
-                Dtx.lesions.forEach((v) => {
-                    if(mark.lesionTypes.indexOf(v.id.toString()) !== -1) {
+                MarkerTool.lesions.forEach((v) => {
+                    if(mark.lesionTypes.indexOf(v.id) !== -1) {
                         lesionNames.push(v.name);
                     }
                 });
@@ -92,7 +77,7 @@ export default class MarkerTool extends BaseAnnotationTool {
                 let padding;
                 if (mark.isTruth) {
                     colour = this.configuration.truthColour;
-                    padding = (lesionNames.length > 0 ? -45 : -30) - radius;
+                    padding = (lesionNames.length > 0 ? -30 : -15) - radius;
                 }
                 else {
                     colour = this.configuration.answerColour;
@@ -108,12 +93,12 @@ export default class MarkerTool extends BaseAnnotationTool {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
                     if ( !mark.isTruth ) {
                         drawTextBox(context, 'Your answer. Rate: ' + mark.rating, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
-                        drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
+                        // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     } else {
                         drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {centering: {x: true, y: true}});
-                        drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)}) (R = ${mark.radius})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
+                        // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)}) (R = ${mark.radius})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     }
-                    drawTextBox(context, lesionNames.join(','), textCoords.x, textCoords.y + padding + 30, colour, {centering: {x: true, y: true}});
+                    drawTextBox(context, lesionNames.join(','), textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                 }
             });
         }
@@ -122,10 +107,11 @@ export default class MarkerTool extends BaseAnnotationTool {
     handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
         // precondition: toolData is a Mark object
         moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
-        toolData.prepareForMove();
+        toolData.originalX = toolData.handles.end.x;
+        toolData.originalY = toolData.handles.end.y;
 
         this._handleMouseUp(_ => {
-            Dtx.popup.show(toolData);
+            this.editMarkFunc(toolData);
         });
     }
 
@@ -137,6 +123,8 @@ export default class MarkerTool extends BaseAnnotationTool {
 
         document.addEventListener('mouseup', _handler);
     }
+
+    static lesions = [];
 
     static loadMarks(id) {
         if (!window.marks || !window.marks[id])

@@ -124,20 +124,24 @@ div.viewer {
         background-color: black;
       }
 
-      .eye {
+      .control-btn {
         position: absolute;
         top: 10px;
-        left: 10px;
-        color: transparent;
-        font-size: 14px;
+        left: 5px;
 
-        i {
-          padding: 5px 6px;
-          border-radius: 15.5px;
-          color: #FFB300;
+        a {
+          margin-left: 5px;
+          color: transparent;
+          font-size: 14px;
 
-          &:hover {
-            background-color: #FFB30033;
+          i {
+            padding: 2px 3px;
+            border-radius: 15.5px;
+            color: #FFB300;
+
+            &:hover {
+              background-color: #FFB30033;
+            }
           }
         }
       }
@@ -154,58 +158,115 @@ div.viewer {
       }
 
       .zoom {
-        bottom: 25px;
+        bottom: 27px;
       }
 
       .location {
-        bottom: 42px;
+        bottom: 44px;
       }
 
-      button {
+      .slice {
+
         position: absolute;
+        right: 35px;
         bottom: 10px;
+        color: white;
+        font-size: 14px;
       }
 
       .invert {
+        position: absolute;
+        bottom: 10px;
         right: 18px;
       }
 
       .reset {
+        position: absolute;
+        bottom: 10px;
         right: 90px;
       }
 
-      .stack-scrollbar
-      {
-        height: 100%;
+      .side-bar {
         position: absolute;
         right: 0;
         top: 0;
-        margin: 5px;
+        bottom: 0;
         width: 13px;
-        input {
-          position: absolute;
-          top: 0;
-          left: 12px;
-          height: 12px;
-          width: 500px;
-          padding: 0;
-          transform: rotate(90deg);
-          transform-origin: top left;
-          -webkit-appearance: none;
-          background-color: rgba(0,0,0,0);
-          &::-webkit-slider-thumb {
-            -webkit-appearance: none !important;
-            background-color: #163239;
-            border: none;
-            border-radius: 57px;
-            cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        margin: 0 5px;
+
+        .change-btn {
+          display: flex;
+          flex-direction: column;
+          margin-left: -5px;
+
+          i {
+            color: white;
+          }
+        }
+
+        .stack-scrollbar {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          input {
+            position: relative;
+            top: 0;
+            left: 12px;
             height: 12px;
-            margin-top: -4px;
-            width: 39px;
+            width: 500px;
+            padding: 0;
+            transform: rotate(90deg);
+            transform-origin: top left;
+            -webkit-appearance: none;
+            background-color: rgba(0, 0, 0, 0);
+
+            &::-webkit-slider-thumb {
+              -webkit-appearance: none !important;
+              background-color: #163239;
+              border: none;
+              border-radius: 57px;
+              cursor: pointer;
+              height: 12px;
+              margin-top: -4px;
+              width: 39px;
+            }
           }
         }
       }
 
+      .floating-menu {
+        position: absolute;
+        right: 25px;
+        top: 7px;
+
+        .floating-item-content::-webkit-scrollbar-track
+        {
+          -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+          background-color: rgba(255,255,255,0.1);
+          border-radius: 10px;
+        }
+
+        .floating-item-content::-webkit-scrollbar
+        {
+          width: 10px;
+          background-color: transparent;
+        }
+
+        .floating-item-content::-webkit-scrollbar-thumb
+        {
+          border-radius: 10px;
+          background-color: #FFF;
+          background-image: -webkit-gradient(linear,
+                  40% 0%,
+                  75% 84%,
+                  from(#555555),
+                  to(#777777),
+                  color-stop(.6,#777777))
+        }
+      }
     }
   }
 
