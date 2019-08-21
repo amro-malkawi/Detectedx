@@ -12,7 +12,7 @@ export default function DtxLoader(imageUrl) {
     const promise = new Promise((resolve, reject) => {
         Apis.imagesUrlTemplate(imageId, stack).then((response) => {
             let data = response;
-            pyramid = new Pyramid(imageId, data);
+            pyramid = new Pyramid(imageId, data, stack);
 
             resolve({
                 imageId: imageId,

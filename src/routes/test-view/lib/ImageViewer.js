@@ -94,6 +94,8 @@ export default class ImageViewer extends Component {
         }
 
         this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack.bind(this));
+
+        this.imageElement.querySelector('canvas').oncontextmenu = function() {return false;}
     }
 
     initTools() {
@@ -225,7 +227,7 @@ export default class ImageViewer extends Component {
     handleMarkSave(data) {
         let act;
         data.image_id = this.props.imageInfo.id;
-        data.stack = this.state.currentStack;
+        data.stack = Number(this.state.currentStack) - 1;
         if (data.isNew) {
             act = 'answersAdd';
         } else {
@@ -251,7 +253,7 @@ export default class ImageViewer extends Component {
     renderMarks() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');
         this.markList.forEach((mark) => {
-            if(mark.stack === this.state.currentStack) {
+            if(mark.stack === Number(this.state.currentStack) - 1) {
                 let active = true;
                 let markerData = {
                     active: active,
@@ -334,7 +336,7 @@ export default class ImageViewer extends Component {
     }
 
     _renderPyramid(viewport) {
-        this.imageElement.pyramid.loadTilesForViewport(viewport);
+        this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
     }
 
     _updateImageInfo(event) {
@@ -431,11 +433,11 @@ export default class ImageViewer extends Component {
                                                 key={i}
                                                 answerCount={v.answerCount}
                                                 truthCount={v.truthCount}
-                                                label={'Slice ' + v.stack}
+                                                label={'Slice ' + (Number(v.stack) + 1)}
                                                 buttonTooltip={''}
-                                                active={this.state.currentStack === Number(v.stack)}
+                                                active={this.state.currentStack === Number(v.stack) + 1}
                                                 size={40}
-                                                onClick={() => this.setStack(v.stack)}
+                                                onClick={() => this.setStack(Number(v.stack) + 1)}
                                             />
                                         )
                                     }

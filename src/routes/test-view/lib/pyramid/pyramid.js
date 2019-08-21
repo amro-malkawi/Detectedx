@@ -1,7 +1,7 @@
 import Level from './level';
 
 export default class Pyramid {
-    constructor(imageId, data) {
+    constructor(imageId, data, stack) {
         let { id, width, height, max_depth, tileSize, urlTemplate } = data;
         this.imageId  = imageId;    // cornerstone image id, not db image id
         this.max_depth = max_depth;
@@ -20,7 +20,8 @@ export default class Pyramid {
         // element so layers can be loaded in response to pannning
         // and zooming.
         let imageElement = document.querySelector(`#image${id} .dicom`);
-        imageElement.pyramid = this;
+        if(imageElement.pyramid === undefined) imageElement.pyramid = {};
+        imageElement.pyramid[stack] = this;
 
         // as tiles load they're drawn into this (offscreen) canvas
         // before telling cornerstone to redraw from the canvas

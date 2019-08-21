@@ -2,13 +2,14 @@ import axios from 'axios';
 
 export default axios.create({
     baseURL: 'http://reactify.theironnetwork.org/data/',
-    timeout: 2000
+    timeout: 15000
 });
 
-export const apiAddress = window.location.protocol + '//' + window.location.hostname + ':3000';
+export const apiHost = window.location.protocol + '//' + window.location.hostname + ':3000';
+export const apiAddress = apiHost + '/api/';
 
 const instance = axios.create({
-    baseURL: apiAddress + '/api/',
+    baseURL: apiAddress,
     timeout: 20000
 });
 

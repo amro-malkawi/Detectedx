@@ -57,16 +57,19 @@ function stackScrollSync(synchronizer, sourceElement, targetElement, eventData) 
         return;
     }
 
+    // Get the stack of the source viewport
+    const sourceStackData = cornerstoneTools.getToolState(sourceElement, 'stack').data[0];
+
     // Get the stack of the target viewport
     const stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
     const stackData = stackToolDataSource.data[0];
 
     // Get the new index for the stack
-    let newImageIdIndex = stackData.currentImageIdIndex + eventData.direction;
+    let newImageIdIndex = sourceStackData.currentImageIdIndex;
 
     // Ensure the index does not exceed the bounds of the stack
     newImageIdIndex = Math.min(Math.max(0, newImageIdIndex), stackData.imageIds.length - 1);
-    console.log(newImageIdIndex);
+
     // If the index has not changed, stop here
     if (stackData.currentImageIdIndex === newImageIdIndex) {
         return;

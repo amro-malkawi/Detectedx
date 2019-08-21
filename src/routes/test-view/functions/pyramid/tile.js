@@ -22,7 +22,7 @@ export default class Tile {
         this.image.onload = _ => this._loaded();
 
         // construct the url for this tile
-        this.url = Apis.apiAddress + urlTemplate.replace('[depth]', level.depth)
+        this.url = Apis.apiHost + urlTemplate.replace('[depth]', level.depth)
                               .replace('[col]', col)
                               .replace('[row]', row);
     }
