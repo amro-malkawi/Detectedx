@@ -26,7 +26,7 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
         history.push('/');
     }).catch(error => {
         dispatch({type: LOGIN_USER_FAILURE});
-        NotificationManager.error(error.message);
+        NotificationManager.error(error.response.data.error.message);
     });
 }
 
@@ -45,12 +45,16 @@ export const logoutUserFromEmail = () => (dispatch) => {
  */
 export const signupUserInEmail = (user, history) => (dispatch) => {
     dispatch({type: SIGNUP_USER});
-    Apis.singUp(user.email, user.password).then((result) => {
-        dispatch({type: SIGNUP_USER_SUCCESS, payload: localStorage.getItem('user_id')});
-        history.push('/signin');
-        NotificationManager.success('Account Created Successfully!');
-    }).catch(error => {
-        dispatch({type: SIGNUP_USER_FAILURE});
-        NotificationManager.error(error.message);
+    return new Promise(function (resolve, reject) {
+        Apis.singUp(user.email, user.firstName, user.lastName, user.password).then((result) => {
+            dispatch({type: SIGNUP_USER_SUCCESS, payload: localStorage.getItem('user_id')});
+            history.push('/signin');
+            resolve(result);
+            // NotificationManager.success('Account Created Successfully!');
+        }).catch(error => {
+            dispatch({type: SIGNUP_USER_FAILURE});
+            reject(error);
+            // NotificationManager.error(error.response.data.error.message);
+        });
     });
 }

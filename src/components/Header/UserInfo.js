@@ -23,29 +23,15 @@ import IntlMessages from 'Util/IntlMessages';
 
 class UserInfo extends Component {
 
-    //Get Total Price
-    getTotalPrice() {
-        const { cart } = this.props;
-        let totalPrice = 0;
-        for (const item of cart) {
-            totalPrice += item.totalPrice
-        }
-        return totalPrice.toFixed(2);
-    }
-
-    //Is Cart Empty
-    isCartEmpty() {
-        const { cart } = this.props;
-        if (cart.length === 0) {
-            return true;
-        }
+    userProfile() {
+        this.props.history.push('/app/test/profile');
     }
 
     render() {
         const { cart, deleteItemFromCart, location } = this.props;
         return (
             <UncontrolledDropdown nav className="list-inline-item cart-dropdown">
-                <DropdownToggle nav className="p-0">
+                <DropdownToggle nav className="p-0" onClick={() => this.userProfile()}>
                     <Tooltip title="User Info" placement="bottom">
                         <IconButton aria-label="bag">
                             <i className="zmdi zmdi-account"></i>

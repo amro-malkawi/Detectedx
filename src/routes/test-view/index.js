@@ -17,6 +17,7 @@ import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
+import {NotificationManager} from "react-notifications";
 
 import Switch from "@material-ui/core/Switch";
 import {withStyles} from '@material-ui/core/styles';
@@ -25,7 +26,7 @@ import ImageViewer from './lib/ImageViewer'
 import Marker from './lib/marker';
 import panZoomSynchronizer from "./lib/panZoomSynchronizer";
 import viewerSynchronizer from "./lib/viewerSynchronizer";
-import {NotificationManager} from "react-notifications";
+import InstructionModal from './InstructionModal';
 
 export default class TestView extends Component {
 
@@ -49,6 +50,7 @@ export default class TestView extends Component {
             isShowPopup: false,
             isShowPopupDelete: true,
             selectedMarkData: {},
+            isShowInstructionModal: false,
         };
 
         this.popupCancelHandler = null;
@@ -147,7 +149,7 @@ export default class TestView extends Component {
         Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
             this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/3');
         }).catch((e) => {
-            console.warn(e.message);
+            console.warn(e.response.data.error.message);
         });
     }
 
@@ -256,6 +258,10 @@ export default class TestView extends Component {
                     test_case_index + 1 < test_case_length ?
                         <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(1)}> Next</Button> : null
                 }
+                {
+                    this.state.attemptDetail.complete ?
+                        null : <Button className={'ml-20 mr-10'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>Instruction</Button>
+                }
                 <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
             </nav>
         );
@@ -292,6 +298,7 @@ export default class TestView extends Component {
                     onShowPopup={this.handleShowPopup.bind(this)}
                     stackCount={item.stack_count}
                     complete={this.state.attemptDetail.complete}
+                    width={100 / this.state.test_case.images.length}
                     key={index}
                 />
             )
@@ -440,6 +447,10 @@ export default class TestView extends Component {
                                 </div>
                             </div> : null
                     }
+                    <InstructionModal
+                        isOpen={this.state.isShowInstructionModal}
+                        toggle={() => this.setState({isShowInstructionModal: false})}
+                    />
                 </div>
             );
         } else {

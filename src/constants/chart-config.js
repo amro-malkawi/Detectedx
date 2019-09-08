@@ -39,7 +39,7 @@ export const tooltipTextStyle = {
   fontSize: '12px',
   paddingTop: '5px',
   paddingBottom: '5px',
-  lineHeight: '1'
+  lineHeight: 'header.png'
 }
 
 export default ChartConfig;

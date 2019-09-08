@@ -8,7 +8,7 @@ import update from 'react-addons-update';
 const INIT_STATE = {
 	cart: [
 		{
-			objectID: '1',
+			objectID: 'header.png',
 			image: require('../assets/img/product-1.png'),
 			name: 'Speaker',
 			description: 'Rechargeable Battery',

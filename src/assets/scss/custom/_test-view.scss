@@ -117,7 +117,7 @@ div.viewer {
       height: 100%;
       position: relative;
       border: 1px solid #00a4d9;
-      width: 25%;
+      //width: 25%;
 
       .dicom {
         height: 100%;
@@ -312,6 +312,48 @@ div.viewer {
           text-align: right;
         }
       }
+    }
+  }
+}
+
+.instruction-container {
+  height: 100%;
+  border: 1px solid #9ccef9;
+  background-color: black;
+
+  .instruction-content {
+    max-height: 80%;
+    &::-webkit-scrollbar-track
+    {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      border-radius: 10px;
+      background-color: black;
+    }
+
+    &::-webkit-scrollbar
+    {
+      width: 12px;
+      background-color: black;
+    }
+
+    &::-webkit-scrollbar-thumb
+    {
+      border-radius: 10px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+      background-color: #333333;
+    }
+
+
+
+    p, ul {
+      color: #afafaf;
+      font-size: 18px;
+    }
+    ul {
+      padding-inline-start: 40px;
+    }
+    strong {
+      color: #eeeeee;
     }
   }
 }

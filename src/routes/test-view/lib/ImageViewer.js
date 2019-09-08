@@ -452,7 +452,7 @@ export default class ImageViewer extends Component {
     render() {
         const {imageInfo, viewerRef} = this.props;
         return (
-            <div className="image" id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
+            <div className="image" style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
                 <div className={'control-btn'}>
                     <a className="eye" onClick={() => this.toggleMarkInfo()}>
                         <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>

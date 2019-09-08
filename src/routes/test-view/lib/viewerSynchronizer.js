@@ -53,7 +53,15 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
 
 function stackScrollSync(synchronizer, sourceElement, targetElement, eventData) {    // stackScrollSynchronizer
     // If there is no event, or direction is 0, stop
-    if (!eventData || !eventData.direction) {
+
+    // if (!eventData || !eventData.direction) {
+    //     return;
+    // }
+
+    // Scale and/or translation are different, sync them
+    let targetIndex = targetElement.parentElement.dataset.index;
+    let sourceIndex = sourceElement.parentElement.dataset.index;
+    if(isNaN(targetIndex) || isNaN(sourceIndex) || !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
         return;
     }
 

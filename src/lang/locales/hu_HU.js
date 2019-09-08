@@ -737,7 +737,7 @@ module.exports = {
 	"components.confirmPayment": "Fizetés megerősítése",
 	"sidebar.saas": "SAAS",
 	"sidebar.multiLevel": "többszintű",
-	"sidebar.level1": "1. szint",
+	"sidebar.level1": "header.png. szint",
 	"sidebar.level2": "2. szint",
 	"sidebar.boxed": "Dobozban",
 	"sidebar.news": "hírek",

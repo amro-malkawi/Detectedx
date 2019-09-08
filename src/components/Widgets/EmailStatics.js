@@ -21,7 +21,7 @@ import { hexToRgbA } from 'Helpers/helpers';
 export default class EmailStatics extends Component {
 
   state = {
-    activeTabForTableSection: '1'
+    activeTabForTableSection: 'header.png'
   }
 
   toggleTableTabs = (tab) => {
@@ -38,8 +38,8 @@ export default class EmailStatics extends Component {
       <Fragment>
         <Nav tabs className="custom-tabs p-10">
           <NavItem>
-            <NavLink className={classnames({ active: this.state.activeTabForTableSection === '1' })}
-              onClick={() => { this.toggleTableTabs('1'); }}> <IntlMessages id="widgets.open" />
+            <NavLink className={classnames({ active: this.state.activeTabForTableSection === 'header.png' })}
+              onClick={() => { this.toggleTableTabs('header.png'); }}> <IntlMessages id="widgets.open" />
             </NavLink>
           </NavItem>
           <NavItem>

@@ -35,9 +35,16 @@ const AsyncAdvanceTestCompleteListComponent = Loadable({
     loading: () => <RctPageLoader/>,
 });
 
+// user profile components
+const AsyncAdvanceProfileComponent = Loadable({
+    loader: () => import("Routes/test/profile"),
+    loading: () => <RctPageLoader/>,
+});
+
 export {
     AsyncAdvanceTestListComponent,
     AsyncAdvanceTestViewComponent,
     AsyncAdvanceTestAttemptComponent,
-    AsyncAdvanceTestCompleteListComponent
+    AsyncAdvanceTestCompleteListComponent,
+    AsyncAdvanceProfileComponent
 };

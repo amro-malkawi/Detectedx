@@ -32,7 +32,7 @@ const stepName = {
     answer: 'Answer'
 };
 
-export default class TestQuestionnaire extends Component {
+export default class Attempt extends Component {
 
     constructor(props) {
         super(props);
@@ -262,7 +262,7 @@ export default class TestQuestionnaire extends Component {
         this.setState({isDownCert: true});
         Apis.attemptsCertificatePdf(this.state.attempts_id).then((resp) => {
         }).catch((e) => {
-            NotificationManager.error(e.message);
+            NotificationManager.error(e.response.data.error.message);
         }).finally(() => {
             this.setState({isDownCert: false});
         })

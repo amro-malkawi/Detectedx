@@ -9,6 +9,7 @@ import {
     AsyncAdvanceTestListComponent,
     AsyncAdvanceTestCompleteListComponent,
     AsyncAdvanceTestAttemptComponent,
+    AsyncAdvanceProfileComponent,
 } from 'Components/AsyncComponent/AsyncComponent';
 
 const Test = ({ match }) => (
@@ -19,6 +20,7 @@ const Test = ({ match }) => (
             <Route path={`${match.url}/complete-list/:attempt_id`} component={AsyncAdvanceTestCompleteListComponent} />
             <Route path={`${match.url}/attempt/:attempt_id/:step`} component={AsyncAdvanceTestAttemptComponent} />
             <Route path={`${match.url}/attempt/:attempt_id`} component={AsyncAdvanceTestAttemptComponent} />
+            <Route path={`${match.url}/profile`} component={AsyncAdvanceProfileComponent} />
         </Switch>
     </div>
 );

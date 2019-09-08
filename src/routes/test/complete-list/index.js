@@ -11,7 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import moment from 'moment';
 
-export default class score extends Component {
+export default class CompleteList extends Component {
 
     constructor(props) {
         super(props);

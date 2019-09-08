@@ -16,11 +16,11 @@ const instance = axios.create({
 instance.interceptors.response.use(response => {
     return response;
 }, error => {
-    if (error.response.status === 401) {
+    if (error.response.status === 401 && error.request.responseURL.indexOf('api/users/login') === -1) {
         localStorage.removeItem('user_id');
         window.location.reload();
     }
-    return error;
+    throw error;
 });
 
 export function getAccessToken() {
@@ -36,13 +36,39 @@ export function login(email, password) {
     return instance.post(url, req).then((response) => response.data);
 }
 
-export function singUp(email, password) {
+export function singUp(email, firstName, lastName, password) {
     const url = '/users';
     const req = {
         email,
+        first_name: firstName,
+        last_name: lastName,
         password
     };
     return instance.post(url, req).then((response) => response.data);
+}
+
+export function changePassword(curPass, newPass) {
+    let url = '/users/change-password?access_token=' + getAccessToken();
+    const req = {
+        oldPassword: curPass,
+        newPassword: newPass
+    };
+    return instance.post(url, req).then((response) => response.data);
+}
+
+export function checkEmailStatus(id) {
+    const url = '/users/' + id + '/email-status';
+    return instance.get(url).then((response) => response.data);
+}
+
+export function userVerify(id) {
+    const url = '/users/' + id + '/verify';
+    return instance.post(url, {}).then((response) => response.data);
+}
+
+export function userConfirm(id, token) {
+    const url = '/users/confirm?uid=' + id + '&token=' + token;
+    return instance.get(url, ).then((response) => response.data);
 }
 
 /**
@@ -59,16 +85,46 @@ export function userAdd(data) {
     return instance.post(url, data).then((response) => response.data);
 }
 
-export function userUpdate(id, data) {
-    const url = '/users/' + id + '?access_token=' + getAccessToken();
+export function userUpdate(data) {
+    const url = '/users/update-info?access_token=' + getAccessToken();
     delete data["created_at"];
     delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
+    return instance.post(url, data).then((response) => response.data);
 }
 
 export function userDelete(id) {
     const url = '/users/' + id + '?access_token=' + getAccessToken();
     return instance.delete(url).then((response) => response.data);
+}
+
+export function userInfo() {
+    let url = '/users/info?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+
+/**
+ * User positions functions
+ */
+export function userPositions() {
+    let url = '/user_positions?access_token=' + getAccessToken() + '&filter=' + encodeURI(JSON.stringify({order: 'position ASC'}));
+    return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * User interest functions
+ */
+export function userInterests() {
+    let url = '/user_interests?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * User placeOfWork functions
+ */
+export function userPlaceOfWorks() {
+    let url = '/user_placeofworks?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 
 /**

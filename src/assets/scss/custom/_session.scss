@@ -10,7 +10,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   .session-inner-wrapper {
-    transform: translate3d(0%, 40%, 0);
+    transform: translate3d(0%, 10%, 0);
     padding-bottom: 1.875rem;
   }
 }
@@ -98,6 +98,9 @@
   .has-wrapper {
     .has-input {
       @include border(1px solid, $input-border-color, top bottom left right);
+    }
+    .has-error-input {
+      @include border(1px solid, red, top bottom left right);
     }
   }
 }
