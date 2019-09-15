@@ -134,7 +134,7 @@ export default class TestView extends Component {
     }
 
     onMove(seek) { // previous -1, next 1
-        let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
         let next_test_case_id = this.state.test_set_cases[test_case_index + seek];
         this.setState({test_cases_id: next_test_case_id, loading: true}, () => {
             let url = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + next_test_case_id;
@@ -242,7 +242,7 @@ export default class TestView extends Component {
     }
 
     renderNav() {
-        let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
         let test_case_length = this.state.test_set_cases.length;
         return (
             <nav>
@@ -299,86 +299,142 @@ export default class TestView extends Component {
                     stackCount={item.stack_count}
                     complete={this.state.attemptDetail.complete}
                     width={100 / this.state.test_case.images.length}
+                    tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
                     key={index}
                 />
             )
         });
     }
 
+    renderTools(){
+        let tools = this.state.test_case.modalities.tools;
+        tools = tools === null ? [] : tools.split(',');
+        return (
+            <div id="tools">
+                {
+                    tools.indexOf('Pan') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
+                            <svg id="icon-tools-pan" viewBox="0 0 18 18">
+                                <title>Pan</title>
+                                <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path id="icon-tools-pan-line-v" d="M9,1 L9,17"/>
+                                    <path id="icon-tools-pan-line-h" d="M1,9 L17,9"/>
+                                    <polyline id="icon-tools-pan-caret-t" points="7 3 9 1 11 3"/>
+                                    <polyline id="icon-tools-pan-caret-r" points="15 11 17 9 15 7"/>
+                                    <polyline id="icon-tools-pan-caret-b" points="11 15 9 17 7 15"/>
+                                    <polyline id="icon-tools-pan-caret-l" points="3 7 1 9 3 11"/>
+                                </g>
+                            </svg>
+                            <p>Pan</p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('Zoom') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"
+                             onClick={() => this.onChangeCurrentTool('Zoom')}>
+                            <svg id="icon-tools-zoom" viewBox="0 0 17 17">
+                                <title>Zoom</title>
+                                <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
+                                    <path id="icon-tools-zoom-path" d="m11.5,11.5 4.5,4.5"/>
+                                    <circle id="icon-tools-zoom-circle" cx="7" cy="7" r="6"/>
+                                </g>
+                            </svg>
+                            <p>Zoom</p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('Wwwc') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
+                            <svg id="icon-tools-levels" viewBox="0 0 18 18">
+                                <g id="icon-tools-levels-group">
+                                    <path id="icon-tools-levels-path" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8"/>
+                                    <circle id="icon-tools-levels-circle" cx="9" cy="9" r="8" fill="none" strokeWidth="2"/>
+                                </g>
+                            </svg>
+                            <p>Window</p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('Length') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => this.onChangeCurrentTool('Length')}>
+                            <svg name="measure-temp" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" fill="none">
+                                <title>Measure Temp</title>
+                                <g strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="6.5" cy="6.5" r="6" style={{fill: 'transparent'}}/>
+                                    <path d="M6.5 3v7M3 6.5h7"/><path d="M22.5 6L6 22.5" strokeWidth="3" strokeDasharray="0.6666,5"/>
+                                </g>
+                            </svg>
+                            <p>Length</p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('Angle') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Angle' ? ' active' : '')} data-tool="Angle" onClick={() => this.onChangeCurrentTool('Angle')}>
+                            <svg name="angle-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" width="1em" height="1em" fill="currentColor">
+                                <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/>
+                            </svg>
+                            <p>Angle</p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('EllipticalRoi') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi" onClick={() => this.onChangeCurrentTool('EllipticalRoi')}>
+                            <svg name="circle-o" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor">
+                                <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200z"/>
+                            </svg>
+                            <p>Ellipse</p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('RectangleRoi') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'RectangleRoi' ? ' active' : '')} data-tool="RectangleRoi" onClick={() => this.onChangeCurrentTool('RectangleRoi')}>
+                            <svg name="square-o" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="1em" height="1em" fill="currentColor">
+                                <path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"/>
+                            </svg>
+                            <p>Rectangle</p>
+                        </div> : null
+                }
+
+                {
+                    tools.indexOf('Marker') === -1 || this.state.attemptDetail.complete ? null :
+                        <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
+                            <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
+                                <path
+                                    d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"/>
+                            </svg>
+                            <p>Mark</p>
+                        </div>
+                }
+                <div className="tool">
+                    <AntSwitch
+                        defaultChecked
+                        onChange={(e) => this.onChangeSynchonize(e)}
+                        value="checkedB"
+                    />
+                    <p>&nbsp;Sync</p>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         if (!this.state.loading) {
             let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
-            let test_case_index = this.state.test_set_cases.indexOf(Number(this.state.test_cases_id));
+            let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
             let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {
                 return {label: v.name, value: v.id}
             });
             return (
                 <div className="viewer">
                     <div id="toolbar">
-                        <div id="tools">
-                            <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
-                                <svg id="icon-tools-pan" viewBox="0 0 18 18">
-                                    <title>Pan</title>
-                                    <g id="icon-tools-pan-group" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path id="icon-tools-pan-line-v" d="M9,1 L9,17"/>
-                                        <path id="icon-tools-pan-line-h" d="M1,9 L17,9"/>
-                                        <polyline id="icon-tools-pan-caret-t" points="7 3 9 1 11 3"/>
-                                        <polyline id="icon-tools-pan-caret-r" points="15 11 17 9 15 7"/>
-                                        <polyline id="icon-tools-pan-caret-b" points="11 15 9 17 7 15"/>
-                                        <polyline id="icon-tools-pan-caret-l" points="3 7 1 9 3 11"/>
-                                    </g>
-                                </svg>
-                                <p>Pan</p>
-                            </div>
-                            <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"
-                                 onClick={() => this.onChangeCurrentTool('Zoom')}>
-                                <svg id="icon-tools-zoom" viewBox="0 0 17 17">
-                                    <title>Zoom</title>
-                                    <g id="icon-tools-zoom-group" fill="none" strokeWidth="2" strokeLinecap="round">
-                                        <path id="icon-tools-zoom-path" d="m11.5,11.5 4.5,4.5"/>
-                                        <circle id="icon-tools-zoom-circle" cx="7" cy="7" r="6"/>
-                                    </g>
-                                </svg>
-                                <p>Zoom</p>
-                            </div>
-                            <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
-                                <svg id="icon-tools-levels" viewBox="0 0 18 18">
-                                    <title>Window / Level</title>
-                                    <g id="icon-tools-levels-group">
-                                        <path id="icon-tools-levels-path" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8"/>
-                                        <circle id="icon-tools-levels-circle" cx="9" cy="9" r="8" fill="none" strokeWidth="2"/>
-                                    </g>
-                                </svg>
-                                <p>Window</p>
-                            </div>
-                            {
-                                this.state.attemptDetail.complete ? null :
-                                    <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
-                                        <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
-                                            <title>Elliptical ROI</title>
-                                            <path
-                                                d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"/>
-                                        </svg>
-                                        <p>Mark</p>
-                                    </div>
-                            }
-                            <div className="tool">
-                                <AntSwitch
-                                    defaultChecked
-                                    onChange={(e) => this.onChangeSynchonize(e)}
-                                    value="checkedB"
-                                />
-                                <p>&nbsp;Sync</p>
-                            </div>
-                        </div>
-
+                        {this.renderTools()}
                         {this.renderTestResult()}
 
                         <h1>{test_case_index + 1} / {this.state.test_set_cases.length}</h1>
 
                         {this.renderNav()}
                     </div>
-                    <div id="images">
+                    <div id="images" className={'cursor-' + this.state.currentTool}>
                         {this.renderImageViewer()}
                     </div>
                     {

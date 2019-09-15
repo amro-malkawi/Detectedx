@@ -88,7 +88,7 @@ export default class list extends Component {
                                                         <Button
                                                             className="mr-10 mt-5 mb-5"
                                                             outline color="info" size="sm"
-                                                            onClick={() => this.props.history.push('/app/test/complete-list/' + (item.test_sets.attempts[0].complete ? item.test_sets.attempts[0].id : item.test_sets.attempts[1].id))}>
+                                                            onClick={() => this.props.history.push('/app/test/complete-list/' + item.test_sets.id)}>
                                                             Scores
                                                         </Button> : null
                                                 }

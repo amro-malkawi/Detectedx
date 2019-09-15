@@ -10,6 +10,11 @@ const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
+const LengthTool = cornerstoneTools.LengthTool;
+const AngleTool = cornerstoneTools.AngleTool;
+const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
+const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
+
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
 
 export default class ImageViewer extends Component {
@@ -89,7 +94,7 @@ export default class ImageViewer extends Component {
             this.imageElement.parentNode.querySelector('.location').textContent = `(x: ${x}, y: ${y})`;
         });
 
-        if(!this.props.complete) {
+        if(!this.props.complete && this.props.tools.indexOf('Marker') !== -1) {
             this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleAddMark(event.detail.currentPoints.image));
         }
 
@@ -108,6 +113,10 @@ export default class ImageViewer extends Component {
         cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
         cornerstoneTools.addToolForElement(this.imageElement, PanTool);
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
+        cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+        cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
+        cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);
+        cornerstoneTools.addToolForElement(this.imageElement, RectangleRoiTool);
 
         // add the zoom tools, setting the min scale (which defaults to
         // 0.25 - too large to show the whole image within frame)
@@ -207,7 +216,6 @@ export default class ImageViewer extends Component {
     }
 
     handleMarkCancel() {
-        console.warn('cancel')
         this.renderMarks();
     }
 
@@ -221,7 +229,6 @@ export default class ImageViewer extends Component {
             alert('An error occurred deleting this mark');
         }).finally(() => {
         });
-        console.warn('delete', deleteId);
     }
 
     handleMarkSave(data) {
@@ -235,7 +242,7 @@ export default class ImageViewer extends Component {
         }
         console.warn(data.id);
         Apis[act](data).then(response => {
-            response.lesionTypes = response.answer_lesion_types.map((v) => Number(v));
+            response.lesionTypes = response.answer_lesion_types;
             if (data.isNew) {
                 this.markList.push(response);
             } else {
@@ -306,11 +313,11 @@ export default class ImageViewer extends Component {
 
     resetTool(previousName, nextName) {
         // deactive
-        if (previousName != 'Marker') {
-            cornerstoneTools.setToolDisabled(previousName);
-        } else {
+        // if (previousName != 'Marker') {
+        //     cornerstoneTools.setToolDisabled(previousName);
+        // } else {
             cornerstoneTools.setToolPassive(previousName);
-        }
+        // }
         //active
         cornerstoneTools.setToolActive(nextName, {
             mouseButtonMask: 1
@@ -327,6 +334,13 @@ export default class ImageViewer extends Component {
         this.setState({isShowMarkInfo: !this.state.isShowMarkInfo}, () => {
             cornerstone.invalidate(this.imageElement);
         });
+    }N
+
+    onClearSymbols(){
+        if(this.props.currentTool !== 'Marker') {
+            cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
+            cornerstone.invalidate(this.imageElement);
+        }
     }
 
     onReset() {
@@ -451,6 +465,7 @@ export default class ImageViewer extends Component {
 
     render() {
         const {imageInfo, viewerRef} = this.props;
+        console.log('asdasdf');
         return (
             <div className="image" style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
                 <div className={'control-btn'}>
@@ -462,6 +477,9 @@ export default class ImageViewer extends Component {
                     </a>
                     <a onClick={() => null}>
                         <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
+                    </a>
+                    <a onClick={() => null}>
+                        <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
                     </a>
                 </div>
                 <div className="dicom"/>
