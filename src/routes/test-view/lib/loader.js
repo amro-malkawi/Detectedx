@@ -33,8 +33,8 @@ export default function DtxLoader(imageUrl) {
                 width: data.width,
                 color: true,
                 rgba: true,
-                columnPixelSpacing: undefined,
-                rowPixelSpacing: undefined,
+                columnPixelSpacing: data.column_pixel_spacing === undefined || isNaN(data.column_pixel_spacing) ? 0.1 : Number(data.column_pixel_spacing),
+                rowPixelSpacing: data.row_pixel_spacing === undefined || isNaN(data.row_pixel_spacing) ? 0.1 : Number(data.row_pixel_spacing),
                 invert: false,
                 sizeInBytes: data.width * data.height * 4
             });

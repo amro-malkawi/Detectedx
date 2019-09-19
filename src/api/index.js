@@ -36,6 +36,11 @@ export function login(email, password) {
     return instance.post(url, req).then((response) => response.data);
 }
 
+export function logout() {
+    const url = '/users/logout?access_token=' + getAccessToken();
+    return instance.post(url, {}).then((response) => response.data);
+}
+
 export function singUp(email, firstName, lastName, password) {
     const url = '/users';
     const req = {
@@ -655,5 +660,23 @@ export function answersUpdate(data) {
 
 export function answersDelete(id) {
     const url = '/answers/' + id + '?access_token=' + getAccessToken();
+    return instance.delete(url).then((response) => response.data);
+}
+
+/**
+ * shape opertaion
+ */
+export function shapeAdd(data) {
+    const url = '/shapes?access_token=' + getAccessToken();
+    return instance.post(url, data).then((response) => response.data);
+}
+
+export function shapeUpdate(data) {
+    const url = '/shapes/' + data.id + '?access_token=' + getAccessToken();
+    return instance.put(url, data).then((response) => response.data);
+}
+
+export function shapeDelete(id) {
+    const url = '/shapes/' + id + '?access_token=' + getAccessToken();
     return instance.delete(url).then((response) => response.data);
 }

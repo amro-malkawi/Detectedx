@@ -3,7 +3,12 @@ import {Button, IconButton} from "@material-ui/core";
 import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
-import MarkerTool from "./marker";
+import MarkerTool from "./tools/MarkerTool";
+// import LengthTool from "./tools/LengthTool";
+// import AngleTool from "./tools/AngleTool";
+// import EllipticalRoiTool from "./tools/EllipticalRoiTool";
+// import ArrowAnnotateTool from "./tools/ArrowAnnotateTool";
+
 import * as Apis from "Api/index";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
@@ -14,8 +19,17 @@ const LengthTool = cornerstoneTools.LengthTool;
 const AngleTool = cornerstoneTools.AngleTool;
 const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
 const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
+const ArrowAnnotateTool = cornerstoneTools.ArrowAnnotateTool;
+const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
+const EraserTool = cornerstoneTools.EraserTool;
 
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
+
+function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+}
 
 export default class ImageViewer extends Component {
 
@@ -83,6 +97,7 @@ export default class ImageViewer extends Component {
     }
 
     initEvents() {
+        const that = this;
         this.imageElement.addEventListener('cornerstoneimagerendered', (event) => {
             this.wasDrawn(event);
         });
@@ -101,6 +116,28 @@ export default class ImageViewer extends Component {
         this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack.bind(this));
 
         this.imageElement.querySelector('canvas').oncontextmenu = function() {return false;}
+
+        // this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', function (event) {
+        //     console.log('completed', event);
+        //     const toolData = cornerstoneTools.getToolState(that.imageElement, that.props.currentTool);
+        //     // console.log(toolData);
+        //     const toolStateManager = cornerstoneTools.getElementToolStateManager(that.imageElement);
+        //     const toolState = toolStateManager.saveToolState();
+        //     console.log(toolState);
+        //     const uuid = Object.keys(toolState)[0];
+        //     const toolNames = Object.keys(toolState[uuid]);
+        //     for(let tool in toolState[uuid]){
+        //         toolState[uuid][tool].data.forEach((v) => v.id = uuidv4());
+        //     }
+        // });
+        // this.imageElement.addEventListener('cornerstonemeasurementremoved', function (event) {
+        //     console.log('remove', event)
+        // });
+
+        this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleChangeShapes.bind(this));
+        // this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', function (event) {
+        //     console.log('modified', event);
+        // });
     }
 
     initTools() {
@@ -117,6 +154,9 @@ export default class ImageViewer extends Component {
         cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
         cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);
         cornerstoneTools.addToolForElement(this.imageElement, RectangleRoiTool);
+        cornerstoneTools.addToolForElement(this.imageElement, ArrowAnnotateTool);
+        cornerstoneTools.addToolForElement(this.imageElement, FreehandMouseTool);
+        cornerstoneTools.addToolForElement(this.imageElement, EraserTool);
 
         // add the zoom tools, setting the min scale (which defaults to
         // 0.25 - too large to show the whole image within frame)
@@ -187,6 +227,7 @@ export default class ImageViewer extends Component {
     }
 
     handleAddMark(point) {
+        if(this.props.currentTool === 'FreehandMouse') return;
         let markerData = {
             active: true,
             handles: {
@@ -255,6 +296,20 @@ export default class ImageViewer extends Component {
         }).finally(() => {
         });
         console.warn('save')
+    }
+
+    handleChangeShapes(event) {
+        console.log('completed', event);
+        const toolData = cornerstoneTools.getToolState(this.imageElement, this.props.currentTool);
+        console.log(toolData);
+        const toolStateManager = cornerstoneTools.getElementToolStateManager(this.imageElement);
+        const toolState = toolStateManager.saveToolState();
+        console.log(toolState);
+        // const uuid = Object.keys(toolState)[0];
+        // const toolNames = Object.keys(toolState[uuid]);
+        // for(let tool in toolState[uuid]){
+        //     toolState[uuid][tool].data.forEach((v) => v.id = uuidv4());
+        // }
     }
 
     renderMarks() {

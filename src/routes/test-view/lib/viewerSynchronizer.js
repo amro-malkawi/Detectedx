@@ -64,7 +64,9 @@ function stackScrollSync(synchronizer, sourceElement, targetElement, eventData) 
     if(isNaN(targetIndex) || isNaN(sourceIndex) || !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
         return;
     }
-
+    if(cornerstoneTools.getToolState(sourceElement, 'stack') === undefined || cornerstoneTools.getToolState(targetElement, 'stack') === undefined) {
+        return;
+    }
     // Get the stack of the source viewport
     const sourceStackData = cornerstoneTools.getToolState(sourceElement, 'stack').data[0];
 

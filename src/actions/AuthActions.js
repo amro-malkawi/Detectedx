@@ -34,10 +34,13 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
  * Redux Action To Signout User From  Email
  */
 export const logoutUserFromEmail = () => (dispatch) => {
-    dispatch({type: LOGOUT_USER});
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('access_token');
-    NotificationManager.success('User Logout Successfully');
+    Apis.logout().then(() => {
+    }).finally(() => {
+        dispatch({type: LOGOUT_USER});
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('access_token');
+        NotificationManager.success('User Logout Successfully');
+    });
 }
 
 /**
