@@ -48,18 +48,25 @@ export default class ImageViewer extends Component {
             currentImageIdIndex: 0,
             imageIds: []
         };
-
         this.markList = [];
-        this.props.marker.answers && this.props.marker.answers.forEach((mark) => {
+        this.props.answers.answers && this.props.answers.answers.forEach((mark) => {
             mark.isTruth = false;
             mark.lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
             this.markList.push(mark);
         });
-        this.props.marker.truths && this.props.marker.truths.forEach((mark) => {
+        this.props.answers.truths && this.props.answers.truths.forEach((mark) => {
             mark.isTruth = true;
             mark.lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id);
             this.markList.push(mark);
         });
+        this.shapeList = {};
+        this.props.answers.shapes && this.props.answers.shapes.forEach((shape) => {
+            let measurementData = JSON.parse(shape.data);
+            if(this.shapeList[shape.type] === undefined) this.shapeList[shape.type] = [];
+            this.shapeList[shape.type].push({stack: shape.stack, measurementData});
+        });
+
+        this.tempModifiedShape = null;
     }
 
     componentDidMount() {
@@ -97,7 +104,6 @@ export default class ImageViewer extends Component {
     }
 
     initEvents() {
-        const that = this;
         this.imageElement.addEventListener('cornerstoneimagerendered', (event) => {
             this.wasDrawn(event);
         });
@@ -117,27 +123,10 @@ export default class ImageViewer extends Component {
 
         this.imageElement.querySelector('canvas').oncontextmenu = function() {return false;}
 
-        // this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', function (event) {
-        //     console.log('completed', event);
-        //     const toolData = cornerstoneTools.getToolState(that.imageElement, that.props.currentTool);
-        //     // console.log(toolData);
-        //     const toolStateManager = cornerstoneTools.getElementToolStateManager(that.imageElement);
-        //     const toolState = toolStateManager.saveToolState();
-        //     console.log(toolState);
-        //     const uuid = Object.keys(toolState)[0];
-        //     const toolNames = Object.keys(toolState[uuid]);
-        //     for(let tool in toolState[uuid]){
-        //         toolState[uuid][tool].data.forEach((v) => v.id = uuidv4());
-        //     }
-        // });
-        // this.imageElement.addEventListener('cornerstonemeasurementremoved', function (event) {
-        //     console.log('remove', event)
-        // });
-
-        this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleChangeShapes.bind(this));
-        // this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', function (event) {
-        //     console.log('modified', event);
-        // });
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', this.handleAddShape.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleRemoveShape.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', this.handleModifyShape.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
     }
 
     initTools() {
@@ -146,18 +135,35 @@ export default class ImageViewer extends Component {
         let viewport = cornerstone.getViewport(this.imageElement);
         this.originalViewport = this.duplicateViewport(viewport);
 
+
+
+
+
+        // const toolStateManager = cornerstoneTools.getElementToolStateManager(this.imageElement);
+        // const newStackToolStateManager = cornerstoneTools.newStackSpecificToolStateManager(['Length', 'Angle'], toolStateManager);
+        // cornerstoneTools.setElementToolStateManager(this.imageElement, newStackToolStateManager);
+
+
+
         // add all tools to the image
+        const setToolElementFunc = !this.props.complete ? 'setToolPassiveForElement' : 'setToolEnabledForElement';
         cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
         cornerstoneTools.addToolForElement(this.imageElement, PanTool);
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
         cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
         cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'Angle');
         cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'EllipticalRoi');
         cornerstoneTools.addToolForElement(this.imageElement, RectangleRoiTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'RectangleRoi');
         cornerstoneTools.addToolForElement(this.imageElement, ArrowAnnotateTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'ArrowAnnotate');
         cornerstoneTools.addToolForElement(this.imageElement, FreehandMouseTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'FreehandMouse');
         cornerstoneTools.addToolForElement(this.imageElement, EraserTool);
-
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'Eraser');
         // add the zoom tools, setting the min scale (which defaults to
         // 0.25 - too large to show the whole image within frame)
         cornerstoneTools.addToolForElement(this.imageElement, ZoomTool, {
@@ -176,7 +182,7 @@ export default class ImageViewer extends Component {
         // the marker tool is always in passive or active mode (passive so
         // existing marks can be rendered at all times)
         if (this.props.currentTool !== 'Marker') {
-            cornerstoneTools.setToolPassiveForElement(this.imageElement, 'Marker');
+            cornerstoneTools[setToolElementFunc](this.imageElement, 'Marker');
         }
 
         // enable the current tool as well (used when adding a new image after
@@ -198,13 +204,12 @@ export default class ImageViewer extends Component {
             // images are loaded with the zoom mousewheel enabled by default
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }
-
-
-
         // render the first appropriate level of the pyramid
         this._renderPyramid(this.originalViewport);
-
+        // render shapes
+        this.renderShapes();
         this.renderMarks();
+
     }
 
     static adjustSlideSize() {
@@ -222,6 +227,7 @@ export default class ImageViewer extends Component {
 
     handleChangeStack(e, data) {
         this.setState({currentStack: this.stack.currentImageIdIndex + 1}, () => {
+            this.renderShapes();
             this.renderMarks();
         });
     }
@@ -298,18 +304,68 @@ export default class ImageViewer extends Component {
         console.warn('save')
     }
 
-    handleChangeShapes(event) {
-        console.log('completed', event);
-        const toolData = cornerstoneTools.getToolState(this.imageElement, this.props.currentTool);
-        console.log(toolData);
-        const toolStateManager = cornerstoneTools.getElementToolStateManager(this.imageElement);
-        const toolState = toolStateManager.saveToolState();
-        console.log(toolState);
-        // const uuid = Object.keys(toolState)[0];
-        // const toolNames = Object.keys(toolState[uuid]);
-        // for(let tool in toolState[uuid]){
-        //     toolState[uuid][tool].data.forEach((v) => v.id = uuidv4());
-        // }
+    handleAddShape(event) {
+        console.log('completed', event.detail);
+        this.tempModifiedShape = null;
+        if(event.detail.measurementData.id === undefined) {
+            event.detail.measurementData.id = uuidv4();
+            const data = {
+                id: event.detail.measurementData.id,
+                image_id: this.props.imageInfo.id,
+                attempt_id: this.props.attemptId,
+                test_case_id: this.props.imageInfo.test_case_id,
+                type: event.detail.toolName || event.detail.toolType,
+                data: JSON.stringify(event.detail.measurementData).replace(/-?\d+\.\d+/g, function(x) { return parseFloat(x).toFixed(2) }),
+                stack: Number(this.state.currentStack) - 1,
+            };
+            Apis.shapeAdd(data).then(resp => {
+                console.log('completed', event.detail.measurementData.id);
+                if(this.shapeList[data.type] === undefined) this.shapeList[data.type] = [];
+                this.shapeList[data.type].push({stack: data.stack, measurementData: JSON.parse(data.data)});
+            });
+        }
+    }
+
+    handleModifyShape(event) {
+        this.tempModifiedShape = event.detail;
+        console.log('modify event', event.detail.measurementData)
+    }
+
+    handleRemoveShape(event) {
+        this.tempModifiedShape = null;
+        const that = this;
+        // This timeout is needed because remove event is sometimes called before complete event is called.
+        setTimeout(function () {
+            const shapeId = event.detail.measurementData.id;
+            const type = event.detail.toolName || event.detail.toolType;
+            Apis.shapeDelete(shapeId).then(resp => {
+                console.log('removed', event.detail.measurementData.id);
+                const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
+                that.shapeList[type].splice(index, 1);
+            });
+        }, 500);
+    }
+
+    handleMouseUp(event) {
+        const that = this;
+        setTimeout(function () {
+            if(that.tempModifiedShape !== null && that.tempModifiedShape.measurementData.id !== undefined) {
+                const data = {
+                    id: that.tempModifiedShape.measurementData.id,
+                    image_id: that.props.imageInfo.id,
+                    attempt_id: that.props.attemptId,
+                    test_case_id: that.props.imageInfo.test_case_id,
+                    type: that.tempModifiedShape.toolName || that.tempModifiedShape.toolType,
+                    data: JSON.stringify(that.tempModifiedShape.measurementData).replace(/-?\d+\.\d+/g, function(x) { return parseFloat(x).toFixed(2) }),
+                    stack: Number(that.state.currentStack) - 1,
+                };
+                Apis.shapeUpdate(data).then(resp => {
+                    console.log('modified shape');
+                    const index = that.shapeList[data.type].map((v) => v.measurementData.id).indexOf(data.id);
+                    that.shapeList[data.type][index] = {stack: data.stack, measurementData: JSON.parse(data.data)};
+                });
+            }
+        }, 500);
     }
 
     renderMarks() {
@@ -342,6 +398,17 @@ export default class ImageViewer extends Component {
             }
         });
         cornerstone.invalidate(this.imageElement);
+    }
+
+    renderShapes() {
+        for(let type in this.shapeList) {
+            cornerstoneTools.clearToolState(this.imageElement, type);
+            this.shapeList[type].forEach((v) => {
+                if(v.stack === Number(this.state.currentStack) - 1) {
+                    cornerstoneTools.addToolState(this.imageElement, type, v.measurementData);
+                }
+            });
+        }
     }
 
     duplicateViewport(viewport) {
@@ -389,12 +456,15 @@ export default class ImageViewer extends Component {
         this.setState({isShowMarkInfo: !this.state.isShowMarkInfo}, () => {
             cornerstone.invalidate(this.imageElement);
         });
-    }N
+    }
 
     onClearSymbols(){
         if(this.props.currentTool !== 'Marker') {
             cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
             cornerstone.invalidate(this.imageElement);
+            Apis.shapeDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id, this.props.currentTool).then((resp) => {
+
+            });
         }
     }
 
@@ -520,7 +590,6 @@ export default class ImageViewer extends Component {
 
     render() {
         const {imageInfo, viewerRef} = this.props;
-        console.log('asdasdf');
         return (
             <div className="image" style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
                 <div className={'control-btn'}>

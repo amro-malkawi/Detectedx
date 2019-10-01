@@ -84,7 +84,7 @@ export default class list extends Component {
                                             </div>
                                             <div>
                                                 {
-                                                    item.test_sets.attempts[1] !== undefined && item.test_sets.attempts[1].complete ?
+                                                    item.test_sets.attempts.some((v) => v.complete) ?
                                                         <Button
                                                             className="mr-10 mt-5 mb-5"
                                                             outline color="info" size="sm"

@@ -594,13 +594,18 @@ export function attemptsUpdate(id, data) {
     return instance.patch(url, data).then((response) => response.data);
 }
 
+export function attemptsMoveTestCase(id, testCaseId) {
+    const url = '/attempts/' + id + '/move_test_case?test_case_id=' + testCaseId + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 export function attemptsComplete(id) {
     const url = '/attempts/' + id + '/complete?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsDetail(id) {
-    const url = '/attempts/' + id + '/detail?access_token=' + getAccessToken();
+export function attemptsDetail(id, testCaseId) {
+    const url = '/attempts/' + id + '/detail/?test_case_id=' + testCaseId + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -641,7 +646,12 @@ export function attemptsCertificatePdf(id) {
 }
 
 export function attemptsPercentile(id) {
-    const url = '/attempts/' + id + '/percentile?&access_token=' + getAccessToken();
+    const url = '/attempts/' + id + '/percentile?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsQuality(id, test_case_id, quality) {
+    const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&quality=' + quality + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -679,4 +689,15 @@ export function shapeUpdate(data) {
 export function shapeDelete(id) {
     const url = '/shapes/' + id + '?access_token=' + getAccessToken();
     return instance.delete(url).then((response) => response.data);
+}
+
+export function shapeDeleteAll(imageId, attemptId, testCaseId, type) {
+    const url = '/shapes/delete_all?access_token=' + getAccessToken();
+    const data = {
+        image_id: imageId,
+        attempt_id: attemptId,
+        test_case_id: testCaseId,
+        type: type,
+    };
+    return instance.post(url, data).then((response) => response.data);
 }
