@@ -10,6 +10,7 @@ import MarkerTool from "./tools/MarkerTool";
 // import ArrowAnnotateTool from "./tools/ArrowAnnotateTool";
 
 import * as Apis from "Api/index";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -134,17 +135,6 @@ export default class ImageViewer extends Component {
         // so we can reset zoom and position
         let viewport = cornerstone.getViewport(this.imageElement);
         this.originalViewport = this.duplicateViewport(viewport);
-
-
-
-
-
-        // const toolStateManager = cornerstoneTools.getElementToolStateManager(this.imageElement);
-        // const newStackToolStateManager = cornerstoneTools.newStackSpecificToolStateManager(['Length', 'Angle'], toolStateManager);
-        // cornerstoneTools.setElementToolStateManager(this.imageElement, newStackToolStateManager);
-
-
-
         // add all tools to the image
         const setToolElementFunc = !this.props.complete ? 'setToolPassiveForElement' : 'setToolEnabledForElement';
         cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
@@ -209,7 +199,7 @@ export default class ImageViewer extends Component {
         // render shapes
         this.renderShapes();
         this.renderMarks();
-
+        this.setInitialSetParam();
     }
 
     static adjustSlideSize() {
@@ -223,6 +213,21 @@ export default class ImageViewer extends Component {
                 sliders[i].style.width = sliders[i].parentNode.clientHeight + 'px';
             }
         });
+    }
+
+    setInitialSetParam() {
+        let viewport = cornerstone.getViewport(this.imageElement);
+        // viewport.invert = !viewport.invert;
+        if(this.props.brightness !== undefined && this.props.brightness !== null && !isNaN(this.props.brightness)) {
+            viewport.voi.windowWidth = Number(this.props.brightness);
+        }
+        if(this.props.contrast !== undefined && this.props.contrast !== null && !isNaN(this.props.contrast)) {
+            viewport.voi.windowCenter = Number(this.props.contrast);
+        }
+        if(this.props.zoom !== undefined && this.props.zoom !== null && !isNaN(this.props.zoom)) {
+            viewport.scale = viewport.scale * Number(this.props.zoom);
+        }
+        cornerstone.setViewport(this.imageElement, viewport);
     }
 
     handleChangeStack(e, data) {
@@ -472,6 +477,7 @@ export default class ImageViewer extends Component {
         // reset the pan, zoom, invert, and windowing levels
         let original = this.duplicateViewport(this.originalViewport);
         cornerstone.setViewport(this.imageElement, original);
+        this.setInitialSetParam();
     }
 
     _renderPyramid(viewport) {
@@ -594,16 +600,24 @@ export default class ImageViewer extends Component {
             <div className="image" style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
                 <div className={'control-btn'}>
                     <a className="eye" onClick={() => this.toggleMarkInfo()}>
-                        <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
+                        <Tooltip title="Hide Info" placement="bottom">
+                            <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
+                        </Tooltip>
                     </a>
                     <a onClick={() => null}>
-                        <i className={"zmdi zmdi-refresh fs-23"} style={{paddingLeft: 6, paddingRight: 6}} onClick={() => this.onReset()}/>
+                        <Tooltip title="Reset" placement="bottom">
+                            <i className={"zmdi zmdi-refresh fs-23"} style={{paddingLeft: 6, paddingRight: 6}} onClick={() => this.onReset()}/>
+                        </Tooltip>
                     </a>
                     <a onClick={() => null}>
-                        <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
+                        <Tooltip title="Invert" placement="bottom">
+                            <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
+                        </Tooltip>
                     </a>
                     <a onClick={() => null}>
-                        <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
+                        <Tooltip title="Delete" placement="bottom">
+                            <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
+                        </Tooltip>
                     </a>
                 </div>
                 <div className="dicom"/>

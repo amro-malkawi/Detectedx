@@ -1,0 +1,48 @@
+import React, {Component} from 'react';
+import {Button, Input} from "reactstrap";
+import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
+
+export default class ConfirmQualityModal extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            msg: ''
+        }
+    }
+
+    render() {
+        const {isOpen, toggle, confirm} = this.props;
+        return (
+            <div>
+                <Dialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md'>
+                    <div className={'quality-container'} style={{padding: '3px 50px'}}>
+                        <DialogTitle>
+                            <span className={'quality-title'}>Confirm Image Quality</span>
+                        </DialogTitle>
+                        <DialogContent>
+                            <div>
+                                <span className={'confirm-quality-text'}>Correct Image quality is <b style={{color: '#FFB300'}}>{this.props.quality}</b>. Are you agree this quality?</span>
+                            </div>
+                            <Input
+                                type="textarea"
+                                name="first_name"
+                                id="first_name"
+                                placeholder="Please input feedback"
+                                value={this.state.msg}
+                                className={'quality-feedback'}
+                                onChange={(e) => this.setState({msg: e.target.value})}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <div style={{margin: 'auto'}}>
+                                <Button variant="contained" onClick={() => confirm(true, this.state.msg)} color="success" className="text-white"
+                                        style={{marginRight: 12}}>&nbsp;&nbsp;Agree&nbsp;&nbsp;</Button>
+                                <Button variant="contained" onClick={() => confirm(false, this.state.msg)} color="danger" className="text-white">&nbsp;Disagree&nbsp;</Button>
+                            </div>
+                        </DialogActions>
+                    </div>
+                </Dialog>
+            </div>
+        )
+    }
+}

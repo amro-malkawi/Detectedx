@@ -83,17 +83,22 @@ export default class Attempt extends Component {
         });
 
         Promise.all([promise0, promise1, promise2]).then(function (values) {
+            const [questionnaires, detail, percentile] = values;
             let steps;
-            if (!values[1].complete) {
-                steps = values[0].additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
+            if (!detail.complete) {
+                steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
             } else {
-                steps = values[0].additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
+                if(detail.test_sets.modalities.image_quality) {
+                    steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
+                } else {
+                    steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
+                }
             }
             that.setState({
-                mainQuestions: values[0].main,
-                additionalQuestions: values[0].additional,
-                attemptInfo: values[1],
-                percentile: values[2],
+                mainQuestions: questionnaires.main,
+                additionalQuestions: questionnaires.additional,
+                attemptInfo: detail,
+                percentile: percentile,
                 steps: steps,
                 loading: false,
             });
@@ -611,11 +616,11 @@ export default class Attempt extends Component {
                             <span className={'fs-17'}>I understand that:</span>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">The results of the screen read test set are de-identified and confidential, with test results identified only by Reader Numbers</span>
+                                <span className="fs-14 mr-10">The results of the screen read test set are de-identified, with test results identified only by Reader Numbers</span>
                             </div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">My results may form part fo the Quality Assurance Program of my Service or Clinic</span>
+                                <span className="fs-14 mr-10">My results may form part of the Quality Assurance Program of my Service or Clinic</span>
                             </div>
                             <div className={'fs-17 mt-15'}>I consent to:</div>
                             <div>

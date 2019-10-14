@@ -50,9 +50,3 @@ export default class QualityModal extends Component{
         )
     }
 }
-
-
-// https://thenounproject.com/term/bad-quality/252641/
-// https://thenounproject.com/grega.cresnar/uploads/?i=252627
-// https://thenounproject.com/search/?q=quality&creator=753582&i=216832
-// https://thenounproject.com/grega.cresnar/collection/quality/

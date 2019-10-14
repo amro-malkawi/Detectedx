@@ -28,6 +28,7 @@ import panZoomSynchronizer from "./lib/panZoomSynchronizer";
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from './InstructionModal';
 import QualityModal from './QualityModal';
+import ConfirmQualityModal from './ConfirmQualityModal';
 
 export default class TestView extends Component {
 
@@ -52,7 +53,8 @@ export default class TestView extends Component {
             isShowPopupDelete: true,
             selectedMarkData: {},
             isShowInstructionModal: false,
-            isShowQualityModal: false
+            isShowQualityModal: false,
+            isShowConfirmQualityModal: false,
         };
 
         this.popupCancelHandler = null;
@@ -140,16 +142,20 @@ export default class TestView extends Component {
     }
 
     onNext() {
-       if(!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality) {
+       if(!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
             this.setState({isShowQualityModal: true});
+       } else if (!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+           this.setState({isShowConfirmQualityModal: true});
        } else {
            this.onMove(1);
        }
     }
 
     onFinish() {
-        if(!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality) {
+        if(!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
             this.setState({isShowQualityModal: true});
+        } else if (!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+            this.setState({isShowConfirmQualityModal: true});
         } else {
             this.onComplete();
         }
@@ -161,14 +167,38 @@ export default class TestView extends Component {
         this.setState({loading: true}, () => {
             let url = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + next_test_case_id;
             Apis.attemptsMoveTestCase(this.state.attempts_id, next_test_case_id).then((resp) => {
-                this.setState({test_cases_id: next_test_case_id});
-                this.getData();
-                this.props.history.replace(url);
+                this.setState({test_cases_id: next_test_case_id}, () => {
+                    this.getData();
+                    this.props.history.replace(url);
+                });
             }).catch((e) => {
                 NotificationManager.error('Can not move case');
                 this.setState({loading: false})
             }).finally(() => {
                 // this.setState({loading: false})
+            });
+        });
+    }
+
+    onComplete() {
+        this.setState({loading: true}, () => {
+            Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
+                if (!resp.complete && resp.stage === 2) {
+                    let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
+                    this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
+                        this.getData();
+                        this.props.history.replace(nextPath);
+                    });
+                } else if (resp.complete) {
+                    if(this.state.test_case.modalities.image_quality) {
+                        NotificationManager.success('Test was finished. Thank you at the end');
+                        this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
+                    } else {
+                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/3');  // go to scores tab
+                    }
+                }
+            }).catch((e) => {
+                console.warn(e.response.data.error.message);
             });
         });
     }
@@ -187,11 +217,16 @@ export default class TestView extends Component {
         });
     }
 
-    onComplete() {
-        Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
-            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/3');
-        }).catch((e) => {
-            console.warn(e.response.data.error.message);
+    onConfirmImageQuality(isAgree, msg) {
+        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+        let test_case_length = this.state.test_set_cases.length;
+        this.setState({isShowConfirmQualityModal: false});
+        Apis.attemptsConfirmQuality(this.state.attempts_id, this.state.test_cases_id, this.state.test_case.quality, isAgree, msg).then((resp) => {
+            if(test_case_index + 1 === test_case_length) {
+                this.onComplete();
+            } else {
+                this.onMove(1);
+            }
         });
     }
 
@@ -302,7 +337,7 @@ export default class TestView extends Component {
                 }
                 {
                     this.state.attemptDetail.complete ?
-                        null : <Button className={'ml-20 mr-10'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>Instruction</Button>
+                        null : <Button className={'ml-20 mr-10'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>Instructions</Button>
                 }
                 <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
             </nav>
@@ -328,6 +363,7 @@ export default class TestView extends Component {
     }
 
     renderImageViewer() {
+        this.viewers = [];
         return this.state.test_case.images.map((item, index) => {
             this.viewers.push(React.createRef());
             return (
@@ -345,10 +381,27 @@ export default class TestView extends Component {
                     complete={this.state.attemptDetail.complete}
                     width={100 / this.state.test_case.images.length}
                     tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
+                    brightness={this.state.test_case.modalities.brightness}
+                    contrast={this.state.test_case.modalities.contrast}
+                    zoom={this.state.test_case.modalities.zoom}
                     key={index}
                 />
             )
         });
+    }
+
+    renderTruthImageQuality() {
+        if (!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+            let quality = ['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)];
+            return (
+                <div className={'truth-quality'}>
+                    <div className={'quality-icon ' + quality.toLowerCase() + '-icon'}/>
+                    <span className={'quality-text'}>{quality}</span>
+                </div>
+            );
+        } else {
+            return null;
+        }
     }
 
     renderTools() {
@@ -391,6 +444,7 @@ export default class TestView extends Component {
                     tools.indexOf('Wwwc') !== -1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
                             <svg id="icon-tools-levels" viewBox="0 0 18 18">
+                                <title>Window</title>
                                 <g id="icon-tools-levels-group">
                                     <path id="icon-tools-levels-path" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8"/>
                                     <circle id="icon-tools-levels-circle" cx="9" cy="9" r="8" fill="none" strokeWidth="2"/>
@@ -400,10 +454,10 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Length') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('Length') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => this.onChangeCurrentTool('Length')}>
                             <svg name="measure-temp" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" fill="none">
-                                <title>Measure Temp</title>
+                                <title>Length</title>
                                 <g strokeLinecap="round" strokeLinejoin="round">
                                     <circle cx="6.5" cy="6.5" r="6" fill="transparent"/>
                                     <path d="M6.5 3v7M3 6.5h7"/>
@@ -414,9 +468,10 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Angle') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('Angle') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Angle' ? ' active' : '')} data-tool="Angle" onClick={() => this.onChangeCurrentTool('Angle')}>
                             <svg name="angle-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" width="1em" height="1em" fill="currentColor">
+                                <title>Angle</title>
                                 <path
                                     d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/>
                             </svg>
@@ -424,19 +479,21 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('EllipticalRoi') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('EllipticalRoi') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi"
                              onClick={() => this.onChangeCurrentTool('EllipticalRoi')}>
                             <svg name="circle-o" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor">
+                                <title>Circle</title>
                                 <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200z"/>
                             </svg>
                             <p>Ellipse</p>
                         </div> : null
                 }
                 {
-                    tools.indexOf('RectangleRoi') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('RectangleRoi') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'RectangleRoi' ? ' active' : '')} data-tool="RectangleRoi" onClick={() => this.onChangeCurrentTool('RectangleRoi')}>
                             <svg name="square-o" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="1em" height="1em" fill="currentColor">
+                                <title>Rectangle</title>
                                 <path
                                     d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"/>
                             </svg>
@@ -444,11 +501,12 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('ArrowAnnotate') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('ArrowAnnotate') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'ArrowAnnotate' ? ' active' : '')} data-tool="ArrowAnnotate"
                              onClick={() => this.onChangeCurrentTool('ArrowAnnotate')}>
                             <svg name="measure-non-target" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" fill="none" strokeLinecap="round"
                                  strokeLinejoin="round">
+                                <title>Arrow annotate</title>
                                 <circle cx="6.5" cy="6.5" r="6" fill="transparent"/>
                                 <path d="M6.5 3v7M3 6.5h7"/>
                                 <path d="M23 7L8 22m-1-5v6h6" strokeWidth="2"/>
@@ -457,10 +515,11 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('FreehandMouse') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('FreehandMouse') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'FreehandMouse' ? ' active' : '')} data-tool="FreehandMouse"
                              onClick={() => this.onChangeCurrentTool('FreehandMouse')}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <title>Freehand</title>
                                 <path
                                     d="M4.59 6.89c.7-.71 1.4-1.35 1.71-1.22.5.2 0 1.03-.3 1.52-.25.42-2.86 3.89-2.86 6.31 0 1.28.48 2.34 1.34 2.98.75.56 1.74.73 2.64.46 1.07-.31 1.95-1.4 3.06-2.77 1.21-1.49 2.83-3.44 4.08-3.44 1.63 0 1.65 1.01 1.76 1.79-3.78.64-5.38 3.67-5.38 5.37 0 1.7 1.44 3.09 3.21 3.09 1.63 0 4.29-1.33 4.69-6.1H21v-2.5h-2.47c-.15-1.65-1.09-4.2-4.03-4.2-2.25 0-4.18 1.91-4.94 2.84-.58.73-2.06 2.48-2.29 2.72-.25.3-.68.84-1.11.84-.45 0-.72-.83-.36-1.92.35-1.09 1.4-2.86 1.85-3.52.78-1.14 1.3-1.92 1.3-3.28C8.95 3.69 7.31 3 6.44 3 5.12 3 3.97 4 3.72 4.25c-.36.36-.66.66-.88.93l1.75 1.71zm9.29 11.66c-.31 0-.74-.26-.74-.72 0-.6.73-2.2 2.87-2.76-.3 2.69-1.43 3.48-2.13 3.48z"/>
                             </svg>
@@ -468,7 +527,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Eraser') !== -1 && !this.state.attemptDetail.complete ?
+                    tools.indexOf('Eraser') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Eraser' ? ' active' : '')} data-tool="Eraser" onClick={() => this.onChangeCurrentTool('Eraser')}>
                             <svg name="eraser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 1792" width="1em" height="1em" fill="currentColor">
                                 <title>Eraser</title>
@@ -479,14 +538,15 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Marker') === -1 || this.state.attemptDetail.complete ? null :
+                    tools.indexOf('Marker') === -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
                             <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
+                                <title>Marker</title>
                                 <path
                                     d="M12 5.5c-4.688 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.813-8.5-8.5-8.5zM24 14c0 6.625-5.375 12-12 12s-12-5.375-12-12 5.375-12 12-12v0c6.625 0 12 5.375 12 12z"/>
                             </svg>
                             <p>Mark</p>
-                        </div>
+                        </div> : null
                 }
                 <div className="tool">
                     <AntSwitch
@@ -497,6 +557,7 @@ export default class TestView extends Component {
                     <p>&nbsp;Sync</p>
                 </div>
                 {this.renderTestResult()}
+                {this.renderTruthImageQuality()}
             </div>
         )
     }
@@ -513,7 +574,10 @@ export default class TestView extends Component {
                     <div id="toolbar">
                         {this.renderTools()}
 
-                        <h1>{test_case_index + 1} / {this.state.test_set_cases.length}&nbsp;&nbsp;( {this.state.test_case.name} )</h1>
+                        <h1>
+                            {this.state.attemptDetail.stage !== 1 ? <span className={'stage'}>Stage{this.state.attemptDetail.stage}</span> : null}
+                            {test_case_index + 1} / {this.state.test_set_cases.length}&nbsp;&nbsp;( {this.state.test_case.name} )
+                        </h1>
 
                         {this.renderNav()}
                     </div>
@@ -555,7 +619,7 @@ export default class TestView extends Component {
                                         <Label>Lesions:</Label>
                                         <Select
                                             isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
-                                            placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select Lesions' : 'Select Lesions'}
+                                            placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select lesion type' : 'Select lesion type'}
                                             isMulti
                                             name="lesions"
                                             options={lesions}
@@ -595,6 +659,12 @@ export default class TestView extends Component {
                         isOpen={this.state.isShowQualityModal}
                         toggle={() => this.setState({isShowQualityModal: false})}
                         confirm={(quality) => this.onSetQuality(quality)}
+                    />
+                    <ConfirmQualityModal
+                        isOpen={this.state.isShowConfirmQualityModal}
+                        toggle={() => this.setState({isShowConfirmQualityModal: false})}
+                        quality={ ['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)]}
+                        confirm={(isAgree, msg) => this.onConfirmImageQuality(isAgree, msg)}
                     />
 
                 </div>
