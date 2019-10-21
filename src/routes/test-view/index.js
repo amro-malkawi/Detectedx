@@ -538,7 +538,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Marker') === -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('Marker') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
                             <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
                                 <title>Marker</title>
@@ -581,7 +581,7 @@ export default class TestView extends Component {
 
                         {this.renderNav()}
                     </div>
-                    <div id="images" className={'cursor-' + this.state.currentTool}>
+                    <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
                         {this.renderImageViewer()}
                     </div>
                     {

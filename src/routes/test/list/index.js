@@ -78,7 +78,7 @@ export default class list extends Component {
     render() {
         return (
             <div className="news-dashboard-wrapper">
-                <PageTitleBar title={"Test Sets"} match={this.props.match} enableBreadCrumb={false}/>
+                <PageTitleBar title={"Module Sets"} match={this.props.match} enableBreadCrumb={false}/>
                 <div className="row">
                     {
                         this.state.testSetsList.map((item, index) => {
@@ -117,7 +117,7 @@ export default class list extends Component {
                         <DialogContent>
                             <p>Interactive mammogram interpretation to improve breast cancer detection- module M1</p>
                             <div>
-                            <span className="fs-17">At the end of this module, the candidate will be able to</span>
+                            <span className="fs-17">At the end of this module, the user will be able to</span>
                             </div>
                             <ol>
                                 <li>

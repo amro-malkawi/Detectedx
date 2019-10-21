@@ -505,6 +505,7 @@ export default class Attempt extends Component {
                             <RctCollapsibleCard
                                 customClasses="p-20 text-center"
                             >
+                                <p className="mb-20 fs-17">Before starting please read the instructions by clicking on “Instructions button” in the top right hand corner of this page.</p>
                                 <div className="mb-20 fs-17">To proceed to the test click button below</div>
                                 <Button
                                     variant="contained"
@@ -616,7 +617,7 @@ export default class Attempt extends Component {
                             <span className={'fs-17'}>I understand that:</span>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">The results of the screen read test set are de-identified, with test results identified only by Reader Numbers</span>
+                                <span className="fs-14 mr-10">The results of reading this module are de-identified, with  results identified only by Reader Numbers</span>
                             </div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
@@ -625,7 +626,7 @@ export default class Attempt extends Component {
                             <div className={'fs-17 mt-15'}>I consent to:</div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">My de-identified results to be used to further develop test sets and the educational program</span>
+                                <span className="fs-14 mr-10">My de-identified results to be used to further develop the educational program</span>
                             </div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>

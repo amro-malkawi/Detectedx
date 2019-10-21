@@ -437,7 +437,9 @@ div.viewer {
   height: 100%;
   border: 1px solid #9ccef9;
   background-color: black;
-
+  .instruction-header {
+    background-color: black;
+  }
   .instruction-content {
     max-height: 80%;
     &::-webkit-scrollbar-track
@@ -491,4 +493,56 @@ div.viewer {
       border-color: white;
     }
   }
+}
+
+.instruction-page {
+  position: absolute;
+  height: 100%;
+  .instruction-header {
+    background-color: white;
+  }
+  .instruction-container {
+    border: 1px solid white;
+    background-color: white;
+    .instruction-content {
+      &::-webkit-scrollbar-track
+      {
+        -webkit-box-shadow: inset 0 0 6px #888888;
+        background-color: white;
+      }
+
+      &::-webkit-scrollbar
+      {
+        background-color: white;
+      }
+
+      &::-webkit-scrollbar-thumb
+      {
+        -webkit-box-shadow: inset 0 0 6px #888888;
+        background-color: #eeeeee;
+      }
+      p, ul {
+        color: #333333;
+      }
+      strong {
+        color: #111111;
+      }
+      hr {
+        border-color: #888888;
+      }
+      .sub-menu-title {
+        color: #42A5F5;
+      }
+      .white-border {
+        border: #888888 solid 1px;
+      }
+      .right-border {
+        border-color: #888888;
+      }
+    }
+  }
+}
+
+.instruction-modal {
+
 }

@@ -684,6 +684,16 @@ export function answersDelete(id) {
     return instance.delete(url).then((response) => response.data);
 }
 
+export function answersDeleteAll(imageId, attemptId, testCaseId) {
+    const url = '/answers/delete_all?access_token=' + getAccessToken();
+    const data = {
+        image_id: imageId,
+        attempt_id: attemptId,
+        test_case_id: testCaseId
+    };
+    return instance.post(url, data).then((response) => response.data);
+}
+
 /**
  * shape opertaion
  */

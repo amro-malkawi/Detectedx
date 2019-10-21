@@ -11,6 +11,7 @@ import MarkerTool from "./tools/MarkerTool";
 
 import * as Apis from "Api/index";
 import Tooltip from "@material-ui/core/Tooltip";
+import {NotificationManager} from "react-notifications";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -465,10 +466,18 @@ export default class ImageViewer extends Component {
 
     onClearSymbols(){
         if(this.props.currentTool !== 'Marker') {
-            cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
-            cornerstone.invalidate(this.imageElement);
             Apis.shapeDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id, this.props.currentTool).then((resp) => {
-
+                cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
+                cornerstone.invalidate(this.imageElement);
+            }).catch((error) => {
+                NotificationManager.error(error.response.data.error.message);
+            });
+        } else {
+            Apis.answersDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id).then((resp) => {
+                this.markList = [];
+                this.renderMarks();
+            }).catch((error) => {
+                NotificationManager.error(error.response.data.error.message);
             });
         }
     }
@@ -614,11 +623,14 @@ export default class ImageViewer extends Component {
                             <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
                         </Tooltip>
                     </a>
-                    <a onClick={() => null}>
-                        <Tooltip title="Delete" placement="bottom">
-                            <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
-                        </Tooltip>
-                    </a>
+                    {
+                        this.props.complete ? null :
+                            <a onClick={() => null}>
+                                <Tooltip title="Delete" placement="bottom">
+                                    <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
+                                </Tooltip>
+                            </a>
+                    }
                 </div>
                 <div className="dicom"/>
                 <div className="location status"/>

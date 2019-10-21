@@ -111,7 +111,7 @@ class Header extends Component {
                   <li className="list-inline-item">
                      <Tooltip title="Tests" placement="bottom">
                         <Button component={Link} to={`/${getAppLayout(location)}/test`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
-                           Tests
+                           Modules
                         </Button>
                      </Tooltip>
                   </li>
