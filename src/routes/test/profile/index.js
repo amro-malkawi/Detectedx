@@ -184,17 +184,17 @@ export default class Profile extends Component {
                             <div className="">
                                 <div className="p-0">
                                     <div className="p-20" style={{textAlign: 'center'}}>
-                                        <div>
-                                            <img
-                                                src={require('Assets/avatars/user-4.jpg')}
-                                                className="rounded-circle"
-                                                alt="user profile"
-                                                width="90"
-                                                height="90"
-                                            />
-                                        </div>
+                                        {/*<div>*/}
+                                        {/*    <img*/}
+                                        {/*        src={require('Assets/avatars/user-4.jpg')}*/}
+                                        {/*        className="rounded-circle"*/}
+                                        {/*        alt="user profile"*/}
+                                        {/*        width="90"*/}
+                                        {/*        height="90"*/}
+                                        {/*    />*/}
+                                        {/*</div>*/}
                                         <div className="media-body pt-10">
-                                            <h4 className="mb-5">{this.state.userInfo.email}</h4>
+                                            <h1 className="mb-5">{this.state.userInfo.email}</h1>
                                             <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMMM Do YYYY, HH:mm:ss')}</span>
                                         </div>
                                     </div>

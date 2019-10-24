@@ -25,12 +25,14 @@ import Cart from './Cart';
 
 import UserInfo from './UserInfo';
 import Logout from './Logout';
+import InstructionModal from "Routes/test-view/InstructionModal";
 
 class Header extends Component {
 
    state = {
       customizer: false,
-      isMobileSearchFormVisible: false
+      isMobileSearchFormVisible: false,
+      isShowInstructionModal: false,
    }
 
    // function to change the state of collapsed sidebar
@@ -117,7 +119,8 @@ class Header extends Component {
                   </li>
                   <li className="list-inline-item">
                      <Tooltip title="Instructions" placement="bottom">
-                        <Button component={Link} to={`/${getAppLayout(location)}/instructions`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
+                        {/*<Button component={Link} to={`/${getAppLayout(location)}/instructions`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">*/}
+                        <Button onClick={() => this.setState({isShowInstructionModal: true})} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
                            Instructions
                         </Button>
                      </Tooltip>
@@ -128,6 +131,11 @@ class Header extends Component {
             </Toolbar>
             <DashboardOverlay
                onClose={() => this.closeDashboardOverlay()}
+            />
+            <InstructionModal
+                isOpen={this.state.isShowInstructionModal}
+                toggle={() => this.setState({isShowInstructionModal: false})}
+                theme={'white'}
             />
          </AppBar>
       );

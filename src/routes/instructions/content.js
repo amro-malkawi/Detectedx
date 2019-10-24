@@ -337,29 +337,30 @@ export default class Content extends Component{
     }
 
     render() {
-        const {onClose} = this.props;
+        const {theme, onClose} = this.props;
         return (
-            <div className={'instruction-container'}>
-                <DialogTitle>
-                    <AppBar position="static" color="primary" className={'instruction-header'}>
-                        <Tabs value={this.state.activeIndex} onChange={(e, value) => this.setState({activeIndex: value})} textColor={onClose ? undefined : "primary"}>
-                            <Tab label="Mammo"/>
-                            <Tab label="DBT" />
-                            <Tab label="CT"/>
-                        </Tabs>
-                    </AppBar>
-                </DialogTitle>
-                <DialogContent className={'instruction-content'}>
-
-                    {this.renderContent()}
-                </DialogContent>
-                <DialogActions>
-                    <div style={{margin: 'auto'}}>
-                        {
-                            onClose ? <Button variant="contained" onClick={onClose} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Close&nbsp;&nbsp;</Button> : null
-                        }
-                    </div>
-                </DialogActions>
+            <div className={theme === 'black' ? 'instruction-theme-black' : 'instruction-theme-white'}>
+                <div className={'instruction-container'}>
+                    <DialogTitle>
+                        <AppBar position="static" color="primary" className={'instruction-header'}>
+                            <Tabs value={this.state.activeIndex} onChange={(e, value) => this.setState({activeIndex: value})} textColor={theme === 'black' ? undefined : "primary"}>
+                                <Tab label="Mammo"/>
+                                <Tab label="DBT" />
+                                <Tab label="CT"/>
+                            </Tabs>
+                        </AppBar>
+                    </DialogTitle>
+                    <DialogContent className={'instruction-content'}>
+                        {this.renderContent()}
+                    </DialogContent>
+                    <DialogActions>
+                        <div style={{margin: 'auto'}}>
+                            {
+                                onClose ? <Button variant="contained" onClick={onClose} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Close&nbsp;&nbsp;</Button> : null
+                            }
+                        </div>
+                    </DialogActions>
+                </div>
             </div>
         )
     }

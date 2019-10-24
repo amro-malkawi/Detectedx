@@ -8,7 +8,7 @@ import Content from './content';
 export default class instruction extends Component {
     render() {
         return (
-            <div className={'instruction-page'} style={{position: 'absolute', height: '100%'}}>
+            <div className={'instruction-theme-white'} style={{position: 'absolute', height: '100%'}}>
                 <Content/>
             </div>
         )

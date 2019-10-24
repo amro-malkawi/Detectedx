@@ -72,7 +72,7 @@ export default class CompleteList extends Component {
                         <tbody>
                         {this.state.completeList.attempts && this.state.completeList.attempts.map((item, i) => (
                             <tr key={i}>
-                                <td className={'text-center'}>{i + 1}</td>
+                                <td className={'text-center'}>{this.state.completeList.attempts.length - i}</td>
                                 {
                                     this.renderScores(item.scores)
                                 }

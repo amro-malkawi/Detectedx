@@ -4,10 +4,6 @@ import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import MarkerTool from "./tools/MarkerTool";
-// import LengthTool from "./tools/LengthTool";
-// import AngleTool from "./tools/AngleTool";
-// import EllipticalRoiTool from "./tools/EllipticalRoiTool";
-// import ArrowAnnotateTool from "./tools/ArrowAnnotateTool";
 
 import * as Apis from "Api/index";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -43,7 +39,7 @@ export default class ImageViewer extends Component {
             currentStack: 1,
             isShowFloatingMenu: false,
         };
-
+        this.toolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.originalViewport = undefined;
         this.stack  = {
@@ -67,7 +63,6 @@ export default class ImageViewer extends Component {
             if(this.shapeList[shape.type] === undefined) this.shapeList[shape.type] = [];
             this.shapeList[shape.type].push({stack: shape.stack, measurementData});
         });
-
         this.tempModifiedShape = null;
     }
 
@@ -137,26 +132,29 @@ export default class ImageViewer extends Component {
         let viewport = cornerstone.getViewport(this.imageElement);
         this.originalViewport = this.duplicateViewport(viewport);
         // add all tools to the image
-        const setToolElementFunc = !this.props.complete ? 'setToolPassiveForElement' : 'setToolEnabledForElement';
+        const setToolElementFunc = this.props.complete || this.props.stage >= 2 ? 'setToolEnabledForElement' : 'setToolPassiveForElement';
         cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
         cornerstoneTools.addToolForElement(this.imageElement, PanTool);
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
-        cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
-        cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'Angle');
-        cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'EllipticalRoi');
-        cornerstoneTools.addToolForElement(this.imageElement, RectangleRoiTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'RectangleRoi');
-        cornerstoneTools.addToolForElement(this.imageElement, ArrowAnnotateTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'ArrowAnnotate');
-        cornerstoneTools.addToolForElement(this.imageElement, FreehandMouseTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'FreehandMouse');
-        cornerstoneTools.addToolForElement(this.imageElement, EraserTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'Eraser');
-        // add the zoom tools, setting the min scale (which defaults to
-        // 0.25 - too large to show the whole image within frame)
+        this.toolList.forEach(toolName => {
+            cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
+            cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
+        });
+        // cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
+        // cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'Angle');
+        // cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'EllipticalRoi');
+        // cornerstoneTools.addToolForElement(this.imageElement, RectangleRoiTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'RectangleRoi');
+        // cornerstoneTools.addToolForElement(this.imageElement, ArrowAnnotateTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'ArrowAnnotate');
+        // cornerstoneTools.addToolForElement(this.imageElement, FreehandMouseTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'FreehandMouse');
+        // cornerstoneTools.addToolForElement(this.imageElement, EraserTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'Eraser');
+
         cornerstoneTools.addToolForElement(this.imageElement, ZoomTool, {
             configuration: {
                 minScale: viewport.scale
@@ -407,8 +405,10 @@ export default class ImageViewer extends Component {
     }
 
     renderShapes() {
+        this.toolList.forEach(toolName => {
+            cornerstoneTools.clearToolState(this.imageElement, toolName);
+        });
         for(let type in this.shapeList) {
-            cornerstoneTools.clearToolState(this.imageElement, type);
             this.shapeList[type].forEach((v) => {
                 if(v.stack === Number(this.state.currentStack) - 1) {
                     cornerstoneTools.addToolState(this.imageElement, type, v.measurementData);

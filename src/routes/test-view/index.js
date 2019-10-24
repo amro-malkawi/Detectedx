@@ -379,6 +379,7 @@ export default class TestView extends Component {
                     onShowPopup={this.handleShowPopup.bind(this)}
                     stackCount={item.stack_count}
                     complete={this.state.attemptDetail.complete}
+                    stage={this.state.attemptDetail.stage}
                     width={100 / this.state.test_case.images.length}
                     tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
                     brightness={this.state.test_case.modalities.brightness}
@@ -654,6 +655,7 @@ export default class TestView extends Component {
                     <InstructionModal
                         isOpen={this.state.isShowInstructionModal}
                         toggle={() => this.setState({isShowInstructionModal: false})}
+                        theme={'black'}
                     />
                     <QualityModal
                         isOpen={this.state.isShowQualityModal}

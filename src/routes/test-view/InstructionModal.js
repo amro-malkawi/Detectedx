@@ -10,10 +10,10 @@ export default class InstructionModal extends Component{
     }
 
     render() {
-        const {isOpen, toggle} = this.props;
+        const {isOpen, toggle, theme} = this.props;
         return (
             <FullDialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth style={{container: {height: '80%'}}}>
-                <Content onClose={toggle}/>
+                <Content onClose={toggle} theme={theme}/>
             </FullDialog>
         )
     }
