@@ -636,8 +636,6 @@ export default class ImageViewer extends Component {
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>
-                {/*<Button className="invert" variant="contained" onClick={() => this.onInvert()}>Invert</Button>*/}
-                {/*<Button className="reset" variant="contained" onClick={() => this.onReset()}>Reset</Button>*/}
                 {this.renderStackComponent()}
             </div>
         )
