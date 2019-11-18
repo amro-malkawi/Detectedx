@@ -26,7 +26,7 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
         history.push('/');
     }).catch(error => {
         dispatch({type: LOGIN_USER_FAILURE});
-        NotificationManager.error(error.response.data.error.message);
+        NotificationManager.error(error.response ? error.response.data.error.message : error.message);
     });
 }
 

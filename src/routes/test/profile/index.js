@@ -98,7 +98,7 @@ export default class Profile extends Component {
                 loading: false
             });
         }).catch(e => {
-            NotificationManager.error(e.response.data.error.message);
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
 
     }

@@ -38,10 +38,12 @@ export default class TestView extends Component {
             test_cases_id: this.props.match.params.test_cases_id,
             test_sets_id: this.props.match.params.test_sets_id,
             attempts_id: this.props.match.params.attempts_id,
+            isPostTest: this.props.match.params.is_post_test === 'post',
             loading: true,
             attemptDetail: {},
             test_case: {},
             test_set_cases: [],
+            complete: false,
             selectedRating: '2',
             lesionsValue: [],
             selectedLesions: [],
@@ -94,12 +96,21 @@ export default class TestView extends Component {
             });
         });
         let promise1 = new Promise(function (resolve, reject) {
-            Apis.testSetsCases(that.state.test_sets_id).then((data) => {
-                data = data.map((v) => v.test_case_id);
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
+            if(!that.state.isPostTest) {
+                Apis.testSetsCases(that.state.test_sets_id).then((data) => {
+                    data = data.map((v) => v.test_case_id);
+                    resolve(data);
+                }).catch(e => {
+                    reject(e);
+                });
+            } else {
+                Apis.postTestSetsCases(that.state.test_sets_id).then((data) => {
+                    data = data.map((v) => v.test_case_id);
+                    resolve(data);
+                }).catch(e => {
+                    reject(e);
+                });
+            }
         });
         let promise2 = new Promise(function (resolve, reject) {
             Apis.attemptsDetail(that.state.attempts_id, that.state.test_cases_id).then(data => {
@@ -118,20 +129,38 @@ export default class TestView extends Component {
 
         Promise.all([promise0, promise1, promise2, promise3]).then(function (values) {
             const [testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers] = values;
+            let complete = false;
+            if(!attemptsDetail.test_sets.has_post) {
+                complete = attemptsDetail.complete;
+            } else {
+                if(that.state.isPostTest) {
+                    if(!attemptsDetail.complete) {
+                        throw Error('can not test');
+                    } else {
+                        if(attemptsDetail.post_stage === 0) {
+                            complete = false;
+                        } else {
+                            complete = true;
+                        }
+                    }
+                }
+            }
+
             that.setState({
                 test_case: testCaseViewInfo,
                 test_set_cases: testSetsCases,
                 attemptDetail: attemptsDetail,
+                complete,
                 imageAnswers: testCasesAnswers.images,
-                isAnswerCancer: testCasesAnswers.isAnswerCancer,
-                isTruthCancer: testCasesAnswers.isTruthCancer,
+                isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
+                isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
                 loading: false
             }, () => {
                 Marker.lesions = that.state.test_case.modalities.lesion_types;
                 ImageViewer.adjustSlideSize();
             });
         }).catch((e) => {
-            NotificationManager.error(e.response.data.error.message);
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
     }
 
@@ -142,9 +171,9 @@ export default class TestView extends Component {
     }
 
     onNext() {
-       if(!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
+       if(!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
             this.setState({isShowQualityModal: true});
-       } else if (!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+       } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
            this.setState({isShowConfirmQualityModal: true});
        } else {
            this.onMove(1);
@@ -152,9 +181,9 @@ export default class TestView extends Component {
     }
 
     onFinish() {
-        if(!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
+        if(!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
             this.setState({isShowQualityModal: true});
-        } else if (!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+        } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
         } else {
             this.onComplete();
@@ -182,24 +211,32 @@ export default class TestView extends Component {
 
     onComplete() {
         this.setState({loading: true}, () => {
-            Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
-                if (!resp.complete && resp.stage === 2) {
-                    let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
-                    this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
-                        this.getData();
-                        this.props.history.replace(nextPath);
-                    });
-                } else if (resp.complete) {
-                    if(this.state.test_case.modalities.image_quality) {
-                        NotificationManager.success('Test was finished. Thank you at the end');
-                        this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
-                    } else {
-                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/3');  // go to scores tab
+            if(!this.state.isPostTest) {
+                Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
+                    if (!resp.complete && resp.stage === 2) {
+                        let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
+                        this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
+                            this.getData();
+                            this.props.history.replace(nextPath);
+                        });
+                    } else if (resp.complete) {
+                        if (this.state.test_case.modalities.image_quality) {
+                            NotificationManager.success('Test was finished. Thank you at the end');
+                            this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
+                        } else {
+                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
+                        }
                     }
-                }
-            }).catch((e) => {
-                console.warn(e.response.data.error.message);
-            });
+                }).catch((e) => {
+                    console.warn(e.response ? e.response.data.error.message : e.message);
+                });
+            } else {
+                Apis.attemptsPostTestComplete(this.state.attempts_id).then(resp => {
+                    this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                }).catch(e => {
+                    console.warn(e.response ? e.response.data.error.message : e.message);
+                })
+            }
         });
     }
 
@@ -324,11 +361,11 @@ export default class TestView extends Component {
         return (
             <nav>
                 {
-                    test_case_index > 0 && (this.state.attemptDetail.complete || !this.state.test_case.modalities.force_flow) ?
+                    test_case_index > 0 && (this.state.complete || !this.state.test_case.modalities.force_flow) ?
                         <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onMove(-1)}> Previous</Button> : null
                 }
                 {
-                    this.state.attemptDetail.complete || test_case_index + 1 !== test_case_length ?
+                    this.state.complete || test_case_index + 1 !== test_case_length ?
                         null : <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onFinish()}> Finish</Button>
                 }
                 {
@@ -336,7 +373,7 @@ export default class TestView extends Component {
                         <Button className='mr-10' variant="contained" color="primary" onClick={() => this.onNext(1)}> Next</Button> : null
                 }
                 {
-                    this.state.attemptDetail.complete ?
+                    this.state.complete ?
                         null : <Button className={'ml-20 mr-10'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>Instructions</Button>
                 }
                 <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
@@ -378,7 +415,7 @@ export default class TestView extends Component {
                     radius={this.state.test_case.modalities.circle_size}
                     onShowPopup={this.handleShowPopup.bind(this)}
                     stackCount={item.stack_count}
-                    complete={this.state.attemptDetail.complete}
+                    complete={this.state.complete}
                     stage={this.state.attemptDetail.stage}
                     width={100 / this.state.test_case.images.length}
                     tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
@@ -392,7 +429,7 @@ export default class TestView extends Component {
     }
 
     renderTruthImageQuality() {
-        if (!this.state.attemptDetail.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+        if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
             let quality = ['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)];
             return (
                 <div className={'truth-quality'}>
@@ -455,7 +492,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Length') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('Length') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => this.onChangeCurrentTool('Length')}>
                             <svg name="measure-temp" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" fill="none">
                                 <title>Length</title>
@@ -469,7 +506,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Angle') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('Angle') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Angle' ? ' active' : '')} data-tool="Angle" onClick={() => this.onChangeCurrentTool('Angle')}>
                             <svg name="angle-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" width="1em" height="1em" fill="currentColor">
                                 <title>Angle</title>
@@ -480,7 +517,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('EllipticalRoi') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('EllipticalRoi') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi"
                              onClick={() => this.onChangeCurrentTool('EllipticalRoi')}>
                             <svg name="circle-o" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor">
@@ -491,7 +528,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('RectangleRoi') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('RectangleRoi') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'RectangleRoi' ? ' active' : '')} data-tool="RectangleRoi" onClick={() => this.onChangeCurrentTool('RectangleRoi')}>
                             <svg name="square-o" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="1em" height="1em" fill="currentColor">
                                 <title>Rectangle</title>
@@ -502,7 +539,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('ArrowAnnotate') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('ArrowAnnotate') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'ArrowAnnotate' ? ' active' : '')} data-tool="ArrowAnnotate"
                              onClick={() => this.onChangeCurrentTool('ArrowAnnotate')}>
                             <svg name="measure-non-target" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" fill="none" strokeLinecap="round"
@@ -516,7 +553,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('FreehandMouse') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('FreehandMouse') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'FreehandMouse' ? ' active' : '')} data-tool="FreehandMouse"
                              onClick={() => this.onChangeCurrentTool('FreehandMouse')}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -528,7 +565,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Eraser') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('Eraser') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Eraser' ? ' active' : '')} data-tool="Eraser" onClick={() => this.onChangeCurrentTool('Eraser')}>
                             <svg name="eraser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 1792" width="1em" height="1em" fill="currentColor">
                                 <title>Eraser</title>
@@ -539,7 +576,7 @@ export default class TestView extends Component {
                         </div> : null
                 }
                 {
-                    tools.indexOf('Marker') !== -1 && !this.state.attemptDetail.complete && this.state.attemptDetail.stage === 1 ?
+                    tools.indexOf('Marker') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
                             <svg id="icon-tools-elliptical-roi" viewBox="0 0 24 28">
                                 <title>Marker</title>
@@ -565,7 +602,7 @@ export default class TestView extends Component {
 
     render() {
         if (!this.state.loading) {
-            let disabled = this.state.attemptDetail.complete ? {'disabled': 'disabled'} : {};
+            let disabled = this.state.complete ? {'disabled': 'disabled'} : {};
             let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
             let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {
                 return {label: v.name, value: v.id}
@@ -605,7 +642,7 @@ export default class TestView extends Component {
                                                         this.state.test_case.ratings.map((v, i) => {   // [0, 1, 2, 3...]
                                                             return (
                                                                 <CustomFormControlLabel
-                                                                    disabled={this.state.attemptDetail.complete}
+                                                                    disabled={this.state.complete}
                                                                     value={v.toString()}
                                                                     control={<CustomRadio/>}
                                                                     label={v}
@@ -619,8 +656,8 @@ export default class TestView extends Component {
                                         </FormGroup>
                                         <Label>Lesions:</Label>
                                         <Select
-                                            isDisabled={this.state.attemptDetail.complete || this.state.selectedRating === '2'}
-                                            placeholder={this.state.attemptDetail.complete || this.state.selectedRating === '2' ? 'Can not select lesion type' : 'Select lesion type'}
+                                            isDisabled={this.state.complete || this.state.selectedRating === '2'}
+                                            placeholder={this.state.complete || this.state.selectedRating === '2' ? 'Can not select lesion type' : 'Select lesion type'}
                                             isMulti
                                             name="lesions"
                                             options={lesions}
@@ -631,11 +668,11 @@ export default class TestView extends Component {
 
                                         <div className="actions">
                                             <div className="left">
-                                                <Button variant="contained" className="text-black bg-white cancel" disabled={this.state.attemptDetail.complete}
+                                                <Button variant="contained" className="text-black bg-white cancel" disabled={this.state.complete}
                                                         onClick={() => this.handleClosePopup('cancel')}>Cancel</Button>
                                             </div>
                                             {
-                                                this.state.attemptDetail.complete ?
+                                                this.state.complete ?
                                                     <div className="right">
                                                         <Button variant="contained" className="ok" onClick={() => this.handleClosePopup('ok')}>&nbsp;&nbsp;Ok&nbsp;&nbsp;</Button>
                                                     </div> :

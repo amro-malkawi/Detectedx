@@ -176,6 +176,11 @@ export function testSetsCases(id) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function postTestSetsCases(id) {
+    const url = '/test_sets/' + id + '/post_test_set_cases?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * modalities operation
  */
@@ -429,22 +434,6 @@ export function imagesDelete(id) {
     return instance.delete(url).then((response) => response.data);
 }
 
-export function dicomImagesUpload(data) {
-    let url = '/images/upload?access_token=' + getAccessToken() + '&test_case_id=' + data.test_case_id + '&position=' + data.position;
-    if (data.id !== undefined) {
-        url += '&id=' + data.id;
-    }
-    // const url = '/containers/dicom/upload?access_token=' + getAccessToken();
-    const formData = new FormData();
-    formData.append('file', data.dicom_file);
-    const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
-    };
-    return instance.post(url, formData, config).then((response) => response.data);
-}
-
 export function imagesUrlTemplate(id, stack) {
     const url = '/images/' + id + '/urlTemplate/' + stack + '?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
@@ -604,6 +593,11 @@ export function attemptsComplete(id) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsPostTestComplete(id) {
+    const url = '/attempts/' + id + '/post_test_complete?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 export function attemptsDetail(id, testCaseId) {
     const url = '/attempts/' + id + '/detail/?test_case_id=' + testCaseId + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
@@ -624,9 +618,9 @@ export function attemptsQuestionnaireAnswer(id, data, type) {
     return instance.post(url, data).then((response) => response.data);
 }
 
-export function attemptsCertificatePdf(id) {
+export function attemptsCertificatePdf(id, type) {
     return new Promise(function (resolve, reject) {
-        const url = '/attempts/' + id + '/certificate/?access_token=' + getAccessToken();
+        const url = '/attempts/' + id + '/certificate/?type=' + type + '&access_token=' + getAccessToken();
         instance({
             url: url,
             method: 'GET',

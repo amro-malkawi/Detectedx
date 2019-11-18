@@ -217,10 +217,10 @@ export default class ImageViewer extends Component {
     setInitialSetParam() {
         let viewport = cornerstone.getViewport(this.imageElement);
         // viewport.invert = !viewport.invert;
-        if(this.props.brightness !== undefined && this.props.brightness !== null && !isNaN(this.props.brightness)) {
+        if(this.props.brightness !== undefined && this.props.brightness !== null && !isNaN(this.props.brightness) && Number(this.props.brightness) !== 0) {
             viewport.voi.windowWidth = Number(this.props.brightness);
         }
-        if(this.props.contrast !== undefined && this.props.contrast !== null && !isNaN(this.props.contrast)) {
+        if(this.props.contrast !== undefined && this.props.contrast !== null && !isNaN(this.props.contrast) && Number(this.props.contrast) !== 0) {
             viewport.voi.windowCenter = Number(this.props.contrast);
         }
         if(this.props.zoom !== undefined && this.props.zoom !== null && !isNaN(this.props.zoom)) {
@@ -470,14 +470,14 @@ export default class ImageViewer extends Component {
                 cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
                 cornerstone.invalidate(this.imageElement);
             }).catch((error) => {
-                NotificationManager.error(error.response.data.error.message);
+                NotificationManager.error(error.response ? error.response.data.error.message : error.message);
             });
         } else {
             Apis.answersDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id).then((resp) => {
                 this.markList = [];
                 this.renderMarks();
             }).catch((error) => {
-                NotificationManager.error(error.response.data.error.message);
+                NotificationManager.error(error.response ? error.response.data.error.message : error.message);
             });
         }
     }

@@ -12,7 +12,10 @@ const theme = createMuiTheme({
     secondary: {
       main: AppConfig.themeColors.warning
     }
-  }
+  },
+  typography: {
+    useNextVariants: true,
+  },
 });
 
 export default theme;

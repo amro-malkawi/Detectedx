@@ -103,7 +103,7 @@ class Signup extends Component {
                 this.props.history.push('/users/send-email/' + result.id);
             }).catch((error) => {
                 this.setState({loading: false});
-                NotificationManager.error(error.response.data.error.message);
+                NotificationManager.error(error.response ? error.response.data.error.message : error.message);
             });
         }
     }

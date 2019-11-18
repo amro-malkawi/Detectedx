@@ -30,7 +30,7 @@ export default class SendEmail extends Component {
                 this.props.history.replace('/signin');
             }
         }).catch((e) => {
-            NotificationManager.error(e.response.data.error.message);
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         })
     }
 
