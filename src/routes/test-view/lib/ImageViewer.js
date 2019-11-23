@@ -291,7 +291,6 @@ export default class ImageViewer extends Component {
         } else {
             act = 'answersUpdate';
         }
-        console.warn(data.id);
         Apis[act](data).then(response => {
             response.lesionTypes = response.answer_lesion_types;
             if (data.isNew) {

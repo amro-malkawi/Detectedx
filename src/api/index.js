@@ -281,8 +281,8 @@ export function testCasesViewInfo(id) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function testCasesAnswers(id, attempt_id) {
-    const url = '/test_cases/' + id + '/attempt/' + attempt_id + '/answers?access_token=' + getAccessToken();
+export function testCasesAnswers(id, attempt_id, isPostTest) {
+    const url = '/test_cases/' + id + '/attempt/' + attempt_id + '/answers?is_post_test=' + (isPostTest ? '1' : '0') + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -658,6 +658,11 @@ export function attemptsConfirmQuality(id, test_case_id, quality, isAgree, msg) 
         msg
     };
     return instance.post(url, data).then((response) => response.data);
+}
+
+export function attemptsSavePostAnswer(id, answer) {
+    const url = '/attempts/' + id + '/save_post_answer?&access_token=' + getAccessToken();
+    return instance.post(url, {answer}).then((response) => response.data);
 }
 
 /**

@@ -61,3 +61,23 @@
     }
   }
 }
+
+.post-questionnaire-container {
+  margin: 20px 0 0 0;
+
+
+  .post-questionnaire {
+    margin: 7px 0 0 0;
+    > div {
+      padding-left: 0;
+    }
+
+    .label-option4 {
+      width: 90px;
+    }
+  }
+
+  .sub-label {
+    padding-left: 15px !important;
+  }
+}

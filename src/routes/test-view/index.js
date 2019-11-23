@@ -1,11 +1,10 @@
 import React, {Component} from 'react'
 import {Col, FormGroup, Label} from "reactstrap";
-import Button from '@material-ui/core/Button';
+import {Button, Radio, RadioGroup, FormControlLabel, Switch} from '@material-ui/core';
 import Select from 'react-select';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import {Input} from "reactstrap";
 import yellow from '@material-ui/core/colors/yellow';
+import {withStyles} from '@material-ui/core/styles';
 import chroma from 'chroma-js';
 import * as Apis from 'Api';
 
@@ -19,8 +18,6 @@ import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import {NotificationManager} from "react-notifications";
 
-import Switch from "@material-ui/core/Switch";
-import {withStyles} from '@material-ui/core/styles';
 
 import ImageViewer from './lib/ImageViewer'
 import Marker from './lib/tools/MarkerTool';
@@ -120,7 +117,7 @@ export default class TestView extends Component {
             });
         });
         let promise3 = new Promise(function (resolve, reject) {
-            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id).then((imageAnswers) => {
+            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest).then((imageAnswers) => {
                 resolve(imageAnswers);
             }).catch(e => {
                 reject(e);
@@ -143,6 +140,8 @@ export default class TestView extends Component {
                             complete = true;
                         }
                     }
+                } else {
+                    complete = attemptsDetail.complete;
                 }
             }
 
@@ -190,11 +189,18 @@ export default class TestView extends Component {
         }
     }
 
-    onMove(seek) { // previous -1, next 1
+    onMove(step) { // previous -1, next 1
         let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
-        let next_test_case_id = this.state.test_set_cases[test_case_index + seek];
+        this.onSeek(test_case_index + step);
+    }
+
+    onSeek(number) {
+        let next_test_case_id = this.state.test_set_cases[number];
         this.setState({loading: true}, () => {
             let url = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + next_test_case_id;
+            if(this.state.isPostTest) {
+                url += '/post'
+            }
             Apis.attemptsMoveTestCase(this.state.attempts_id, next_test_case_id).then((resp) => {
                 this.setState({test_cases_id: next_test_case_id}, () => {
                     this.getData();
@@ -323,6 +329,7 @@ export default class TestView extends Component {
                     rating: this.state.selectedRating,
                     answer_lesion_types: this.state.selectedLesions.map((v) => v.value.toString()),
                     isNew: this.state.selectedMarkData.isNew,
+                    is_post_test: this.state.isPostTest
                 };
                 this.popupSaveHandler(data);
                 break;
@@ -353,6 +360,24 @@ export default class TestView extends Component {
 
     onChangeLesions(value) {
         this.setState({selectedLesions: value})
+    }
+
+    renderHeaderNumber() {
+        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+        return(
+            <h1 style={{display: "flex", justifyContent: 'center', alignItems: 'center'}}>
+                {this.state.attemptDetail.stage !== 1 ? <span className={'stage'}>Stage{this.state.attemptDetail.stage}</span> : null}
+                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={test_case_index} onChange={(e) => this.onSeek(e.target.value)} style={{width: 80, backgroundColor: 'black', color: 'white', borderColor: 'grey'}}>
+                    {
+                        this.state.test_set_cases.map((v, i) =>
+                            <option value={i} key={i}>{i + 1}</option>
+                        )
+                    }
+                </Input>
+                    {/*{test_case_index + 1}*/}
+                &nbsp;&nbsp;/ {this.state.test_set_cases.length}&nbsp;&nbsp;( {this.state.test_case.name} )
+            </h1>
+        )
     }
 
     renderNav() {
@@ -603,7 +628,6 @@ export default class TestView extends Component {
     render() {
         if (!this.state.loading) {
             let disabled = this.state.complete ? {'disabled': 'disabled'} : {};
-            let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
             let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {
                 return {label: v.name, value: v.id}
             });
@@ -611,12 +635,7 @@ export default class TestView extends Component {
                 <div className="viewer">
                     <div id="toolbar">
                         {this.renderTools()}
-
-                        <h1>
-                            {this.state.attemptDetail.stage !== 1 ? <span className={'stage'}>Stage{this.state.attemptDetail.stage}</span> : null}
-                            {test_case_index + 1} / {this.state.test_set_cases.length}&nbsp;&nbsp;( {this.state.test_case.name} )
-                        </h1>
-
+                        {this.renderHeaderNumber()}
                         {this.renderNav()}
                     </div>
                     <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}

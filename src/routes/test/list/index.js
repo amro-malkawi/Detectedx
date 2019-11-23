@@ -7,6 +7,7 @@ import PageTitleBar from "Components/PageTitleBar/PageTitleBar";
 import {Card, CardBody, Button} from "reactstrap";
 import * as Apis from 'Api';
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
+import StartModal from './StartModal';
 
 export default class list extends Component {
 
@@ -109,7 +110,12 @@ export default class list extends Component {
                         })
                     }
                 </div>
-                <Dialog open={this.state.isShowModal} onClose={() => this.setState({isShowModal: false})} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
+                <StartModal
+                    open={this.state.isShowModal}
+                    onClose={() => this.setState({isShowModal: false})}
+                    onNext={() => this.onGoAttempt()}
+                />
+                {/*<Dialog open={this.state.isShowModal} onClose={() => this.setState({isShowModal: false})} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
                     <div style={{padding: 30}}>
                         <DialogTitle id="alert-dialog-title">
                             <span className={'fs-23'}>LEARNING OBJECTIVES FOR:</span>
@@ -159,7 +165,7 @@ export default class list extends Component {
                             </div>
                         </DialogActions>
                     </div>
-                </Dialog>
+                </Dialog>*/}
             </div>
         )
     }
