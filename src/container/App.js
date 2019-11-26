@@ -9,17 +9,8 @@ import {NotificationContainer} from 'react-notifications';
 // rct theme provider
 import RctThemeProvider from './RctThemeProvider';
 
-//Horizontal Layout
-import HorizontalLayout from './HorizontalLayout';
-
-//Agency Layout
-import AgencyLayout from './AgencyLayout';
-
 //Main App
 import RctDefaultLayout from './DefaultLayout';
-
-// boxed layout
-import RctBoxedLayout from './RctBoxedLayout';
 
 // app signin
 import AppSignIn from './Signin';
@@ -38,17 +29,8 @@ import {
     AsyncAdvanceTestViewComponent,
 } from 'Components/AsyncComponent/AsyncComponent';
 
-//Auth0
-import Auth from '../Auth/Auth';
 
-//Auth0 Handle Authentication
-const auth = new Auth();
 
-const handleAuthentication = ({location}) => {
-    if (/access_token|id_token|error/.test(location.hash)) {
-        auth.handleAuthentication();
-    }
-}
 
 /**
  * Initial Path To Check Whether User Is Logged In Or Not

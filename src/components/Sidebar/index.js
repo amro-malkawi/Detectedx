@@ -13,7 +13,6 @@ import $ from 'jquery';
 import { collapsedSidebarAction } from 'Actions';
 
 // components
-import UserBlock from './UserBlock';
 import SidebarContent from './SidebarContent';
 import AgencySidebar from '../AgencyMenu/AgencySidebar';
 

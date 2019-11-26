@@ -13,11 +13,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
 import {Fab} from "@material-ui/core";
 
-// components
-import {
-    SessionSlider
-} from 'Components/Widgets';
-
 // app config
 import AppConfig from 'Constants/AppConfig';
 
@@ -26,10 +21,6 @@ import {
     signinUserInEmail,
 } from 'Actions';
 
-//Auth File
-import Auth from '../Auth/Auth';
-
-const auth = new Auth();
 
 class Signin extends Component {
 

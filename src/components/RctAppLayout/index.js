@@ -12,9 +12,7 @@ import classnames from 'classnames';
 // Components
 import Header from 'Components/Header/Header';
 import SidebarContent from 'Components/Sidebar';
-import Footer from 'Components/Footer/Footer';
 import Tour from 'Components/Tour';
-import ThemeOptions from 'Components/ThemeOptions/ThemeOptions';
 
 // preload Components
 import PreloadHeader from 'Components/PreloadLayout/PreloadHeader';
