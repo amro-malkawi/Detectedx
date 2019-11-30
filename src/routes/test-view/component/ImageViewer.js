@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {Button, IconButton} from "@material-ui/core";
-import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import cornerstone from 'cornerstone-core';
-import cornerstoneTools from 'cornerstone-tools';
-import MarkerTool from "./tools/MarkerTool";
-
-import * as Apis from "Api/index";
 import Tooltip from "@material-ui/core/Tooltip";
+import cornerstoneTools from 'cornerstone-tools';
 import {NotificationManager} from "react-notifications";
+import MarkerTool from "../lib/tools/MarkerTool";
+import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
+import * as Apis from "Api/index";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -35,7 +34,7 @@ export default class ImageViewer extends Component {
         super(props);
         this.state = {
             isShowMarkInfo: true,
-            stackCount: this.props.stackCount,
+            stackCount: this.props.imageInfo.stack_count,
             currentStack: 1,
             isShowFloatingMenu: false,
         };
@@ -64,11 +63,12 @@ export default class ImageViewer extends Component {
             this.shapeList[shape.type].push({stack: shape.stack, measurementData});
         });
         this.tempModifiedShape = null;
+        this.imageElementRef = React.createRef();
     }
 
     componentDidMount() {
-        const {imageInfo, viewerRef} = this.props;
-        this.imageElement = viewerRef.current.querySelector('.dicom');
+        const {imageInfo} = this.props;
+        this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
             return `dtx://${imageInfo.id}/${v}`;
         });
@@ -603,9 +603,9 @@ export default class ImageViewer extends Component {
     }
 
     render() {
-        const {imageInfo, viewerRef} = this.props;
+        const {imageInfo, dndRef, isDragOver} = this.props;
         return (
-            <div className="image" style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count} ref={viewerRef}>
+            <div ref={dndRef} className={"image " + (isDragOver ? 'drag-hover' : '')} style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count}>
                 <div className={'control-btn'}>
                     <a className="eye" onClick={() => this.toggleMarkInfo()}>
                         <Tooltip title="Hide Info" placement="bottom">
@@ -631,7 +631,7 @@ export default class ImageViewer extends Component {
                             </a>
                     }
                 </div>
-                <div className="dicom"/>
+                <div className="dicom" ref={this.imageElementRef}/>
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>

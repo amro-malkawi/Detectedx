@@ -1,4 +1,7 @@
 import React, {Component} from 'react'
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import { setImageListAction, setShowImageBrowser } from 'Actions';
 import {Col, FormGroup, Label} from "reactstrap";
 import {Button, Radio, RadioGroup, FormControlLabel, Switch} from '@material-ui/core';
 import Select from 'react-select';
@@ -6,7 +9,9 @@ import {Input} from "reactstrap";
 import yellow from '@material-ui/core/colors/yellow';
 import {withStyles} from '@material-ui/core/styles';
 import chroma from 'chroma-js';
-import * as Apis from 'Api';
+import {NotificationManager} from "react-notifications";
+import {DndProvider} from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
@@ -16,18 +21,19 @@ import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
-import {NotificationManager} from "react-notifications";
 
-
-import ImageViewer from './lib/ImageViewer'
+import ImageViewerContainer from './component/ImageViewerContainer'
+import ImageViewer from './component/ImageViewer'
 import Marker from './lib/tools/MarkerTool';
 import panZoomSynchronizer from "./lib/panZoomSynchronizer";
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from './InstructionModal';
 import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
+import ImageBrowser from "./component/ImageBrowser";
+import * as Apis from 'Api';
 
-export default class TestView extends Component {
+class TestView extends Component {
 
     constructor(props) {
         super(props);
@@ -59,7 +65,6 @@ export default class TestView extends Component {
         this.popupCancelHandler = null;
         this.popupDeleteHandler = null;
         this.popupSaveHandler = null;
-        this.viewers = [];
         this.synchronizer = null;
         this.initConerstone();
     }
@@ -93,7 +98,7 @@ export default class TestView extends Component {
             });
         });
         let promise1 = new Promise(function (resolve, reject) {
-            if(!that.state.isPostTest) {
+            if (!that.state.isPostTest) {
                 Apis.testSetsCases(that.state.test_sets_id).then((data) => {
                     data = data.map((v) => v.test_case_id);
                     resolve(data);
@@ -127,18 +132,14 @@ export default class TestView extends Component {
         Promise.all([promise0, promise1, promise2, promise3]).then(function (values) {
             const [testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers] = values;
             let complete = false;
-            if(!attemptsDetail.test_sets.has_post) {
+            if (!attemptsDetail.test_sets.has_post) {
                 complete = attemptsDetail.complete;
             } else {
-                if(that.state.isPostTest) {
-                    if(!attemptsDetail.complete) {
+                if (that.state.isPostTest) {
+                    if (!attemptsDetail.complete) {
                         throw Error('can not test');
                     } else {
-                        if(attemptsDetail.post_stage === 0) {
-                            complete = false;
-                        } else {
-                            complete = true;
-                        }
+                        complete = attemptsDetail.post_stage !== 0;
                     }
                 } else {
                     complete = attemptsDetail.complete;
@@ -150,7 +151,6 @@ export default class TestView extends Component {
                 test_set_cases: testSetsCases,
                 attemptDetail: attemptsDetail,
                 complete,
-                imageAnswers: testCasesAnswers.images,
                 isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
                 isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
                 loading: false
@@ -158,6 +158,7 @@ export default class TestView extends Component {
                 Marker.lesions = that.state.test_case.modalities.lesion_types;
                 ImageViewer.adjustSlideSize();
             });
+            that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
@@ -170,17 +171,17 @@ export default class TestView extends Component {
     }
 
     onNext() {
-       if(!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
+        if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
             this.setState({isShowQualityModal: true});
-       } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
-           this.setState({isShowConfirmQualityModal: true});
-       } else {
-           this.onMove(1);
-       }
+        } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+            this.setState({isShowConfirmQualityModal: true});
+        } else {
+            this.onMove(1);
+        }
     }
 
     onFinish() {
-        if(!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
+        if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
             this.setState({isShowQualityModal: true});
         } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
@@ -198,7 +199,7 @@ export default class TestView extends Component {
         let next_test_case_id = this.state.test_set_cases[number];
         this.setState({loading: true}, () => {
             let url = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + next_test_case_id;
-            if(this.state.isPostTest) {
+            if (this.state.isPostTest) {
                 url += '/post'
             }
             Apis.attemptsMoveTestCase(this.state.attempts_id, next_test_case_id).then((resp) => {
@@ -217,7 +218,7 @@ export default class TestView extends Component {
 
     onComplete() {
         this.setState({loading: true}, () => {
-            if(!this.state.isPostTest) {
+            if (!this.state.isPostTest) {
                 Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
                     if (!resp.complete && resp.stage === 2) {
                         let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
@@ -247,12 +248,12 @@ export default class TestView extends Component {
     }
 
     onSetQuality(quality) {
-        if(quality === -1) return;
+        if (quality === -1) return;
         let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
         let test_case_length = this.state.test_set_cases.length;
         this.setState({isShowQualityModal: false});
         Apis.attemptsQuality(this.state.attempts_id, this.state.test_cases_id, quality).then((resp) => {
-            if(test_case_index + 1 === test_case_length) {
+            if (test_case_index + 1 === test_case_length) {
                 this.onComplete();
             } else {
                 this.onMove(1);
@@ -265,7 +266,7 @@ export default class TestView extends Component {
         let test_case_length = this.state.test_set_cases.length;
         this.setState({isShowConfirmQualityModal: false});
         Apis.attemptsConfirmQuality(this.state.attempts_id, this.state.test_cases_id, this.state.test_case.quality, isAgree, msg).then((resp) => {
-            if(test_case_index + 1 === test_case_length) {
+            if (test_case_index + 1 === test_case_length) {
                 this.onComplete();
             } else {
                 this.onMove(1);
@@ -347,34 +348,24 @@ export default class TestView extends Component {
         this.setSelectedRating(event.target.value);
     }
 
-    setSelectedLesions(lesions) {
-        let lesionsValue = [];
-        lesions = lesions.map(v => v.toString());
-        this.state.test_case.modalities.lesion_types.forEach(v => {
-            if (lesions.indexOf(v.id.toString()) !== -1) {
-                lesionsValue.push({value: v.id, label: v.name});
-            }
-        });
-        this.setState({selectedLesions: lesionsValue});
-    }
-
     onChangeLesions(value) {
         this.setState({selectedLesions: value})
     }
 
     renderHeaderNumber() {
         let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
-        return(
+        return (
             <h1 style={{display: "flex", justifyContent: 'center', alignItems: 'center'}}>
                 {this.state.attemptDetail.stage !== 1 ? <span className={'stage'}>Stage{this.state.attemptDetail.stage}</span> : null}
-                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={test_case_index} onChange={(e) => this.onSeek(e.target.value)} style={{width: 80, backgroundColor: 'black', color: 'white', borderColor: 'grey'}}>
+                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={test_case_index} onChange={(e) => this.onSeek(e.target.value)}
+                       style={{width: 80, backgroundColor: 'black', color: 'white', borderColor: 'grey'}}>
                     {
                         this.state.test_set_cases.map((v, i) =>
                             <option value={i} key={i}>{i + 1}</option>
                         )
                     }
                 </Input>
-                    {/*{test_case_index + 1}*/}
+                {/*{test_case_index + 1}*/}
                 &nbsp;&nbsp;/ {this.state.test_set_cases.length}&nbsp;&nbsp;( {this.state.test_case.name} )
             </h1>
         )
@@ -425,21 +416,16 @@ export default class TestView extends Component {
     }
 
     renderImageViewer() {
-        this.viewers = [];
         return this.state.test_case.images.map((item, index) => {
-            this.viewers.push(React.createRef());
             return (
-                <ImageViewer
+                <ImageViewerContainer
                     imageInfo={item}
                     attemptId={this.state.attempts_id}
-                    viewerRef={this.viewers[this.viewers.length - 1]}
                     currentTool={this.state.currentTool}
                     synchronizer={this.synchronizer}
                     index={index}
-                    answers={this.state.imageAnswers[index]}
                     radius={this.state.test_case.modalities.circle_size}
                     onShowPopup={this.handleShowPopup.bind(this)}
-                    stackCount={item.stack_count}
                     complete={this.state.complete}
                     stage={this.state.attemptDetail.stage}
                     width={100 / this.state.test_case.images.length}
@@ -472,6 +458,14 @@ export default class TestView extends Component {
         tools = tools === null ? [] : tools.split(',');
         return (
             <div id="tools">
+                <div className={"tool option"} onClick={() => this.props.setShowImageBrowser(!this.props.isShowImageBrowser)}>
+                    <div className={'series-icon ' + (this.props.isShowImageBrowser ? 'active' : '')}>
+                        <svg name="th-large" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 13" width="1em" height="1em" fill="currentColor"><title>TH Large</title>
+                            <path d="M0 0h7v6H0zm8 0h7v6H8zM0 7h7v6H0zm8 0h7v6H8z"/>
+                        </svg>
+                    </div>
+                    <p>Series</p>
+                </div>
                 {
                     tools.indexOf('Pan') !== -1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
@@ -638,8 +632,27 @@ export default class TestView extends Component {
                         {this.renderHeaderNumber()}
                         {this.renderNav()}
                     </div>
-                    <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
-                        {this.renderImageViewer()}
+                    <div className={'test-content'}>
+                        <DndProvider backend={HTML5Backend}>
+                            <ImageBrowser/>
+                            {/*<div id="images"> /!*className={'cursor-' + this.state.currentTool}>*!/*/}
+                            {/*    {this.renderImageViewer()}*/}
+                            {/*</div>*/}
+                            <ImageViewerContainer
+                                attemptId={this.state.attempts_id}
+                                currentTool={this.state.currentTool}
+                                synchronizer={this.synchronizer}
+                                radius={this.state.test_case.modalities.circle_size}
+                                onShowPopup={this.handleShowPopup.bind(this)}
+                                complete={this.state.complete}
+                                stage={this.state.attemptDetail.stage}
+                                width={100 / this.state.test_case.images.length}
+                                tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
+                                brightness={this.state.test_case.modalities.brightness}
+                                contrast={this.state.test_case.modalities.contrast}
+                                zoom={this.state.test_case.modalities.zoom}
+                            />
+                        </DndProvider>
                     </div>
                     {
                         this.state.isShowPopup ?
@@ -721,7 +734,7 @@ export default class TestView extends Component {
                     <ConfirmQualityModal
                         isOpen={this.state.isShowConfirmQualityModal}
                         toggle={() => this.setState({isShowConfirmQualityModal: false})}
-                        quality={ ['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)]}
+                        quality={['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)]}
                         confirm={(isAgree, msg) => this.onConfirmImageQuality(isAgree, msg)}
                     />
 
@@ -733,6 +746,18 @@ export default class TestView extends Component {
     }
 }
 
+// map state to props
+const mapStateToProps = (state) => {
+    return {
+        imageList: state.testView.imageList,
+        isShowImageBrowser: state.testView.isShowImageBrowser
+    };
+};
+
+export default withRouter(connect(mapStateToProps, {
+    setImageListAction,
+    setShowImageBrowser,
+})(TestView));
 
 const AntSwitch = withStyles(theme => ({
     root: {
