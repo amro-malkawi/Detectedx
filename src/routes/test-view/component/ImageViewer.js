@@ -1,4 +1,8 @@
 import React, {Component} from 'react';
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {setImageAnswer} from "Actions";
+import ResizeDetector from 'react-resize-detector';
 import {Button, IconButton} from "@material-ui/core";
 import cornerstone from 'cornerstone-core';
 import Tooltip from "@material-ui/core/Tooltip";
@@ -28,7 +32,7 @@ function uuidv4() {
     );
 }
 
-export default class ImageViewer extends Component {
+class ImageViewer extends Component {
 
     constructor(props) {
         super(props);
@@ -45,28 +49,30 @@ export default class ImageViewer extends Component {
             currentImageIdIndex: 0,
             imageIds: []
         };
-        this.markList = [];
-        this.props.answers.answers && this.props.answers.answers.forEach((mark) => {
-            mark.isTruth = false;
-            mark.lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
-            this.markList.push(mark);
-        });
-        this.props.answers.truths && this.props.answers.truths.forEach((mark) => {
-            mark.isTruth = true;
-            mark.lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id);
-            this.markList.push(mark);
-        });
-        this.shapeList = {};
-        this.props.answers.shapes && this.props.answers.shapes.forEach((shape) => {
-            let measurementData = JSON.parse(shape.data);
-            if(this.shapeList[shape.type] === undefined) this.shapeList[shape.type] = [];
-            this.shapeList[shape.type].push({stack: shape.stack, measurementData});
-        });
+        this.markList = this.props.imageInfo.answers.markList;
+        this.shapeList = this.props.imageInfo.answers.shapeList;
+        // this.props.answers.answers && this.props.answers.answers.forEach((mark) => {
+        //     mark.isTruth = false;
+        //     mark.lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
+        //     this.markList.push(mark);
+        // });
+        // this.props.answers.truths && this.props.answers.truths.forEach((mark) => {
+        //     mark.isTruth = true;
+        //     mark.lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id);
+        //     this.markList.push(mark);
+        // });
+        // this.shapeList = {};
+        // this.props.answers.shapes && this.props.answers.shapes.forEach((shape) => {
+        //     let measurementData = JSON.parse(shape.data);
+        //     if(this.shapeList[shape.type] === undefined) this.shapeList[shape.type] = [];
+        //     this.shapeList[shape.type].push({stack: shape.stack, measurementData});
+        // });
         this.tempModifiedShape = null;
         this.imageElementRef = React.createRef();
     }
 
     componentDidMount() {
+        console.log('component did mount');
         const {imageInfo} = this.props;
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
@@ -207,6 +213,7 @@ export default class ImageViewer extends Component {
             sliders[i].style.width = sliders[i].parentNode.clientHeight + 'px';
         }
         window.addEventListener('resize', () => {
+            console.log('resize----------------------')
             let sliders = document.querySelectorAll('div .stack-scrollbar input');
             for (let i = 0; i < sliders.length; i++) {
                 sliders[i].style.width = sliders[i].parentNode.clientHeight + 'px';
@@ -275,6 +282,7 @@ export default class ImageViewer extends Component {
             this.markList = this.markList.filter((v) => {
                 return !(v.id === deleteId && !v.isTruth);
             });
+            this.props.setImageAnswer(this.props.imageInfo.id, 'markList', this.markList);
             this.renderMarks();
         }).catch(e => {
             alert('An error occurred deleting this mark');
@@ -299,6 +307,7 @@ export default class ImageViewer extends Component {
                 let index = this.markList.findIndex((v) => v.id === response.id);
                 this.markList[index] = response;
             }
+            this.props.setImageAnswer(this.props.imageInfo.id, 'markList', this.markList);
             this.renderMarks();
         }).catch(e_ => {
             alert('An error occurred saving this mark');
@@ -325,6 +334,7 @@ export default class ImageViewer extends Component {
                 console.log('completed', event.detail.measurementData.id);
                 if(this.shapeList[data.type] === undefined) this.shapeList[data.type] = [];
                 this.shapeList[data.type].push({stack: data.stack, measurementData: JSON.parse(data.data)});
+                this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
             });
         }
     }
@@ -345,6 +355,7 @@ export default class ImageViewer extends Component {
                 console.log('removed', event.detail.measurementData.id);
                 const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
                 that.shapeList[type].splice(index, 1);
+                this.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', that.shapeList);
             });
         }, 500);
     }
@@ -366,6 +377,7 @@ export default class ImageViewer extends Component {
                     console.log('modified shape');
                     const index = that.shapeList[data.type].map((v) => v.measurementData.id).indexOf(data.id);
                     that.shapeList[data.type][index] = {stack: data.stack, measurementData: JSON.parse(data.data)};
+                    this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
                 });
             }
         }, 500);
@@ -631,7 +643,20 @@ export default class ImageViewer extends Component {
                             </a>
                     }
                 </div>
-                <div className="dicom" ref={this.imageElementRef}/>
+                <ResizeDetector
+                    handleWidth
+                    handleHeight
+                    skipOnMount={true}
+                    refreshMode={'throttle'}
+                    refreshRate={500}
+                    onResize={() => {
+                        cornerstone.resize(this.imageElement);
+                    }}
+                >
+                <div className="dicom" ref={this.imageElementRef}>
+
+                </div>
+                </ResizeDetector>
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>
@@ -640,3 +665,16 @@ export default class ImageViewer extends Component {
         )
     }
 }
+
+
+// map state to props
+const mapStateToProps = (state) => {
+    return {
+        imageList: state.testView.imageList,
+        showImageList: state.testView.showImageList
+    };
+};
+
+export default withRouter(connect(mapStateToProps, {
+    setImageAnswer
+})(ImageViewer));

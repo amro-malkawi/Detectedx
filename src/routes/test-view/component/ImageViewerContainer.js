@@ -6,29 +6,28 @@ import { useDrop } from 'react-dnd'
 import ImageViewer from "./ImageViewer";
 
 const ImageViewerContainer = (props) => {
-    // {/*<ImageViewer {...props} dndRef={drop} isDragOver={isDragOverActive}/>*/}
     return (
         <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
         {
-            props.showImageList.map((item, index) => {
+            props.showImageList.map((id, index) => {
                 const [{ canDrop, isOver }, drop] = useDrop({
                     accept: "DicomImage",
-                    drop: () => ({ id: item.id, index }),
+                    drop: () => ({ id: id, index }),
                     collect: monitor => ({
                         isOver: monitor.isOver(),
                         canDrop: monitor.canDrop(),
                     }),
                 });
                 const isDragOverActive = canDrop && isOver;
+                const item = props.imageList.find((v) => v.id === id);
                 return (
                     <ImageViewer
                         {...props}
                         imageInfo={item}
                         index={index}
                         dndRef={drop}
-                        answers={item.answers}
                         isDragOver={isDragOverActive}
-                        key={index}
+                        key={index + '_' + id}
                     />
                 )
             })
@@ -40,6 +39,7 @@ const ImageViewerContainer = (props) => {
 // map state to props
 const mapStateToProps = (state) => {
     return {
+        imageList: state.testView.imageList,
         showImageList: state.testView.showImageList
     };
 };

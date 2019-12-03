@@ -88,7 +88,18 @@ class TestView extends Component {
         this.getData();
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.test_case.images !== undefined && this.state.test_case.images !== prevState.test_case.images) {
+
+        }
+    }
+
+    componentWillUnmount() {
+        this.props.setImageListAction([], []);
+    }
+
     getData() {
+        this.props.setImageListAction([], []);
         const that = this;
         let promise0 = new Promise(function (resolve, reject) {
             Apis.testCasesViewInfo(that.state.test_cases_id).then((data) => {
@@ -158,16 +169,11 @@ class TestView extends Component {
                 Marker.lesions = that.state.test_case.modalities.lesion_types;
                 ImageViewer.adjustSlideSize();
             });
-            that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
+            // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
+            that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images);
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.state.test_case.images !== undefined && this.state.test_case.images !== prevState.test_case.images) {
-
-        }
     }
 
     onNext() {

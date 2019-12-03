@@ -1,7 +1,7 @@
 /**
  * Sidebar Reducers
  */
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import { TOGGLE_MENU, AGENCY_TOGGLE_MENU } from 'Actions/types';
 
 // nav links
