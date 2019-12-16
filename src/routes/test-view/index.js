@@ -31,6 +31,7 @@ import InstructionModal from './InstructionModal';
 import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
 import ImageBrowser from "./component/ImageBrowser";
+import HangingSelector from './component/HangingSelector';
 import * as Apis from 'Api';
 
 class TestView extends Component {
@@ -170,7 +171,7 @@ class TestView extends Component {
                 ImageViewer.adjustSlideSize();
             });
             // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
-            that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images);
+            that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, complete);
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
@@ -398,6 +399,10 @@ class TestView extends Component {
                     this.state.complete ?
                         null : <Button className={'ml-20 mr-10'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>Instructions</Button>
                 }
+                {
+                    this.state.complete ?
+                        <Button className={'ml-20 mr-10'} variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>Scores</Button> : null
+                }
                 <Button variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/list')}>Home</Button>
             </nav>
         );
@@ -619,6 +624,7 @@ class TestView extends Component {
                     />
                     <p>&nbsp;Sync</p>
                 </div>
+                <HangingSelector/>
                 {this.renderTestResult()}
                 {this.renderTruthImageQuality()}
             </div>

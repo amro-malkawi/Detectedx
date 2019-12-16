@@ -27,7 +27,7 @@ import PostQuestionForm from "./PostQuestionForm";
 const stepName = {
     mainQuestions: 'Questionnaires',
     additionalQuestions: 'Additional Questions',
-    test: 'Test stays',
+    test: 'Test',
     score: 'Scores',
     answer: 'Answers',
     postTest: 'PostTest',

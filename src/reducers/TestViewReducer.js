@@ -14,12 +14,20 @@ const INIT_STATE = {
     imageList: [],
     showImageList: [],
     isShowImageBrowser: true,
+    hasAllTestImages: false,
+    hasAllPriorImages: false,
 };
 
 export default (state = INIT_STATE, action) => {
     switch (action.type) {
         case TEST_VIEW_SET_IMAGE_LIST:
-            return { ...state, imageList: action.payload, showImageList: action.payload.map(v => v.id)};
+            return {
+                ...state,
+                imageList: action.imageList,
+                showImageList: action.showImageList,
+                hasAllTestImages: action.hasAllTestImages,
+                hasAllPriorImages: action.hasAllPriorImages,
+            };
         case TEST_VIEW_CHANGE_IMAGE_LIST:
             return { ...state, imageList: action.payload};
         case TEST_VIEW_SET_SHOW_IMAGE_LIST:

@@ -221,6 +221,9 @@ div.viewer {
         .dicom {
           height: 100%;
           background-color: black;
+          .cornerstone-canvas {
+            width: 100% !important;
+          }
         }
 
         .control-btn {
@@ -599,4 +602,16 @@ div.viewer {
 .instruction-theme-black {
   position: absolute;
   height: 100%;
+}
+
+.hanging-type-container {
+  position: relative;
+  top: -13px;
+  display: inline-block;
+  .hanging-button {
+    background-color: transparent;
+    &:hover {
+      background-color: grey;
+    }
+  }
 }

@@ -3,6 +3,7 @@ import { useDrag } from 'react-dnd'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {dropImage} from "Actions";
+import * as Apis from 'Api';
 
 const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
     const [{ isDragging }, drag] = useDrag({
@@ -17,16 +18,16 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
             isDragging: monitor.isDragging()
         })
     });
-
+    const metaData = JSON.parse(item.metadata);
     return (
         <div className="ThumbnailEntryContainer">
             <div ref={drag} className="ThumbnailEntry">
                 <div className="p-x-1">
-                    <div className="ImageThumbnail">
+                    <div className="ImageThumbnail" style={{boxShadow: 'inset 0 0 0 1px ' + (item.type === 'test' ? '#72787d' : (item.type === 'prior' ? '#73730a' : '#672525'))}}>
                         <div className="image-thumbnail-canvas">
                             <img
                                 className="static-image"
-                                src={'http://localhost:3000/dicomimg/' + item.id + '/0/0/0_0.png'}
+                                src={Apis.apiHost + '/dicomimg/' + item.id + '/0/0/0_0.png'}
                                 height={123}
                                 alt={''}
                             />
@@ -37,21 +38,21 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                     </div>
                 </div>
                 <div className="series-details">
-                    <div className="series-description">SCOUT</div>
+                    <div className="series-description">{metaData.viewPosition ? metaData.viewPosition : ''}</div>
                     <div className="series-information">
                         <div className="item item-series">
-                            <div className="icon">S:</div>
-                            <div className="value">1</div>
+                            <div className="icon">Laterality:</div>
+                            <div className="value">{metaData.imageLaterality ? metaData.imageLaterality : ''}</div>
                         </div>
                         <div className="item item-series">
-                            <div className="icon">I:</div>
-                            <div className="value">1</div>
+                            <div className="icon">Type:</div>
+                            <div className="value">{item.type}</div>
                         </div>
                         <div className="item item-frames">
                             <div className="icon">
                                 <div/>
                             </div>
-                            <div className="value">2</div>
+                            <div className="value">{item.stack_count}</div>
                         </div>
                     </div>
                 </div>

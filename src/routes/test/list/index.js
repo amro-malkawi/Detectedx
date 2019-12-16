@@ -16,7 +16,7 @@ export default class list extends Component {
         this.state = {
             testSetsList: [],
             selectedId: null,
-            isShowModal: false,
+            isShowModalType: '',
         }
     }
 
@@ -33,7 +33,7 @@ export default class list extends Component {
     }
 
     onGoAttempt() {
-        this.setState({isShowModal: false});
+        this.setState({isShowModalType: ''});
         if (this.state.selectedId.indexOf !== undefined && this.state.selectedId.indexOf('/app/test/attempt/') === 0) {
             this.props.history.push(this.state.selectedId)
         } else {
@@ -48,7 +48,7 @@ export default class list extends Component {
         }
     }
 
-    onStart(value, isImageQuality) {
+    onStart(value, isImageQuality, has_post) {
         if(isImageQuality) {
             this.setState({
                 selectedId: value
@@ -56,23 +56,24 @@ export default class list extends Component {
                 this.onGoAttempt();
             });
         } else {
+
             this.setState({
-                isShowModal: true,
+                isShowModalType: has_post ? 'has_post' : 'normal',
                 selectedId: value
             });
         }
     }
 
-    renderStartButton(test_set_id, attempts, isImageQuality) {
+    renderStartButton(test_set_id, attempts, isImageQuality, has_post) {
         let attempt = attempts[0];
         if (attempt === undefined) {
-            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, isImageQuality)}>Start</Button>);
+            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, isImageQuality, has_post)}>Start</Button>);
         } else if (attempt.complete) {
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, isImageQuality)}>Re-Start</Button>);
+            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, isImageQuality, has_post)}>Re-Start</Button>);
         } else {
             // let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             let path = '/app/test/attempt/' + attempt.id;
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, isImageQuality)}>Continue</Button>);
+            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, isImageQuality, has_post)}>Continue</Button>);
         }
     }
 
@@ -101,7 +102,7 @@ export default class list extends Component {
                                                             Scores
                                                         </Button> : null
                                                 }
-                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.image_quality)}
+                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.image_quality, item.test_sets.has_post)}
                                             </div>
                                         </CardBody>
                                     </Card>
@@ -111,11 +112,11 @@ export default class list extends Component {
                     }
                 </div>
                 <StartModal
-                    open={this.state.isShowModal}
-                    onClose={() => this.setState({isShowModal: false})}
+                    open={this.state.isShowModalType === 'has_post'}
+                    onClose={() => this.setState({isShowModalType: ''})}
                     onNext={() => this.onGoAttempt()}
                 />
-                {/*<Dialog open={this.state.isShowModal} onClose={() => this.setState({isShowModal: false})} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
+                <Dialog open={this.state.isShowModalType === 'normal'} onClose={() => this.setState({isShowModalType: ''})} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
                     <div style={{padding: 30}}>
                         <DialogTitle id="alert-dialog-title">
                             <span className={'fs-23'}>LEARNING OBJECTIVES FOR:</span>
@@ -165,7 +166,7 @@ export default class list extends Component {
                             </div>
                         </DialogActions>
                     </div>
-                </Dialog>*/}
+                </Dialog>
             </div>
         )
     }

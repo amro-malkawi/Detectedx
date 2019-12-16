@@ -27,7 +27,7 @@ const EraserTool = cornerstoneTools.EraserTool;
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
 
 function uuidv4() {
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
 }
@@ -45,7 +45,7 @@ class ImageViewer extends Component {
         this.toolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.originalViewport = undefined;
-        this.stack  = {
+        this.stack = {
             currentImageIdIndex: 0,
             imageIds: []
         };
@@ -118,13 +118,15 @@ class ImageViewer extends Component {
             this.imageElement.parentNode.querySelector('.location').textContent = `(x: ${x}, y: ${y})`;
         });
 
-        if(!this.props.complete && this.props.tools.indexOf('Marker') !== -1) {
+        if (!this.props.complete && this.props.tools.indexOf('Marker') !== -1) {
             this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleAddMark(event.detail.currentPoints.image));
         }
 
         this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack.bind(this));
 
-        this.imageElement.querySelector('canvas').oncontextmenu = function() {return false;}
+        this.imageElement.querySelector('canvas').oncontextmenu = function () {
+            return false;
+        }
 
         this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', this.handleAddShape.bind(this));
         this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleRemoveShape.bind(this));
@@ -189,7 +191,7 @@ class ImageViewer extends Component {
         //add synchronizer
         this.props.synchronizer.add(this.imageElement);
 
-        if(this.state.stackCount > 1) {
+        if (this.state.stackCount > 1) {
             //add image stack
             cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
             cornerstoneTools.addToolState(this.imageElement, 'stack', this.stack);
@@ -224,13 +226,13 @@ class ImageViewer extends Component {
     setInitialSetParam() {
         let viewport = cornerstone.getViewport(this.imageElement);
         // viewport.invert = !viewport.invert;
-        if(this.props.brightness !== undefined && this.props.brightness !== null && !isNaN(this.props.brightness) && Number(this.props.brightness) !== 0) {
+        if (this.props.brightness !== undefined && this.props.brightness !== null && !isNaN(this.props.brightness) && Number(this.props.brightness) !== 0) {
             viewport.voi.windowWidth = Number(this.props.brightness);
         }
-        if(this.props.contrast !== undefined && this.props.contrast !== null && !isNaN(this.props.contrast) && Number(this.props.contrast) !== 0) {
+        if (this.props.contrast !== undefined && this.props.contrast !== null && !isNaN(this.props.contrast) && Number(this.props.contrast) !== 0) {
             viewport.voi.windowCenter = Number(this.props.contrast);
         }
-        if(this.props.zoom !== undefined && this.props.zoom !== null && !isNaN(this.props.zoom)) {
+        if (this.props.zoom !== undefined && this.props.zoom !== null && !isNaN(this.props.zoom)) {
             viewport.scale = viewport.scale * Number(this.props.zoom);
         }
         cornerstone.setViewport(this.imageElement, viewport);
@@ -244,7 +246,7 @@ class ImageViewer extends Component {
     }
 
     handleAddMark(point) {
-        if(this.props.currentTool === 'FreehandMouse') return;
+        if (this.props.currentTool === 'FreehandMouse') return;
         let markerData = {
             active: true,
             handles: {
@@ -319,7 +321,7 @@ class ImageViewer extends Component {
     handleAddShape(event) {
         console.log('completed', event.detail);
         this.tempModifiedShape = null;
-        if(event.detail.measurementData.id === undefined) {
+        if (event.detail.measurementData.id === undefined) {
             event.detail.measurementData.id = uuidv4();
             const data = {
                 id: event.detail.measurementData.id,
@@ -327,12 +329,14 @@ class ImageViewer extends Component {
                 attempt_id: this.props.attemptId,
                 test_case_id: this.props.imageInfo.test_case_id,
                 type: event.detail.toolName || event.detail.toolType,
-                data: JSON.stringify(event.detail.measurementData).replace(/-?\d+\.\d+/g, function(x) { return parseFloat(x).toFixed(2) }),
+                data: JSON.stringify(event.detail.measurementData).replace(/-?\d+\.\d+/g, function (x) {
+                    return parseFloat(x).toFixed(2)
+                }),
                 stack: Number(this.state.currentStack) - 1,
             };
             Apis.shapeAdd(data).then(resp => {
                 console.log('completed', event.detail.measurementData.id);
-                if(this.shapeList[data.type] === undefined) this.shapeList[data.type] = [];
+                if (this.shapeList[data.type] === undefined) this.shapeList[data.type] = [];
                 this.shapeList[data.type].push({stack: data.stack, measurementData: JSON.parse(data.data)});
                 this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
             });
@@ -363,14 +367,16 @@ class ImageViewer extends Component {
     handleMouseUp(event) {
         const that = this;
         setTimeout(function () {
-            if(that.tempModifiedShape !== null && that.tempModifiedShape.measurementData.id !== undefined) {
+            if (that.tempModifiedShape !== null && that.tempModifiedShape.measurementData.id !== undefined) {
                 const data = {
                     id: that.tempModifiedShape.measurementData.id,
                     image_id: that.props.imageInfo.id,
                     attempt_id: that.props.attemptId,
                     test_case_id: that.props.imageInfo.test_case_id,
                     type: that.tempModifiedShape.toolName || that.tempModifiedShape.toolType,
-                    data: JSON.stringify(that.tempModifiedShape.measurementData).replace(/-?\d+\.\d+/g, function(x) { return parseFloat(x).toFixed(2) }),
+                    data: JSON.stringify(that.tempModifiedShape.measurementData).replace(/-?\d+\.\d+/g, function (x) {
+                        return parseFloat(x).toFixed(2)
+                    }),
                     stack: Number(that.state.currentStack) - 1,
                 };
                 Apis.shapeUpdate(data).then(resp => {
@@ -386,7 +392,7 @@ class ImageViewer extends Component {
     renderMarks() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');
         this.markList.forEach((mark) => {
-            if(mark.stack === Number(this.state.currentStack) - 1) {
+            if (mark.stack === Number(this.state.currentStack) - 1) {
                 let active = true;
                 let markerData = {
                     active: active,
@@ -419,9 +425,9 @@ class ImageViewer extends Component {
         this.toolList.forEach(toolName => {
             cornerstoneTools.clearToolState(this.imageElement, toolName);
         });
-        for(let type in this.shapeList) {
+        for (let type in this.shapeList) {
             this.shapeList[type].forEach((v) => {
-                if(v.stack === Number(this.state.currentStack) - 1) {
+                if (v.stack === Number(this.state.currentStack) - 1) {
                     cornerstoneTools.addToolState(this.imageElement, type, v.measurementData);
                 }
             });
@@ -455,7 +461,7 @@ class ImageViewer extends Component {
         // if (previousName != 'Marker') {
         //     cornerstoneTools.setToolDisabled(previousName);
         // } else {
-            cornerstoneTools.setToolPassive(previousName);
+        cornerstoneTools.setToolPassive(previousName);
         // }
         //active
         cornerstoneTools.setToolActive(nextName, {
@@ -475,8 +481,8 @@ class ImageViewer extends Component {
         });
     }
 
-    onClearSymbols(){
-        if(this.props.currentTool !== 'Marker') {
+    onClearSymbols() {
+        if (this.props.currentTool !== 'Marker') {
             Apis.shapeDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id, this.props.currentTool).then((resp) => {
                 cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
                 cornerstone.invalidate(this.imageElement);
@@ -515,7 +521,7 @@ class ImageViewer extends Component {
 
     onStepSlide(seek) {
         let value = Number(this.state.currentStack) + seek;
-        if(value > this.state.stackCount || value < 1) return;
+        if (value > this.state.stackCount || value < 1) return;
         this.setStack(value);
     }
 
@@ -532,8 +538,8 @@ class ImageViewer extends Component {
         let stackData = stackToolDataSource.data[0];
         // Switch images, if necessary
         const that = this;
-        if(newIndex !== stackData.currentImageIdIndex && stackData.imageIds[newIndex] !== undefined) {
-            cornerstone.loadAndCacheImage(stackData.imageIds[newIndex]).then(function(image) {
+        if (newIndex !== stackData.currentImageIdIndex && stackData.imageIds[newIndex] !== undefined) {
+            cornerstone.loadAndCacheImage(stackData.imageIds[newIndex]).then(function (image) {
                 let viewport = cornerstone.getViewport(that.imageElement);
                 stackData.currentImageIdIndex = newIndex;
                 cornerstone.displayImage(that.imageElement, image, viewport);
@@ -548,17 +554,17 @@ class ImageViewer extends Component {
         } else {
             let countPerStack = {};
             this.markList.forEach((v) => {
-                if(countPerStack[v.stack] === undefined) {
+                if (countPerStack[v.stack] === undefined) {
                     countPerStack[v.stack] = {answerCount: 0, truthCount: 0};
                 }
-                if(v.isTruth) {
+                if (v.isTruth) {
                     countPerStack[v.stack].truthCount++;
                 } else {
                     countPerStack[v.stack].answerCount++;
                 }
             });
             let floatingButton = [];
-            for(let v in countPerStack) {
+            for (let v in countPerStack) {
                 floatingButton.push({
                     stack: v,
                     answerCount: countPerStack[v].answerCount,
@@ -575,7 +581,7 @@ class ImageViewer extends Component {
                         <div className="stack-scrollbar">
                             <input type="range" min={1} max={this.state.stackCount} value={this.state.currentStack} onChange={this.onStackSlide.bind(this)}/>
                         </div>
-                        <IconButton className={'change-btn'}  onClick={() => this.onStepSlide(1)}>
+                        <IconButton className={'change-btn'} onClick={() => this.onStepSlide(1)}>
                             <i className="zmdi zmdi-plus"/>
                         </IconButton>
                     </div>
@@ -617,7 +623,8 @@ class ImageViewer extends Component {
     render() {
         const {imageInfo, dndRef, isDragOver} = this.props;
         return (
-            <div ref={dndRef} className={"image " + (isDragOver ? 'drag-hover' : '')} style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id} data-index={this.props.index} data-stack={imageInfo.stack_count}>
+            <div ref={dndRef} className={"image " + (isDragOver ? 'drag-hover' : '')} style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id}
+                 data-index={this.props.index} data-stack={imageInfo.stack_count}>
                 <div className={'control-btn'}>
                     <a className="eye" onClick={() => this.toggleMarkInfo()}>
                         <Tooltip title="Hide Info" placement="bottom">
@@ -653,9 +660,7 @@ class ImageViewer extends Component {
                         cornerstone.resize(this.imageElement);
                     }}
                 >
-                <div className="dicom" ref={this.imageElementRef}>
-
-                </div>
+                    <div className="dicom" ref={this.imageElementRef}/>
                 </ResizeDetector>
                 <div className="location status"/>
                 <div className="zoom status"/>
