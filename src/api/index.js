@@ -588,8 +588,8 @@ export function attemptsMoveTestCase(id, testCaseId) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsComplete(id) {
-    const url = '/attempts/' + id + '/complete?access_token=' + getAccessToken();
+export function attemptsComplete(id, monitorWidth, monitorHeight) {
+    const url = '/attempts/' + id + '/complete?monitor_width=' + monitorWidth + '&monitor_height=' + monitorHeight + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -603,7 +603,7 @@ export function attemptsDetail(id, testCaseId) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsCompleteList(test_set_id) {
+export function attemptsCompletedList(test_set_id) {
     const url = '/attempts/complete_list?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }

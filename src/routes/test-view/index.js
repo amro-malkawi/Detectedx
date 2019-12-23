@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import { setImageListAction, setShowImageBrowser } from 'Actions';
+import {changeHangingLayout, setImageListAction, setShowImageBrowser} from 'Actions';
 import {Col, FormGroup, Label} from "reactstrap";
 import {Button, Radio, RadioGroup, FormControlLabel, Switch} from '@material-ui/core';
 import Select from 'react-select';
@@ -226,7 +226,7 @@ class TestView extends Component {
     onComplete() {
         this.setState({loading: true}, () => {
             if (!this.state.isPostTest) {
-                Apis.attemptsComplete(this.state.attempts_id).then((resp) => {
+                Apis.attemptsComplete(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
                     if (!resp.complete && resp.stage === 2) {
                         let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
                         this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
@@ -287,6 +287,10 @@ class TestView extends Component {
 
     onChangeCurrentTool(tool) {
         this.setState({currentTool: tool});
+    }
+
+    onResetView() {
+        this.props.changeHangingLayout('CC-R_CC-L_MLO-R_MLO-L');
     }
 
     handleShowPopup(markData, cancelCallback, deleteCallback, saveCallback) {
@@ -616,6 +620,12 @@ class TestView extends Component {
                             <p>Mark</p>
                         </div> : null
                 }
+                <div className={"tool option"} onClick={() => this.onResetView()}>
+                    <svg name="reset" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 28" width="1em" height="1em" fill="currentColor">
+                        <path d="M24 14c0 6.609-5.391 12-12 12a11.972 11.972 0 0 1-9.234-4.328.52.52 0 0 1 .031-.672l2.141-2.156a.599.599 0 0 1 .391-.141.51.51 0 0 1 .359.187A7.91 7.91 0 0 0 12 21.999c4.406 0 8-3.594 8-8s-3.594-8-8-8A7.952 7.952 0 0 0 6.563 8.14l2.141 2.156a.964.964 0 0 1 .219 1.078 1.002 1.002 0 0 1-.922.625h-7c-.547 0-1-.453-1-1v-7c0-.406.25-.766.625-.922a.964.964 0 0 1 1.078.219l2.031 2.016c2.203-2.078 5.187-3.313 8.266-3.313 6.609 0 12 5.391 12 12z"/>
+                    </svg>
+                    <p>Reset</p>
+                </div>
                 <div className="tool">
                     <AntSwitch
                         defaultChecked
@@ -769,6 +779,7 @@ const mapStateToProps = (state) => {
 export default withRouter(connect(mapStateToProps, {
     setImageListAction,
     setShowImageBrowser,
+    changeHangingLayout
 })(TestView));
 
 const AntSwitch = withStyles(theme => ({

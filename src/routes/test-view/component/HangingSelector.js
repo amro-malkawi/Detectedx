@@ -56,6 +56,8 @@ class HangingSelector extends Component{
                     'CC-R_CC-L_MLO-R_MLO-L',
                     'CC-R_CC-L',
                     'MLO-R_MLO-L',
+                    'CC-R_MLO-R',
+                    'CC-L_MLO-L',
                     'CC-R_CC-R-P',
                     'MLO-R_MLO-R-P',
                     'CC-L_CC-L-P',
@@ -68,13 +70,16 @@ class HangingSelector extends Component{
                     'CC-R_CC-L_MLO-R_MLO-L',
                     'CC-R_CC-L',
                     'MLO-R_MLO-L',
+                    'CC-R_MLO-R',
+                    'CC-L_MLO-L',
                 ];
             }
-            const {type, selectedIndex} = this.state;
+            const {type} = this.state;
+            const selectedIndex = this.options.findIndex((v) => v === this.props.hangingType);
             return (
                 <div className={'hanging-type-container'}>
                     <Button variant="contained" color="default" className={'hanging-button'} onClick={(event) => this.setState({type: event.currentTarget})}>
-                        <img src={require('Assets/img/hangings/' + this.options[selectedIndex] + '.png')} width={70}/>
+                        <img src={require('Assets/img/hangings/' + this.props.hangingType + '.png')} width={70}/>
                     </Button>
                     <StyledMenu
                         id="lock-menu"
@@ -106,7 +111,8 @@ const mapStateToProps = (state) => {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
         hasAllTestImages: state.testView.hasAllTestImages,
-        hasAllPriorImages: state.testView.hasAllPriorImages
+        hasAllPriorImages: state.testView.hasAllPriorImages,
+        hangingType: state.testView.hangingType,
     };
 };
 

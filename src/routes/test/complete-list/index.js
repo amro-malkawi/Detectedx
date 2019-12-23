@@ -27,7 +27,7 @@ export default class CompleteList extends Component {
     }
 
     getData() {
-        Apis.attemptsCompleteList(this.state.testSetId).then(resp => {
+        Apis.attemptsCompletedList(this.state.testSetId).then(resp => {
             this.setState({completeList: resp, loading: false});
         }).catch(e => {
 

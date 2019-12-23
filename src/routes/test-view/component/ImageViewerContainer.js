@@ -38,7 +38,7 @@ const ImageViewerContainer = (props) => {
                         index={index}
                         imageList={props.imageList}
                         param={props}
-                        key={index + '_' + id}
+                        key={index + '_' + props.resetId + '_' + id}
                     />
                 ))
             }
@@ -50,7 +50,8 @@ const ImageViewerContainer = (props) => {
 const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
-        showImageList: state.testView.showImageList
+        showImageList: state.testView.showImageList,
+        resetId: state.testView.resetId,
     };
 };
 

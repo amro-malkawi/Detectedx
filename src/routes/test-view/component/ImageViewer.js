@@ -499,12 +499,12 @@ class ImageViewer extends Component {
         }
     }
 
-    onReset() {
-        // reset the pan, zoom, invert, and windowing levels
-        let original = this.duplicateViewport(this.originalViewport);
-        cornerstone.setViewport(this.imageElement, original);
-        this.setInitialSetParam();
-    }
+    // onReset() {
+    //     // reset the pan, zoom, invert, and windowing levels
+    //     let original = this.duplicateViewport(this.originalViewport);
+    //     cornerstone.setViewport(this.imageElement, original);
+    //     this.setInitialSetParam();
+    // }
 
     _renderPyramid(viewport) {
         this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
@@ -631,11 +631,11 @@ class ImageViewer extends Component {
                             <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
                         </Tooltip>
                     </a>
-                    <a onClick={() => null}>
-                        <Tooltip title="Reset" placement="bottom">
-                            <i className={"zmdi zmdi-refresh fs-23"} style={{paddingLeft: 6, paddingRight: 6}} onClick={() => this.onReset()}/>
-                        </Tooltip>
-                    </a>
+                    {/*<a onClick={() => null}>*/}
+                    {/*    <Tooltip title="Reset" placement="bottom">*/}
+                    {/*        <i className={"zmdi zmdi-refresh fs-23"} style={{paddingLeft: 6, paddingRight: 6}} onClick={() => this.onReset()}/>*/}
+                    {/*    </Tooltip>*/}
+                    {/*</a>*/}
                     <a onClick={() => null}>
                         <Tooltip title="Invert" placement="bottom">
                             <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>

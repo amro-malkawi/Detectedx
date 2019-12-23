@@ -6,6 +6,8 @@ import {
     TEST_VIEW_CHANGE_IMAGE_LIST,
     TEST_VIEW_SET_SHOW_IMAGE_LIST,
     TEST_VIEW_SET_SHOW_IMAGE_BROWSER,
+    TEST_VIEW_SET_HANGING_TYPE,
+    TEST_VIEW_SET_RESET_ID,
 } from 'Actions/types';
 
 const getHangingImageOrder = (images, type) => {
@@ -20,7 +22,7 @@ const getHangingImageOrder = (images, type) => {
     return idList
 };
 
-export const setImageListAction = (list, answer, complete) => (dispatch) => {
+export const setImageListAction = (list, answer, complete) => (dispatch, getState) => {
     let newList = list.map((v, i) => {
         let imageAnswers = answer[i]
         const markList = [];
@@ -96,8 +98,9 @@ export const setImageListAction = (list, answer, complete) => (dispatch) => {
         if(priorCount !== 1) hasAllPriorImages = false;
     });
     let showImageList;
+    const currentHangingType = getState().testView.hangingType;
     if(hasAllTestImages) {
-        showImageList = getHangingImageOrder(newList, 'CC-R_CC-L_MLO-R_MLO-L');
+        showImageList = getHangingImageOrder(newList, currentHangingType);
     } else {
         showImageList = newList.map(v => v.id);
     }
@@ -107,7 +110,7 @@ export const setImageListAction = (list, answer, complete) => (dispatch) => {
         imageList: newList,
         showImageList,
         hasAllTestImages,
-        hasAllPriorImages
+        hasAllPriorImages,
     });
 };
 
@@ -115,14 +118,17 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
     const list = getHangingImageOrder(getState().testView.imageList, type);
     dispatch({
         type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
-        payload: list
+        payload: list,
+    });
+    dispatch({
+        type: TEST_VIEW_SET_RESET_ID,
+        payload: Math.random().toString(36).substring(7),
+    });
+    dispatch({
+        type: TEST_VIEW_SET_HANGING_TYPE,
+        payload: type
     });
 };
-
-export const setShowImageList = (list) => ({
-    type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
-    payload: list
-});
 
 export const dropImage = (id, index) => (dispatch, getState) => {
     const showImageList = [...getState().testView.showImageList];
