@@ -1,11 +1,15 @@
 import axios from 'axios';
+import { Cookies } from 'react-cookie';
+
+const cookie = new Cookies();
 
 export default axios.create({
     baseURL: 'http://reactify.theironnetwork.org/data/',
     timeout: 15000
 });
 
-export const apiHost = window.location.protocol + '//' + window.location.hostname + ':3000';
+export const apiHost = window.location.protocol + '//' + (window.location.hostname === 'localhost' ? 'localhost:3000' : window.location.hostname);
+    // window.location.hostname.split('.')[0].split('-')[0] + '-api' + window.location.hostname.substr(window.location.hostname.split('.')[0].length));
 export const apiAddress = apiHost + '/api/';
 
 const instance = axios.create({
@@ -17,14 +21,15 @@ instance.interceptors.response.use(response => {
     return response;
 }, error => {
     if (error.response.status === 401 && error.request.responseURL.indexOf('api/users/login') === -1) {
-        localStorage.removeItem('user_id');
+        cookie.remove('user_id', {path: '/'});
+        cookie.remove('access_token', {path: '/'});
         window.location.reload();
     }
     throw error;
 });
 
 export function getAccessToken() {
-    return localStorage.getItem("access_token");
+    return cookie.get("access_token");
 }
 
 export function login(email, password) {
@@ -74,6 +79,11 @@ export function userVerify(id) {
 export function userConfirm(id, token) {
     const url = '/users/confirm?uid=' + id + '&token=' + token;
     return instance.get(url, ).then((response) => response.data);
+}
+
+export function forgotPassword(email) {
+    const url = '/users/reset-password';
+    return instance.post(url, {email}).then((response) => response.data);
 }
 
 /**
@@ -645,8 +655,8 @@ export function attemptsPercentile(id) {
 }
 
 export function attemptsQuality(id, test_case_id, quality) {
-    const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&quality=' + quality + '&access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
+    const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.post(url, quality).then((response) => response.data);
 }
 
 export function attemptsConfirmQuality(id, test_case_id, quality, isAgree, msg) {

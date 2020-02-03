@@ -101,7 +101,7 @@ class Header extends Component {
                         </Button>
                      </Tooltip>
                   </li>
-                  <UserInfo />
+                  <UserInfo history={this.props.history}/>
                   <Logout />
                </ul>
             </Toolbar>

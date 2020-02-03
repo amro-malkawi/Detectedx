@@ -1,6 +1,7 @@
 /**
  * Auth User Reducers
  */
+import { Cookies } from 'react-cookie';
 import {
     LOGIN_USER,
     LOGIN_USER_SUCCESS,
@@ -11,11 +12,13 @@ import {
     SIGNUP_USER_FAILURE
 } from 'Actions/types';
 
+const cookie = new Cookies();
+
 /**
  * initial auth user
  */
 const INIT_STATE = {
-    user: localStorage.getItem('user_id'),
+    user: cookie.get("user_id"),
     loading: false
 };
 

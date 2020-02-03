@@ -13,6 +13,7 @@ import './lib/reactifyCss';
 
 // app component
 import App from './container/App';
+import ErrorBoundary from './container/ErrorBoundary';
 
 import { configureStore } from './store';
 
@@ -21,7 +22,9 @@ const MainApp = () => (
 		<MuiPickersUtilsProvider utils={MomentUtils}>
 			<Router>
 				<Switch>
-					<Route path="/" component={App} />
+					<ErrorBoundary>
+						<Route path="/" component={App} />
+					</ErrorBoundary>
 				</Switch>
 			</Router>
 		</MuiPickersUtilsProvider>

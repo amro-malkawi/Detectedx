@@ -164,7 +164,7 @@ class Signup extends Component {
                                                     placeholder="Enter Email Address"
                                                     onChange={(e) => this.onSetValue('email', e.target.value)}
                                                 />
-                                                <span className="has-icon"><i className="ti-email"></i></span>
+                                                <span className="has-icon"><i className="ti-email"/></span>
                                             </FormGroup>
                                             <FormGroup row className="has-wrapper">
                                                 <Col sm={6}>
@@ -223,7 +223,7 @@ class Signup extends Component {
                                                             value=""
                                                         />
                                                     }
-                                                    label={<span>I have read and agree to the <Link to="/signup">terms of conditions</Link></span>}
+                                                    label={<span>I have read and agree to the <Link to="/terms">terms of conditions</Link></span>}
                                                 />
                                             </div>
                                             <FormGroup className="mb-15 mt-10">

@@ -11,12 +11,13 @@ import {NotificationManager} from "react-notifications";
 import MarkerTool from "../lib/tools/MarkerTool";
 import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
+import LengthTool from "../lib/tools/LengthTool";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
-const LengthTool = cornerstoneTools.LengthTool;
+// const LengthTool = cornerstoneTools.LengthTool;
 const AngleTool = cornerstoneTools.AngleTool;
 const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
 const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
@@ -42,7 +43,8 @@ class ImageViewer extends Component {
             currentStack: 1,
             isShowFloatingMenu: false,
         };
-        this.toolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
+        // this.toolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
+        this.toolList = ['Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.originalViewport = undefined;
         this.stack = {
@@ -148,8 +150,8 @@ class ImageViewer extends Component {
             cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
             cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
         });
-        // cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
-        // cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
+        cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+        cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
         // cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
         // cornerstoneTools[setToolElementFunc](this.imageElement, 'Angle');
         // cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);
@@ -548,6 +550,23 @@ class ImageViewer extends Component {
         // this.setState({currentStack: value});
     }
 
+    renderImageQuality() {
+        if(this.props.isShowQuality) {
+            const imageQuality = Number(this.props.stage === 1 ? this.props.imageInfo.imageQuality : this.props.imageInfo.quality);
+            return (
+                <div className={'individual-quality-btn'}>
+                    <a className="eye" onClick={() => this.props.stage === 1 ? this.props.onShowQualityModal(this.props.imageInfo.id) : null}>
+                        <Tooltip title="Image Quality" placement="bottom">
+                            <div className={(imageQuality === -1 ? 'quality-none' : ['inadequate', 'moderate', 'good', 'perfect'][imageQuality]) + '-icon'}/>
+                        </Tooltip>
+                    </a>
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
     renderStackComponent() {
         if (this.state.stackCount <= 1) {
             return null;
@@ -650,6 +669,7 @@ class ImageViewer extends Component {
                             </a>
                     }
                 </div>
+                {this.renderImageQuality()}
                 <ResizeDetector
                     handleWidth
                     handleHeight

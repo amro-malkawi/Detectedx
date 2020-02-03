@@ -8,6 +8,8 @@ import {
     TEST_VIEW_SET_SHOW_IMAGE_BROWSER,
     TEST_VIEW_SET_HANGING_TYPE,
     TEST_VIEW_SET_RESET_ID,
+    TEST_VIEW_SET_FULL_IMAGE_QUALITY,
+    TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
 } from 'Actions/types';
 
 const getHangingImageOrder = (images, type) => {
@@ -24,7 +26,7 @@ const getHangingImageOrder = (images, type) => {
 
 export const setImageListAction = (list, answer, complete) => (dispatch, getState) => {
     let newList = list.map((v, i) => {
-        let imageAnswers = answer[i]
+        let imageAnswers = answer[i];
         const markList = [];
         imageAnswers.answers && imageAnswers.answers.forEach((mark) => {
             mark.isTruth = false;
@@ -44,6 +46,7 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         });
         return {
             ...v,
+            imageQuality: -1,
             answers: {
                 markList,
                 shapeList
@@ -153,6 +156,26 @@ export const setImageAnswer = (imageId, type, value) => (dispatch, getState) => 
         dispatch({
             type: TEST_VIEW_CHANGE_IMAGE_LIST,
             payload: newList
-        })
+        });
     }
+};
+
+export const setImageQuality = (imageId, value) => (dispatch, getState) => {
+    const imageList = [...getState().testView.imageList];
+    if(imageId === '') {
+        dispatch({
+            type: TEST_VIEW_SET_FULL_IMAGE_QUALITY,
+            payload: value
+        });
+    } else {
+        const index = imageList.findIndex((v) => v.id === imageId);
+        dispatch({
+            type: TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
+            payload: {
+                index,
+                value
+            }
+        });
+    }
+
 };

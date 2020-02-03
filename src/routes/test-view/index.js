@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {changeHangingLayout, setImageListAction, setShowImageBrowser} from 'Actions';
+import {changeHangingLayout, setImageListAction, setShowImageBrowser, setImageQuality} from 'Actions';
 import {Col, FormGroup, Label} from "reactstrap";
 import {Button, Radio, RadioGroup, FormControlLabel, Switch} from '@material-ui/core';
 import Select from 'react-select';
@@ -60,6 +60,7 @@ class TestView extends Component {
             selectedMarkData: {},
             isShowInstructionModal: false,
             isShowQualityModal: false,
+            imageIdForQuality: '',
             isShowConfirmQualityModal: false,
         };
 
@@ -179,7 +180,8 @@ class TestView extends Component {
 
     onNext() {
         if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
-            this.setState({isShowQualityModal: true});
+            // this.setState({isShowQualityModal: true});
+            this.onSendQuality();
         } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
         } else {
@@ -189,7 +191,7 @@ class TestView extends Component {
 
     onFinish() {
         if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
-            this.setState({isShowQualityModal: true});
+            this.onSendQuality();
         } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
         } else {
@@ -254,18 +256,37 @@ class TestView extends Component {
         });
     }
 
+    onShowImageQualityModal(imageId) {
+        if(this.state.attemptDetail.stage === 2) return;
+        this.setState({isShowQualityModal: true, imageIdForQuality: imageId});
+    }
+
     onSetQuality(quality) {
         if (quality === -1) return;
-        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
-        let test_case_length = this.state.test_set_cases.length;
         this.setState({isShowQualityModal: false});
-        Apis.attemptsQuality(this.state.attempts_id, this.state.test_cases_id, quality).then((resp) => {
-            if (test_case_index + 1 === test_case_length) {
-                this.onComplete();
-            } else {
-                this.onMove(1);
-            }
-        });
+        this.props.setImageQuality(this.state.imageIdForQuality, quality);
+    }
+
+    onSendQuality() {
+        const quality = {
+            full: this.props.imageQuality,
+            image: this.props.imageList.map((v) => ({id: v.id, quality: v.imageQuality}))
+        };
+        if(quality.full === -1) {
+            NotificationManager.error('Please select image quality');
+        } else if(quality.image.some((v) => v.quality === -1)) {
+            NotificationManager.error('Please select every image quality');
+        } else {
+            const test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+            const test_case_length = this.state.test_set_cases.length;
+            Apis.attemptsQuality(this.state.attempts_id, this.state.test_cases_id, quality).then((resp) => {
+                if (test_case_index + 1 === test_case_length) {
+                    this.onComplete();
+                } else {
+                    this.onMove(1);
+                }
+            });
+        }
     }
 
     onConfirmImageQuality(isAgree, msg) {
@@ -430,32 +451,8 @@ class TestView extends Component {
         }
     }
 
-    renderImageViewer() {
-        return this.state.test_case.images.map((item, index) => {
-            return (
-                <ImageViewerContainer
-                    imageInfo={item}
-                    attemptId={this.state.attempts_id}
-                    currentTool={this.state.currentTool}
-                    synchronizer={this.synchronizer}
-                    index={index}
-                    radius={this.state.test_case.modalities.circle_size}
-                    onShowPopup={this.handleShowPopup.bind(this)}
-                    complete={this.state.complete}
-                    stage={this.state.attemptDetail.stage}
-                    width={100 / this.state.test_case.images.length}
-                    tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
-                    brightness={this.state.test_case.modalities.brightness}
-                    contrast={this.state.test_case.modalities.contrast}
-                    zoom={this.state.test_case.modalities.zoom}
-                    key={index}
-                />
-            )
-        });
-    }
-
     renderTruthImageQuality() {
-        if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+        /*if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
             let quality = ['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)];
             return (
                 <div className={'truth-quality'}>
@@ -463,6 +460,27 @@ class TestView extends Component {
                     <span className={'quality-text'}>{quality}</span>
                 </div>
             );
+        } else {
+            return null;
+        }*/
+        if(this.state.test_case.modalities.image_quality) {
+            const imageQuality = Number(this.state.attemptDetail.stage === 1 ? this.props.imageQuality : this.state.test_case.quality);
+            if (imageQuality === -1) {
+                return (
+                    <div className={'truth-quality'} onClick={() => this.onShowImageQualityModal('')}>
+                        <div className={'quality-icon quality-none-icon'}/>
+                        <span className={'quality-text'}>Quality</span>
+                    </div>
+                )
+            } else {
+                let quality = ['Inadequate', 'Moderate', 'Good', 'Perfect'][imageQuality];
+                return (
+                    <div className={'truth-quality'} onClick={() => this.onShowImageQualityModal('')}>
+                        <div className={'quality-icon ' + quality.toLowerCase() + '-icon'}/>
+                        <span className={'quality-text'}>{quality}</span>
+                    </div>
+                )
+            }
         } else {
             return null;
         }
@@ -636,7 +654,6 @@ class TestView extends Component {
                 </div>
                 <HangingSelector/>
                 {this.renderTestResult()}
-                {this.renderTruthImageQuality()}
             </div>
         )
     }
@@ -651,21 +668,18 @@ class TestView extends Component {
                 <div className="viewer">
                     <div id="toolbar">
                         {this.renderTools()}
+                        {this.renderTruthImageQuality()}
                         {this.renderHeaderNumber()}
                         {this.renderNav()}
                     </div>
                     <div className={'test-content'}>
                         <DndProvider backend={HTML5Backend}>
                             <ImageBrowser/>
-                            {/*<div id="images"> /!*className={'cursor-' + this.state.currentTool}>*!/*/}
-                            {/*    {this.renderImageViewer()}*/}
-                            {/*</div>*/}
                             <ImageViewerContainer
                                 attemptId={this.state.attempts_id}
                                 currentTool={this.state.currentTool}
                                 synchronizer={this.synchronizer}
                                 radius={this.state.test_case.modalities.circle_size}
-                                onShowPopup={this.handleShowPopup.bind(this)}
                                 complete={this.state.complete}
                                 stage={this.state.attemptDetail.stage}
                                 width={100 / this.state.test_case.images.length}
@@ -673,6 +687,9 @@ class TestView extends Component {
                                 brightness={this.state.test_case.modalities.brightness}
                                 contrast={this.state.test_case.modalities.contrast}
                                 zoom={this.state.test_case.modalities.zoom}
+                                onShowPopup={this.handleShowPopup.bind(this)}
+                                onShowQualityModal={(!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) ? this.onShowImageQualityModal.bind(this) : null}
+                                isShowQuality={this.state.test_case.modalities.image_quality}
                             />
                         </DndProvider>
                     </div>
@@ -772,14 +789,16 @@ class TestView extends Component {
 const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
-        isShowImageBrowser: state.testView.isShowImageBrowser
+        isShowImageBrowser: state.testView.isShowImageBrowser,
+        imageQuality: state.testView.imageQuality,
     };
 };
 
 export default withRouter(connect(mapStateToProps, {
     setImageListAction,
     setShowImageBrowser,
-    changeHangingLayout
+    changeHangingLayout,
+    setImageQuality,
 })(TestView));
 
 const AntSwitch = withStyles(theme => ({

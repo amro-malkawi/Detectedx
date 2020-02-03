@@ -67,6 +67,11 @@
 .error-msg {
   font-size: 4.375rem; //70px;
 }
+.error-desc-msg {
+  text-shadow: none !important;
+  font-weight: 400 !important;
+  font-size: 1.7rem; //70px;
+}
 .rct-session-wrapper {
   @extend .session-wrapper;
   .row-eq-height {

@@ -736,7 +736,13 @@ export default class Attempt extends Component {
                                 fluidWidth
                                 maxValue={100}
                                 value={specitifity}
-                                labelValues={{0: 0, 100: 100, ...this.state.percentile.specificity}}
+                                labelValues={{
+                                    0: 0,
+                                    25: this.state.percentile.specificity[25],
+                                    50: this.state.percentile.specificity[50],
+                                    75: this.state.percentile.specificity[75],
+                                    100: 100
+                                }}
                                 segments={4}
                                 ringWidth={30}
                                 currentValueText="Specificity: ${value}%"
@@ -750,7 +756,13 @@ export default class Attempt extends Component {
                                 fluidWidth
                                 maxValue={100}
                                 value={sensitivity}
-                                labelValues={{0: 0, 100: 100, ...this.state.percentile.sensitivity}}
+                                labelValues={{
+                                    0: 0,
+                                    25: this.state.percentile.sensitivity[25],
+                                    50: this.state.percentile.sensitivity[50],
+                                    75: this.state.percentile.sensitivity[75],
+                                    100: 100
+                                }}
                                 segments={4}
                                 ringWidth={30}
                                 currentValueText="Sensitivity: ${value}%"

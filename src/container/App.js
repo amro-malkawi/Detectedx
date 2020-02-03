@@ -15,19 +15,19 @@ import RctDefaultLayout from './DefaultLayout';
 // app signin
 import AppSignIn from './Signin';
 import AppSignUp from './Signup';
+import Terms from './Terms';
+import ForgotPassword from './ForgotPassword';
 import SendEmail from 'Routes/user/SendEmail';
 import Confirm from 'Routes/user/Confirm';
-import NoMatch from 'Routes/no-match';
+import NoMatch from './NoMatch';
 
 // async components
 import {
-    AsyncSessionLockScreenComponent,
-    AsyncSessionForgotPasswordComponent,
-    AsyncSessionPage404Component,
-    AsyncSessionPage500Component,
-    AsyncTermsConditionComponent,
     AsyncAdvanceTestViewComponent,
 } from 'Components/AsyncComponent/AsyncComponent';
+import { Cookies } from 'react-cookie';
+
+const cookie = new Cookies();
 
 
 
@@ -51,9 +51,10 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        const {location, match, user} = this.props;
+        const accessToken = cookie.get("access_token");
+        const {location, match} = this.props;
         if (location.pathname === '/') {
-            if (user === null) {
+            if (accessToken === null) {
                 return (<Redirect to={'/signin'}/>);
             } else {
                 // return (<Redirect to={'/app/home'} />);
@@ -66,13 +67,15 @@ class App extends Component {
                 <Switch>
                     <PrivateRoute
                         path={`${match.url}app`}
-                        authUser={user}
+                        authUser={accessToken}
                         component={RctDefaultLayout}
                     />
-                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={user}/>
-                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={user}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={accessToken}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={accessToken}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
+                    <Route path="/terms" component={Terms}/>
+                    <Route path="/forgot-password" component={ForgotPassword}/>
                     <Route path="/users/send-email/:user_id" component={SendEmail}/>
                     <Route path="/users/confirm" component={Confirm}/>
                     <Route component={NoMatch}/>

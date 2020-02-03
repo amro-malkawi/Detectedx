@@ -3,6 +3,7 @@
  * Auth Action With Google, Facebook, Twitter and Github
  */
 import {NotificationManager} from 'react-notifications';
+import { Cookies } from 'react-cookie';
 import {
     LOGIN_USER,
     LOGIN_USER_SUCCESS,
@@ -14,15 +15,19 @@ import {
 } from 'Actions/types';
 import * as Apis from 'Api';
 
+const cookie = new Cookies();
+
 /**
  * Redux Action To Sigin User With Email
  */
 export const signinUserInEmail = (user, history) => (dispatch) => {
     Apis.login(user.email, user.password).then((result) => {
         dispatch({type: LOGIN_USER});
-        localStorage.setItem("user_id", result.userId);
-        localStorage.setItem("access_token", result.id);
-        dispatch({type: LOGIN_USER_SUCCESS, payload: localStorage.getItem('user_id')});
+        if(Apis.apiHost.indexOf('localhost') !== -1) {
+            cookie.set('user_id', result.userId, {path: '/'});
+            cookie.set('access_token', result.id, {path: '/'});
+        }
+        dispatch({type: LOGIN_USER_SUCCESS, payload: result.userId});
         history.push('/');
     }).catch(error => {
         dispatch({type: LOGIN_USER_FAILURE});
@@ -36,9 +41,11 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
 export const logoutUserFromEmail = () => (dispatch) => {
     Apis.logout().then(() => {
     }).finally(() => {
+        if(Apis.apiHost.indexOf('localhost') !== -1) {
+            cookie.remove('user_id', {path: '/'});
+            cookie.remove('access_token', {path: '/'});
+        }
         dispatch({type: LOGOUT_USER});
-        localStorage.removeItem('user_id');
-        localStorage.removeItem('access_token');
         NotificationManager.success('User Logout Successfully');
     });
 }
@@ -50,7 +57,7 @@ export const signupUserInEmail = (user, history) => (dispatch) => {
     dispatch({type: SIGNUP_USER});
     return new Promise(function (resolve, reject) {
         Apis.singUp(user.email, user.firstName, user.lastName, user.password).then((result) => {
-            dispatch({type: SIGNUP_USER_SUCCESS, payload: localStorage.getItem('user_id')});
+            dispatch({type: SIGNUP_USER_SUCCESS, payload: cookie.get("user_id")});
             history.push('/signin');
             resolve(result);
             // NotificationManager.success('Account Created Successfully!');
