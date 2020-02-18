@@ -567,7 +567,6 @@
          }
       }
       &.app-boxed-v2 {
-         .trending-news-widegt,
          .top-author-wrap,
          .twitter-feeds-widget,
          .main-slider-wrap {
@@ -578,22 +577,6 @@
          .main-slider-wrap {
             .slick-slide {
                float: left;
-            }
-         }
-         .trending-news-widegt {
-            .trending-block {
-               border-right: none;
-               border-left: 1px solid $white;
-            }
-            .slick-arrow {
-               &.slick-prev {
-                  right: auto;
-                  left: 3rem;
-               }
-               &.slick-next {
-                  right: auto;
-                  left: 1rem;
-               }
             }
          }
          .top-author-wrap {

@@ -20,7 +20,7 @@ import AppConfig from 'Constants/AppConfig';
 import {
     signinUserInEmail,
 } from 'Actions';
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import * as selectors from "Selectors";
 
 
 class Signin extends Component {
@@ -28,8 +28,13 @@ class Signin extends Component {
     state = {
         email: '',
         password: ''
-    }
+    };
 
+    componentDidMount() {
+        if(this.props.isLogin) {
+            this.props.history.push('/');
+        }
+    }
     /**
      * On User Login
      */
@@ -135,8 +140,8 @@ class Signin extends Component {
 // map state to props
 const mapStateToProps = ({authUser}) => {
     const {user, loading} = authUser;
-    return {user, loading}
-}
+    return {user, loading, isLogin: selectors.getIsLogin(null)}
+};
 
 export default connect(mapStateToProps, {
     signinUserInEmail,

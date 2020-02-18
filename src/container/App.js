@@ -11,6 +11,8 @@ import RctThemeProvider from './RctThemeProvider';
 
 //Main App
 import RctDefaultLayout from './DefaultLayout';
+//Site Layout
+import RctSiteLayout from './SiteLayout';
 
 // app signin
 import AppSignIn from './Signin';
@@ -25,9 +27,7 @@ import NoMatch from './NoMatch';
 import {
     AsyncAdvanceTestViewComponent,
 } from 'Components/AsyncComponent/AsyncComponent';
-import { Cookies } from 'react-cookie';
-
-const cookie = new Cookies();
+import * as selectors from "Selectors";
 
 
 
@@ -51,27 +51,32 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        const accessToken = cookie.get("access_token");
-        const {location, match} = this.props;
+        const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
-            if (accessToken === null) {
-                return (<Redirect to={'/signin'}/>);
+            if (!isLogin) {
+                // return (<Redirect to={'/signin'}/>);
+                return (<Redirect to={'/site/home'}/>);
             } else {
-                // return (<Redirect to={'/app/home'} />);
-                return (<Redirect to={'/app/test/list'}/>);
+                // return (<Redirect to={'/app/welcome'} />);
+                // return (<Redirect to={'/app/test/list'}/>);
+                return (<Redirect to={'/site/home'}/>);
             }
         }
         return (
             <RctThemeProvider>
                 <NotificationContainer/>
                 <Switch>
+                    <Route
+                        path={`${match.url}site`}
+                        component={RctSiteLayout}
+                    />
                     <PrivateRoute
                         path={`${match.url}app`}
-                        authUser={accessToken}
+                        authUser={isLogin}
                         component={RctDefaultLayout}
                     />
-                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={accessToken}/>
-                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={accessToken}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
                     <Route path="/terms" component={Terms}/>
@@ -86,9 +91,8 @@ class App extends Component {
 }
 
 // map state to props
-const mapStateToProps = ({authUser}) => {
-    const {user} = authUser;
-    return {user};
-};
+const mapStateToProps = (state) => ({
+    isLogin: selectors.getIsLogin(state),
+});
 
 export default connect(mapStateToProps)(App);

@@ -3,7 +3,7 @@
  * Auth Action With Google, Facebook, Twitter and Github
  */
 import {NotificationManager} from 'react-notifications';
-import { Cookies } from 'react-cookie';
+import {Cookies} from 'react-cookie';
 import {
     LOGIN_USER,
     LOGIN_USER_SUCCESS,
@@ -23,11 +23,20 @@ const cookie = new Cookies();
 export const signinUserInEmail = (user, history) => (dispatch) => {
     Apis.login(user.email, user.password).then((result) => {
         dispatch({type: LOGIN_USER});
-        if(Apis.apiHost.indexOf('localhost') !== -1) {
+        if (Apis.apiHost.indexOf('localhost') !== -1) {
             cookie.set('user_id', result.userId, {path: '/'});
+            cookie.set('user_name', result.userName, {path: '/'});
+            cookie.set('user_email', result.userEmail, {path: '/'});
             cookie.set('access_token', result.id, {path: '/'});
         }
-        dispatch({type: LOGIN_USER_SUCCESS, payload: result.userId});
+        dispatch({
+            type: LOGIN_USER_SUCCESS, payload: {
+                user: result.userId,
+                userName: result.userName,
+                userEmail: result.userEmail,
+                accessToken: result.id,
+            }
+        });
         history.push('/');
     }).catch(error => {
         dispatch({type: LOGIN_USER_FAILURE});
@@ -41,7 +50,7 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
 export const logoutUserFromEmail = () => (dispatch) => {
     Apis.logout().then(() => {
     }).finally(() => {
-        if(Apis.apiHost.indexOf('localhost') !== -1) {
+        if (Apis.apiHost.indexOf('localhost') !== -1) {
             cookie.remove('user_id', {path: '/'});
             cookie.remove('access_token', {path: '/'});
         }

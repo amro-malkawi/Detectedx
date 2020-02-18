@@ -19,6 +19,9 @@ const cookie = new Cookies();
  */
 const INIT_STATE = {
     user: cookie.get("user_id"),
+    userName: cookie.get("user_name"),
+    userEmail: cookie.get("user_email"),
+    accessToken: cookie.get("access_token"),
     loading: false
 };
 
@@ -29,7 +32,13 @@ export default (state = INIT_STATE, action) => {
             return { ...state, loading: true };
 
         case LOGIN_USER_SUCCESS:
-            return { ...state, loading: false, user: action.payload };
+            return {
+                ...state, loading: false,
+                user: action.payload.user,
+                userName: action.payload.userName,
+                userEmail: action.payload.userEmail,
+                accessToken: action.payload.accessToken
+            };
 
         case LOGIN_USER_FAILURE:
             return { ...state, loading: false };

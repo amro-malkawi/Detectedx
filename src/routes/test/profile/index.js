@@ -60,6 +60,7 @@ export default class Profile extends Component {
                 postcode: '',
                 referrer_by: '',
                 extra_info: '',
+                user_order: [],
             },
             birthday: '',
             interestList: [],
@@ -197,20 +198,11 @@ export default class Profile extends Component {
                 <div>
                     <div className={'row'}>
                         <RctCollapsibleCard
-                            colClasses="col-sm-4 col-md-4 col-xl-3 b-100 w-xs-full"
+                            colClasses="col-sm-4 col-md-4 col-xl-4 b-100 w-xs-full"
                         >
                             <div className="">
                                 <div className="p-0">
                                     <div className="p-20" style={{textAlign: 'center'}}>
-                                        {/*<div>*/}
-                                        {/*    <img*/}
-                                        {/*        src={require('Assets/avatars/user-4.jpg')}*/}
-                                        {/*        className="rounded-circle"*/}
-                                        {/*        alt="user profile"*/}
-                                        {/*        width="90"*/}
-                                        {/*        height="90"*/}
-                                        {/*    />*/}
-                                        {/*</div>*/}
                                         <div className="media-body pt-10">
                                             <h1 className="mb-5">{this.state.userInfo.email}</h1>
                                             <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMMM Do YYYY, HH:mm:ss')}</span>
@@ -227,7 +219,7 @@ export default class Profile extends Component {
                             </div>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-8 col-md-8 col-xl-5 b-100 w-xs-full"
+                            colClasses="col-sm-8 col-md-8 col-xl-8 b-100 w-xs-full"
                         >
                             <ExpansionPanel expanded={this.state.expanded === 'personalInfo'} onChange={this.onExpandeChange('personalInfo')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
@@ -451,23 +443,63 @@ export default class Profile extends Component {
                             </ExpansionPanel>
                             <ExpansionPanel expanded={this.state.expanded === 'payment'} onChange={this.onExpandeChange('payment')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
-                                    <span className={'fs-17 fw-bold'}>Payment information</span>
+                                    <span className={'fs-17 fw-bold'}>Subscriptions</span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <div className={'d-flex justify-content-center'}>
-                                        <img
-                                            src={require('Assets/img/payment-types.png')}
-                                            width="370"
-                                            height="150"
-                                        />
+                                        <table className="table table-middle table-hover mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th className="text-center">Subscription Type</th>
+                                                <th className="text-center">Last Payment</th>
+                                                <th className="text-center">Next Payment Due</th>
+                                                <th className="text-center">Payment Method</th>
+                                                <th className="text-center"/>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {
+                                                this.state.userInfo.user_order.length === 0 ? null :
+                                                    <tr>
+                                                        <td className="text-center">{this.state.userInfo.user_order[0].product_plans.name} Plan</td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].created_at).format('MMMM Do YYYY, HH:mm:ss')} Plan</td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].expire_at).format('MMMM Do YYYY, HH:mm:ss')}</td>
+                                                        <td className="text-center">{this.state.userInfo.user_order[0].payment_type}</td>
+                                                        <td />
+                                                    </tr>
+                                            }
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-12 col-md-12 col-xl-4 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-12 col-xl-12 b-100 w-xs-full"
                         >
-                            <span className={'fs-17 fw-bold'}>Payment History</span>
+                            <span className={'fs-17 fw-bold'}>Billing History</span>
+                            <table className="table table-middle table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th className="text-center">Date</th>
+                                    <th className="text-center">Description</th>
+                                    <th className="text-center">Payment Method</th>
+                                    <th className="text-center">Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    this.state.userInfo.user_order.map((v, i) => (
+                                        <tr key={i}>
+                                            <td className="text-center">{moment(v.created_at).format('MMMM Do YYYY, HH:mm:ss')}</td>
+                                            <td className="text-center">{v.product_plans.name} Plan</td>
+                                            <td className="text-center">{v.payment_type}</td>
+                                            <td className="text-center">{v.amount} AUD</td>
+                                        </tr>
+                                    ))
+                                }
+                                </tbody>
+                            </table>
                         </RctCollapsibleCard>
                     </div>
                     <div className={'d-flex justify-content-center'}>
