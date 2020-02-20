@@ -1042,7 +1042,7 @@ export default class Attempt extends Component {
     render() {
         if (!this.state.loading) {
             return (
-                <div className={'questionnaire-wrapper'}>
+                <div className={'questionnaire-wrapper mt-30 mb-30'}>
                     <h1>{stepName[this.state.steps[this.state.stepIndex]]}</h1>
                     {this.renderStepper()}
                     {this.renderStepContent()}

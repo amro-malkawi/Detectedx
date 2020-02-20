@@ -195,7 +195,7 @@ export default class Profile extends Component {
             const interestOptions = this.state.interestList.map(v => ({value: v.id, label: v.name}));
             const interestDefault = this.state.userInfo.interest === null ? [] : interestOptions.filter((v) => this.state.userInfo.interest.split(',').indexOf(v.value.toString()) !== -1);
             return (
-                <div>
+                <div className={'p-30'}>
                     <div className={'row'}>
                         <RctCollapsibleCard
                             colClasses="col-sm-4 col-md-4 col-xl-4 b-100 w-xs-full"
@@ -205,7 +205,7 @@ export default class Profile extends Component {
                                     <div className="p-20" style={{textAlign: 'center'}}>
                                         <div className="media-body pt-10">
                                             <h1 className="mb-5">{this.state.userInfo.email}</h1>
-                                            <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMMM Do YYYY, HH:mm:ss')}</span>
+                                            <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMM Do YYYY, HH:mm:ss')}</span>
                                         </div>
                                     </div>
                                     <div className="card-footer">
@@ -451,6 +451,7 @@ export default class Profile extends Component {
                                             <thead>
                                             <tr>
                                                 <th className="text-center">Subscription Type</th>
+                                                <th className="text-center">Status</th>
                                                 <th className="text-center">Last Payment</th>
                                                 <th className="text-center">Next Payment Due</th>
                                                 <th className="text-center">Payment Method</th>
@@ -462,8 +463,9 @@ export default class Profile extends Component {
                                                 this.state.userInfo.user_order.length === 0 ? null :
                                                     <tr>
                                                         <td className="text-center">{this.state.userInfo.user_order[0].product_plans.name} Plan</td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].created_at).format('MMMM Do YYYY, HH:mm:ss')} Plan</td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].expire_at).format('MMMM Do YYYY, HH:mm:ss')}</td>
+                                                        <td className='text-center'><span className='text-primary'>{this.state.userInfo.user_order[0].status}</span></td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].created_at).format('MMM Do YYYY, HH:mm:ss')} Plan</td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                                         <td className="text-center">{this.state.userInfo.user_order[0].payment_type}</td>
                                                         <td />
                                                     </tr>
@@ -491,7 +493,7 @@ export default class Profile extends Component {
                                 {
                                     this.state.userInfo.user_order.map((v, i) => (
                                         <tr key={i}>
-                                            <td className="text-center">{moment(v.created_at).format('MMMM Do YYYY, HH:mm:ss')}</td>
+                                            <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                             <td className="text-center">{v.product_plans.name} Plan</td>
                                             <td className="text-center">{v.payment_type}</td>
                                             <td className="text-center">{v.amount} AUD</td>

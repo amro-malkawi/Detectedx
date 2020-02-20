@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import scriptLoader from 'react-async-script-loader';
 
+const PAYPAL_CLIENT_ID = 'ASNlAmrUflaRXLfCF_Y3Tg5JwkdQfFxC3f4VlVrhxD9LiTdRQIrjtSvZ45FdKUhlRQPNwCcdjrSNh3qA';
+
+
 class PaypalButton extends Component {
     constructor(props) {
         super(props);
@@ -24,7 +27,7 @@ class PaypalButton extends Component {
             isScriptLoaded;
         if (isLoadedButWasntLoadedBefore) {
             if (isScriptLoadSucceed) {
-                let PayPalButton = paypal.Buttons.driver('react', {React, ReactDOM});
+                const {cliendId, planId, onCreateSubscription, onApprove, onSuccess, onCancel} = this.props;
                 paypal.Buttons({
                     style: {
                         size: 'responsive',
@@ -32,21 +35,23 @@ class PaypalButton extends Component {
                         shape: 'rect',
                         label: 'paypal',
                     },
-                    createSubscription: function (data, actions) {
-                        return actions.subscription.create({
-                            'plan_id': 'P-8YS05629T57601256LZFHRVQ'
-                        });
-                    },
-                    onApprove: function (data, actions) {
-                        alert('You have successfully created subscription ' + data.subscriptionID);
-                    }
+                    createSubscription: onCreateSubscription,
+                    onApprove: onApprove,
+                    // createSubscription: function (data, actions) {
+                    //     return actions.subscription.create({
+                    //         'plan_id': planId
+                    //     });
+                    // },
+                    // onApprove: function (data, actions) {
+                    //     alert('You have successfully created subscription ' + data.subscriptionID);
+                    //     // onSuccess(data);
+                    // }
                 }).render('#paypal-button-container');
             }
         }
     }
 
     render() {
-
         // https://github.com/paypal/paypal-checkout-components
         return (
             <div className={'buy-button'} style={{marginTop: 32}}>
@@ -56,4 +61,4 @@ class PaypalButton extends Component {
     }
 }
 
-export default scriptLoader('https://www.paypal.com/sdk/js?client-id=ASNlAmrUflaRXLfCF_Y3Tg5JwkdQfFxC3f4VlVrhxD9LiTdRQIrjtSvZ45FdKUhlRQPNwCcdjrSNh3qA&disable-funding=credit,card&vault=true')(PaypalButton);
+export default scriptLoader('https://www.paypal.com/sdk/js?client-id=' + PAYPAL_CLIENT_ID +'&disable-funding=credit,card&vault=true')(PaypalButton);

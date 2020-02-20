@@ -750,13 +750,13 @@ export function orderChargeCard(planId, token) {
     return instance.post(url, {planId, token}).then((response) => response.data);
 }
 
-export function orderPaypalCreatePayment(planId) {
-    const url = 'user_orders/paypal_create_payment?access_token=' + getAccessToken();
+export function orderPaypalCreateSubscription(planId) {
+    const url = 'user_orders/paypal_create_subscription?access_token=' + getAccessToken();
     return instance.post(url, {planId}).then((response) => response.data);
 }
 
-export function orderPaypalExecutePayment(paymentId, payerId, planId) {
-    const url = 'user_orders/paypal_execute_payment?access_token=' + getAccessToken();
-    return instance.post(url, {paymentId, payerId, planId}).then((response) => response.data);
+export function orderPaypalApprove(paymentInfo, planId) {
+    const url = 'user_orders/paypal_approve?access_token=' + getAccessToken();
+    return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
 }
 

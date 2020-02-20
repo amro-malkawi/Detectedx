@@ -79,7 +79,7 @@ export default class list extends Component {
 
     render() {
         return (
-            <div className="news-dashboard-wrapper">
+            <div className="news-dashboard-wrapper mt-30 mb-20">
                 <PageTitleBar title={"Module Sets"} match={this.props.match} enableBreadCrumb={false}/>
                 <div className="row">
                     {

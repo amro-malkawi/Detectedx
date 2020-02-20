@@ -12,9 +12,6 @@ import * as selectors from 'Selectors';
 
 // helpers
 import {getAppLayout} from "Helpers/helpers";
-
-import UserInfo from './UserInfo';
-import Logout from './Logout';
 import UserBlock from "./UserBlock";
 import InstructionModal from "Routes/test-view/InstructionModal";
 

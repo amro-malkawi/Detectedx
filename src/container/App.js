@@ -73,7 +73,8 @@ class App extends Component {
                     <PrivateRoute
                         path={`${match.url}app`}
                         authUser={isLogin}
-                        component={RctDefaultLayout}
+                        // component={RctDefaultLayout}
+                        component={RctSiteLayout}
                     />
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>

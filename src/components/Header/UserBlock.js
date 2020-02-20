@@ -23,7 +23,7 @@ class UserBlock extends Component {
      * Logout User
      */
     logoutUser() {
-    	this.props.logoutUserFromEmail();
+        this.props.logoutUserFromEmail();
     }
 
     /**
@@ -60,16 +60,22 @@ class UserBlock extends Component {
                                 <span className="text-white fs-14">{this.props.userEmail}</span>
                             </li>
                             <li>
-                                <Link to={{
-                                    pathname: '/app/test/profile',
-                                    state: {activeTab: 0}
-                                }}>
+                                <Link
+                                    to={{
+                                        pathname: '/app/test/profile',
+                                        state: {activeTab: 0}
+                                    }}
+                                    onClick={() => this.setState({userDropdownMenu: false})}
+                                >
                                     <i className="zmdi zmdi-account text-primary mr-3"/>
                                     <IntlMessages id="widgets.profile"/>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/app/test">
+                                <Link
+                                    to="/app/test"
+                                    onClick={() => this.setState({userDropdownMenu: false})}
+                                >
                                     <i className="zmdi zmdi-edit text-warning mr-3"/>
                                     <span>Modules</span>
                                 </Link>
@@ -96,5 +102,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-	logoutUserFromEmail
+    logoutUserFromEmail
 })(UserBlock);

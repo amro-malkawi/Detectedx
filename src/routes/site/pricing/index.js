@@ -73,6 +73,7 @@ class Pricing extends Component{
                 <PricingOrder
                     plan={this.state.selectedPlan}
                     isOpen={this.state.isOpenOrderModal}
+                    history={this.props.history}
                     onClose={() => this.setState({isOpenOrderModal: false})}
                 />
             </div>

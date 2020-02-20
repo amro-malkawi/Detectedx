@@ -7,6 +7,9 @@ import Platform from 'Routes/site/platform';
 import Pricing from 'Routes/site/pricing';
 import AboutUs from 'Routes/site/about-us';
 import ContactUs from 'Routes/site/contact-us';
+import Welcome from "Routes/welcome";
+import Instructions from "Routes/instructions";
+import Test from "Routes/test";
 
 export default [
     {
@@ -37,4 +40,18 @@ export default [
         path: 'contact_us',
         component: ContactUs
     },
+
+
+    {
+        path: 'welcome',
+        component: Welcome
+    },
+    {
+        path: 'instructions',
+        component: Instructions
+    },
+    {
+        path: 'test',
+        component: Test
+    }
 ]

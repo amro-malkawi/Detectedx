@@ -17,15 +17,6 @@ import * as selectors from "Selectors";
 import * as Apis from 'Api';
 import PaypalButton from "./PaypalButton";
 
-const paymentAppKey = {
-    stripeKey: '',
-    paypal: {
-        sandboxKey: 'ASNlAmrUflaRXLfCF_Y3Tg5JwkdQfFxC3f4VlVrhxD9LiTdRQIrjtSvZ45FdKUhlRQPNwCcdjrSNh3qA',
-        productionKey: '',
-        evn: 'sandbox'
-    }
-};
-
 class _OrderForm extends Component {
     constructor(props) {
         super(props);
@@ -113,7 +104,8 @@ class _OrderForm extends Component {
                     const that = this;
                     this.setState({payFinished: true}, () => {
                         setTimeout(() => {
-                            that.props.onClose()
+                            // that.props.onClose()
+                            that.props.history.push('/app/test/profile');
                         }, 500);
                     });
                     console.log(result, result);
@@ -126,15 +118,16 @@ class _OrderForm extends Component {
         }
     }
 
-    onPaypalPayment(data, actions) {
-        return Apis.orderPaypalCreatePayment(this.props.plan.id).then(resp => resp.id);
+    onPaypalCreateSubscription(data, actions) {
+        return Apis.orderPaypalCreateSubscription(this.props.plan.id).then(resp => resp.id);
     }
 
-    onPaypalAuthorize(data, actions) {
-        return Apis.orderPaypalExecutePayment(data.paymentID, data.payerID, this.props.plan.id).then((resp) => {
+    onPaypalApprove(data, actions) {
+        return Apis.orderPaypalApprove(JSON.stringify(data), this.props.plan.id).then((resp) => {
             const that = this;
             setTimeout(() => {
-                that.props.onClose()
+                // that.props.onClose()
+                that.props.history.push('/app/test/profile');
             }, 500);
         }).catch((e) => {
             if (e.response) NotificationManager.error(e.response.data.error.message);
@@ -209,19 +202,11 @@ class _OrderForm extends Component {
         } else if (this.state.paymentType === 'paypal') {
             return (
                 <PaypalButton
-                    client={{
-                        sandbox: paymentAppKey.paypal.sandboxKey,
-                        production: paymentAppKey.paypal.productionKey,
-                    }}
-                    env={paymentAppKey.paypal.evn}
-                    commit={true}
-                    currency={'USD'}
-                    total={100}
-                    onPayment={this.onPaypalPayment.bind(this)}
-                    onAuthorize={this.onPaypalAuthorize.bind(this)}
-                    onSuccess={(data) => this.onChargePaypal(data)}
-                    onError={() => null}
-                    onCancel={() => null}
+                    planId=''
+                    onCreateSubscription={this.onPaypalCreateSubscription.bind(this)}
+                    onApprove={this.onPaypalApprove.bind(this)}
+                    onSuccess={null}
+                    onCancel={null}
                 />
             )
         } else {
@@ -300,7 +285,7 @@ class PlanOrder extends Component {
                 >
                     <StripeProvider apiKey={'pk_test_o94dTQYi7yrYebuzehraBcqk00QCQPvwhk'}>
                         <Elements>
-                            <OrderForm plan={plan} onClose={onClose} userName={this.props.userName}/>
+                            <OrderForm plan={plan} onClose={onClose} userName={this.props.userName} history={this.props.history}/>
                         </Elements>
                     </StripeProvider>
                 </StripeScriptLoader>
