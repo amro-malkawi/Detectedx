@@ -19,6 +19,7 @@ import AppSignIn from './Signin';
 import AppSignUp from './Signup';
 import Terms from './Terms';
 import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 import SendEmail from 'Routes/user/SendEmail';
 import Confirm from 'Routes/user/Confirm';
 import NoMatch from './NoMatch';
@@ -82,6 +83,7 @@ class App extends Component {
                     <Route path="/signup" component={AppSignUp}/>
                     <Route path="/terms" component={Terms}/>
                     <Route path="/forgot-password" component={ForgotPassword}/>
+                    <Route path="/reset-password" component={ResetPassword}/>
                     <Route path="/users/send-email/:user_id" component={SendEmail}/>
                     <Route path="/users/confirm" component={Confirm}/>
                     <Route component={NoMatch}/>

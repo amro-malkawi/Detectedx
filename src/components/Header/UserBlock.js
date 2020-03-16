@@ -46,7 +46,7 @@ class UserBlock extends Component {
                         className="d-flex align-items-center"
                     >
                         <div className="user-profile">
-                            <span>{this.props.userName.charAt(0).toUpperCase()}</span>
+                            <span>{this.props.userName === undefined ? '' : this.props.userName.charAt(0).toUpperCase()}</span>
                         </div>
                         <div className="user-info">
                             <span className="user-name">{this.props.userName}</span>

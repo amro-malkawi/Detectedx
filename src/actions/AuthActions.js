@@ -62,10 +62,10 @@ export const logoutUserFromEmail = () => (dispatch) => {
 /**
  * Redux Action To Signup User
  */
-export const signupUserInEmail = (user, history) => (dispatch) => {
+export const signupUserInEmail = (userData, history) => (dispatch) => {
     dispatch({type: SIGNUP_USER});
     return new Promise(function (resolve, reject) {
-        Apis.singUp(user.email, user.firstName, user.lastName, user.password).then((result) => {
+        Apis.singUp(userData).then((result) => {
             dispatch({type: SIGNUP_USER_SUCCESS, payload: cookie.get("user_id")});
             history.push('/signin');
             resolve(result);

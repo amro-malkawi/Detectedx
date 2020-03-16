@@ -34,8 +34,6 @@ import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import moment from 'moment';
 
-const countryList = require('./country');
-
 export default class Profile extends Component {
 
     constructor(props) {
@@ -65,6 +63,7 @@ export default class Profile extends Component {
             birthday: '',
             interestList: [],
             placeOfWorkList: [],
+            countryList: [],
             labelWidth: 50,
             currentPassword: '',
             newPassword: '',
@@ -80,40 +79,19 @@ export default class Profile extends Component {
 
     getData() {
         const that = this;
-        let promise0 = new Promise(function (resolve, reject) {
-            Apis.userInfo().then(resp => {
-                resolve(resp);
-            }).catch((e) => {
-                reject(e);
-            });
-        });
-        let promise1 = new Promise(function (resolve, reject) {
-            Apis.userPositions().then(resp => {
-                resolve(resp);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        let promise2 = new Promise(function (resolve, reject) {
-            Apis.userInterests().then(resp => {
-                resolve(resp);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        let promise3 = new Promise(function (resolve, reject) {
-            Apis.userPlaceOfWorks().then(resp => {
-                resolve(resp);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        Promise.all([promise0, promise1, promise2, promise3]).then(function (values) {
+        Promise.all([
+            Apis.userInfo(),
+            Apis.userPositions(),
+            Apis.userInterests(),
+            Apis.userPlaceOfWorks(),
+            Apis.countryList()
+        ]).then(function (values) {
             that.setState({
                 userInfo: values[0],
                 positionList: values[1],
                 interestList: values[2],
                 placeOfWorkList: values[3],
+                countryList: values[4],
                 loading: false
             });
         }).catch(e => {
@@ -185,7 +163,7 @@ export default class Profile extends Component {
     }
     render() {
         if (!this.state.loading) {
-            const countryOptions = countryList.map((v) => ({value: v.country, label: v.country}));
+            const countryOptions = this.state.countryList.map((v) => ({value: v.country_name, label: v.country_name}));
             const placeOfWorkOptions = this.state.placeOfWorkList.map(v => ({value: v.id, label: v.name}));
             const placeOfWorkDefault = this.state.userInfo.place_of_work === null ? [] : placeOfWorkOptions.filter((v) => this.state.userInfo.place_of_work.split(',').indexOf(v.value.toString()) !== -1);
 

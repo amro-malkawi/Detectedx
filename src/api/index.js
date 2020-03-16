@@ -46,15 +46,9 @@ export function logout() {
     return instance.post(url, {}).then((response) => response.data);
 }
 
-export function singUp(email, firstName, lastName, password) {
+export function singUp(data) {
     const url = '/users';
-    const req = {
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        password
-    };
-    return instance.post(url, req).then((response) => response.data);
+    return instance.post(url, data).then((response) => response.data);
 }
 
 export function changePassword(curPass, newPass) {
@@ -82,8 +76,13 @@ export function userConfirm(id, token) {
 }
 
 export function forgotPassword(email) {
-    const url = '/users/reset-password';
+    const url = '/users/reset';
     return instance.post(url, {email}).then((response) => response.data);
+}
+
+export function resetPassword(newPassword, accessToken) {
+    const url = '/users/reset-password?access_token=' + accessToken;
+    return instance.post(url, {newPassword}).then((response) => response.data);
 }
 
 /**
@@ -122,7 +121,7 @@ export function userInfo() {
  * User positions functions
  */
 export function userPositions() {
-    let url = '/user_positions?access_token=' + getAccessToken() + '&filter=' + encodeURI(JSON.stringify({order: 'position ASC'}));
+    let url = '/user_positions?filter=' + encodeURI(JSON.stringify({order: 'position ASC'}));
     return instance.get(url).then((response) => response.data);
 }
 
@@ -138,7 +137,15 @@ export function userInterests() {
  * User placeOfWork functions
  */
 export function userPlaceOfWorks() {
-    let url = '/user_placeofworks?access_token=' + getAccessToken();
+    let url = '/user_placeofworks';
+    return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * countries
+ */
+export function countryList() {
+    let url = '/countries?filter=' + encodeURI(JSON.stringify({order: 'country_name ASC'}));
     return instance.get(url).then((response) => response.data);
 }
 
@@ -252,39 +259,6 @@ export function testSetCasesDelete(id) {
 /**
  * test cases operation
  */
-
-export function testCasesList(page) {
-    let url = '/test_cases?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "modalities"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function testCasesAdd(data) {
-    const url = '/test_cases?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function testCasesUpdate(id, data) {
-    const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function testCasesDelete(id) {
-    const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-export function testCasesInfo(id, filter) {
-    let url = '/test_cases/' + id + '?access_token=' + getAccessToken();
-    if (filter !== undefined) {
-        url += '&filter=' + encodeURI(JSON.stringify(filter));
-    }
-    return instance.get(url).then((response) => response.data);
-}
 
 export function testCasesViewInfo(id) {
     const url = '/test_cases/' + id + '/viewInfo?access_token=' + getAccessToken();

@@ -7,17 +7,15 @@ import {connect} from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import {Link} from 'react-router-dom';
-import {Col, Form, FormGroup, Input} from 'reactstrap';
+import {Col, Form, FormGroup, Input, Label} from 'reactstrap';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import {withStyles} from '@material-ui/core/styles';
 import {NotificationManager} from 'react-notifications';
-import {Fab} from '@material-ui/core';
-
-// components
-import {SessionSlider} from 'Components/Widgets';
+import {FormControl, InputLabel, Radio, RadioGroup, TextField, Divider, CircularProgress, Switch} from '@material-ui/core';
+import * as Apis from 'Api';
 
 // app config
 import AppConfig from 'Constants/AppConfig';
@@ -26,24 +24,91 @@ import AppConfig from 'Constants/AppConfig';
 import {
     signupUserInEmail,
 } from 'Actions';
+import CreatableSelect from 'react-select/creatable';
 
 class Signup extends Component {
 
     state = {
+        formType: 'email',
         email: '',
         emailInvalid: false,
-        firstName: '',
-        firstNameInvalid: false,
-        lastName: '',
-        lastNameInvalid: false,
         password: '',
         passwordInvalid: false,
         confirmPassword: '',
         confirmPasswordInvalid: false,
+
+        firstName: '',
+        firstNameInvalid: false,
+        lastName: '',
+        lastNameInvalid: false,
+        gender: '',
+        genderInvalid: false,
+        // yearOfBirth: '',
+        // yearOfBirthInvalid: false,
+        placeOfWork: null,
+        placeOfWorkInvalid: false,
+        position: undefined,
+        positionInvalid: false,
+        country: undefined,
+        countryInvalid: false,
+        address1: '',
+        address1Invalid: false,
+        address2: '',
+        address2Invalid: false,
+        suburb: '',
+        suburbInvalid: false,
+        state: '',
+        stateInvalid: false,
+        postcode: '',
+        postcodeInvalid: false,
+        employer: '',
+        employerInvalid: false,
+        jobTitle: '',
+        jobTitleInvalid: false,
+        hearFromWhere: null,
+        hearFromWhereInvalid: false,
+        extraInfo: '',
+        extraInfoInvalid: false,
+        allowContactMe: false,
+        autoAssign: false,
         checkTerms: false,
         termInvalid: false,
-        loading: false,
+
+        // interest: null,
+        // interestInvalid: false,
+        // referrerBy: '',
+        // referrerByInvalid: false,
+
+        positionList: [],
+        interestList: [],
+        placeOfWorkList: [],
+        countryList: [],
+        loading: true,
+
     };
+
+    componentDidMount() {
+        this.getData();
+    }
+
+    getData() {
+        Promise.all([
+            Apis.userPositions(),
+            Apis.userPlaceOfWorks(),
+            Apis.countryList(),
+            // Apis.userInterests(),
+        ]).then(([positionList, placeOfWorkList, countryList]) => {
+            this.setState({
+                positionList,
+                placeOfWorkList,
+                countryList,
+                // interestList,
+                loading: false,
+            });
+        }).catch(e => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+        });
+    }
 
     validateEmail(email) {
         let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -52,20 +117,12 @@ class Signup extends Component {
 
 
     validate() {
-        const {email, firstName, lastName, password, confirmPassword, checkTerms} = this.state;
+        const {email, password, confirmPassword, checkTerms} = this.state;
         let valid = true;
         let inValidObj = {};
         if (email.length === 0 || !this.validateEmail(email)) {
             valid = false;
             inValidObj.emailInvalid = true;
-        }
-        if (firstName.length === 0) {
-            valid = false;
-            inValidObj.firstNameInvalid = true;
-        }
-        if (lastName.length === 0) {
-            valid = false;
-            inValidObj.lastNameInvalid = true;
         }
         if (password.length === 0) {
             valid = false;
@@ -90,15 +147,108 @@ class Signup extends Component {
         return valid;
     }
 
+    validateInfo() {
+        let valid = true;
+        let invalidObj = {};
+        if (this.state.firstName.trim().length === 0) {
+            valid = false;
+            invalidObj.firstNameInvalid = true;
+        }
+        if (this.state.lastName.trim().length === 0) {
+            valid = false;
+            invalidObj.lastNameInvalid = true;
+        }
+        if(this.state.placeOfWork === null) {
+            valid = false;
+            invalidObj.placeOfWorkInvalid = true;
+        }
+        if(this.state.position === undefined) {
+            valid = false;
+            invalidObj.positionInvalid = true;
+        }
+        if(this.state.country === undefined) {
+            valid = false;
+            invalidObj.countryInvalid = true;
+        }
+        if(this.state.address1.trim().length === 0) {
+            valid = false;
+            invalidObj.address1Invalid = true;
+        }
+        if(this.state.suburb.trim().length === 0) {
+            valid = false;
+            invalidObj.suburbInvalid = true;
+        }
+        if(this.state.postcode.trim().length === 0) {
+            valid = false;
+            invalidObj.postcodeInvalid = true;
+        }
+        if(this.state.employer.trim().length === 0) {
+            valid = false;
+            invalidObj.employerInvalid = true;
+        }
+        if(this.state.jobTitle.trim().length === 0) {
+            valid = false;
+            invalidObj.jobTitleInvalid = true
+        }
+        if(this.state.hearFromWhere === null) {
+            valid = false;
+            invalidObj.hearFromWhereInvalid = true;
+        }
+
+        if (!valid) {
+            this.setState(invalidObj);
+        }
+        console.log(invalidObj, valid);
+        return valid;
+    }
+    onSetValue(key, value) {
+        this.setState({[key]: value, [key + 'Invalid']: false});
+    }
+
+    onChangeSelectData(key, data) {
+        if (data === null) {
+            this.onSetValue(key, '');
+        } else if (typeof data === 'object' && !Array.isArray(data)) {
+            this.onSetValue(key, data.value);
+        } else if (typeof data === 'object' && Array.isArray(data)) {
+            this.onSetValue(key, data.map((v) => v.value).join(','));
+        }
+    }
+
+    onNextForm() {
+        if(this.validate()) {
+            console.log('asdfasdfasdf');
+            this.setState({formType: 'info'});
+        }
+    }
+
     /**
      * On User Signup
      */
-    onUserSignUp(e) {
-        e.preventDefault();
-        if (this.validate()) {
+    onUserSignUp() {
+        if (this.validateInfo()) {
             this.setState({loading: true});
-            const {email, firstName, lastName, password, confirmPassword} = this.state;
-            this.props.signupUserInEmail({email, firstName, lastName, password}, this.props.history).then((result) => {
+            this.props.signupUserInEmail({
+                email: this.state.email,
+                password: this.state.password,
+                first_name: this.state.firstName,
+                last_name: this.state.lastName,
+                gender: this.state.gender,
+                place_of_work: this.state.placeOfWork,
+                position: this.state.position,
+                country: this.state.country,
+                address1: this.state.address1,
+                address2: this.state.address2,
+                suburb: this.state.suburb,
+                state: this.state.state,
+                postcode: this.state.postcode,
+                employer: this.state.employer,
+                job_title: this.state.jobTitle,
+                hear_from_where: this.state.hearFromWhere,
+                extra_info: this.state.extraInfo,
+                allow_contact_me: this.state.allowContactMe,
+                auto_assign: this.state.autoAssign,
+            }, this.props.history).then((result) => {
                 NotificationManager.success('Account Created Successfully!');
                 this.props.history.push('/users/send-email/' + result.id);
             }).catch((error) => {
@@ -108,12 +258,450 @@ class Signup extends Component {
         }
     }
 
-    onSetValue(key, value) {
-        this.setState({[key]: value, [key + 'Invalid']: false});
+    renderMainForm() {
+        return (
+            <Form className={'signup-form'}>
+                <FormGroup className="has-wrapper">
+                    <TextField
+                        id="email"
+                        type="email"
+                        value={this.state.email}
+                        onChange={(event) => this.onSetValue('email', event.target.value)}
+                        label="Email *"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.emailInvalid}
+                    />
+                    <span className="has-icon mt-5"><i className="ti-email"/></span>
+                </FormGroup>
+
+                <FormGroup className="has-wrapper">
+                    <TextField
+                        id="password"
+                        type="password"
+                        value={this.state.password}
+                        onChange={(event) => this.onSetValue('password', event.target.value)}
+                        label="Password *"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.passwordInvalid}
+                    />
+                    <span className="has-icon mt-5"><i className="ti-lock"/></span>
+                </FormGroup>
+                <FormGroup className="has-wrapper mb-5">
+                    <TextField
+                        id="confirmPassword"
+                        type="password"
+                        value={this.state.confirmPassword}
+                        onChange={(event) => this.onSetValue('confirmPassword', event.target.value)}
+                        label="Confirm Password *"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.confirmPasswordInvalid}
+                    />
+                    <span className="has-icon mt-5"><i className="ti-lock"/></span>
+                </FormGroup>
+                <FormControlLabel
+                    control={
+                        <IOSSwitch
+                            checked={this.state.autoAssign}
+                            onChange={() => this.setState({autoAssign: !this.state.autoAssign})}
+                            disableRipple
+                        />
+                    }
+                    label="Auto Assign Test Sets"
+                />
+                <div className={'d-flex justify-content-left'}>
+                    <FormControlLabel
+                        control={
+                            <GreenCheckbox
+                                checked={this.state.checkTerms}
+                                onChange={(event) => this.setState({checkTerms: event.target.checked})}
+                                value=""
+                            />
+                        }
+                        label={<span>I have read and agree to the <Link to="/terms">terms of conditions</Link></span>}
+                    />
+                </div>
+                <FormGroup className="mb-15 mt-10">
+                    <Button
+                        disabled={this.state.loading}
+                        onClick={() => this.onNextForm()}
+                        // type={'submit'}
+                        className="btn-info text-white btn-block w-100"
+                        variant="contained"
+                        size="large"
+                    >
+                        {
+                            this.state.loading ? <CircularProgress size={24}/> : 'SIGN UP'
+                        }
+                    </Button>
+                </FormGroup>
+            </Form>
+        )
+    }
+
+    renderInfoForm() {
+        const placeOfWorkOptions = this.state.placeOfWorkList.map(v => ({value: v.id, label: v.name}));
+        const placeOfWorkDefault = this.state.placeOfWork === null ? [] : placeOfWorkOptions.filter((v) => this.state.placeOfWork.split(',').indexOf(v.value.toString()) !== -1);
+        // const interestOptions = this.state.interestList.map(v => ({value: v.id, label: v.name}));
+        // const interestDefault = this.state.interest === null ? [] : interestOptions.filter((v) => this.state.interest.split(',').indexOf(v.value.toString()) !== -1);
+        return (
+            <Form className={'signup-form'}>
+                <FormGroup row className="has-wrapper">
+                    <Col sm={6}>
+                        <TextField
+                            id="first_name"
+                            value={this.state.firstName}
+                            onChange={(event) => this.onSetValue('firstName', event.target.value)}
+                            label="First Name *"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.firstNameInvalid}
+                        />
+                    </Col>
+                    <Col sm={6}>
+                        <TextField
+                            id="last_name"
+                            value={this.state.lastName}
+                            onChange={(event) => this.onSetValue('lastName', event.target.value)}
+                            label="Last Name *"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.lastNameInvalid}
+                        />
+                    </Col>
+                </FormGroup>
+
+                <FormGroup row className="has-wrapper">
+                    <Col sm={6}>
+                        <FormGroup row className={'mb-0'}>
+                            <Label style={{padding: '12px 25px 0px 13px', fontSize: 16}}>Gender: </Label>
+                            <RadioGroup
+                                aria-label="gender"
+                                name="gender"
+                                value={this.state.gender}
+                                onChange={(event) => this.onSetValue('gender', event.target.value)}
+                                row
+                            >
+                                <FormControlLabel
+                                    value={''}
+                                    control={<Radio/>}
+                                    label={'Not Specified'}
+                                />
+                                <FormControlLabel
+                                    value={'female'}
+                                    control={<Radio/>}
+                                    label={'Female'}
+                                />
+                                <FormControlLabel
+                                    value={'male'}
+                                    control={<Radio/>}
+                                    label={'Male'}
+                                />
+                            </RadioGroup>
+                        </FormGroup>
+                    </Col>
+                    <Col sm={6}>
+                        {/*<TextField
+                            id="yearOfBirth"
+                            type="number"
+                            value={this.state.yearOfBirth}
+                            onChange={(event) => this.onSetValue('yearOfBirth', event.target.value)}
+                            label="Year of birthday e.g 1985"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.yearOfBirthInvalid}
+                        />*/}
+                        <TextField
+                            id="position"
+                            select
+                            label="Position *"
+                            SelectProps={{ native: true}}
+                            variant="outlined"
+                            className={'mb-10'}
+                            margin="dense"
+                            fullWidth
+                            onChange={(e) => this.onSetValue('position', e.target.value)}
+                            value={this.state.position}
+                            error={this.state.positionInvalid}
+                        >
+                            <option style={{display: 'none'}} />
+                            {
+                                this.state.positionList.map((v) => (
+                                    <option value={v.id} key={v.id}>{v.name}</option>
+                                ))
+                            }
+                        </TextField>
+                    </Col>
+                </FormGroup>
+                <FormControl variant="outlined" fullWidth style={{paddingTop: 8}}>
+                    <CustomInputLabel
+                        htmlFor="placeOfWork"
+                        shrink
+                    >
+                        Place of work *
+                    </CustomInputLabel>
+                    <CreatableSelect
+                        id={'placeOfWork'}
+                        defaultValue={placeOfWorkDefault}
+                        // value={[]}
+                        placeholder={'Select place of work'}
+                        options={placeOfWorkOptions}
+                        onChange={(data) => this.onChangeSelectData('placeOfWork', data)}
+                        isMulti
+                        styles={selectStyles}
+                    />
+                </FormControl>
+                <Divider variant="middle" className={'mt-20 mb-20'}/>
+                <FormGroup row className="has-wrapper">
+                    <Col sm={3}>
+                        <TextField
+                            id="country"
+                            select
+                            label="Country *"
+                            SelectProps={{ native: true}}
+                            variant="outlined"
+                            className={'mb-10'}
+                            margin="dense"
+                            fullWidth
+                            onChange={(e) => this.onSetValue('country', e.target.value)}
+                            value={this.state.country}
+                            error={this.state.countryInvalid}
+                        >
+                            <option style={{display: 'none'}} />
+                            {
+                                this.state.countryList.map((v) => (
+                                    <option value={v.country_name} key={v.id}>{v.country_name}</option>
+                                ))
+                            }
+                        </TextField>
+                    </Col>
+                    <Col sm={9}>
+                        <TextField
+                            id="address1"
+                            value={this.state.address1}
+                            onChange={(event) => this.onSetValue('address1', event.target.value)}
+                            label="Address 1 *"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.address1Invalid}
+                        />
+                    </Col>
+                </FormGroup>
+                <FormGroup className="has-wrapper">
+                        <TextField
+                            id="address2"
+                            value={this.state.address2}
+                            onChange={(event) => this.onSetValue('address2', event.target.value)}
+                            label="Address 2"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.address2Invalid}
+                        />
+                </FormGroup>
+                <FormGroup row className="has-wrapper">
+                    <Col sm={4}>
+                        <TextField
+                            id="suburb"
+                            value={this.state.suburb}
+                            onChange={(event) => this.onSetValue('suburb', event.target.value)}
+                            label="Suburb *"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.suburbInvalid}
+                        />
+                    </Col>
+                    <Col sm={4}>
+                        <TextField
+                            id="state"
+                            value={this.state.state}
+                            onChange={(event) => this.onSetValue('state', event.target.value)}
+                            label="State"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.stateInvalid}
+                        />
+                    </Col>
+                    <Col sm={4}>
+                        <TextField
+                            id="postcode"
+                            type="number"
+                            value={this.state.postcode}
+                            onChange={(event) => this.onSetValue('postcode', event.target.value)}
+                            label="Postcode *"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.postcodeInvalid}
+                        />
+                    </Col>
+                </FormGroup>
+                {/*<FormGroup row className="has-wrapper">
+                    <Col sm={6}>
+                        <FormControl variant="outlined" fullWidth style={{paddingTop: 8}}>
+                            <CustomInputLabel
+                                htmlFor="interest"
+                                shrink
+                            >
+                                Interests
+                            </CustomInputLabel>
+                            <CreatableSelect
+                                id={'interest'}
+                                defaultValue={interestDefault}
+                                // value={[]}
+                                placeholder={'Select interests'}
+                                options={interestOptions}
+                                onChange={(data) => this.onChangeSelectData('interest', data)}
+                                isMulti
+                                styles={selectStyles}
+                            />
+                        </FormControl>
+                    </Col>
+                    <Col sm={6}>
+                        <TextField
+                            id="referrerBy"
+                            value={this.state.referrerBy}
+                            onChange={(event) => this.onSetValue('referrerBy', event.target.value)}
+                            label="Referrer By"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.referrerByInvalid}
+                        />
+                    </Col>
+                </FormGroup>*/}
+                <Divider variant="middle" className={'mt-20 mb-20'}/>
+                <FormGroup className={'has-wrapper'}>
+                    <TextField
+                        id="employer"
+                        value={this.state.employer}
+                        onChange={(event) => this.onSetValue('employer', event.target.value)}
+                        label="Employer *"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.employerInvalid}
+                    />
+                </FormGroup>
+                <FormGroup className={'has-wrapper'}>
+                    <TextField
+                        id="jobTitle"
+                        value={this.state.jobTitle}
+                        onChange={(event) => this.onSetValue('jobTitle', event.target.value)}
+                        label="Job Title *"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.jobTitleInvalid}
+                    />
+                </FormGroup>
+                <FormGroup className={'has-wrapper'}>
+                    <TextField
+                        id="hearFromWhere"
+                        select
+                        label="How did you hear about us?"
+                        SelectProps={{ native: true}}
+                        variant="outlined"
+                        className={'mb-10'}
+                        margin="dense"
+                        fullWidth
+                        onChange={(e) => this.onSetValue('hearFromWhere', e.target.value)}
+                        value={this.state.hearFromWhere}
+                        error={this.state.hearFromWhereInvalid}
+                    >
+                        <option style={{display: 'none'}} />
+                        <option value={'GE Healthcare'}>GE Healthcare</option>
+                        <option value={'Volpara'}>Volpara</option>
+                        <option value={'Social media'}>Social media</option>
+                        <option value={'News media'}>News media</option>
+                        <option value={'Word of mouth'}>Word of mouth</option>
+                        <option value={'World Continuing Education Alliance'}>World Continuing Education Alliance</option>
+                        <option value={'Other-Specify'}>Other-Specify</option>
+                    </TextField>
+                </FormGroup>
+                <FormGroup className={'has-wrapper'}>
+                    <TextField
+                        id="extraInfo"
+                        value={this.state.extraInfo}
+                        onChange={(event) => this.onSetValue('extraInfo', event.target.value)}
+                        label="Extra Information"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.extraInfoInvalid}
+                    />
+                </FormGroup>
+                <div className={'d-flex justify-content-left'}>
+                    <FormControlLabel
+                        control={
+                            <GreenCheckbox
+                                checked={this.state.allowContactMe}
+                                onChange={(event) => this.onSetValue('allowContactMe', event.target.checked)}
+                                value=""
+                            />
+                        }
+                        label={<span>I allow <strong>DetectED-X</strong> to contact me further about its  services</span>}
+                    />
+                </div>
+                <FormGroup className="mb-15 mt-10">
+                    <Button
+                        disabled={this.state.loading}
+                        // type={'submit'}
+                        className="btn-info text-white btn-block w-100"
+                        variant="contained"
+                        size="large"
+                        onClick={() => this.onUserSignUp()}
+                    >
+                        {
+                            this.state.loading ? <CircularProgress size={24}/> : 'CONFIRM'
+                        }
+                    </Button>
+                </FormGroup>
+                <div className={'social-icons'}>
+                    <a href="https://twitter.com/detected_x" target="_blank">
+                        <div className="twitter-icon"/>
+                    </a>
+                    <a href="https://www.linkedin.com/company/detected-x" target="_blank">
+                        <div className="linkedin-icon"/>
+                    </a>
+                    <a href="https://www.facebook.com/DetectEDX1" target="_blank">
+                        <div className="facebook-icon"/>
+                    </a>
+                    <a href="https://www.instagram.com/detected.x" target="_blank">
+                        <div className="instagram-icon"/>
+                    </a>
+                </div>
+            </Form>
+        )
     }
 
     render() {
-        const {email, firstName, lastName, password, confirmPassword} = this.state;
         const {loading} = this.props;
         return (
             <QueueAnim type="bottom" duration={2000}>
@@ -127,7 +715,7 @@ class Signup extends Component {
                                 <div className="d-flex justify-content-between">
                                     <div className="session-logo">
                                         <Link to="/">
-                                            <img src={AppConfig.appLogo} alt="session-logo" width="110" height="35"/>
+                                            <img src={AppConfig.appLogo} alt="session-logo" width="209" height="44"/>
                                         </Link>
                                     </div>
                                     <div>
@@ -145,98 +733,22 @@ class Signup extends Component {
                             </div>
                         </Toolbar>
                     </AppBar>
-                    <div className="session-inner-wrapper">
+                    <div className="session-inner-wrapper pt-10" >
                         <div className="container">
                             <div className="row row-eq-height">
-                                <div className="col-sm-12 col-md-8 col-lg-7" style={{margin: 'auto'}}>
+                                <div className={this.state.formType === 'email' ? "col-sm-12 col-md-8 col-lg-7 mt-70" : "col-sm-12 col-md-12 col-lg-12"} style={{margin: 'auto'}}>
                                     <div className="session-body text-center">
-                                        <div className="session-head mb-15">
-                                            <h2>{AppConfig.brandName} Sign up</h2>
+                                        <div className="session-head mb-40">
+                                            {
+                                                this.state.formType === 'email' ?
+                                                    <h1 className="font-weight-bold">{AppConfig.brandName} Sign up</h1> :
+                                                    <h1 className="font-weight-bold">User Information</h1>
+                                            }
                                         </div>
-                                        <Form onSubmit={this.onUserSignUp.bind(this)}>
-                                            <FormGroup className="has-wrapper">
-                                                <Input
-                                                    type="mail"
-                                                    value={email}
-                                                    name="user-mail"
-                                                    id="user-mail"
-                                                    className={this.state.emailInvalid ? "has-error-input input-lg" : "has-input input-lg"}
-                                                    placeholder="Enter Email Address"
-                                                    onChange={(e) => this.onSetValue('email', e.target.value)}
-                                                />
-                                                <span className="has-icon"><i className="ti-email"/></span>
-                                            </FormGroup>
-                                            <FormGroup row className="has-wrapper">
-                                                <Col sm={6}>
-                                                    <Input
-                                                        value={firstName}
-                                                        type="text"
-                                                        name="first_name"
-                                                        id="first_name"
-                                                        className={this.state.firstNameInvalid ? "has-error-input input-lg" : "has-input input-lg"}
-                                                        placeholder="First Name"
-                                                        onChange={(e) => this.onSetValue('firstName', e.target.value)}
-                                                    />
-                                                </Col>
-                                                <Col sm={6}>
-                                                    <Input
-                                                        value={lastName}
-                                                        type="text"
-                                                        name="last_name"
-                                                        id="last_name"
-                                                        className={this.state.lastNameInvalid ? "has-error-input input-lg" : "has-input input-lg"}
-                                                        placeholder="Last Name"
-                                                        onChange={(e) => this.onSetValue('lastName', e.target.value)}
-                                                    />
-                                                </Col>
-                                            </FormGroup>
-                                            <FormGroup className="has-wrapper">
-                                                <Input
-                                                    value={password}
-                                                    type="Password"
-                                                    name="user-pwd"
-                                                    id="pwd"
-                                                    className={this.state.passwordInvalid ? "has-error-input input-lg" : "has-input input-lg"}
-                                                    placeholder="Password"
-                                                    onChange={(e) => this.onSetValue('password', e.target.value)}
-                                                />
-                                                <span className="has-icon"><i className="ti-lock"></i></span>
-                                            </FormGroup>
-                                            <FormGroup className="has-wrapper mb-5">
-                                                <Input
-                                                    value={confirmPassword}
-                                                    type="Password"
-                                                    name="user-confirm-pwd"
-                                                    id="cpwd"
-                                                    className={this.state.confirmPasswordInvalid ? "has-error-input input-lg" : "has-input input-lg"}
-                                                    placeholder="Confirm Password"
-                                                    onChange={(e) => this.onSetValue('confirmPassword', e.target.value)}
-                                                />
-                                                <span className="has-icon"><i className="ti-lock"/></span>
-                                            </FormGroup>
-                                            <div className={'d-flex justify-content-left'}>
-                                                <FormControlLabel
-                                                    control={
-                                                        <GreenCheckbox
-                                                            checked={this.state.checkTerms}
-                                                            onChange={(event) => this.setState({checkTerms: event.target.checked})}
-                                                            value=""
-                                                        />
-                                                    }
-                                                    label={<span>I have read and agree to the <Link to="/terms">terms of conditions</Link></span>}
-                                                />
-                                            </div>
-                                            <FormGroup className="mb-15 mt-10">
-                                                <Button
-                                                    disabled={this.state.loading}
-                                                    type={'submit'}
-                                                    className="btn-info text-white btn-block w-100"
-                                                    variant="contained"
-                                                    size="large">
-                                                    Sign Up
-                                                </Button>
-                                            </FormGroup>
-                                        </Form>
+                                        {
+                                            this.state.formType === 'email' ?
+                                            this.renderMainForm() : this.renderInfoForm()
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -248,6 +760,96 @@ class Signup extends Component {
     }
 }
 
+const selectStyles = {
+    container: styles => ({...styles, marginBottom: 10}),
+    control: styles => ({...styles, padding: 0}),
+    option: (styles, {data, isDisabled, isFocused, isSelected}) => {
+        return {
+            ...styles,
+            textAlign: 'left'
+        };
+    },
+    menu: styles => ({...styles, zIndex: 5}),
+};
+
+
+const CustomInputLabel = withStyles(theme => ({
+    shrink: {
+        backgroundColor: 'white',
+        paddingTop: 10,
+        paddingLeft: 2,
+        paddingRight: 2,
+    }
+}))(InputLabel);
+
+
+const IOSSwitch = withStyles(theme => ({
+    colorSwitchBase: {
+        color: '#BA68C8',
+        '&$colorChecked': {
+            color: '#9C27B0',
+            '& + $colorBar': {
+                backgroundColor: '#9C27B0',
+            },
+        },
+    },
+    colorBar: {},
+    colorChecked: {},
+    iOSSwitchBase: {
+        '&$iOSChecked': {
+            color: theme.palette.common.white,
+            '& + $iOSBar': {
+                backgroundColor: '#52d869',
+            },
+        },
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+            easing: theme.transitions.easing.sharp,
+        }),
+    },
+    iOSChecked: {
+        transform: 'translateX(15px)',
+        '& + $iOSBar': {
+            opacity: 1,
+            border: 'none',
+        },
+    },
+    iOSBar: {
+        borderRadius: 13,
+        width: 42,
+        height: 26,
+        marginTop: -13,
+        marginLeft: -21,
+        border: 'solid 1px',
+        borderColor: theme.palette.grey[400],
+        backgroundColor: theme.palette.grey[50],
+        opacity: 1,
+        transition: theme.transitions.create(['background-color', 'border']),
+    },
+    iOSIcon: {
+        width: 24,
+        height: 24,
+    },
+    iOSIconChecked: {
+        boxShadow: theme.shadows[1],
+    },
+}))(({classes, ...props}) => {
+    return (
+        <Switch
+            focusVisibleClassName={classes.focusVisible}
+            disableRipple
+            classes={{
+                switchBase: classes.iOSSwitchBase,
+                bar: classes.iOSBar,
+                icon: classes.iOSIcon,
+                iconChecked: classes.iOSIconChecked,
+                checked: classes.iOSChecked,
+            }}
+            {...props}
+        />
+    );
+});
+
 const GreenCheckbox = withStyles({
     root: {
         color: '#66bb6a',
@@ -257,6 +859,7 @@ const GreenCheckbox = withStyles({
     },
     checked: {},
 })(props => <Checkbox color="default" {...props} />);
+
 
 // map state to props
 const mapStateToProps = ({authUser}) => {
