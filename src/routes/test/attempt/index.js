@@ -94,7 +94,7 @@ export default class Attempt extends Component {
             if (!detail.complete) {
                 steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
             } else {
-                if (detail.test_sets.modalities.image_quality) {
+                if (detail.test_sets.modalities.modality_type === 'image_quality') {
                     steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
                 } else {
                     steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];

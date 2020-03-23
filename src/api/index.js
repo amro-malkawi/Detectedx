@@ -649,6 +649,31 @@ export function attemptsSavePostAnswer(id, answer) {
     return instance.post(url, {answer}).then((response) => response.data);
 }
 
+export function attemptsSetCovidAnswer(id, test_case_id, rating, answer) {
+    let url = '/attempts/' + id + '/set_covid_answer?access_token=' + getAccessToken();
+    const data = {
+        test_case_id,
+        rating,
+        answer
+    };
+    return instance.post(url, data).then((response) => response.data);
+}
+
+export function attepmtsGetCovidAnswer(id, test_case_id) {
+    let url = '/attempts/' + id + '/get_covid_answer?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attepmtsGetCovidTruth(id, test_case_id) {
+    let url = '/attempts/' + id + '/get_covid_truth?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attemptGetTestCaseComment(id, test_case_id) {
+    let url = '/attempts/' + id + '/get_test_case_comment?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * answer operation
  */

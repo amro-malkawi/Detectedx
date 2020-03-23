@@ -382,6 +382,102 @@ div.viewer {
         }
       }
     }
+
+    .covid-question-container {
+      display: flex;
+      flex-direction: column;
+      width: 320px;
+      height: 100%;
+      background-color: black;
+      border-top: 1px solid #00a4d9;
+      .covid-question-title {
+        min-height: 25px;
+        font-weight: bold;
+        font-size: 18px;
+        color: #b3b3b3;
+        margin: 10px 0 0 5px;
+      }
+      .covid-questions {
+        flex: 1;
+        flex-direction: column;
+
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        overflow-y: auto;
+      }
+      .covid-confidence {
+        margin: 10px auto;
+        & > div {
+          margin-top: 10px;
+        }
+      }
+    }
+
+    /*======= Comment Info Panel =======*/
+    .comment-info {
+      position: absolute;
+      top: 100px;
+      left: -2px;
+      width: auto;
+      z-index: 9;
+      border-radius: 10px 0 0 10px;
+      &.covid-comment {
+        top: 10px;
+        left: 80px;
+        .dropdown {
+          .dropdown-menu {
+            margin-top: -30px;
+            margin-left: 92px;
+          }
+        }
+      }
+      i {
+        font-size: 15px;
+        padding: 15px 7px;
+        transition: all 0.3s ease;
+        &:hover {
+          padding: 15px;
+        }
+      }
+      .header-title {
+        line-height: 25px;
+        font-size: 15px;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+      }
+      .dropdown {
+        > button.btn-secondary {
+          background: none;
+          border: none;
+          padding: 0;
+          &:hover, &.active, &:focus {
+            background: none;
+          }
+        }
+        &.show {
+          .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease !important;
+          }
+        }
+        .dropdown-menu {
+          left: 45px !important;
+          right: auto !important;
+          width: 19rem; // 330px;
+          border-radius: 5px;
+          padding: 1.25rem;
+          background-color: black;
+          border: 0.5px solid #aaa;
+          margin-top: -70px;
+          .comment-text {
+            color: #aaa;
+            font-size: 14px;
+          }
+        }
+      }
+    }
   }
 
   #cover {
@@ -393,7 +489,7 @@ div.viewer {
     background-color: rgba(0, 0, 0, 0.5);
 
     #mark-details {
-      width: 320px;
+      width: 450px;
       margin: 150px auto 0 auto;
       background-color: black;
       border: 1px solid $normal-colour;

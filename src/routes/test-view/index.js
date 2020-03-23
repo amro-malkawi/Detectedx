@@ -28,9 +28,11 @@ import Marker from './lib/tools/MarkerTool';
 import panZoomSynchronizer from "./lib/panZoomSynchronizer";
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from './InstructionModal';
+import CovidQuestions from "Routes/test-view/component/CovidQuestions";
 import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
 import ImageBrowser from "./component/ImageBrowser";
+import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
 import * as Apis from 'Api';
 
@@ -63,7 +65,7 @@ class TestView extends Component {
             imageIdForQuality: '',
             isShowConfirmQualityModal: false,
         };
-
+        this.covidQuestionRef = React.createRef();
         this.popupCancelHandler = null;
         this.popupDeleteHandler = null;
         this.popupSaveHandler = null;
@@ -179,20 +181,27 @@ class TestView extends Component {
     }
 
     onNext() {
-        if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
+        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) {
             // this.setState({isShowQualityModal: true});
             this.onSendQuality();
-        } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+        } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
+        } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'covid'){
+            const covidRating = this.covidQuestionRef.current.state.selectedRating;
+            if( isNaN(covidRating) || Number(covidRating) < 0 || Number(covidRating) > 5) {
+                NotificationManager.error('Please select confidence number');
+            } else {
+                this.onMove(1);
+            }
         } else {
             this.onMove(1);
         }
     }
 
     onFinish() {
-        if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) {
+        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) {
             this.onSendQuality();
-        } else if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
+        } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
         } else {
             this.onComplete();
@@ -236,7 +245,7 @@ class TestView extends Component {
                             this.props.history.replace(nextPath);
                         });
                     } else if (resp.complete) {
-                        if (this.state.test_case.modalities.image_quality) {
+                        if (this.state.test_case.modalities.modality_type === 'image_quality') {
                             NotificationManager.success('Test was finished. Thank you at the end');
                             this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
                         } else {
@@ -327,8 +336,8 @@ class TestView extends Component {
                 lesionsValue.push({value: v.id, label: v.name});
             }
         });
-        let rating = markData.rating || '2';
-        if (rating === '2') {
+        let rating = (markData.rating === undefined || isNaN(markData.rating)) ? '2' : markData.rating;
+        if (Number(rating) < 3) {
             this.setState({selectedLesions: []});
         }
         this.setState({isShowPopup: true, selectedMarkData: markData, isShowPopupDelete: isShowDeleteButton, selectedLesions: lesionsValue, selectedRating: rating.toString()});
@@ -338,7 +347,7 @@ class TestView extends Component {
     }
 
     handleClosePopup(type) {
-        if (type === 'save' && this.state.selectedRating !== '2' && (this.state.selectedLesions === null || this.state.selectedLesions.length === 0)) {
+        if (type === 'save' && Number(this.state.selectedRating) > 2 && (this.state.selectedLesions === null || this.state.selectedLesions.length === 0)) {
             NotificationManager.error('Please select lesion type');
             return;
         }
@@ -370,7 +379,7 @@ class TestView extends Component {
     }
 
     setSelectedRating(value) {
-        if (value === '2') {
+        if (Number(value) < 3) {
             this.setState({selectedLesions: []});
         }
         this.setState({selectedRating: value});
@@ -452,18 +461,7 @@ class TestView extends Component {
     }
 
     renderTruthImageQuality() {
-        /*if (!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 2) {
-            let quality = ['Inadequate', 'Moderate', 'Good', 'Perfect'][Number(this.state.test_case.quality)];
-            return (
-                <div className={'truth-quality'}>
-                    <div className={'quality-icon ' + quality.toLowerCase() + '-icon'}/>
-                    <span className={'quality-text'}>{quality}</span>
-                </div>
-            );
-        } else {
-            return null;
-        }*/
-        if(this.state.test_case.modalities.image_quality) {
+        if(this.state.test_case.modalities.modality_type === 'image_quality') {
             const imageQuality = Number(this.state.attemptDetail.stage === 1 ? this.props.imageQuality : this.state.test_case.quality);
             if (imageQuality === -1) {
                 return (
@@ -675,6 +673,24 @@ class TestView extends Component {
                     <div className={'test-content'}>
                         <DndProvider backend={HTML5Backend}>
                             <ImageBrowser/>
+                            {
+                                this.state.complete &&
+                                <CommentInfo
+                                    test_case_id={this.state.test_cases_id}
+                                    attempts_id={this.state.attempts_id}
+                                    isCovid={this.state.test_case.modalities.modality_type === 'covid'}
+                                />
+                            }
+                            {
+                                this.state.complete && this.state.test_case.modalities.modality_type === 'covid' &&
+                                <CovidQuestions
+                                    ref={this.covidQuestionRef}
+                                    attempts_id={this.state.attempts_id}
+                                    test_case_id={this.state.test_cases_id}
+                                    complete={true}
+                                    isTruth={true}
+                                />
+                            }
                             <ImageViewerContainer
                                 attemptId={this.state.attempts_id}
                                 currentTool={this.state.currentTool}
@@ -688,9 +704,19 @@ class TestView extends Component {
                                 contrast={this.state.test_case.modalities.contrast}
                                 zoom={this.state.test_case.modalities.zoom}
                                 onShowPopup={this.handleShowPopup.bind(this)}
-                                onShowQualityModal={(!this.state.complete && this.state.test_case.modalities.image_quality && this.state.attemptDetail.stage === 1) ? this.onShowImageQualityModal.bind(this) : null}
-                                isShowQuality={this.state.test_case.modalities.image_quality}
+                                onShowQualityModal={(!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) ? this.onShowImageQualityModal.bind(this) : null}
+                                isShowQuality={this.state.test_case.modalities.modality_type === 'image_quality'}
                             />
+                            {
+                                this.state.test_case.modalities.modality_type === 'covid' &&
+                                <CovidQuestions
+                                    ref={this.covidQuestionRef}
+                                    attempts_id={this.state.attempts_id}
+                                    test_case_id={this.state.test_cases_id}
+                                    complete={this.state.complete}
+                                    isTruth={false}
+                                />
+                            }
                         </DndProvider>
                     </div>
                     {
@@ -727,8 +753,8 @@ class TestView extends Component {
                                         </FormGroup>
                                         <Label>Lesions:</Label>
                                         <Select
-                                            isDisabled={this.state.complete || this.state.selectedRating === '2'}
-                                            placeholder={this.state.complete || this.state.selectedRating === '2' ? 'Can not select lesion type' : 'Select lesion type'}
+                                            isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
+                                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? 'Can not select lesion type' : 'Select lesion type'}
                                             isMulti
                                             name="lesions"
                                             options={lesions}

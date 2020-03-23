@@ -55,12 +55,11 @@ class App extends Component {
         const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
             if (!isLogin) {
-                // return (<Redirect to={'/signin'}/>);
-                return (<Redirect to={'/site/home'}/>);
+                return (<Redirect to={'/signin'}/>);
+                // return (<Redirect to={'/site/home'}/>);
             } else {
-                // return (<Redirect to={'/app/welcome'} />);
-                // return (<Redirect to={'/app/test/list'}/>);
-                return (<Redirect to={'/site/home'}/>);
+                return (<Redirect to={'/app/test/list'}/>);
+                // return (<Redirect to={'/site/home'}/>);
             }
         }
         return (
@@ -74,8 +73,8 @@ class App extends Component {
                     <PrivateRoute
                         path={`${match.url}app`}
                         authUser={isLogin}
-                        // component={RctDefaultLayout}
-                        component={RctSiteLayout}
+                        component={RctDefaultLayout}
+                        // component={RctSiteLayout}
                     />
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>

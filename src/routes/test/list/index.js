@@ -102,7 +102,7 @@ export default class list extends Component {
                                                             Scores
                                                         </Button> : null
                                                 }
-                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.image_quality, item.test_sets.has_post)}
+                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, (item.test_sets.modalities.modality_type === 'image_quality'), item.test_sets.has_post)}
                                             </div>
                                         </CardBody>
                                     </Card>
