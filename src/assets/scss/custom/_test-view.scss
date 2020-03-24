@@ -101,7 +101,8 @@ div.viewer {
     .correct-result {
       position: absolute;
       top: 5px;
-      width: 133px;
+      //width: 133px;
+      width: auto;
       height: 34px;
       margin-left: 5px;
       border-radius: 20px;
@@ -110,6 +111,7 @@ div.viewer {
       span {
         color: white;
         font-size: 16px;
+        white-space: nowrap;
       }
 
       &.correct {
@@ -391,11 +393,11 @@ div.viewer {
       background-color: black;
       border-top: 1px solid #00a4d9;
       .covid-question-title {
-        min-height: 25px;
+        min-height: 45px;
         font-weight: bold;
         font-size: 18px;
         color: #b3b3b3;
-        margin: 10px 0 0 5px;
+        margin: 10px 0 0 65px;
       }
       .covid-questions {
         flex: 1;
@@ -407,6 +409,13 @@ div.viewer {
       }
       .covid-confidence {
         margin: 10px auto;
+        p {
+          min-height: 45px;
+          font-weight: bold;
+          font-size: 18px;
+          color: #b3b3b3;
+          margin: 10px 0 0 5px;
+        }
         & > div {
           margin-top: 10px;
         }
@@ -422,7 +431,7 @@ div.viewer {
       z-index: 9;
       border-radius: 10px 0 0 10px;
       &.covid-comment {
-        top: 10px;
+        top: 40px;
         left: 80px;
         .dropdown {
           .dropdown-menu {

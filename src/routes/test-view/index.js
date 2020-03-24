@@ -449,11 +449,13 @@ class TestView extends Component {
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
             // let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
-            let resultStr = isTruthCancer ? "Cancer Case" : "Normal Case";
+            let resultStr = this.state.test_case.modalities.modality_type !== 'covid' ?
+                (isTruthCancer ? "Cancer Case" : "Normal Case") :
+                (isTruthCancer ? "COVID-19 SIGNS" : "NON-COVID-19");
             return (
                 <div style={{display: 'inline-block'}}>
                     <div className={isTruthCancer ? 'correct-result wrong' : 'correct-result correct'}>
-                        <span style={{color: 'white'}}>{resultStr}</span>
+                        <span>{resultStr}</span>
                     </div>
                 </div>
             );

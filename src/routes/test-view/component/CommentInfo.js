@@ -47,7 +47,7 @@ export default class CommentInfo extends Component {
                         <DropdownToggle className="bg-primary">
                             {
                                 this.props.isCovid ?
-                                    <Button size={'small'} color="secondary" onClick={() => null}>Synaptic Comment</Button> :
+                                    <Button size={'small'} color="primary" onClick={() => null}>Synaptic Comment</Button> :
                                     <Tooltip title="Comment" placement="right">
                                         <i className="zmdi zmdi-comment-text"/>
                                     </Tooltip>
