@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
-import {Dialog, DialogActions, DialogContent, DialogTitle, AppBar, Tabs, Tab, TabPanel, Typography} from "@material-ui/core";
+import {Dialog} from "@material-ui/core";
 import {withStyles} from "@material-ui/core/styles";
 import Content from '../instructions/content';
 

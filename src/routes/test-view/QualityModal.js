@@ -12,8 +12,13 @@ export default class QualityModal extends Component{
         }
     }
 
+    onConfirm() {
+        this.props.confirm(this.state.quality);
+        this.setState({quality: -1});
+    }
+
     render() {
-        const {isOpen, toggle, confirm} = this.props;
+        const {isOpen, toggle} = this.props;
         return (
             <Dialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md' >
                 <div className={'quality-container'}>
@@ -42,7 +47,7 @@ export default class QualityModal extends Component{
                     </DialogContent>
                     <DialogActions>
                         <div style={{margin: 'auto'}}>
-                            <Button variant="contained" onClick={() => confirm(this.state.quality)} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Confirm&nbsp;&nbsp;</Button>
+                            <Button variant="contained" onClick={() => this.onConfirm()} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Confirm&nbsp;&nbsp;</Button>
                         </div>
                     </DialogActions>
                 </div>

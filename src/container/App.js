@@ -9,46 +9,29 @@ import {NotificationContainer} from 'react-notifications';
 // rct theme provider
 import RctThemeProvider from './RctThemeProvider';
 
-//Horizontal Layout
-import HorizontalLayout from './HorizontalLayout';
-
-//Agency Layout
-import AgencyLayout from './AgencyLayout';
-
 //Main App
 import RctDefaultLayout from './DefaultLayout';
-
-// boxed layout
-import RctBoxedLayout from './RctBoxedLayout';
+//Site Layout
+import RctSiteLayout from './SiteLayout';
 
 // app signin
 import AppSignIn from './Signin';
 import AppSignUp from './Signup';
+import Terms from './Terms';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 import SendEmail from 'Routes/user/SendEmail';
 import Confirm from 'Routes/user/Confirm';
-import NoMatch from 'Routes/no-match';
+import NoMatch from './NoMatch';
 
 // async components
 import {
-    AsyncSessionLockScreenComponent,
-    AsyncSessionForgotPasswordComponent,
-    AsyncSessionPage404Component,
-    AsyncSessionPage500Component,
-    AsyncTermsConditionComponent,
     AsyncAdvanceTestViewComponent,
 } from 'Components/AsyncComponent/AsyncComponent';
+import * as selectors from "Selectors";
 
-//Auth0
-import Auth from '../Auth/Auth';
 
-//Auth0 Handle Authentication
-const auth = new Auth();
 
-const handleAuthentication = ({location}) => {
-    if (/access_token|id_token|error/.test(location.hash)) {
-        auth.handleAuthentication();
-    }
-}
 
 /**
  * Initial Path To Check Whether User Is Logged In Or Not
@@ -69,27 +52,37 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        const {location, match, user} = this.props;
+        const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
-            if (user === null) {
+            if (!isLogin) {
                 return (<Redirect to={'/signin'}/>);
+                // return (<Redirect to={'/site/home'}/>);
             } else {
-                // return (<Redirect to={'/app/home'} />);
                 return (<Redirect to={'/app/test/list'}/>);
+                // return (<Redirect to={'/site/home'}/>);
             }
         }
         return (
             <RctThemeProvider>
                 <NotificationContainer/>
                 <Switch>
+                    <Route
+                        path={`${match.url}site`}
+                        component={RctSiteLayout}
+                    />
                     <PrivateRoute
                         path={`${match.url}app`}
-                        authUser={user}
+                        authUser={isLogin}
                         component={RctDefaultLayout}
+                        // component={RctSiteLayout}
                     />
-                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={user}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
+                    <Route path="/terms" component={Terms}/>
+                    <Route path="/forgot-password" component={ForgotPassword}/>
+                    <Route path="/reset-password" component={ResetPassword}/>
                     <Route path="/users/send-email/:user_id" component={SendEmail}/>
                     <Route path="/users/confirm" component={Confirm}/>
                     <Route component={NoMatch}/>
@@ -100,9 +93,8 @@ class App extends Component {
 }
 
 // map state to props
-const mapStateToProps = ({authUser}) => {
-    const {user} = authUser;
-    return {user};
-};
+const mapStateToProps = (state) => ({
+    isLogin: selectors.getIsLogin(state),
+});
 
 export default connect(mapStateToProps)(App);

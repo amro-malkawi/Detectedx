@@ -9,7 +9,6 @@ import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
-import screenfull from 'screenfull';
 import Tooltip from '@material-ui/core/Tooltip';
 import MenuIcon from '@material-ui/icons/Menu';
 import { withRouter } from 'react-router-dom';
@@ -20,8 +19,6 @@ import { collapsedSidebarAction } from 'Actions';
 // helpers
 import { getAppLayout } from "Helpers/helpers";
 
-import DashboardOverlay from '../DashboardOverlay/DashboardOverlay';
-import Cart from './Cart';
 
 import UserInfo from './UserInfo';
 import Logout from './Logout';
@@ -41,32 +38,11 @@ class Header extends Component {
       this.props.collapsedSidebarAction(val);
    }
 
-   // open dashboard overlay
-   openDashboardOverlay() {
-      $('.dashboard-overlay').toggleClass('d-none');
-      $('.dashboard-overlay').toggleClass('show');
-      if ($('.dashboard-overlay').hasClass('show')) {
-         $('body').css('overflow', 'hidden');
-      } else {
-         $('body').css('overflow', '');
-      }
-   }
-
    // close dashboard overlay
    closeDashboardOverlay() {
       $('.dashboard-overlay').removeClass('show');
       $('.dashboard-overlay').addClass('d-none');
       $('body').css('overflow', '');
-   }
-
-   // toggle screen full
-   toggleScreenFull() {
-      screenfull.toggle();
-   }
-
-   // mobile search form
-   openMobileSearchForm() {
-      this.setState({ isMobileSearchFormVisible: true });
    }
 
    render() {
@@ -125,13 +101,10 @@ class Header extends Component {
                         </Button>
                      </Tooltip>
                   </li>
-                  <UserInfo />
+                  <UserInfo history={this.props.history}/>
                   <Logout />
                </ul>
             </Toolbar>
-            <DashboardOverlay
-               onClose={() => this.closeDashboardOverlay()}
-            />
             <InstructionModal
                 isOpen={this.state.isShowInstructionModal}
                 toggle={() => this.setState({isShowInstructionModal: false})}

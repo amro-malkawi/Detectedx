@@ -18,7 +18,7 @@ class Logout extends Component {
     }
 
     render() {
-        const { cart, deleteItemFromCart, location } = this.props;
+        const { cart, location } = this.props;
         return (
             <UncontrolledDropdown nav className="list-inline-item cart-dropdown">
                 <DropdownToggle nav className="p-0" onClick={() => this.logoutUser()}>

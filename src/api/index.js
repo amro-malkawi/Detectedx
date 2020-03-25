@@ -1,11 +1,15 @@
 import axios from 'axios';
+import { Cookies } from 'react-cookie';
+
+const cookie = new Cookies();
 
 export default axios.create({
     baseURL: 'http://reactify.theironnetwork.org/data/',
     timeout: 15000
 });
 
-export const apiHost = window.location.protocol + '//' + window.location.hostname + ':3000';
+export const apiHost = window.location.protocol + '//' + (window.location.hostname === 'localhost' ? 'localhost:3000' : window.location.hostname);
+    // window.location.hostname.split('.')[0].split('-')[0] + '-api' + window.location.hostname.substr(window.location.hostname.split('.')[0].length));
 export const apiAddress = apiHost + '/api/';
 
 const instance = axios.create({
@@ -17,14 +21,15 @@ instance.interceptors.response.use(response => {
     return response;
 }, error => {
     if (error.response.status === 401 && error.request.responseURL.indexOf('api/users/login') === -1) {
-        localStorage.removeItem('user_id');
+        cookie.remove('user_id', {path: '/'});
+        cookie.remove('access_token', {path: '/'});
         window.location.reload();
     }
     throw error;
 });
 
 export function getAccessToken() {
-    return localStorage.getItem("access_token");
+    return cookie.get("access_token");
 }
 
 export function login(email, password) {
@@ -41,15 +46,9 @@ export function logout() {
     return instance.post(url, {}).then((response) => response.data);
 }
 
-export function singUp(email, firstName, lastName, password) {
+export function singUp(data) {
     const url = '/users';
-    const req = {
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        password
-    };
-    return instance.post(url, req).then((response) => response.data);
+    return instance.post(url, data).then((response) => response.data);
 }
 
 export function changePassword(curPass, newPass) {
@@ -74,6 +73,16 @@ export function userVerify(id) {
 export function userConfirm(id, token) {
     const url = '/users/confirm?uid=' + id + '&token=' + token;
     return instance.get(url, ).then((response) => response.data);
+}
+
+export function forgotPassword(email) {
+    const url = '/users/reset';
+    return instance.post(url, {email}).then((response) => response.data);
+}
+
+export function resetPassword(newPassword, accessToken) {
+    const url = '/users/reset-password?access_token=' + accessToken;
+    return instance.post(url, {newPassword}).then((response) => response.data);
 }
 
 /**
@@ -112,7 +121,7 @@ export function userInfo() {
  * User positions functions
  */
 export function userPositions() {
-    let url = '/user_positions?access_token=' + getAccessToken() + '&filter=' + encodeURI(JSON.stringify({order: 'position ASC'}));
+    let url = '/user_positions?filter=' + encodeURI(JSON.stringify({order: 'position ASC'}));
     return instance.get(url).then((response) => response.data);
 }
 
@@ -128,7 +137,15 @@ export function userInterests() {
  * User placeOfWork functions
  */
 export function userPlaceOfWorks() {
-    let url = '/user_placeofworks?access_token=' + getAccessToken();
+    let url = '/user_placeofworks';
+    return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * countries
+ */
+export function countryList() {
+    let url = '/countries?filter=' + encodeURI(JSON.stringify({order: 'country_name ASC'}));
     return instance.get(url).then((response) => response.data);
 }
 
@@ -173,6 +190,11 @@ export function testSetsModality(id) {
 
 export function testSetsCases(id) {
     const url = '/test_sets/' + id + '/test_set_cases?access_token=' + getAccessToken() + '&filter=' + encodeURI('{"order": "position ASC"}');
+    return instance.get(url).then((response) => response.data);
+}
+
+export function postTestSetsCases(id) {
+    const url = '/test_sets/' + id + '/post_test_set_cases?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -238,46 +260,13 @@ export function testSetCasesDelete(id) {
  * test cases operation
  */
 
-export function testCasesList(page) {
-    let url = '/test_cases?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "modalities"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function testCasesAdd(data) {
-    const url = '/test_cases?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function testCasesUpdate(id, data) {
-    const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function testCasesDelete(id) {
-    const url = '/test_cases/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-export function testCasesInfo(id, filter) {
-    let url = '/test_cases/' + id + '?access_token=' + getAccessToken();
-    if (filter !== undefined) {
-        url += '&filter=' + encodeURI(JSON.stringify(filter));
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
 export function testCasesViewInfo(id) {
     const url = '/test_cases/' + id + '/viewInfo?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
-export function testCasesAnswers(id, attempt_id) {
-    const url = '/test_cases/' + id + '/attempt/' + attempt_id + '/answers?access_token=' + getAccessToken();
+export function testCasesAnswers(id, attempt_id, isPostTest) {
+    const url = '/test_cases/' + id + '/attempt/' + attempt_id + '/answers?is_post_test=' + (isPostTest ? '1' : '0') + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -427,22 +416,6 @@ export function imagesUpdate(id, data) {
 export function imagesDelete(id) {
     const url = '/images/' + id + '?access_token=' + getAccessToken();
     return instance.delete(url).then((response) => response.data);
-}
-
-export function dicomImagesUpload(data) {
-    let url = '/images/upload?access_token=' + getAccessToken() + '&test_case_id=' + data.test_case_id + '&position=' + data.position;
-    if (data.id !== undefined) {
-        url += '&id=' + data.id;
-    }
-    // const url = '/containers/dicom/upload?access_token=' + getAccessToken();
-    const formData = new FormData();
-    formData.append('file', data.dicom_file);
-    const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
-    };
-    return instance.post(url, formData, config).then((response) => response.data);
 }
 
 export function imagesUrlTemplate(id, stack) {
@@ -599,8 +572,13 @@ export function attemptsMoveTestCase(id, testCaseId) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsComplete(id) {
-    const url = '/attempts/' + id + '/complete?access_token=' + getAccessToken();
+export function attemptsComplete(id, monitorWidth, monitorHeight) {
+    const url = '/attempts/' + id + '/complete?monitor_width=' + monitorWidth + '&monitor_height=' + monitorHeight + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsPostTestComplete(id) {
+    const url = '/attempts/' + id + '/post_test_complete?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -609,7 +587,7 @@ export function attemptsDetail(id, testCaseId) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsCompleteList(test_set_id) {
+export function attemptsCompletedList(test_set_id) {
     const url = '/attempts/complete_list?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
@@ -624,9 +602,9 @@ export function attemptsQuestionnaireAnswer(id, data, type) {
     return instance.post(url, data).then((response) => response.data);
 }
 
-export function attemptsCertificatePdf(id) {
+export function attemptsCertificatePdf(id, type) {
     return new Promise(function (resolve, reject) {
-        const url = '/attempts/' + id + '/certificate/?access_token=' + getAccessToken();
+        const url = '/attempts/' + id + '/certificate/?type=' + type + '&access_token=' + getAccessToken();
         instance({
             url: url,
             method: 'GET',
@@ -651,8 +629,8 @@ export function attemptsPercentile(id) {
 }
 
 export function attemptsQuality(id, test_case_id, quality) {
-    const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&quality=' + quality + '&access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
+    const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.post(url, quality).then((response) => response.data);
 }
 
 export function attemptsConfirmQuality(id, test_case_id, quality, isAgree, msg) {
@@ -664,6 +642,36 @@ export function attemptsConfirmQuality(id, test_case_id, quality, isAgree, msg) 
         msg
     };
     return instance.post(url, data).then((response) => response.data);
+}
+
+export function attemptsSavePostAnswer(id, answer) {
+    const url = '/attempts/' + id + '/save_post_answer?&access_token=' + getAccessToken();
+    return instance.post(url, {answer}).then((response) => response.data);
+}
+
+export function attemptsSetCovidAnswer(id, test_case_id, rating, answer) {
+    let url = '/attempts/' + id + '/set_covid_answer?access_token=' + getAccessToken();
+    const data = {
+        test_case_id,
+        rating,
+        answer
+    };
+    return instance.post(url, data).then((response) => response.data);
+}
+
+export function attepmtsGetCovidAnswer(id, test_case_id) {
+    let url = '/attempts/' + id + '/get_covid_answer?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attepmtsGetCovidTruth(id, test_case_id) {
+    let url = '/attempts/' + id + '/get_covid_truth?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attemptGetTestCaseComment(id, test_case_id) {
+    let url = '/attempts/' + id + '/get_test_case_comment?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 
 /**
@@ -722,3 +730,32 @@ export function shapeDeleteAll(imageId, attemptId, testCaseId, type) {
     };
     return instance.post(url, data).then((response) => response.data);
 }
+
+/**
+ * product plans
+ */
+
+export function getProductPlans() {
+    const url = '/product_plans/list?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * order opertaion
+ */
+
+export function orderChargeCard(planId, token) {
+    const url = 'user_orders/charge_card?access_token=' + getAccessToken();
+    return instance.post(url, {planId, token}).then((response) => response.data);
+}
+
+export function orderPaypalCreateSubscription(planId) {
+    const url = 'user_orders/paypal_create_subscription?access_token=' + getAccessToken();
+    return instance.post(url, {planId}).then((response) => response.data);
+}
+
+export function orderPaypalApprove(paymentInfo, planId) {
+    const url = 'user_orders/paypal_approve?access_token=' + getAccessToken();
+    return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
+}
+

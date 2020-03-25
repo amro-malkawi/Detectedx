@@ -27,7 +27,7 @@ export default class CompleteList extends Component {
     }
 
     getData() {
-        Apis.attemptsCompleteList(this.state.testSetId).then(resp => {
+        Apis.attemptsCompletedList(this.state.testSetId).then(resp => {
             this.setState({completeList: resp, loading: false});
         }).catch(e => {
 
@@ -51,7 +51,7 @@ export default class CompleteList extends Component {
     render() {
         if (!this.state.loading) {
             return (
-                <div className="table-responsive">
+                <div className="table-responsive mt-30 mb-30">
                     <div className="d-flex justify-content-between py-20 px-10 border-bottom">
                         <h3>{"Attempt for " + this.state.completeList.test_set_name}</h3>
                     </div>

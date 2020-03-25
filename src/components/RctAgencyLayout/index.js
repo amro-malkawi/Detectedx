@@ -8,9 +8,6 @@ import { connect } from "react-redux";
 
 // Components
 import Header from 'Components/Header/Header';
-import Footer from 'Components/Footer/Footer';
-import ThemeOptions from 'Components/ThemeOptions/ThemeOptions';
-import AgencyMenu from '../AgencyMenu/AgencyMenu';
 
 class RctAgencyLayout extends Component {
 

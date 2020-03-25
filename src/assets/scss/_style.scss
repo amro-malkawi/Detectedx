@@ -3,9 +3,8 @@
 //Default Bootstrap File
 @import "./bootstrap";
 
-//Slick Slider
-@import "~slick-carousel/slick/slick.css";
-@import "~slick-carousel/slick/slick-theme.css";
+//image gallery
+@import "~react-image-gallery/styles/scss/image-gallery.scss";
 
 /*==== Core Mixins ====*/
 @import "./custom/mixins/mixin";

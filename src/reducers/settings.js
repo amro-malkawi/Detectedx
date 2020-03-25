@@ -1,7 +1,7 @@
 /**
  * App Settings Reducers
  */
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 import {
 	COLLAPSED_SIDEBAR,

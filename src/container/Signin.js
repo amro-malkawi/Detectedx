@@ -13,11 +13,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
 import {Fab} from "@material-ui/core";
 
-// components
-import {
-    SessionSlider
-} from 'Components/Widgets';
-
 // app config
 import AppConfig from 'Constants/AppConfig';
 
@@ -25,19 +20,21 @@ import AppConfig from 'Constants/AppConfig';
 import {
     signinUserInEmail,
 } from 'Actions';
+import * as selectors from "Selectors";
 
-//Auth File
-import Auth from '../Auth/Auth';
-
-const auth = new Auth();
 
 class Signin extends Component {
 
     state = {
         email: '',
         password: ''
-    }
+    };
 
+    componentDidMount() {
+        if(this.props.isLogin) {
+            this.props.history.push('/');
+        }
+    }
     /**
      * On User Login
      */
@@ -100,7 +97,7 @@ class Signin extends Component {
                                                     placeholder="Enter Email Address"
                                                     onChange={(event) => this.setState({email: event.target.value})}
                                                 />
-                                                <span className="has-icon"><i className="ti-email"></i></span>
+                                                <span className="has-icon"><i className="ti-email"/></span>
                                             </FormGroup>
                                             <FormGroup className="has-wrapper">
                                                 <Input
@@ -112,7 +109,7 @@ class Signin extends Component {
                                                     placeholder="Password"
                                                     onChange={(event) => this.setState({password: event.target.value})}
                                                 />
-                                                <span className="has-icon"><i className="ti-lock"></i></span>
+                                                <span className="has-icon"><i className="ti-lock"/></span>
                                             </FormGroup>
                                             <FormGroup className="mb-15">
                                                 <Button
@@ -125,6 +122,9 @@ class Signin extends Component {
                                                     Sign In
                                                 </Button>
                                             </FormGroup>
+                                            <div className={'d-flex justify-content-center mt-30 fs-14'}>
+                                                <Link to="/forgot-password">Forgot Password</Link>
+                                            </div>
                                         </Form>
                                     </div>
                                 </div>
@@ -140,8 +140,8 @@ class Signin extends Component {
 // map state to props
 const mapStateToProps = ({authUser}) => {
     const {user, loading} = authUser;
-    return {user, loading}
-}
+    return {user, loading, isLogin: selectors.getIsLogin(null)}
+};
 
 export default connect(mapStateToProps, {
     signinUserInEmail,

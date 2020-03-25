@@ -8,13 +8,13 @@ import { Route, withRouter, Redirect } from 'react-router-dom';
 import RctAgencyLayout from 'Components/RctAgencyLayout';
 
 // router service
-import routerService from '../services/_routerService';
+import routerService from '../services/routerAppService';
 
 class RctNewsApp extends Component {
 	render() {
 		const { match, location } = this.props;
 		if (location.pathname === '/app') {
-			// return (<Redirect to={'/app/home'} />);
+			// return (<Redirect to={'/app/welcome'} />);
 			return (<Redirect to={'/app/test/list'} />);
 		}
 		return (

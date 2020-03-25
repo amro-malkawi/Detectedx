@@ -8,7 +8,7 @@ import { Route, withRouter, Redirect } from 'react-router-dom';
 import RctAgencyLayout from 'Components/RctAgencyLayout';
 
 // router service
-import routerService from '../services/_routerService';
+import routerService from '../services/routerAppService';
 
 class RctAgencyApp extends Component {
    render() {

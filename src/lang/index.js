@@ -6,7 +6,6 @@ import { addLocaleData } from 'react-intl';
 import enLang from './entries/en-US';
 import frLang from './entries/fr_FR';
 import zhLang from './entries/zh-Hans-CN';
-import arLang from './entries/ar_SA';
 import heLang from './entries/he_HE';
 import deLang from './entries/de_DE';
 import ruLang from './entries/ru_RU';
@@ -20,7 +19,6 @@ const AppLocale = {
     en: enLang,
     fr: frLang,
     zh: zhLang,
-    ar: arLang,
     he: heLang,
     de: deLang,
     ru: ruLang,
@@ -34,7 +32,6 @@ const AppLocale = {
 addLocaleData(AppLocale.en.data);
 addLocaleData(AppLocale.fr.data);
 addLocaleData(AppLocale.zh.data);
-addLocaleData(AppLocale.ar.data);
 addLocaleData(AppLocale.he.data);
 addLocaleData(AppLocale.de.data);
 addLocaleData(AppLocale.ru.data);

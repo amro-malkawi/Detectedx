@@ -53,8 +53,9 @@ const theme = createMuiTheme({
         button: {
             fontWeight: 400,
             textAlign: 'capitalize'
-        }
-    }
+        },
+        useNextVariants: true,
+    },
 });
 
 export default theme;
