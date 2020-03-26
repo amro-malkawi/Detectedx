@@ -21,6 +21,11 @@ const getHangingImageOrder = (images, type) => {
             idList.push(imageObj.id);
         }
     });
+    if(idList.length === 0) {
+        images.forEach((v) => {
+            if(idList.length < typeArray.length) idList.push(v.id);
+        });
+    }
     return idList
 };
 

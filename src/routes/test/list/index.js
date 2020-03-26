@@ -8,6 +8,8 @@ import {Card, CardBody, Button} from "reactstrap";
 import * as Apis from 'Api';
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import StartModal from './StartModal';
+import LearningModal from "./LearningModal";
+import LearningCovidModal from "./LearningCovidModal";
 
 export default class list extends Component {
 
@@ -48,15 +50,19 @@ export default class list extends Component {
         }
     }
 
-    onStart(value, isImageQuality, has_post) {
-        if(isImageQuality) {
+    onStart(value, modality_type, has_post) {
+        if(modality_type === 'image_quality') {
             this.setState({
                 selectedId: value
             }, () => {
                 this.onGoAttempt();
             });
+        } else if (modality_type === 'covid') {
+            this.setState({
+                isShowModalType: 'covid',
+                selectedId: value
+            });
         } else {
-
             this.setState({
                 isShowModalType: has_post ? 'has_post' : 'normal',
                 selectedId: value
@@ -64,16 +70,16 @@ export default class list extends Component {
         }
     }
 
-    renderStartButton(test_set_id, attempts, isImageQuality, has_post) {
+    renderStartButton(test_set_id, attempts, modality_type, has_post) {
         let attempt = attempts[0];
         if (attempt === undefined) {
-            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, isImageQuality, has_post)}>Start</Button>);
+            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>Start</Button>);
         } else if (attempt.complete) {
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, isImageQuality, has_post)}>Re-Start</Button>);
+            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>Re-Start</Button>);
         } else {
             // let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             let path = '/app/test/attempt/' + attempt.id;
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, isImageQuality, has_post)}>Continue</Button>);
+            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, modality_type, has_post)}>Continue</Button>);
         }
     }
 
@@ -102,7 +108,7 @@ export default class list extends Component {
                                                             Scores
                                                         </Button> : null
                                                 }
-                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, (item.test_sets.modalities.modality_type === 'image_quality'), item.test_sets.has_post)}
+                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.modality_type, item.test_sets.has_post)}
                                             </div>
                                         </CardBody>
                                     </Card>
@@ -116,57 +122,16 @@ export default class list extends Component {
                     onClose={() => this.setState({isShowModalType: ''})}
                     onNext={() => this.onGoAttempt()}
                 />
-                <Dialog open={this.state.isShowModalType === 'normal'} onClose={() => this.setState({isShowModalType: ''})} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
-                    <div style={{padding: 30}}>
-                        <DialogTitle id="alert-dialog-title">
-                            <span className={'fs-23'}>LEARNING OBJECTIVES FOR:</span>
-                        </DialogTitle>
-                        <DialogContent>
-                            <p>Interactive mammogram interpretation to improve breast cancer detection- module M1</p>
-                            <div>
-                            <span className="fs-17">At the end of this module, the user will be able to</span>
-                            </div>
-                            <ol>
-                                <li>
-                                    <span className="fs-17 mr-10">Recognise a range of cancer appearances demonstrated in the image learning set and therefore maximise cancer detection;</span>
-                                </li>
-                                <li>
-                                    <span className="fs-17 mr-10">Be aware of the range of appearances of images without cancer and therefore minimise unnecessary call-backs;</span>
-                                </li>
-                                <li>
-                                    <span className="fs-17 mr-10">Improve perception and interpretation skills in the reading of digital mammograms;</span>
-                                </li>
-                                <li>
-                                    <span className="fs-17 mr-10">Demonstrate an awareness of any personal weaknesses when searching for cancers or trying to recognise normal images;</span>
-                                </li>
-                                <li>
-                                    <span className="fs-17 mr-10">Assess detailed scores on personal performance levels using 5 internationally recognised metrics;</span>
-                                </li>
-                                <li>
-                                    <span className="fs-17 mr-10">Demonstrate increased confidence when interpreting radiologic images.</span>
-                                </li>
-                            </ol>
-                            <div className={'fs-17 mt-15'}>disclosures:</div>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">Patrick C Brennan is a Professor of Diagnostic Imaging at the University of Sydney and CEO and Co-founder of DetectED-X</span>
-                            </div>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">Mary T Rickard is a Radiologist, Adjunct Professor at the University of Sydney and Director and Co-founder of DetectED-X</span>
-                            </div>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">Mo'ayyad E Suleiman is an academic at the University of Sydney and Director and Co-founder of DetectED-X.</span>
-                            </div>
-                        </DialogContent>
-                        <DialogActions>
-                            <div style={{margin: 'auto'}}>
-                                <Button variant="contained" onClick={() => this.onGoAttempt()} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Next&nbsp;&nbsp;</Button>
-                            </div>
-                        </DialogActions>
-                    </div>
-                </Dialog>
+                <LearningModal
+                    open={this.state.isShowModalType === 'normal'}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                    onNext={this.onGoAttempt.bind(this)}
+                />
+                <LearningCovidModal
+                    open={this.state.isShowModalType === 'covid'}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                    onNext={this.onGoAttempt.bind(this)}
+                />
             </div>
         )
     }

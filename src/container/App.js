@@ -5,16 +5,10 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {NotificationContainer} from 'react-notifications';
-
-// rct theme provider
+import {detect} from 'detect-browser';
 import RctThemeProvider from './RctThemeProvider';
-
-//Main App
 import RctDefaultLayout from './DefaultLayout';
-//Site Layout
 import RctSiteLayout from './SiteLayout';
-
-// app signin
 import AppSignIn from './Signin';
 import AppSignUp from './Signup';
 import Terms from './Terms';
@@ -23,6 +17,7 @@ import ResetPassword from './ResetPassword';
 import SendEmail from 'Routes/user/SendEmail';
 import Confirm from 'Routes/user/Confirm';
 import NoMatch from './NoMatch';
+import ChromeError from './ChromeError';
 
 // async components
 import {
@@ -52,6 +47,10 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
+        const browser = detect();
+        if(!browser || (browser.name !== 'chrome' && browser.name !== 'firefox')) {
+            return (<Route component={ChromeError}/>);
+        }
         const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
             if (!isLogin) {

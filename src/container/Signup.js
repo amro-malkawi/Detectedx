@@ -43,6 +43,8 @@ class Signup extends Component {
         lastNameInvalid: false,
         gender: '',
         genderInvalid: false,
+        title: '',
+        titleInvalid: false,
         // yearOfBirth: '',
         // yearOfBirthInvalid: false,
         placeOfWork: null,
@@ -67,10 +69,11 @@ class Signup extends Component {
         jobTitleInvalid: false,
         hearFromWhere: null,
         hearFromWhereInvalid: false,
+        hearFromOtherText: '',
+        hearFromOtherTextInvalid: false,
         extraInfo: '',
         extraInfoInvalid: false,
         allowContactMe: false,
-        autoAssign: false,
         checkTerms: false,
         termInvalid: false,
 
@@ -158,9 +161,13 @@ class Signup extends Component {
             valid = false;
             invalidObj.lastNameInvalid = true;
         }
-        if(this.state.placeOfWork === null) {
+        // if(this.state.placeOfWork === null) {
+        //     valid = false;
+        //     invalidObj.placeOfWorkInvalid = true;
+        // }
+        if(this.state.title.trim().length === 0) {
             valid = false;
-            invalidObj.placeOfWorkInvalid = true;
+            invalidObj.titleInvalid = true;
         }
         if(this.state.position === undefined) {
             valid = false;
@@ -186,15 +193,18 @@ class Signup extends Component {
             valid = false;
             invalidObj.employerInvalid = true;
         }
-        if(this.state.jobTitle.trim().length === 0) {
-            valid = false;
-            invalidObj.jobTitleInvalid = true
-        }
+        // if(this.state.jobTitle.trim().length === 0) {
+        //     valid = false;
+        //     invalidObj.jobTitleInvalid = true
+        // }
         if(this.state.hearFromWhere === null) {
             valid = false;
             invalidObj.hearFromWhereInvalid = true;
         }
-
+        if(this.state.hearFromWhere === 'Other-Specify' && this.state.hearFromOtherText.trim().length === 0) {
+            valid = false;
+            invalidObj.hearFromOtherTextInvalid = true;
+        }
         if (!valid) {
             this.setState(invalidObj);
         }
@@ -234,7 +244,8 @@ class Signup extends Component {
                 first_name: this.state.firstName,
                 last_name: this.state.lastName,
                 gender: this.state.gender,
-                place_of_work: this.state.placeOfWork,
+                title: this.state.title,
+                // place_of_work: this.state.placeOfWork,
                 position: this.state.position,
                 country: this.state.country,
                 address1: this.state.address1,
@@ -243,11 +254,11 @@ class Signup extends Component {
                 state: this.state.state,
                 postcode: this.state.postcode,
                 employer: this.state.employer,
-                job_title: this.state.jobTitle,
+                // job_title: this.state.jobTitle,
                 hear_from_where: this.state.hearFromWhere,
+                hear_from_other_text: this.state.hearFromOtherText,
                 extra_info: this.state.extraInfo,
                 allow_contact_me: this.state.allowContactMe,
-                auto_assign: this.state.autoAssign,
             }, this.props.history).then((result) => {
                 NotificationManager.success('Account Created Successfully!');
                 this.props.history.push('/users/send-email/' + result.id);
@@ -307,16 +318,6 @@ class Signup extends Component {
                     />
                     <span className="has-icon mt-5"><i className="ti-lock"/></span>
                 </FormGroup>
-                <FormControlLabel
-                    control={
-                        <IOSSwitch
-                            checked={this.state.autoAssign}
-                            onChange={() => this.setState({autoAssign: !this.state.autoAssign})}
-                            disableRipple
-                        />
-                    }
-                    label="Auto Assign Test Sets"
-                />
                 <div className={'d-flex justify-content-left'}>
                     <FormControlLabel
                         control={
@@ -348,8 +349,8 @@ class Signup extends Component {
     }
 
     renderInfoForm() {
-        const placeOfWorkOptions = this.state.placeOfWorkList.map(v => ({value: v.id, label: v.name}));
-        const placeOfWorkDefault = this.state.placeOfWork === null ? [] : placeOfWorkOptions.filter((v) => this.state.placeOfWork.split(',').indexOf(v.value.toString()) !== -1);
+        // const placeOfWorkOptions = this.state.placeOfWorkList.map(v => ({value: v.id, label: v.name}));
+        // const placeOfWorkDefault = this.state.placeOfWork === null ? [] : placeOfWorkOptions.filter((v) => this.state.placeOfWork.split(',').indexOf(v.value.toString()) !== -1);
         // const interestOptions = this.state.interestList.map(v => ({value: v.id, label: v.name}));
         // const interestDefault = this.state.interest === null ? [] : interestOptions.filter((v) => this.state.interest.split(',').indexOf(v.value.toString()) !== -1);
         return (
@@ -413,41 +414,65 @@ class Signup extends Component {
                         </FormGroup>
                     </Col>
                     <Col sm={6}>
-                        {/*<TextField
-                            id="yearOfBirth"
-                            type="number"
-                            value={this.state.yearOfBirth}
-                            onChange={(event) => this.onSetValue('yearOfBirth', event.target.value)}
-                            label="Year of birthday e.g 1985"
-                            className={'mb-10'}
-                            margin="dense"
-                            variant="outlined"
-                            fullWidth
-                            error={this.state.yearOfBirthInvalid}
-                        />*/}
                         <TextField
-                            id="position"
+                            id="title"
                             select
-                            label="Position *"
+                            label="Title *"
                             SelectProps={{ native: true}}
                             variant="outlined"
                             className={'mb-10'}
                             margin="dense"
                             fullWidth
-                            onChange={(e) => this.onSetValue('position', e.target.value)}
-                            value={this.state.position}
-                            error={this.state.positionInvalid}
+                            onChange={(e) => this.onSetValue('title', e.target.value)}
+                            value={this.state.title}
+                            error={this.state.titleInvalid}
                         >
                             <option style={{display: 'none'}} />
-                            {
-                                this.state.positionList.map((v) => (
-                                    <option value={v.id} key={v.id}>{v.name}</option>
-                                ))
-                            }
+                            <option value={'Dr'}>Dr</option>
+                            <option value={'Prof'}>Prof</option>
+                            <option value={'Mr'}>Mr</option>
+                            <option value={'Mrs'}>Mrs</option>
+                            <option value={'Miss'}>Miss</option>
+                            <option value={'Ms'}>Ms</option>
                         </TextField>
                     </Col>
                 </FormGroup>
                 <FormControl variant="outlined" fullWidth style={{paddingTop: 8}}>
+                    <TextField
+                        id="position"
+                        select
+                        label="Job Title *"
+                        SelectProps={{ native: true}}
+                        variant="outlined"
+                        className={'mb-10'}
+                        margin="dense"
+                        fullWidth
+                        onChange={(e) => this.onSetValue('position', e.target.value)}
+                        value={this.state.position}
+                        error={this.state.positionInvalid}
+                    >
+                        <option style={{display: 'none'}} />
+                        {
+                            this.state.positionList.map((v) => (
+                                <option value={v.id} key={v.id}>{v.name}</option>
+                            ))
+                        }
+                    </TextField>
+                </FormControl>
+                <FormGroup className={'has-wrapper'}>
+                    <TextField
+                        id="employer"
+                        value={this.state.employer}
+                        onChange={(event) => this.onSetValue('employer', event.target.value)}
+                        label="Employer *"
+                        className={'mb-10'}
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        error={this.state.employerInvalid}
+                    />
+                </FormGroup>
+               {/* <FormControl variant="outlined" fullWidth style={{paddingTop: 8}}>
                     <CustomInputLabel
                         htmlFor="placeOfWork"
                         shrink
@@ -464,7 +489,7 @@ class Signup extends Component {
                         isMulti
                         styles={selectStyles}
                     />
-                </FormControl>
+                </FormControl>*/}
                 <Divider variant="middle" className={'mt-20 mb-20'}/>
                 <FormGroup row className="has-wrapper">
                     <Col sm={3}>
@@ -558,66 +583,18 @@ class Signup extends Component {
                         />
                     </Col>
                 </FormGroup>
-                {/*<FormGroup row className="has-wrapper">
-                    <Col sm={6}>
-                        <FormControl variant="outlined" fullWidth style={{paddingTop: 8}}>
-                            <CustomInputLabel
-                                htmlFor="interest"
-                                shrink
-                            >
-                                Interests
-                            </CustomInputLabel>
-                            <CreatableSelect
-                                id={'interest'}
-                                defaultValue={interestDefault}
-                                // value={[]}
-                                placeholder={'Select interests'}
-                                options={interestOptions}
-                                onChange={(data) => this.onChangeSelectData('interest', data)}
-                                isMulti
-                                styles={selectStyles}
-                            />
-                        </FormControl>
-                    </Col>
-                    <Col sm={6}>
-                        <TextField
-                            id="referrerBy"
-                            value={this.state.referrerBy}
-                            onChange={(event) => this.onSetValue('referrerBy', event.target.value)}
-                            label="Referrer By"
-                            className={'mb-10'}
-                            margin="dense"
-                            variant="outlined"
-                            fullWidth
-                            error={this.state.referrerByInvalid}
-                        />
-                    </Col>
-                </FormGroup>*/}
                 <Divider variant="middle" className={'mt-20 mb-20'}/>
                 <FormGroup className={'has-wrapper'}>
                     <TextField
-                        id="employer"
-                        value={this.state.employer}
-                        onChange={(event) => this.onSetValue('employer', event.target.value)}
-                        label="Employer *"
+                        id="extraInfo"
+                        value={this.state.extraInfo}
+                        onChange={(event) => this.onSetValue('extraInfo', event.target.value)}
+                        label="Professional associations you are a member of"
                         className={'mb-10'}
                         margin="dense"
                         variant="outlined"
                         fullWidth
-                        error={this.state.employerInvalid}
-                    />
-                </FormGroup>
-                <FormGroup className={'has-wrapper'}>
-                    <TextField
-                        id="jobTitle"
-                        value={this.state.jobTitle}
-                        onChange={(event) => this.onSetValue('jobTitle', event.target.value)}
-                        label="Job Title *"
-                        className={'mb-10'}
-                        margin="dense"
-                        variant="outlined"
-                        fullWidth
-                        error={this.state.jobTitleInvalid}
+                        error={this.state.extraInfoInvalid}
                     />
                 </FormGroup>
                 <FormGroup className={'has-wrapper'}>
@@ -644,19 +621,22 @@ class Signup extends Component {
                         <option value={'Other-Specify'}>Other-Specify</option>
                     </TextField>
                 </FormGroup>
-                <FormGroup className={'has-wrapper'}>
-                    <TextField
-                        id="extraInfo"
-                        value={this.state.extraInfo}
-                        onChange={(event) => this.onSetValue('extraInfo', event.target.value)}
-                        label="Extra Information"
-                        className={'mb-10'}
-                        margin="dense"
-                        variant="outlined"
-                        fullWidth
-                        error={this.state.extraInfoInvalid}
-                    />
-                </FormGroup>
+                {
+                    this.state.hearFromWhere === 'Other-Specify' &&
+                    <FormGroup className={'has-wrapper'}>
+                        <TextField
+                            id="hearFromOtherText"
+                            value={this.state.hearFromOtherText}
+                            onChange={(event) => this.onSetValue('hearFromOtherText', event.target.value)}
+                            label="Where did you hear us? *"
+                            className={'mb-10'}
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            error={this.state.hearFromOtherTextInvalid}
+                        />
+                    </FormGroup>
+                }
                 <div className={'d-flex justify-content-left'}>
                     <FormControlLabel
                         control={
@@ -683,19 +663,20 @@ class Signup extends Component {
                         }
                     </Button>
                 </FormGroup>
-                <div className={'social-icons'}>
-                    <a href="https://twitter.com/detected_x" target="_blank">
-                        <div className="twitter-icon"/>
-                    </a>
+                <div className={'social-icons mt-30'}>
+                    <span className={'mr-20'}>Please connect with us on Linkedin here</span>
+                    {/*<a href="https://twitter.com/detected_x" target="_blank">*/}
+                    {/*    <div className="twitter-icon"/>*/}
+                    {/*</a>*/}
                     <a href="https://www.linkedin.com/company/detected-x" target="_blank">
                         <div className="linkedin-icon"/>
                     </a>
-                    <a href="https://www.facebook.com/DetectEDX1" target="_blank">
-                        <div className="facebook-icon"/>
-                    </a>
-                    <a href="https://www.instagram.com/detected.x" target="_blank">
-                        <div className="instagram-icon"/>
-                    </a>
+                    {/*<a href="https://www.facebook.com/DetectEDX1" target="_blank">*/}
+                    {/*    <div className="facebook-icon"/>*/}
+                    {/*</a>*/}
+                    {/*<a href="https://www.instagram.com/detected.x" target="_blank">*/}
+                    {/*    <div className="instagram-icon"/>*/}
+                    {/*</a>*/}
                 </div>
             </Form>
         )

@@ -703,13 +703,13 @@ export default class Attempt extends Component {
     renderGaugeChart() {
         let specitifity, sensitivity, roc;
         this.state.attemptInfo.scores.map((v) => {
-            if (v.metrics.name === 'Specificity(%)') {
+            if (v.metrics.name.indexOf('Specificity(%)') > -1) {
                 specitifity = Number(v.score);
             }
-            if (v.metrics.name === 'Sensitivity(%)') {
+            if (v.metrics.name.indexOf('Sensitivity(%)') > -1) {
                 sensitivity = Number(v.score);
             }
-            if (v.metrics.name === 'ROC') {
+            if (v.metrics.name.indexOf('ROC') > -1) {
                 roc = Number(v.score);
             }
         });
