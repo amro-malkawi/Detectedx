@@ -176,6 +176,7 @@ class TestView extends Component {
             // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
             that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, complete);
         }).catch((e) => {
+            console.debug(e);
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
     }

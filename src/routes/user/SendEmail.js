@@ -96,7 +96,7 @@ export default class SendEmail extends Component {
                                             </div>
                                         </div>
                                         <Button component="span" disabled={this.state.loading} className={'mt-20 mb-20'} style={{color: '#0D47A1'}} onClick={() => this.onResendEmail()}>
-                                            Resent Confirmation Email
+                                            Resend Confirmation Email
                                         </Button>
                                     </div>
                                 </div>

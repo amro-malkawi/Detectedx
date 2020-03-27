@@ -45,9 +45,13 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         });
         const shapeList = {};
         imageAnswers.shapes && imageAnswers.shapes.forEach((shape) => {
-            let measurementData = JSON.parse(shape.data);
-            if (shapeList[shape.type] === undefined) shapeList[shape.type] = [];
-            shapeList[shape.type].push({stack: shape.stack, measurementData});
+            try{
+                let measurementData = JSON.parse(shape.data);
+                if (shapeList[shape.type] === undefined) shapeList[shape.type] = [];
+                shapeList[shape.type].push({stack: shape.stack, measurementData});
+            } catch (e) {
+                console.warn('shape json error', shape.id)
+            }
         });
         return {
             ...v,

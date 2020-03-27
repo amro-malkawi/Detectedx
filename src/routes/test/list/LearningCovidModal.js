@@ -10,11 +10,10 @@ export default class LearningCovidModal extends Component {
                     <div className={'instruction-content'}>
                         <p className={'sub-menu-title'}>Instructions</p>
                         <p>
-                            Welcome to COVED a tool aiming to familiarise you with the CT lung appearances typical of COVID-19.
+                            Welcome to COVED, a tool aiming to familiarise you with the CT lung appearances typical of COVID-19.
                             You will be asked to look at a number of cases and try to identify appearances where relevant.
-                            We have developed a rubric which is introduced below and embedded within each case as you are examining it.
-                            At the end of this activity, you will have an immediate performance assessment of your abilities to recognise COVID-19 appearances
-                            (which is available only to you) and then a detailed review of each case comparing your judgements with a panel of expert radiologists.
+                            At the end of this activity, you will have an immediate performance assessment of your abilities to recognise COVID-19 appearances,
+                            which is available only to you. You will be given a detailed review comparing your judgements with a panel of expert radiologists.
                         </p>
                         <hr/>
                         <div>
