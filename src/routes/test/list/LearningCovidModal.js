@@ -36,14 +36,15 @@ export default class LearningCovidModal extends Component {
                                 <li>In the upper, lower section of the chest as defined in the diagram below.</li>
                                 <li>On the left side, right side or both</li>
                                 <li>In the anterior or posterior halves of the chest</li>
-                                <li>Whether the appearances are peripheral, central or both</li>
+                                <li >Whether the collective COVID appearances are peripheral, central or both</li>
                             </ul>
                             <img src={require('Assets/img/instruction/img_covid.jpg')} width={'30%'} alt={''} style={{marginLeft: 70}}/>
                         </div>
                         <hr/>
                         <div>
                             <p>
-                                Finally, based on your assessment of the case, you will be asked to give a score of 0-5 indicating whether you think this case is COVID-19 positive or not.
+                                Finally, based on your assessment of the case, you will be asked to give a score of 0-5 indicating
+                                whether you think <strong>this case is</strong> COVID-19 positive <strong><i>or not</i></strong>.
                                 This scoring will be defined as:
                             </p>
                             <p>0: Absolutely confident that this case is not COVID-19 positive</p>

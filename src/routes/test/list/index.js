@@ -10,6 +10,7 @@ import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/co
 import StartModal from './StartModal';
 import LearningModal from "./LearningModal";
 import LearningCovidModal from "./LearningCovidModal";
+import VideoModal from "./VideoModal";
 
 export default class list extends Component {
 
@@ -17,6 +18,13 @@ export default class list extends Component {
         super(props);
         this.state = {
             testSetsList: [],
+            instructionVideos: [
+                {
+                    title: 'CovED',
+                    thumbnail: 'https://static.detectedx.com/instruction_video/covid/thumbnail.png',
+                    video: 'https://static.detectedx.com/instruction_video/covid/video.mp4'
+                }
+            ],
             selectedId: null,
             isShowModalType: '',
         }
@@ -51,7 +59,7 @@ export default class list extends Component {
     }
 
     onStart(value, modality_type, has_post) {
-        if(modality_type === 'image_quality') {
+        if (modality_type === 'image_quality') {
             this.setState({
                 selectedId: value
             }, () => {
@@ -83,39 +91,57 @@ export default class list extends Component {
         }
     }
 
+    renderInstructionVideo(video, index) {
+        return (
+            <div key={index} onClick={() => this.setState({isShowModalType: 'video', selectedVideoLink: video.video})}>
+                <img src={video.thumbnail} alt=''/>
+                <p>{video.title}</p>
+                <i className="zmdi zmdi-play-circle-outline"/>
+            </div>
+        );
+    }
+
     render() {
         return (
             <div className="news-dashboard-wrapper mt-30 mb-20">
-                <PageTitleBar title={"Module Sets"} match={this.props.match} enableBreadCrumb={false}/>
-                <div className="row">
-                    {
-                        this.state.testSetsList.map((item, index) => {
-                            return (
-                                <div className="col-sm-12 col-md-10 col-lg-8 offset-md-1 offset-lg-2" key={index}>
-                                    <Card className="rct-block">
-                                        <CardBody className="d-flex justify-content-between">
-                                            <div>
-                                                <p className="fs-14 fw-bold mb-5">{item.test_sets.name}</p>
-                                                <span className="fs-12 d-block text-muted">{item.test_sets.modalities.name}</span>
-                                            </div>
-                                            <div>
-                                                {
-                                                    item.test_sets.attempts.some((v) => v.complete) ?
-                                                        <Button
-                                                            className="mr-10 mt-5 mb-5"
-                                                            outline color="info" size="sm"
-                                                            onClick={() => this.props.history.push('/app/test/complete-list/' + item.test_sets.id)}>
-                                                            Scores
-                                                        </Button> : null
-                                                }
-                                                {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.modality_type, item.test_sets.has_post)}
-                                            </div>
-                                        </CardBody>
-                                    </Card>
-                                </div>
-                            )
-                        })
-                    }
+                <div className={'row align-items-start'}>
+                    <div className="col-sm-12 col-md-8">
+                        <PageTitleBar title={"Module Sets"} match={this.props.match} enableBreadCrumb={false}/>
+                        {
+                            this.state.testSetsList.map((item, index) => {
+                                return (
+                                    <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1" key={index}>
+                                        <Card className="rct-block">
+                                            <CardBody className="d-flex justify-content-between">
+                                                <div>
+                                                    <p className="fs-14 fw-bold mb-5">{item.test_sets.name}</p>
+                                                    <span className="fs-12 d-block text-muted">{item.test_sets.modalities.name}</span>
+                                                </div>
+                                                <div>
+                                                    {
+                                                        item.test_sets.attempts.some((v) => v.complete) ?
+                                                            <Button
+                                                                className="mr-10 mt-5 mb-5"
+                                                                outline color="info" size="sm"
+                                                                onClick={() => this.props.history.push('/app/test/complete-list/' + item.test_sets.id)}>
+                                                                Scores
+                                                            </Button> : null
+                                                    }
+                                                    {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.modality_type, item.test_sets.has_post)}
+                                                </div>
+                                            </CardBody>
+                                        </Card>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                    <div className={'col-sm-12 col-md-4 instruction-video'}>
+                        <PageTitleBar title={"Instructions Videos"} match={this.props.match} enableBreadCrumb={false}/>
+                        {
+                            this.state.instructionVideos.map((video, index) => this.renderInstructionVideo(video, index))
+                        }
+                    </div>
                 </div>
                 <StartModal
                     open={this.state.isShowModalType === 'has_post'}
@@ -131,6 +157,11 @@ export default class list extends Component {
                     open={this.state.isShowModalType === 'covid'}
                     onClose={() => this.setState({isShowModalType: ''})}
                     onNext={this.onGoAttempt.bind(this)}
+                />
+                <VideoModal
+                    open={this.state.isShowModalType === 'video'}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                    link={this.state.selectedVideoLink}
                 />
             </div>
         )

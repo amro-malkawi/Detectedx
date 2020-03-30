@@ -408,6 +408,15 @@ div.viewer {
         padding-bottom: 10px;
         overflow-y: auto;
       }
+      .covid-option-questions {
+        p {
+          min-height: 5px;
+          font-weight: bold;
+          font-size: 18px;
+          color: #b3b3b3;
+          margin: 10px 0 0 5px;
+        }
+      }
       .covid-confidence {
         margin: 10px auto;
         p {

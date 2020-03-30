@@ -39,7 +39,7 @@ export default class CovidQuestions extends Component {
                 {
                     id: '0ee6d601-790b-45e7-b80f-754cc5a7815a',
                     type: 'checkbox',
-                    text: 'Crazy-paving / Mosaic attenuation',
+                    text: 'Crazy-paving / Mosaic Attenuation',
                     child: [
                         {
                             id: '87ddc0c0-075d-4c0f-a630-7a032acc989c',
@@ -140,9 +140,17 @@ export default class CovidQuestions extends Component {
     onChangeQuestionOptions(parentId, questionId, value) {
         const {selectedValue} = this.state;
         if(parentId === null) {
-            selectedValue[questionId] = value;
+            if(selectedValue[questionId] === value) {
+                delete selectedValue[questionId];
+            } else {
+                selectedValue[questionId] = value;
+            }
         } else {
-            selectedValue[parentId][questionId] = value;
+            if(selectedValue[parentId][questionId] === value) {
+                delete selectedValue[parentId][questionId];
+            } else {
+                selectedValue[parentId][questionId] = value;
+            }
         }
         this.setState({selectedValue: selectedValue}, () => {
             this.saveCovidAnswer();
@@ -176,7 +184,7 @@ export default class CovidQuestions extends Component {
                         aria-label="position"
                         name="position"
                         value={value}
-                        onChange={(event) => this.onChangeQuestionOptions(parentId, questionObj.id, event.target.value)}
+                        onClick={(event) => this.onChangeQuestionOptions(parentId, questionObj.id, event.target.value)}
                         row
                         disabled={this.props.complete}
                     >
@@ -232,7 +240,7 @@ export default class CovidQuestions extends Component {
                         aria-label="position"
                         name="position"
                         value={value}
-                        onChange={(event) => this.onChangeQuestionOptions(null, questionObj.id, event.target.value)}
+                        onClick={(event) => this.onChangeQuestionOptions(null, questionObj.id, event.target.value)}
                         row
                         disabled={this.props.complete}
                     >
@@ -279,7 +287,13 @@ export default class CovidQuestions extends Component {
                 </p>
                 <div className={'covid-questions'}>
                     {
-                        this.state.question.map(v => this.renderQuestion(v))
+                        this.state.question.slice(0, 3).map(v => this.renderQuestion(v))
+                    }
+                </div>
+                <div className={'covid-option-questions mb-20'}>
+                    <p>Distribution of COVID appearances</p>
+                    {
+                        this.state.question.slice(3, 5).map(v => this.renderQuestion(v))
                     }
                 </div>
                 <div className={'covid-confidence'}>
