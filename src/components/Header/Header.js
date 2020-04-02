@@ -18,11 +18,11 @@ import $ from 'jquery';
 import { collapsedSidebarAction } from 'Actions';
 // helpers
 import { getAppLayout } from "Helpers/helpers";
-
-
 import UserInfo from './UserInfo';
 import Logout from './Logout';
+import LanguageProvider from "./LanguageProvider";
 import InstructionModal from "Routes/test-view/InstructionModal";
+import IntlMessages from "Util/IntlMessages";
 
 class Header extends Component {
 
@@ -77,7 +77,7 @@ class Header extends Component {
                            <li className="list-inline-item">
                               <Tooltip title="Sidebar Toggle" placement="bottom">
                                  <IconButton color="inherit" aria-label="Menu" className="humburger p-0" component={Link} to="/">
-                                    <i className="ti-layout-sidebar-left"></i>
+                                    <i className="ti-layout-sidebar-left"/>
                                  </IconButton>
                               </Tooltip>
                            </li>
@@ -87,20 +87,17 @@ class Header extends Component {
                </div>
                <ul className="navbar-right list-inline mb-0">
                   <li className="list-inline-item">
-                     <Tooltip title="Tests" placement="bottom">
                         <Button component={Link} to={`/${getAppLayout(location)}/test`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
-                           Modules
+                           <IntlMessages id={"header.modules"}/>
                         </Button>
-                     </Tooltip>
                   </li>
                   <li className="list-inline-item">
-                     <Tooltip title="Instructions" placement="bottom">
                         {/*<Button component={Link} to={`/${getAppLayout(location)}/instructions`} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">*/}
                         <Button onClick={() => this.setState({isShowInstructionModal: true})} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
-                           Instructions
+                           <IntlMessages id={"header.instructions"}/>
                         </Button>
-                     </Tooltip>
                   </li>
+                  <LanguageProvider />
                   <UserInfo history={this.props.history}/>
                   <Logout />
                </ul>

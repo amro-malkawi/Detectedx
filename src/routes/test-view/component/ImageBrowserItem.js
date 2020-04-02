@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {dropImage} from "Actions";
 import * as Apis from 'Api';
+import IntlMessages from "Util/IntlMessages";
 
 const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
     const [{ isDragging }, drag] = useDrag({
@@ -41,11 +42,11 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                     <div className="series-description">{metaData.viewPosition ? metaData.viewPosition : ''}</div>
                     <div className="series-information">
                         <div className="item item-series">
-                            <div className="icon">Laterality:</div>
+                            <div className="icon"><IntlMessages id={"testView.browser.laterality"}/></div>
                             <div className="value">{metaData.imageLaterality ? metaData.imageLaterality : ''}</div>
                         </div>
                         <div className="item item-series">
-                            <div className="icon">Type:</div>
+                            <div className="icon"><IntlMessages id={"testView.browser.type"}/></div>
                             <div className="value">{item.type}</div>
                         </div>
                         <div className="item item-frames">

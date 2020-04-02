@@ -43,9 +43,9 @@ class RctCollapsibleCard extends Component {
                             <h4>{heading} {badge && <Badge className="p-1 ml-10" color={badge.class}>{badge.name}</Badge>}</h4>
                             {(collapsible || reloadable || closeable) &&
                                 <div className="contextual-link">
-                                    {collapsible && <a href="javascript:void(0)" onClick={() => this.onCollapse()}><i className="ti-minus"></i></a>}
-                                    {reloadable && <a href="javascript:void(0)" onClick={() => this.onReload()}><i className="ti-reload"></i></a>}
-                                    {closeable && <a href="javascript:void(0)" onClick={() => this.onCloseSection()}><i className="ti-close"></i></a>}
+                                    {collapsible && <a onClick={() => this.onCollapse()}><i className="ti-minus"/></a>}
+                                    {reloadable && <a onClick={() => this.onReload()}><i className="ti-reload"/></a>}
+                                    {closeable && <a onClick={() => this.onCloseSection()}><i className="ti-close"/></a>}
                                 </div>
                             }
                         </div>

@@ -1,14 +1,9 @@
 import React, {Component} from 'react'
-import {Link} from "react-router-dom";
-import {Card, CardBody, CardText} from "reactstrap";
 import Button from '@material-ui/core/Button';
 import * as Apis from 'Api';
-import RctCollapsibleCard from "Components/RctCollapsibleCard/RctCollapsibleCard";
 import RctSectionLoader from 'Components/RctSectionLoader/RctSectionLoader';
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
 import moment from 'moment';
+import IntlMessages from "Util/IntlMessages";
 
 export default class CompleteList extends Component {
 
@@ -53,20 +48,20 @@ export default class CompleteList extends Component {
             return (
                 <div className="table-responsive mt-30 mb-30">
                     <div className="d-flex justify-content-between py-20 px-10 border-bottom">
-                        <h3>{"Attempt for " + this.state.completeList.test_set_name}</h3>
+                        <h3><IntlMessages id="test.attemptFor"/> {this.state.completeList.test_set_name}</h3>
                     </div>
                     <table className="table table-middle table-hover mb-0">
                         <thead>
                         <tr>
-                            <th className={'text-center'}>Attempt Number</th>
+                            <th className={'text-center'}><IntlMessages id={"test.attemptNumber"}/></th>
                             {
                                 this.state.completeList.metrics.map((v, i) => (
                                     <th key={i} className={'text-center'}>{v.name}</th>
                                 ))
                             }
-                            <th className={'text-center'}>Start</th>
-                            <th className={'text-center'}>Finish</th>
-                            <th className={'text-center'}>Action</th>
+                            <th className={'text-center'}><IntlMessages id={"test.start"}/></th>
+                            <th className={'text-center'}><IntlMessages id={"test.finish"}/></th>
+                            <th className={'text-center'}><IntlMessages id={"test.action"}/></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -80,7 +75,7 @@ export default class CompleteList extends Component {
                                 <td className={'text-center'}>{moment(item.updated_at).format('MM/DD/YYYY, HH:mm:ss')}</td>
                                 <td className="list-action text-center">
                                     <Button variant="contained" className={'text-white'} color="primary" size="small"
-                                            onClick={() => this.props.history.push('/app/test/attempt/' + item.id)}>View</Button>
+                                            onClick={() => this.props.history.push('/app/test/attempt/' + item.id)}><IntlMessages id={"test.view"}/></Button>
                                 </td>
                             </tr>
                         ))}

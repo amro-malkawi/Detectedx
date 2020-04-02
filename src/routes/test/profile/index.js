@@ -1,20 +1,9 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
-import {
-    Form,
-    FormGroup,
-    Label,
-    Input, ModalHeader, ModalBody, Modal, ModalFooter,
-} from 'reactstrap';
+import {FormGroup, Label, ModalHeader, ModalBody, Modal, ModalFooter} from 'reactstrap';
 import {
     TextField,
-    OutlinedInput,
-    FilledInput,
     InputLabel,
-    MenuItem,
-    FormHelperText,
     FormControl,
-    Select,
     Fab,
     Button,
     FormControlLabel,
@@ -33,6 +22,8 @@ import CreatableSelect from 'react-select/creatable';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import moment from 'moment';
+import IntlMessages from "Util/IntlMessages";
+import {Instagram} from "react-content-loader";
 
 export default class Profile extends Component {
 
@@ -189,7 +180,7 @@ export default class Profile extends Component {
                                     <div className="card-footer">
                                         <div className="d-flex justify-content-center mt-10">
                                             <Button variant="contained" className="btn-primary text-white" onClick={() => this.onShowPasswordChangeModal()}>
-                                                Change Password
+                                                <IntlMessages id="profile.changePassword" />
                                             </Button>
                                         </div>
                                     </div>
@@ -201,14 +192,14 @@ export default class Profile extends Component {
                         >
                             <ExpansionPanel expanded={this.state.expanded === 'personalInfo'} onChange={this.onExpandeChange('personalInfo')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
-                                    <span className={'fs-17 fw-bold'}>Personal Information</span>
+                                    <span className={'fs-17 fw-bold'}><IntlMessages id="profile.personalInformation" /></span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <TextField
                                         id="first-name"
                                         value={this.state.userInfo.first_name}
                                         onChange={(event) => this.onChangeData('first_name', event.target.value)}
-                                        label="First Name"
+                                        label={<IntlMessages id={"profile.firstName"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -218,14 +209,14 @@ export default class Profile extends Component {
                                         id="last-name"
                                         value={this.state.userInfo.last_name}
                                         onChange={(event) => this.onChangeData('last_name', event.target.value)}
-                                        label="Last Name"
+                                        label={<IntlMessages id={"profile.lastName"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
                                         fullWidth
                                     />
                                     <FormGroup row className={'mb-0'}>
-                                        <Label style={{padding: '12px 25px 0px 13px', fontSize: 16}}>Gender: </Label>
+                                        <Label style={{padding: '12px 25px 0px 13px', fontSize: 16}}><IntlMessages id={"profile.gender"}/>: </Label>
                                         <RadioGroup
                                             aria-label="position"
                                             name="position"
@@ -236,17 +227,17 @@ export default class Profile extends Component {
                                             <FormControlLabel
                                                 value={''}
                                                 control={<Radio/>}
-                                                label={'Not Specified'}
+                                                label={<IntlMessages id={"profile.position.notSpecified"}/>}
                                             />
                                             <FormControlLabel
                                                 value={'female'}
                                                 control={<Radio/>}
-                                                label={'Female'}
+                                                label={<IntlMessages id={"profile.position.female"}/>}
                                             />
                                             <FormControlLabel
                                                 value={'male'}
                                                 control={<Radio/>}
-                                                label={'Male'}
+                                                label={<IntlMessages id={"profile.position.male"}/>}
                                             />
                                         </RadioGroup>
                                     </FormGroup>
@@ -254,7 +245,7 @@ export default class Profile extends Component {
                                         id="birthday"
                                         value={this.state.userInfo.year_of_birth}
                                         onChange={(event) => this.onChangeData('year_of_birth', event.target.value)}
-                                        label="Birthday"
+                                        label={<IntlMessages id={"profile.birthday"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -264,7 +255,7 @@ export default class Profile extends Component {
                             </ExpansionPanel>
                             <ExpansionPanel expanded={this.state.expanded === 'address'} onChange={this.onExpandeChange('address')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
-                                    <span className={'fs-17 fw-bold'}>Address</span>
+                                    <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.address"}/></span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <FormControl variant="outlined" fullWidth>
@@ -272,13 +263,13 @@ export default class Profile extends Component {
                                             htmlFor="country"
                                             shrink
                                         >
-                                            Country
+                                            <IntlMessages id={"profile.country"}/>
                                         </CustomInputLabel>
                                         <ReactSelect
                                             id={'country'}
                                             defaultValue={{value: this.state.userInfo.country, label: this.state.userInfo.country}}
                                             // value={{ value: this.state.userInfo.country, label: this.state.userInfo.country }}
-                                            placeholder={'Select Country'}
+                                            placeholder={<IntlMessages id={"profile.selectCountry"}/>}
                                             options={countryOptions}
                                             onChange={(data) => this.onChangeSelectData('country', data)}
                                             styles={selectStyles}
@@ -289,7 +280,7 @@ export default class Profile extends Component {
                                         id="address_line1"
                                         value={this.state.userInfo.address1}
                                         onChange={(event) => this.onChangeData('address1', event.target.value)}
-                                        label="Address line1"
+                                        label={<IntlMessages id={"profile.addressLine1"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -299,7 +290,7 @@ export default class Profile extends Component {
                                         id="address_line2"
                                         value={this.state.userInfo.address2}
                                         onChange={(event) => this.onChangeData('address2', event.target.value)}
-                                        label="Address line2"
+                                        label={<IntlMessages id={"profile.addressLine2"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -309,7 +300,7 @@ export default class Profile extends Component {
                                         id="suburb"
                                         value={this.state.userInfo.suburb}
                                         onChange={(event) => this.onChangeData('suburb', event.target.value)}
-                                        label="Suburb"
+                                        label={<IntlMessages id={"profile.suburb"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -319,7 +310,7 @@ export default class Profile extends Component {
                                         id="state"
                                         value={this.state.userInfo.state}
                                         onChange={(event) => this.onChangeData('state', event.target.value)}
-                                        label="State"
+                                        label={<IntlMessages id={"profile.state"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -329,7 +320,7 @@ export default class Profile extends Component {
                                         id="postcode"
                                         value={this.state.userInfo.postcode}
                                         onChange={(event) => this.onChangeData('postcode', event.target.value)}
-                                        label="Postcode"
+                                        label={<IntlMessages id={"profile.postcode"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -339,7 +330,7 @@ export default class Profile extends Component {
                             </ExpansionPanel>
                             <ExpansionPanel expanded={this.state.expanded === 'additional'} onChange={this.onExpandeChange('additional')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
-                                    <span className={'fs-17 fw-bold'}>Additional Information</span>
+                                    <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.additionalInformation"}/></span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <FormControl variant="outlined" fullWidth>
@@ -347,13 +338,13 @@ export default class Profile extends Component {
                                             htmlFor="placesOfWork"
                                             shrink
                                         >
-                                            Places of work
+                                            <IntlMessages id={"profile.placeOfWork"}/>
                                         </CustomInputLabel>
                                         <ReactSelect
                                             id={'places_of_Work'}
                                             defaultValue={placeOfWorkDefault}
                                             // value={[]}
-                                            placeholder={'Input Options'}
+                                            placeholder={<IntlMessages id={"profile.inputOption"}/>}
                                             isMulti
                                             options={placeOfWorkOptions}
                                             onChange={(data) => this.onChangeSelectData('place_of_work', data)}
@@ -365,13 +356,13 @@ export default class Profile extends Component {
                                             htmlFor="position"
                                             shrink
                                         >
-                                            Position
+                                            <IntlMessages id={"profile.position"}/>
                                         </CustomInputLabel>
                                         <CreatableSelect
                                             id={'position'}
                                             defaultValue={positionDefault}
                                             // value={[]}
-                                            placeholder={'Select position'}
+                                            placeholder={<IntlMessages id={"profile.selectPosition"}/>}
                                             options={positionOptions}
                                             onChange={(data) => this.onChangeSelectData('position', data)}
                                             styles={selectStyles}
@@ -382,13 +373,13 @@ export default class Profile extends Component {
                                             htmlFor="interest"
                                             shrink
                                         >
-                                            Interests
+                                            <IntlMessages id={"profile.interests"}/>
                                         </CustomInputLabel>
                                         <CreatableSelect
                                             id={'interest'}
                                             defaultValue={interestDefault}
                                             // value={[]}
-                                            placeholder={'Select interests'}
+                                            placeholder={<IntlMessages id={"profile.selectInterests"}/>}
                                             options={interestOptions}
                                             onChange={(data) => this.onChangeSelectData('interest', data)}
                                             isMulti
@@ -399,7 +390,7 @@ export default class Profile extends Component {
                                         id="referred_by"
                                         value={this.state.userInfo.referrer_by}
                                         onChange={(event) => this.onChangeData('referrer_by', event.target.value)}
-                                        label="Referred By"
+                                        label={<IntlMessages id={"profile.referredBy"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -410,7 +401,7 @@ export default class Profile extends Component {
                                         id="extra_info"
                                         value={this.state.userInfo.extra_info}
                                         onChange={(event) => this.onChangeData('extra_info', event.target.value)}
-                                        label="Extra information"
+                                        label={<IntlMessages id={"profile.extraInformation"}/>}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -421,18 +412,18 @@ export default class Profile extends Component {
                             </ExpansionPanel>
                             <ExpansionPanel expanded={this.state.expanded === 'payment'} onChange={this.onExpandeChange('payment')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
-                                    <span className={'fs-17 fw-bold'}>Subscriptions</span>
+                                    <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.subscriptions"}/></span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <div className={'d-flex justify-content-center'}>
                                         <table className="table table-middle table-hover mb-0">
                                             <thead>
                                             <tr>
-                                                <th className="text-center">Subscription Type</th>
-                                                <th className="text-center">Status</th>
-                                                <th className="text-center">Last Payment</th>
-                                                <th className="text-center">Next Payment Due</th>
-                                                <th className="text-center">Payment Method</th>
+                                                <th className="text-center"><IntlMessages id={"profile.subscriptionType"}/></th>
+                                                <th className="text-center"><IntlMessages id={"profile.status"}/></th>
+                                                <th className="text-center"><IntlMessages id={"profile.lastPayment"}/></th>
+                                                <th className="text-center"><IntlMessages id={"profile.nextPayment"}/></th>
+                                                <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
                                                 <th className="text-center"/>
                                             </tr>
                                             </thead>
@@ -440,9 +431,9 @@ export default class Profile extends Component {
                                             {
                                                 this.state.userInfo.user_order.length === 0 ? null :
                                                     <tr>
-                                                        <td className="text-center">{this.state.userInfo.user_order[0].product_plans.name} Plan</td>
+                                                        <td className="text-center">{this.state.userInfo.user_order[0].product_plans.name} <IntlMessages id={"profile.plan"}/></td>
                                                         <td className='text-center'><span className='text-primary'>{this.state.userInfo.user_order[0].status}</span></td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].created_at).format('MMM Do YYYY, HH:mm:ss')} Plan</td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].created_at).format('MMM Do YYYY, HH:mm:ss')} <IntlMessages id={"profile.plan"}/></td>
                                                         <td className="text-center">{moment(this.state.userInfo.user_order[0].expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                                         <td className="text-center">{this.state.userInfo.user_order[0].payment_type}</td>
                                                         <td />
@@ -457,14 +448,14 @@ export default class Profile extends Component {
                         <RctCollapsibleCard
                             colClasses="col-sm-12 col-md-12 col-xl-12 b-100 w-xs-full"
                         >
-                            <span className={'fs-17 fw-bold'}>Billing History</span>
+                            <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.billingHistory"}/></span>
                             <table className="table table-middle table-hover mb-0">
                                 <thead>
                                 <tr>
-                                    <th className="text-center">Date</th>
-                                    <th className="text-center">Description</th>
-                                    <th className="text-center">Payment Method</th>
-                                    <th className="text-center">Total</th>
+                                    <th className="text-center"><IntlMessages id={"profile.date"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.description"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.total"}/></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -472,7 +463,7 @@ export default class Profile extends Component {
                                     this.state.userInfo.user_order.map((v, i) => (
                                         <tr key={i}>
                                             <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                            <td className="text-center">{v.product_plans.name} Plan</td>
+                                            <td className="text-center">{v.product_plans.name} <IntlMessages id={"profile.plan"}/></td>
                                             <td className="text-center">{v.payment_type}</td>
                                             <td className="text-center">{v.amount} AUD</td>
                                         </tr>
@@ -485,7 +476,7 @@ export default class Profile extends Component {
                     <div className={'d-flex justify-content-center'}>
                         <Fab variant="extended" color="primary" aria-label="add" className={'m-1'} onClick={() => this.onSaveData()}>
                             <SaveIcon className={'mr-1'} />
-                            Update
+                            <IntlMessages id={"profile.update"} />
                         </Fab>
                     </div>
                     <Modal
@@ -493,14 +484,14 @@ export default class Profile extends Component {
                         toggle={() => this.setState({showChangePasswordModal: false})}
                     >
                         <ModalHeader toggle={() => this.setState({showChangePasswordModal: false})}>
-                            Change Password
+                            <IntlMessages id={"profile.changePassword"}/>
                         </ModalHeader>
                         <ModalBody>
                             <TextField
                                 id="current_password"
                                 value={this.state.currentPassword}
                                 onChange={(event) => this.setState({currentPassword: event.target.value})}
-                                label="Current Password"
+                                label={<IntlMessages id={"profile.currentPassword"}/>}
                                 className={'mb-10'}
                                 type="password"
                                 margin="dense"
@@ -511,7 +502,7 @@ export default class Profile extends Component {
                                 id="new_password"
                                 value={this.state.newPassword}
                                 onChange={(event) => this.setState({newPassword: event.target.value})}
-                                label="New Password"
+                                label={<IntlMessages id={"profile.newPassword"}/>}
                                 className={'mb-10'}
                                 type="password"
                                 margin="dense"
@@ -522,7 +513,7 @@ export default class Profile extends Component {
                                 id="confirm_password"
                                 value={this.state.confirmNewPassword}
                                 onChange={(event) => this.setState({confirmNewPassword: event.target.value})}
-                                label="Confirm Password"
+                                label={<IntlMessages id={"profile.confirmPassword"}/>}
                                 className={'mb-10'}
                                 type="password"
                                 margin="dense"
@@ -537,14 +528,14 @@ export default class Profile extends Component {
                                 className="text-white bg-primary"
                                 onClick={() => this.onChangePassword()}
                             >
-                                Change
+                                <IntlMessages id={"profile.change"}/>
                             </Button>
                             <Button
                                 variant="contained"
                                 className="btn-danger text-white bg-danger"
                                 onClick={() => this.setState({showChangePasswordModal: false})}
                             >
-                                Cancel
+                                <IntlMessages id={"profile.cancel"}/>
                             </Button>
                         </ModalFooter>
                     </Modal>

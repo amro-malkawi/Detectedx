@@ -25,11 +25,13 @@ import {
     signupUserInEmail,
 } from 'Actions';
 import CreatableSelect from 'react-select/creatable';
+import IntlMessages from "Util/IntlMessages";
+import LanguageProvider from "Components/Header/LanguageProvider";
 
 class Signup extends Component {
 
     state = {
-        formType: 'email',
+        formType: 'email1',
         email: '',
         emailInvalid: false,
         password: '',
@@ -260,7 +262,7 @@ class Signup extends Component {
                 extra_info: this.state.extraInfo,
                 allow_contact_me: this.state.allowContactMe,
             }, this.props.history).then((result) => {
-                NotificationManager.success('Account Created Successfully!');
+                NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
                 this.props.history.push('/users/send-email/' + result.id);
             }).catch((error) => {
                 this.setState({loading: false});
@@ -278,7 +280,7 @@ class Signup extends Component {
                         type="email"
                         value={this.state.email}
                         onChange={(event) => this.onSetValue('email', event.target.value)}
-                        label="Email *"
+                        label={<IntlMessages id={"user.signup.email"}/>}
                         className={'mb-10'}
                         margin="dense"
                         variant="outlined"
@@ -294,7 +296,7 @@ class Signup extends Component {
                         type="password"
                         value={this.state.password}
                         onChange={(event) => this.onSetValue('password', event.target.value)}
-                        label="Password *"
+                        label={<IntlMessages id={"user.signup.password"}/>}
                         className={'mb-10'}
                         margin="dense"
                         variant="outlined"
@@ -309,7 +311,7 @@ class Signup extends Component {
                         type="password"
                         value={this.state.confirmPassword}
                         onChange={(event) => this.onSetValue('confirmPassword', event.target.value)}
-                        label="Confirm Password *"
+                        label={<IntlMessages id={"user.signup.confirmPassword"}/>}
                         className={'mb-10'}
                         margin="dense"
                         variant="outlined"
@@ -327,7 +329,7 @@ class Signup extends Component {
                                 value=""
                             />
                         }
-                        label={<span>I have read and agree to the <Link to="/terms">terms of conditions</Link></span>}
+                        label={<span><IntlMessages id={"user.signup.agreeTerm"}/><Link to='/terms'><IntlMessages id={"user.signup.term"}/></Link></span>}
                     />
                 </div>
                 <FormGroup className="mb-15 mt-10">
@@ -340,7 +342,7 @@ class Signup extends Component {
                         size="large"
                     >
                         {
-                            this.state.loading ? <CircularProgress size={24}/> : 'SIGN UP'
+                            this.state.loading ? <CircularProgress size={24}/> : <IntlMessages id={"user.signup"}/>
                         }
                     </Button>
                 </FormGroup>
@@ -361,7 +363,7 @@ class Signup extends Component {
                             id="first_name"
                             value={this.state.firstName}
                             onChange={(event) => this.onSetValue('firstName', event.target.value)}
-                            label="First Name *"
+                            label={<IntlMessages id={"user.signup.firstName"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -374,7 +376,7 @@ class Signup extends Component {
                             id="last_name"
                             value={this.state.lastName}
                             onChange={(event) => this.onSetValue('lastName', event.target.value)}
-                            label="Last Name *"
+                            label={<IntlMessages id={"user.signup.lastName"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -387,7 +389,7 @@ class Signup extends Component {
                 <FormGroup row className="has-wrapper">
                     <Col sm={6}>
                         <FormGroup row className={'mb-0'}>
-                            <Label style={{padding: '12px 25px 0px 13px', fontSize: 16}}>Gender: </Label>
+                            <Label style={{padding: '12px 25px 0px 13px', fontSize: 16}}><IntlMessages id={"profile.gender"}/>: </Label>
                             <RadioGroup
                                 aria-label="gender"
                                 name="gender"
@@ -398,17 +400,17 @@ class Signup extends Component {
                                 <FormControlLabel
                                     value={''}
                                     control={<Radio/>}
-                                    label={'Not Specified'}
+                                    label={<IntlMessages id={"profile.position.notSpecified"}/>}
                                 />
                                 <FormControlLabel
                                     value={'female'}
                                     control={<Radio/>}
-                                    label={'Female'}
+                                    label={<IntlMessages id={"profile.position.female"}/>}
                                 />
                                 <FormControlLabel
                                     value={'male'}
                                     control={<Radio/>}
-                                    label={'Male'}
+                                    label={<IntlMessages id={"profile.position.male"}/>}
                                 />
                             </RadioGroup>
                         </FormGroup>
@@ -417,7 +419,7 @@ class Signup extends Component {
                         <TextField
                             id="title"
                             select
-                            label="Title *"
+                            label={<IntlMessages id={"user.signup.title"}/>}
                             SelectProps={{ native: true}}
                             variant="outlined"
                             className={'mb-10'}
@@ -441,7 +443,7 @@ class Signup extends Component {
                     <TextField
                         id="position"
                         select
-                        label="Job Title *"
+                        label={<IntlMessages id={"user.signup.jobTitle"}/>}
                         SelectProps={{ native: true}}
                         variant="outlined"
                         className={'mb-10'}
@@ -464,7 +466,7 @@ class Signup extends Component {
                         id="employer"
                         value={this.state.employer}
                         onChange={(event) => this.onSetValue('employer', event.target.value)}
-                        label="Employer *"
+                        label={<IntlMessages id={"user.signup.employer"}/>}
                         className={'mb-10'}
                         margin="dense"
                         variant="outlined"
@@ -496,7 +498,7 @@ class Signup extends Component {
                         <TextField
                             id="country"
                             select
-                            label="Country *"
+                            label={<IntlMessages id={"user.signup.country"}/>}
                             SelectProps={{ native: true}}
                             variant="outlined"
                             className={'mb-10'}
@@ -519,7 +521,7 @@ class Signup extends Component {
                             id="address1"
                             value={this.state.address1}
                             onChange={(event) => this.onSetValue('address1', event.target.value)}
-                            label="Address 1 *"
+                            label={<IntlMessages id={"user.signup.address1"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -533,7 +535,7 @@ class Signup extends Component {
                             id="address2"
                             value={this.state.address2}
                             onChange={(event) => this.onSetValue('address2', event.target.value)}
-                            label="Address 2"
+                            label={<IntlMessages id={"user.signup.address2"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -547,7 +549,7 @@ class Signup extends Component {
                             id="suburb"
                             value={this.state.suburb}
                             onChange={(event) => this.onSetValue('suburb', event.target.value)}
-                            label="Suburb *"
+                            label={<IntlMessages id={"user.signup.suburb"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -560,7 +562,7 @@ class Signup extends Component {
                             id="state"
                             value={this.state.state}
                             onChange={(event) => this.onSetValue('state', event.target.value)}
-                            label="State"
+                            label={<IntlMessages id={"user.signup.state"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -574,7 +576,7 @@ class Signup extends Component {
                             type="number"
                             value={this.state.postcode}
                             onChange={(event) => this.onSetValue('postcode', event.target.value)}
-                            label="Postcode *"
+                            label={<IntlMessages id={"user.signup.postcode"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -589,7 +591,7 @@ class Signup extends Component {
                         id="extraInfo"
                         value={this.state.extraInfo}
                         onChange={(event) => this.onSetValue('extraInfo', event.target.value)}
-                        label="Professional associations you are a member of"
+                        label={<IntlMessages id={"user.signup.professionalAssoc"}/>}
                         className={'mb-10'}
                         margin="dense"
                         variant="outlined"
@@ -601,7 +603,7 @@ class Signup extends Component {
                     <TextField
                         id="hearFromWhere"
                         select
-                        label="How did you hear about us?"
+                        label={<IntlMessages id={"user.signup.howDidHear"}/>}
                         SelectProps={{ native: true}}
                         variant="outlined"
                         className={'mb-10'}
@@ -628,7 +630,7 @@ class Signup extends Component {
                             id="hearFromOtherText"
                             value={this.state.hearFromOtherText}
                             onChange={(event) => this.onSetValue('hearFromOtherText', event.target.value)}
-                            label="Where did you hear us? *"
+                            label={<IntlMessages id={"user.signup.whereDidHear"}/>}
                             className={'mb-10'}
                             margin="dense"
                             variant="outlined"
@@ -646,7 +648,7 @@ class Signup extends Component {
                                 value=""
                             />
                         }
-                        label={<span>I allow <strong>DetectED-X</strong> to contact me further about its  services</span>}
+                        label={<span><IntlMessages id={"user.signup.allowService"} values={{detectedx: <strong>DetectED-X</strong>}}/></span>}
                     />
                 </div>
                 <FormGroup className="mb-15 mt-10">
@@ -659,12 +661,12 @@ class Signup extends Component {
                         onClick={() => this.onUserSignUp()}
                     >
                         {
-                            this.state.loading ? <CircularProgress size={24}/> : 'CONFIRM'
+                            this.state.loading ? <CircularProgress size={24}/> : <IntlMessages id={"user.signup.confirm"}/>
                         }
                     </Button>
                 </FormGroup>
                 <div className={'social-icons mt-30'}>
-                    <span className={'mr-20'}>Please connect with us on Linkedin here</span>
+                    <span className={'mr-20'}><IntlMessages id={"user.signup.connectLinkedin"}/></span>
                     {/*<a href="https://twitter.com/detected_x" target="_blank">*/}
                     {/*    <div className="twitter-icon"/>*/}
                     {/*</a>*/}
@@ -705,10 +707,11 @@ class Signup extends Component {
                                             component={Link}
                                             to="/signin"
                                             variant="contained"
-                                            className="btn-light"
+                                            className="btn-light mr-10"
                                         >
                                             Sign In
                                         </Button>
+                                        <LanguageProvider />
                                     </div>
                                 </div>
                             </div>

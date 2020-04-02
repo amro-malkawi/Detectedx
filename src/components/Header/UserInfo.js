@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withRouter } from "react-router-dom";
+import IntlMessages from "Util/IntlMessages";
 
 export default class UserInfo extends Component {
 
@@ -22,7 +23,7 @@ export default class UserInfo extends Component {
         return (
             <UncontrolledDropdown nav className="list-inline-item cart-dropdown">
                 <DropdownToggle nav className="p-0" onClick={() => this.userProfile()}>
-                    <Tooltip title="User Info" placement="bottom">
+                    <Tooltip title={<IntlMessages id={"header.userInfo"}/>} placement="bottom">
                         <IconButton aria-label="bag">
                             <i className="zmdi zmdi-account"/>
                         </IconButton>

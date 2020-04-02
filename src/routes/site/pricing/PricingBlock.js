@@ -20,7 +20,7 @@ const PricingBlock = ({ planType, type, description, price, users, features, col
       {planType !== 'free' && <span className="text-muted mb-5 d-block small">Starting at just</span>}
       <div className="mb-10">
          {planType === 'free' ?
-            <h2 className="amount-title"><IntlMessages id={price} /></h2>
+            <h2 className="amount-title">price</h2>
             : <h2 className="amount-title">${price}<sub>/year</sub></h2>
          }
          <span className="text-muted small">For {users} user</span>

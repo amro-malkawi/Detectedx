@@ -4,6 +4,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import {Scrollbars} from "react-custom-scrollbars";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
+import IntlMessages from "Util/IntlMessages";
 
 export default class CommentInfo extends Component {
 
@@ -47,7 +48,7 @@ export default class CommentInfo extends Component {
                         <DropdownToggle className="bg-primary">
                             {
                                 this.props.isCovid ?
-                                    <Button size={'small'} color="primary" onClick={() => null}>Synaptic Comment</Button> :
+                                    <Button size={'small'} color="primary" onClick={() => null}><IntlMessages id={"testView.synapticComment"}/></Button> :
                                     <Tooltip title="Comment" placement="right">
                                         <i className="zmdi zmdi-comment-text"/>
                                     </Tooltip>
@@ -57,7 +58,7 @@ export default class CommentInfo extends Component {
                             <Scrollbars className="rct-scroll" autoHeight autoHeightMin={100} autoHeightMax={530} autoHide autoHideDuration={100}>
                                 <ul className="list-unstyled text-center mb-0">
                                     <li className="header-title mb-10">
-                                        Comment
+                                        <IntlMessages id={"testView.comment"}/>
                                     </li>
                                     <li className={'comment-text'}>
                                         {this.state.commentText}

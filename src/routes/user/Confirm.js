@@ -5,6 +5,7 @@ import React, {Component} from 'react';
 import * as Apis from 'Api';
 import SweetAlert from 'react-bootstrap-sweetalert'
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
+import IntlMessages from "Util/IntlMessages";
 
 export default class Confirm extends Component {
     constructor(props) {
@@ -41,11 +42,11 @@ export default class Confirm extends Component {
         return (
             <div>
                 <RctSectionLoader/>
-                <SweetAlert success show={this.state.success} title="Successful" confirmBtnText={'continue'} onConfirm={() => this.props.history.replace('/')}>
-                    Your email address has been successfully verified.
+                <SweetAlert success show={this.state.success} title={<IntlMessages id={"user.confirm.successful"}/>} confirmBtnText={<IntlMessages id={"user.confirm.continue"}/>} onConfirm={() => this.props.history.replace('/')}>
+                    <IntlMessages id={"user.confirm.verifySuccess"}/>
                 </SweetAlert>
-                <SweetAlert danger show={this.state.fault} title="Failed" confirmBtnText={'OK'} onConfirm={() => null}>
-                    Email Verification failed.
+                <SweetAlert danger show={this.state.fault} title={<IntlMessages id={"user.confirm.failed"}/>} confirmBtnText={<IntlMessages id={"user.confirm.ok"}/>} onConfirm={() => null}>
+                    <IntlMessages id={"user.confirm.verifyFailed"}/>
                 </SweetAlert>
             </div>
         );

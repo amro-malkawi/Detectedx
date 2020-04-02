@@ -5,6 +5,7 @@ import {withStyles} from '@material-ui/core/styles';
 import yellow from "@material-ui/core/colors/yellow";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
+import IntlMessages from "Util/IntlMessages";
 
 export default class CovidQuestions extends Component {
     constructor(props) {
@@ -267,12 +268,12 @@ export default class CovidQuestions extends Component {
     renderTitle() {
         const {isTruth, complete} = this.props;
         if (isTruth) {
-            return 'Experts judgement';
+            return <IntlMessages id={'testView.covidQuestion.expertJudgement'}/>;
         } else {
             if (!complete) {
-                return 'Do you see:';
+                return <IntlMessages id={"testView.covidQuestion.doyousee"}/>;
             } else {
-                return 'Your judgement';
+                return <IntlMessages id={"testView.covidQuestion.yourJudgement"}/>;
             }
         }
     }
@@ -291,13 +292,13 @@ export default class CovidQuestions extends Component {
                     }
                 </div>
                 <div className={'covid-option-questions mb-20'}>
-                    <p>Distribution of COVID appearances</p>
+                    <p><IntlMessages id={"testView.covidQuestion.title1"}/></p>
                     {
                         this.state.question.slice(3, 5).map(v => this.renderQuestion(v))
                     }
                 </div>
                 <div className={'covid-confidence'}>
-                    <p>Suspicion for COVID-19 infection</p>
+                    <p><IntlMessages id={"testView.covidQuestion.title2"} /></p>
                     <RadioGroup
                         aria-label="position"
                         name="position"

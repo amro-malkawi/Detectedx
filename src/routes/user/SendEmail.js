@@ -13,6 +13,7 @@ import QueueAnim from 'rc-queue-anim';
 import AppConfig from 'Constants/AppConfig';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
+import IntlMessages from "Util/IntlMessages";
 
 export default class SendEmail extends Component {
     constructor(props) {
@@ -63,14 +64,14 @@ export default class SendEmail extends Component {
                                         </Link>
                                     </div>
                                     <div>
-                                        <Link to="/signin" className="mr-15 text-white">Already have an account?</Link>
+                                        <Link to="/signin" className="mr-15 text-white"><IntlMessages id={"user.alreadyAccount"} /></Link>
                                         <Button
                                             component={Link}
                                             to="/signin"
                                             variant="contained"
                                             className="btn-light"
                                         >
-                                            Sign In
+                                            <IntlMessages id={"user.signin"}/>
                                         </Button>
                                     </div>
                                 </div>
@@ -83,20 +84,20 @@ export default class SendEmail extends Component {
                                 <div className="col-sm-12 col-md-8 col-lg-7" style={{margin: 'auto'}}>
                                     <div className="session-body text-center">
                                         <div className="session-head mb-15">
-                                            <h2>We've Sent You a Confirmation Email</h2>
-                                            <p>Time to check your email</p>
+                                            <h2><IntlMessages id={"user.sentEmail.title"}/></h2>
+                                            <p><IntlMessages id={"user.sentEmail.checkTime"} /></p>
                                         </div>
                                         <div>
                                             <img className={'mt-20 mb-20'} src={require('Assets/img/inbox.png')} width={170} height={170} alt={''}/>
                                             <div>
-                                                <span>Click the link in your email to confirm your account.</span>
+                                                <span><IntlMessages id={"user.sentEmail.clickLink"}/></span>
                                             </div>
                                             <div>
-                                                <span>If you can't find the email check your spam folder or click the link below to resend.</span>
+                                                <span><IntlMessages id={"user.sentEmail.checkSpamBox"}/></span>
                                             </div>
                                         </div>
                                         <Button component="span" disabled={this.state.loading} className={'mt-20 mb-20'} style={{color: '#0D47A1'}} onClick={() => this.onResendEmail()}>
-                                            Resend Confirmation Email
+                                            <IntlMessages id={"user.sentEmail.resend"}/>
                                         </Button>
                                     </div>
                                 </div>

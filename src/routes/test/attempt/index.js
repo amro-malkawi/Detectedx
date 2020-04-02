@@ -23,16 +23,17 @@ import {NotificationManager} from 'react-notifications';
 import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
 import ReactSpeedometer from "Components/GaugeChart";
 import PostQuestionForm from "./PostQuestionForm";
+import IntlMessages from "Util/IntlMessages";
 
 const stepName = {
-    mainQuestions: 'Questionnaires',
-    additionalQuestions: 'Additional Questions',
-    test: 'Test',
-    score: 'Scores',
-    answer: 'Answers',
-    postTest: 'PostTest',
-    postQuestions: 'Evaluation form',
-    postScore: 'Results'
+    mainQuestions: <IntlMessages id="test.questionnaires"/>,
+    additionalQuestions: <IntlMessages id="test.additionalQuestions"/>,
+    test: <IntlMessages id="test.test"/>,
+    score: <IntlMessages id="test.scores"/>,
+    answer: <IntlMessages id="test.answers"/>,
+    postTest: <IntlMessages id="test.postTest"/>,
+    postQuestions: <IntlMessages id="test.evaluationForm"/>,
+    postScore: <IntlMessages id="test.results"/>
 };
 
 export default class Attempt extends Component {
@@ -216,10 +217,10 @@ export default class Attempt extends Component {
         } else {
             return;
         }
-        if(type === 'post') {
-            if(this.state.post_stage < 2) {
+        if (type === 'post') {
+            if (this.state.post_stage < 2) {
                 const postAnswer = this.postQuestionFormRef.getAnswerData();
-                if(!postAnswer) {
+                if (!postAnswer) {
                     NotificationManager.error('Please answer about all questions');
                     return;
                 }
@@ -294,7 +295,7 @@ export default class Attempt extends Component {
                 questions[index].extra_answer = value;
             } else {
                 questions[index].answer = value;
-                if(questions[index].questionnaire.has_other_text) questions[index].extra_answer = '';
+                if (questions[index].questionnaire.has_other_text) questions[index].extra_answer = '';
             }
         } else if (questions[index].questionnaire.type === 1) {
             if (isExtra !== undefined && isExtra) {
@@ -308,9 +309,9 @@ export default class Attempt extends Component {
                     if (i !== -1) questions[index].answer.splice(i, 1);
                 }
                 // clear extra text
-                if(questions[index].questionnaire.has_other_text) {
+                if (questions[index].questionnaire.has_other_text) {
                     let selectedOptions = questions[index].questionnaire.questionnaire_options.filter(v => questions[index].answer.indexOf(v.id) > -1);
-                    if(!selectedOptions.some(v => v.content.toLowerCase() === 'other')) questions[index].extra_answer = '';
+                    if (!selectedOptions.some(v => v.content.toLowerCase() === 'other')) questions[index].extra_answer = '';
                 }
             }
         } else if (questions[index].questionnaire.type === 2) {
@@ -420,41 +421,41 @@ export default class Attempt extends Component {
                         options.map((v, i) => {
                             if (v.content.toLowerCase() === 'yes') {
                                 return (
-                                            <FormControlLabel
-                                                disabled={isDisable}
-                                                value={v.id.toString()}
-                                                control={<Radio/>}
-                                                label={
-                                                    <div className={'row'}>
-                                                        <Col sm={6} style={{paddingRight: 0}}>
-                                                            <Label style={{fontSize: 14, marginTop: 9}}>Yes, you can contact me at: </Label>
-                                                        </Col>
-                                                        <Col sm={6} style={{paddingLeft: 0, paddingRight: 30}}>
-                                                            <Input
-                                                                disabled={isDisable || isTextDisable}
-                                                                type="text"
-                                                                name="name"
-                                                                id="other_text"
-                                                                placeholder=""
-                                                                value={item.extra_answer}
-                                                                className={'sm-7'}
-                                                                style={{marginTop: 0}}
-                                                                onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value, false, true)}
-                                                            />
-                                                        </Col>
-                                                    </div>
-                                                }
-                                                key={i}
-                                                style={{marginRight: 0}}
-                                                onChange={(event) => this.onQuestionChangeAnswer(index, event.target.value)}
-                                            />
+                                    <FormControlLabel
+                                        disabled={isDisable}
+                                        value={v.id.toString()}
+                                        control={<Radio/>}
+                                        label={
+                                            <div className={'row'}>
+                                                <Col sm={6} style={{paddingRight: 0}}>
+                                                    <Label style={{fontSize: 14, marginTop: 9}}>Yes, you can contact me at: </Label>
+                                                </Col>
+                                                <Col sm={6} style={{paddingLeft: 0, paddingRight: 30}}>
+                                                    <Input
+                                                        disabled={isDisable || isTextDisable}
+                                                        type="text"
+                                                        name="name"
+                                                        id="other_text"
+                                                        placeholder=""
+                                                        value={item.extra_answer}
+                                                        className={'sm-7'}
+                                                        style={{marginTop: 0}}
+                                                        onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value, false, true)}
+                                                    />
+                                                </Col>
+                                            </div>
+                                        }
+                                        key={i}
+                                        style={{marginRight: 0}}
+                                        onChange={(event) => this.onQuestionChangeAnswer(index, event.target.value)}
+                                    />
                                 )
                             } else {
                                 return (
                                     <FormControlLabel
                                         disabled={isDisable}
                                         value={v.id.toString()}
-                                        control={<Radio />}
+                                        control={<Radio/>}
                                         label={v.content}
                                         key={i}
                                         onChange={(event) => this.onQuestionChangeAnswer(index, event.target.value)}
@@ -802,11 +803,9 @@ export default class Attempt extends Component {
                         <div className={'text-center mt-70'}>
                             {
                                 this.state.stepIndex > 0 ?
-                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                            onClick={() => this.onBack()}>Back</Button> : null
+                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
                             }
-                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                    onClick={() => this.onQuestionsNext()}>Next</Button>
+                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
                         </div>
                     </div>
                 );
@@ -817,11 +816,9 @@ export default class Attempt extends Component {
                         <div className={'text-center mt-70'}>
                             {
                                 this.state.stepIndex > 0 ?
-                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                            onClick={() => this.onBack()}>Back</Button> : null
+                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
                             }
-                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                    onClick={() => this.onQuestionsNext()}>Next</Button>
+                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
                         </div>
                     </div>
                 );
@@ -834,21 +831,18 @@ export default class Attempt extends Component {
                             >
                                 {
                                     this.state.attemptInfo.test_sets.has_post ?
-                                        <p className="fs-17">Statements of credit will be awarded based on participation in the posttest and submission of the activity evaluation form.
-                                            A passing score of 75% on the posttest is required to receive a statement of credit
-                                        </p> : null
+                                        <p className="fs-17"><IntlMessages id="test.attempt.testText1"/></p> : null
                                 }
 
-                                <p className="mb-20 fs-17">Before starting please read the instructions by clicking on
-                                    “Instructions button” in the top right hand corner of this page.</p>
-                                <div className="mb-20 fs-17">To proceed to the test click button below</div>
+                                <p className="mb-20 fs-17"><IntlMessages id="test.attempt.testText2"/></p>
+                                <div className="mb-20 fs-17"><IntlMessages id="test.attempt.testText3"/></div>
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     className="text-white"
                                     onClick={() => this.onTest()}
                                 >
-                                    Proceed to test
+                                    <IntlMessages id="test.proceedToTest"/>
                                 </Button>
                             </RctCollapsibleCard>
                         </div>
@@ -859,16 +853,14 @@ export default class Attempt extends Component {
                             <RctCollapsibleCard
                                 customClasses="p-20 text-center"
                             >
-                                <div className="mb-20 fs-17">No attempts left or subscription expired. Please contact
-                                    administrator if you want to try again.
-                                </div>
+                                <div className="mb-20 fs-17"><IntlMessages id="test.attempt.testExpiredText"/></div>
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     className="text-white"
                                     onClick={() => this.setState({stepIndex: this.state.stepIndex + 1})}
                                 >
-                                    Next
+                                    <IntlMessages id="test.next"/>
                                 </Button>
                             </RctCollapsibleCard>
                         </div>
@@ -884,7 +876,7 @@ export default class Attempt extends Component {
                                 disabled={this.state.isDownCert}
                                 onClick={() => this.onGetCertPdf('normal')}
                             >
-                                <SchoolIcon className={'mr-10'}/>Certificate
+                                <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificate'/>
                             </Button>
                             {this.state.isDownCert &&
                             <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>}
@@ -898,9 +890,9 @@ export default class Attempt extends Component {
                                 <table className="table table-middle table-hover mb-0">
                                     <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Value</th>
-                                        <th>Description</th>
+                                        <th><IntlMessages id={"test.name"}/></th>
+                                        <th><IntlMessages id={"test.value"} /></th>
+                                        <th><IntlMessages id={"test.description"}/></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -930,7 +922,7 @@ export default class Attempt extends Component {
                         <RctCollapsibleCard
                             customClasses="p-20 text-center"
                         >
-                            <div className="mb-20 fs-17">To see your answers and compare with truth click button below
+                            <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.answerViewText"}/>
                             </div>
                             <Button
                                 variant="contained"
@@ -938,7 +930,7 @@ export default class Attempt extends Component {
                                 className="text-white"
                                 onClick={() => this.onTest()}
                             >
-                                View Answer
+                                <IntlMessages id={"test.viewAnswer"}/>
                             </Button>
                         </RctCollapsibleCard>
                     </div>
@@ -950,11 +942,8 @@ export default class Attempt extends Component {
                             <RctCollapsibleCard
                                 customClasses="p-20 text-center"
                             >
-                                <p className="mb-5 fs-17">Statements of credit will be awarded based on participation in the posttest and submission of the activity evaluation form. A passing score of 75% on the posttest is
-                                    required to receive a statement of credit.
-                                Before starting please read the instructions by clicking on
-                                    “Instructions button” in the top right hand corner of this page.</p>
-                                <div className="mb-20 fs-17">To proceed to the test click button below</div>
+                                <p className="mb-5 fs-17"><IntlMessages id={"test.attempt.postTestText"}/></p>
+                                <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.testText3"}/></div>
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -963,7 +952,7 @@ export default class Attempt extends Component {
                                 >
                                     {
                                         this.state.post_stage === 0 ?
-                                            "Proceed to post test" : "View to post test"
+                                            <IntlMessages id={"test.proceedPostTest"}/> : <IntlMessages id={"test.viewPostTest"}/>
                                     }
                                 </Button>
                             </RctCollapsibleCard>
@@ -985,11 +974,9 @@ export default class Attempt extends Component {
                             <div className={'text-center mt-70'}>
                                 {
                                     this.state.stepIndex > 0 ?
-                                        <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                                onClick={() => this.onBack()}>Back</Button> : null
+                                        <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id={"test.back"}/></Button> : null
                                 }
-                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                        onClick={() => this.onQuestionsNext()}>Next</Button>
+                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id={"test.next"}/></Button>
                             </div>
                         </div>
                     );
@@ -1003,7 +990,7 @@ export default class Attempt extends Component {
                         <RctCollapsibleCard
                             customClasses="p-20 text-center"
                         >
-                            <p className="mb-50 fs-17">Your score is {postScore}%</p>
+                            <p className="mb-50 fs-17"><IntlMessages id={"test.yourScore"}/> {postScore}%</p>
                             {
                                 postScore >= 75 ?
                                     <div>
@@ -1013,19 +1000,18 @@ export default class Attempt extends Component {
                                             className={'mr-30'}
                                             disabled={this.state.isDownCert}
                                             onClick={() => this.onGetCertPdf('post_physicians')}>
-                                            <SchoolIcon className={'mr-10'}/>Certificate for physicians
+                                            <SchoolIcon className={'mr-10'}/><IntlMessages id={"test.certificatePhysicians"}/>
                                         </Button>
                                         <Button
                                             variant="contained"
                                             color="primary"
                                             disabled={this.state.isDownCert}
                                             onClick={() => this.onGetCertPdf('post_other')}>
-                                            <SchoolIcon className={'mr-10'}/>Certificate for non physicians
+                                            <SchoolIcon className={'mr-10'}/><IntlMessages id={"test.certificateNonPhysicians"}/>
                                         </Button>
-                                        {this.state.isDownCert &&
-                                        <div style={{marginTop: -28}}><CircularProgress size={20}
-                                                                                        style={{color: 'green'}}/>
-                                        </div>}
+                                        {
+                                            this.state.isDownCert && <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>
+                                        }
                                     </div> : null
                             }
                         </RctCollapsibleCard>
@@ -1034,9 +1020,8 @@ export default class Attempt extends Component {
                     return null;
                 }
             default:
-                return null
+                return null;
         }
-        ;
     }
 
     render() {
@@ -1046,34 +1031,32 @@ export default class Attempt extends Component {
                     <h1>{stepName[this.state.steps[this.state.stepIndex]]}</h1>
                     {this.renderStepper()}
                     {this.renderStepContent()}
-                    <Dialog open={this.state.showConsentModal} onClose={() => null} aria-labelledby="alert-dialog-title"
-                            maxWidth='md' fullWidth>
+                    <Dialog open={this.state.showConsentModal} onClose={() => null} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
                         <DialogTitle id="alert-dialog-title">
-                            <div className={'text-center fs-23'}>Consent</div>
+                            <div className={'text-center fs-23'}><IntlMessages id={"test.consent"}/></div>
                         </DialogTitle>
                         <DialogContent>
-                            <span className={'fs-17'}>I understand that:</span>
+                            <span className={'fs-17'}><IntlMessages id={"test.attempt.consent.understand"}/></span>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">The results of reading this module are de-identified, with  results identified only by Reader Numbers</span>
+                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text1"}/></span>
                             </div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">My results may form part of the Quality Assurance Program of my Service or Clinic</span>
+                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text2"}/></span>
                             </div>
-                            <div className={'fs-17 mt-15'}>I consent to:</div>
+                            <div className={'fs-17 mt-15'}><IntlMessages id={"test.attempt.consent.consent"}/></div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">My de-identified results to be used to further develop the educational program</span>
+                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text3"}/></span>
                             </div>
                             <div>
                                 <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10">My de-identified results to be used for research which may be published in peer reviewed scientific journals</span>
+                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text4"}/></span>
                             </div>
                         </DialogContent>
                         <DialogActions>
-                            <Button variant="contained" onClick={() => this.onAcceptConsent()} color="primary"
-                                    className="text-white" autoFocus> Agree </Button>
+                            <Button variant="contained" onClick={() => this.onAcceptConsent()} color="primary" className="text-white" autoFocus> <IntlMessages id={"test.agree"}/> </Button>
                         </DialogActions>
                     </Dialog>
                 </div>

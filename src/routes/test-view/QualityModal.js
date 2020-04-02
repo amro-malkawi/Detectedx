@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
-import {Dialog, DialogActions, DialogContent, DialogTitle, AppBar, Tabs, Tab, Typography} from "@material-ui/core";
-import {withStyles} from "@material-ui/core/styles";
-import DialogContentText from "@material-ui/core/DialogContentText";
+import {Button} from "reactstrap";
+import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
+import IntlMessages from "Util/IntlMessages";
 
 export default class QualityModal extends Component{
     constructor(props) {
@@ -23,31 +22,31 @@ export default class QualityModal extends Component{
             <Dialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md' >
                 <div className={'quality-container'}>
                     <DialogTitle>
-                        <span className={'quality-title'}>Select Image Quality</span>
+                        <span className={'quality-title'}><IntlMessages id={"testView.modal.selectImageQuality"}/></span>
                     </DialogTitle>
                     <DialogContent>
                         <div className={'quality-button-container'}>
                             <div className={'quality-button ' + (this.state.quality === 3 ? 'active' : '')} onClick={() => this.setState({quality: 3})}>
                                 <div className={'perfect-icon'} />
-                                <span>Perfect</span>
+                                <span><IntlMessages id={"testView.quality.perfect"}/></span>
                             </div>
                             <div className={'quality-button ' + (this.state.quality === 2 ? 'active' : '')} onClick={() => this.setState({quality: 2})}>
                                 <div className={'good-icon'} />
-                                <span>Good</span>
+                                <span><IntlMessages id={"testView.quality.good"}/></span>
                             </div>
                             <div className={'quality-button ' + (this.state.quality === 1 ? 'active' : '')} onClick={() => this.setState({quality: 1})}>
                                 <div className={'moderate-icon'} />
-                                <span>Moderate</span>
+                                <span><IntlMessages id={"testView.quality.moderate"}/></span>
                             </div>
                             <div className={'quality-button ' + (this.state.quality === 0 ? 'active' : '')} onClick={() => this.setState({quality: 0})}>
                                 <div className={'inadequate-icon'} />
-                                <span>Inadequate</span>
+                                <span><IntlMessages id={"testView.quality.inadequate"}/></span>
                             </div>
                         </div>
                     </DialogContent>
                     <DialogActions>
                         <div style={{margin: 'auto'}}>
-                            <Button variant="contained" onClick={() => this.onConfirm()} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Confirm&nbsp;&nbsp;</Button>
+                            <Button variant="contained" onClick={() => this.onConfirm()} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id={"testView.confirm"}/>&nbsp;&nbsp;</Button>
                         </div>
                     </DialogActions>
                 </div>

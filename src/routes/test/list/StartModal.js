@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import {Button} from "reactstrap";
+import IntlMessages from "Util/IntlMessages";
 
 const content = require('./StartModalContent.html');
 
@@ -1005,7 +1006,7 @@ export default class StartModal extends Component {
                         </div>
                     <DialogActions>
                         <div style={{margin: 'auto'}}>
-                            <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;Next&nbsp;&nbsp;</Button>
+                            <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>
                         </div>
                     </DialogActions>
                 </div>

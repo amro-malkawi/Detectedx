@@ -3,11 +3,13 @@
  * Used to Display Localised Strings
  */
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import {FormattedMessage, injectIntl, useIntl} from 'react-intl';
 
 // Injected message
-const InjectMassage = props => <FormattedMessage {...props} />;
+const InjectMessage = props => <FormattedMessage {...props} />;
 
-export default injectIntl(InjectMassage, {
+export default injectIntl(InjectMessage, {
     withRef: false
 });
+
+export const IntlStringMessage = id => useIntl().formatMessage({id});

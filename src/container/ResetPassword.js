@@ -15,6 +15,7 @@ import * as Apis from 'Api';
 // app config
 import AppConfig from 'Constants/AppConfig';
 import {NotificationManager} from "react-notifications";
+import IntlMessages from "Util/IntlMessages";
 
 
 export default class ResetPassword extends Component {
@@ -44,7 +45,7 @@ export default class ResetPassword extends Component {
     onResetPassword() {
         if (this.state.password !== '' && this.state.password === this.state.confirmPassword) {
             Apis.resetPassword(this.state.password, this.state.accessToken).then(resp => {
-                NotificationManager.success('Password Reset, Please login again');
+                NotificationManager.success(<IntlMessages id={"user.resetPassword.success"}/>);
                 this.props.history.push('/signin');
             }).catch(error => {
                 NotificationManager.error(error.response ? error.response.data.error.message : error.message);
@@ -76,10 +77,10 @@ export default class ResetPassword extends Component {
                                 <div className="col-sm-12 col-md-8 col-lg-6 offset-md-2 offset-md-3">
                                     <div className="session-body text-center">
                                         <div className="session-head mt-10">
-                                            <h1 className="font-weight-bold">Reset password?</h1>
+                                            <h1 className="font-weight-bold"><IntlMessages id={"user.resetPassword.title"}/></h1>
                                         </div>
                                         <div className={'mb-30 fs-13'}>
-                                            <span>Enter your new password</span>
+                                            <span><IntlMessages id={"user.resetPassword.enterNew"}/></span>
                                         </div>
                                         <div>
                                             <FormGroup className="has-wrapper">
@@ -114,7 +115,7 @@ export default class ResetPassword extends Component {
                                                     size="large"
                                                     onClick={() => this.onResetPassword()}
                                                 >
-                                                    RESET PASSWORD
+                                                    <IntlMessages id={"user.forgotPassword.resetPassword"}/>
                                                 </Button>
                                             </FormGroup>
                                         </div>

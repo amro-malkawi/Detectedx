@@ -2,16 +2,23 @@
  * App Language Provider
  * Add more locales here
  */
-import { addLocaleData } from 'react-intl';
-import enLang from './entries/en-US';
-import frLang from './entries/fr_FR';
+import enLang from './locales/en_US';
+import frLang from './locales/fr_FR';
+import esLang from './locales/es_ES';
 
 const AppLocale = {
-    en: enLang,
-    fr: frLang
+    en: {
+        locale: 'en-US',
+        messages: enLang
+    },
+    fr: {
+        locale: 'fr-FR',
+        messages: frLang
+    },
+    es: {
+        locale: 'es-ES',
+        messages: esLang
+    },
+
 };
-
-addLocaleData(AppLocale.en.data);
-addLocaleData(AppLocale.fr.data);
-
 export default AppLocale;

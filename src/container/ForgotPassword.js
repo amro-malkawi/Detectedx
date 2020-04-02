@@ -14,6 +14,7 @@ import * as Apis from 'Api';
 // app config
 import AppConfig from 'Constants/AppConfig';
 import {NotificationManager} from "react-notifications";
+import IntlMessages from "Util/IntlMessages";
 
 
 export default class ForgotPassword extends Component {
@@ -28,7 +29,7 @@ export default class ForgotPassword extends Component {
     onForgotPassword() {
         if (this.state.email !== '') {
             Apis.forgotPassword(this.state.email).then(resp => {
-                NotificationManager.success('Sent email to reset password. Please check email.');
+                NotificationManager.success(<IntlMessages id={"user.forgotPassword.sentEmail"}/>);
                 this.props.history.push('/signin');
             }).catch(error => {
                 NotificationManager.error(error.response ? error.response.data.error.message : error.message);
@@ -60,10 +61,10 @@ export default class ForgotPassword extends Component {
                                 <div className="col-sm-12 col-md-8 col-lg-6 offset-md-2 offset-md-3">
                                     <div className="session-body text-center">
                                         <div className="session-head mt-10">
-                                            <h1 className="font-weight-bold">Did you forgot your password?</h1>
+                                            <h1 className="font-weight-bold"><IntlMessages id={"user.forgotPassword.title"}/></h1>
                                         </div>
                                         <div className={'mb-30 fs-13'}>
-                                            <span>Enter your email address you're using for you account below and we will send you a password link</span>
+                                            <span><IntlMessages id={"user.forgotPassword.desc"}/></span>
                                         </div>
                                         <div>
                                             <FormGroup className="has-wrapper">
@@ -86,11 +87,11 @@ export default class ForgotPassword extends Component {
                                                     size="large"
                                                     onClick={() => this.onForgotPassword()}
                                                 >
-                                                    RESET PASSWORD
+                                                    <IntlMessages id={"user.forgotPassword.resetPassword"}/>
                                                 </Button>
                                             </FormGroup>
                                             <div className={'d-flex justify-content-center mt-30 fs-14'}>
-                                                <Link to="/signin">Back to Sign in</Link>
+                                                <Link to="/signin"><IntlMessages id={"user.forgotPassword.back"}/></Link>
                                             </div>
                                         </div>
                                     </div>

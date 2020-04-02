@@ -6,11 +6,11 @@ import React, {Component} from 'react'
 import PageTitleBar from "Components/PageTitleBar/PageTitleBar";
 import {Card, CardBody, Button} from "reactstrap";
 import * as Apis from 'Api';
-import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import StartModal from './StartModal';
 import LearningModal from "./LearningModal";
 import LearningCovidModal from "./LearningCovidModal";
 import VideoModal from "./VideoModal";
+import IntlMessages from "Util/IntlMessages";
 
 export default class list extends Component {
 
@@ -81,13 +81,19 @@ export default class list extends Component {
     renderStartButton(test_set_id, attempts, modality_type, has_post) {
         let attempt = attempts[0];
         if (attempt === undefined) {
-            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>Start</Button>);
+            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <IntlMessages id="test.start" />
+            </Button>);
         } else if (attempt.complete) {
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>Re-Start</Button>);
+            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <IntlMessages id="test.reStart" />
+            </Button>);
         } else {
             // let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             let path = '/app/test/attempt/' + attempt.id;
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, modality_type, has_post)}>Continue</Button>);
+            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, modality_type, has_post)}>
+                <IntlMessages id="test.continue"/>
+            </Button>);
         }
     }
 
@@ -106,7 +112,7 @@ export default class list extends Component {
             <div className="news-dashboard-wrapper mt-30 mb-20">
                 <div className={'row align-items-start'}>
                     <div className="col-sm-12 col-md-8">
-                        <PageTitleBar title={"Module Sets"} match={this.props.match} enableBreadCrumb={false}/>
+                        <PageTitleBar title={<IntlMessages id="test.moduleSets"/>} match={this.props.match} enableBreadCrumb={false}/>
                         {
                             this.state.testSetsList.map((item, index) => {
                                 return (
@@ -124,7 +130,7 @@ export default class list extends Component {
                                                                 className="mr-10 mt-5 mb-5"
                                                                 outline color="info" size="sm"
                                                                 onClick={() => this.props.history.push('/app/test/complete-list/' + item.test_sets.id)}>
-                                                                Scores
+                                                                <IntlMessages id="test.scores" />
                                                             </Button> : null
                                                     }
                                                     {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.modality_type, item.test_sets.has_post)}
@@ -137,7 +143,7 @@ export default class list extends Component {
                         }
                     </div>
                     <div className={'col-sm-12 col-md-4 instruction-video'}>
-                        <PageTitleBar title={"Instructions Videos"} match={this.props.match} enableBreadCrumb={false}/>
+                        <PageTitleBar title={<IntlMessages id="test.instructionVideos"/>} match={this.props.match} enableBreadCrumb={false}/>
                         {
                             this.state.instructionVideos.map((video, index) => this.renderInstructionVideo(video, index))
                         }

@@ -16,7 +16,6 @@ export const STOP_USER_TOUR = 'STOP_USER_TOUR';
 export const TOGGLE_DARK_SIDENAV = 'TOGGLE_DARK_SIDENAV';
 
 // Agency Sidebar
-export const AGENCY_TOGGLE_MENU = 'AGENCY_TOGGLE_MENU';
 export const CHANGE_AGENCY_LAYOUT_BG = 'CHANGE_AGENCY_LAYOUT_BG';
 
 // sidebar

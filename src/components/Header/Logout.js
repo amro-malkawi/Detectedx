@@ -10,6 +10,7 @@ import { withRouter } from "react-router-dom";
 
 //Actions
 import {logoutUserFromEmail} from "Actions";
+import IntlMessages from "Util/IntlMessages";
 
 class Logout extends Component {
 
@@ -22,9 +23,9 @@ class Logout extends Component {
         return (
             <UncontrolledDropdown nav className="list-inline-item cart-dropdown">
                 <DropdownToggle nav className="p-0" onClick={() => this.logoutUser()}>
-                    <Tooltip title="Logout" placement="bottom">
+                    <Tooltip title={<IntlMessages id={"header.logout"}/>} placement="bottom">
                         <IconButton aria-label="bag">
-                            <i className="zmdi zmdi-power"></i>
+                            <i className="zmdi zmdi-power"/>
                         </IconButton>
                     </Tooltip>
                 </DropdownToggle>

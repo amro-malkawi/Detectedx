@@ -12,6 +12,7 @@ import MarkerTool from "../lib/tools/MarkerTool";
 import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
 import LengthTool from "../lib/tools/LengthTool";
+import IntlMessages from "Util/IntlMessages";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -321,7 +322,6 @@ class ImageViewer extends Component {
     }
 
     handleAddShape(event) {
-        console.log('completed', event.detail);
         this.tempModifiedShape = null;
         if (event.detail.measurementData.id === undefined) {
             event.detail.measurementData.id = uuidv4();
@@ -337,7 +337,6 @@ class ImageViewer extends Component {
                 stack: Number(this.state.currentStack) - 1,
             };
             Apis.shapeAdd(data).then(resp => {
-                console.log('completed', event.detail.measurementData.id);
                 if (this.shapeList[data.type] === undefined) this.shapeList[data.type] = [];
                 this.shapeList[data.type].push({stack: data.stack, measurementData: JSON.parse(data.data)});
                 this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
@@ -347,7 +346,6 @@ class ImageViewer extends Component {
 
     handleModifyShape(event) {
         this.tempModifiedShape = event.detail;
-        console.log('modify event', event.detail.measurementData)
     }
 
     handleRemoveShape(event) {
@@ -358,7 +356,6 @@ class ImageViewer extends Component {
             const shapeId = event.detail.measurementData.id;
             const type = event.detail.toolName || event.detail.toolType;
             Apis.shapeDelete(shapeId).then(resp => {
-                console.log('removed', event.detail.measurementData.id);
                 const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
                 that.shapeList[type].splice(index, 1);
                 this.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', that.shapeList);
@@ -604,7 +601,7 @@ class ImageViewer extends Component {
                             <i className="zmdi zmdi-plus"/>
                         </IconButton>
                     </div>
-                    <div className="slice status">Slice: [{this.state.currentStack}/{this.state.stackCount}]</div>
+                    <div className="slice status"><IntlMessages id={"testView.viewer.slice"}/>: [{this.state.currentStack}/{this.state.stackCount}]</div>
                     {
                         floatingButton.length > 0 ?
                             <div className={'floating-menu'}>
@@ -646,7 +643,7 @@ class ImageViewer extends Component {
                  data-index={this.props.index} data-stack={imageInfo.stack_count}>
                 <div className={'control-btn'}>
                     <a className="eye" onClick={() => this.toggleMarkInfo()}>
-                        <Tooltip title="Hide Info" placement="bottom">
+                        <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
                             <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
                         </Tooltip>
                     </a>
@@ -656,14 +653,14 @@ class ImageViewer extends Component {
                     {/*    </Tooltip>*/}
                     {/*</a>*/}
                     <a onClick={() => null}>
-                        <Tooltip title="Invert" placement="bottom">
+                        <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
                             <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
                         </Tooltip>
                     </a>
                     {
                         this.props.complete ? null :
                             <a onClick={() => null}>
-                                <Tooltip title="Delete" placement="bottom">
+                                <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
                                     <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
                                 </Tooltip>
                             </a>

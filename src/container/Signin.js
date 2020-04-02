@@ -11,8 +11,7 @@ import {Link} from 'react-router-dom';
 import {Form, FormGroup, Input} from 'reactstrap';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
-import {Fab} from "@material-ui/core";
-
+import LanguageProvider from "Components/Header/LanguageProvider";
 // app config
 import AppConfig from 'Constants/AppConfig';
 
@@ -21,6 +20,7 @@ import {
     signinUserInEmail,
 } from 'Actions';
 import * as selectors from "Selectors";
+import IntlMessages from "Util/IntlMessages";
 
 
 class Signin extends Component {
@@ -71,8 +71,9 @@ class Signin extends Component {
                                         </Link>
                                     </div>
                                     <div>
-                                        <a className="mr-15" onClick={() => this.onUserSignUp()}>Create New account?</a>
-                                        <Button variant="contained" className="btn-light" onClick={() => this.onUserSignUp()}>Sign Up</Button>
+                                        <a className="mr-15" onClick={() => this.onUserSignUp()}><IntlMessages id={"user.createNew"}/></a>
+                                        <Button variant="contained" className="btn-light mr-10" onClick={() => this.onUserSignUp()}><IntlMessages id={"user.signup"}/></Button>
+                                        <LanguageProvider />
                                     </div>
                                 </div>
                             </div>
@@ -84,7 +85,7 @@ class Signin extends Component {
                                 <div className="col-sm-12 col-md-8 col-lg-6 offset-md-2 offset-md-3">
                                     <div className="session-body text-center">
                                         <div className="session-head mb-30">
-                                            <h1 className="font-weight-bold">{AppConfig.brandName} Login</h1>
+                                            <h1 className="font-weight-bold">{AppConfig.brandName} <IntlMessages id={"user.login"}/></h1>
                                         </div>
                                         <Form onSubmit={this.onUserLogin.bind(this)}>
                                             <FormGroup className="has-wrapper">
@@ -119,11 +120,11 @@ class Signin extends Component {
                                                     variant="contained"
                                                     size="large"
                                                 >
-                                                    Sign In
+                                                    <IntlMessages id={"user.signin"}/>
                                                 </Button>
                                             </FormGroup>
                                             <div className={'d-flex justify-content-center mt-30 fs-14'}>
-                                                <Link to="/forgot-password">Forgot Password</Link>
+                                                <Link to="/forgot-password"><IntlMessages id={"user.forgotPassword"}/></Link>
                                             </div>
                                         </Form>
                                     </div>
