@@ -93,13 +93,15 @@
 }
 
 .instruction-video {
+  position: relative;
   cursor: pointer;
   img {
     width: 100%;
     border-radius: 15px;
   }
   p {
-    margin-top: 15px;
+    margin-top: 10px;
+    margin-bottom: 25px;
     text-align: center;
     font-size: 1.6rem;
     font-weight: 700;
@@ -110,7 +112,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    bottom: 0;
+    bottom: 50px;
     right: 0;
     display: flex;
     align-items: center;

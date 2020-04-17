@@ -705,6 +705,7 @@ class TestView extends Component {
                                     test_case_id={this.state.test_cases_id}
                                     complete={true}
                                     isTruth={true}
+                                    isPostTest={this.state.isPostTest}
                                 />
                             }
                             <ImageViewerContainer
@@ -731,6 +732,7 @@ class TestView extends Component {
                                     test_case_id={this.state.test_cases_id}
                                     complete={this.state.complete}
                                     isTruth={false}
+                                    isPostTest={this.state.isPostTest}
                                 />
                             }
                         </DndProvider>

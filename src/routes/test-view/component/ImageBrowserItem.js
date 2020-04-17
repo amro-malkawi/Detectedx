@@ -28,7 +28,7 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                         <div className="image-thumbnail-canvas">
                             <img
                                 className="static-image"
-                                src={Apis.apiHost + '/dicomimg/' + item.id + '/0/0/0_0.png'}
+                                src={'https://static.detectedx.com/images/' + item.id + '/0/0/0_0.png'}
                                 height={123}
                                 alt={''}
                             />

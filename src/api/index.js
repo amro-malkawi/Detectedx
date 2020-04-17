@@ -649,18 +649,19 @@ export function attemptsSavePostAnswer(id, answer) {
     return instance.post(url, {answer}).then((response) => response.data);
 }
 
-export function attemptsSetCovidAnswer(id, test_case_id, rating, answer) {
+export function attemptsSetCovidAnswer(id, test_case_id, rating, answer, is_post_test = false) {
     let url = '/attempts/' + id + '/set_covid_answer?access_token=' + getAccessToken();
     const data = {
         test_case_id,
         rating,
-        answer
+        answer,
+        is_post_test
     };
     return instance.post(url, data).then((response) => response.data);
 }
 
-export function attepmtsGetCovidAnswer(id, test_case_id) {
-    let url = '/attempts/' + id + '/get_covid_answer?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+export function attepmtsGetCovidAnswer(id, test_case_id, is_post_test) {
+    let url = '/attempts/' + id + '/get_covid_answer?test_case_id=' + test_case_id + '&is_post_test=' + is_post_test + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

@@ -129,7 +129,7 @@ module.exports = {
 	"testView.confirm.disagree": "Disagree",
 	"testView.modal.selectImageQuality": "Select Image Quality",
 	"testView.confirm": "Confirm",
-	"testView.synapticComment": "Synaptic Comment",
+	"testView.synopticComment": "Synoptic Comment",
 	"testView.comment": "Comment",
 	"testView.covidQuestion.title1": "Distribution of COVID appearances",
 	"testView.covidQuestion.title2": "Suspicion for COVID-19 infection",
@@ -169,7 +169,7 @@ module.exports = {
 	"user.signup.agreeTerm": "I have read and agree to the ",
 	"user.signup.term": "terms of conditions",
 	"user.signup.firstName": "First Name *",
-	"user.signup.lastname": "Last Name *",
+	"user.signup.lastName": "Last Name *",
 	"user.signup.title": "Title *",
 	"user.signup.jobTitle": "Job Title *",
 	"user.signup.employer": "Employer *",
@@ -219,5 +219,6 @@ module.exports = {
 	"Russian": "Russian",
 	"German": "German",
 	"Spanish": "Spanish",
-	"Italian": "Italian"
+	"Italian": "Italian",
+	"Chinese": "Chinese",
 };

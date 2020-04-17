@@ -129,7 +129,7 @@ module.exports = {
 	"testView.confirm.disagree": "Pas d'accord",
 	"testView.modal.selectImageQuality": "Sélectionnez la qualité d'image",
 	"testView.confirm": "Confirmer",
-	"testView.synapticComment": "Commentaire synaptique",
+	"testView.synopticComment": "Commentaire synaptique",
 	"testView.comment": "Commentaire",
 	"testView.covidQuestion.title1": "Répartition des apparitions COVID",
 	"testView.covidQuestion.title2": "Suspicion d'infection par COVID-19",
@@ -169,7 +169,7 @@ module.exports = {
 	"user.signup.agreeTerm": "J'ai lu et j'accepte les",
 	"user.signup.term": "conditions générales",
 	"user.signup.firstName": "Prénom *",
-	"user.signup.lastname": "Nom *",
+	"user.signup.lastName": "Nom *",
 	"user.signup.title": "Titre *",
 	"user.signup.jobTitle": "Titre du poste *",
 	"user.signup.employer": "Employeur *",
@@ -219,5 +219,6 @@ module.exports = {
 	"Russian": "Russe",
 	"German": "Allemand",
 	"Spanish": "Espagnol",
-	"Italian": "Italien"
+	"Italian": "Italien",
+	"Chinese": "Chinois",
 };

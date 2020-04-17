@@ -6,7 +6,8 @@ import React, {Component} from 'react'
 import PageTitleBar from "Components/PageTitleBar/PageTitleBar";
 import {Card, CardBody, Button} from "reactstrap";
 import * as Apis from 'Api';
-import StartModal from './StartModal';
+import USStartModal from './USStartModal';
+import USCovidStartModal from './USCovidStartModal';
 import LearningModal from "./LearningModal";
 import LearningCovidModal from "./LearningCovidModal";
 import VideoModal from "./VideoModal";
@@ -23,6 +24,11 @@ export default class list extends Component {
                     title: 'CovED',
                     thumbnail: 'https://static.detectedx.com/instruction_video/covid/thumbnail.png',
                     video: 'https://static.detectedx.com/instruction_video/covid/video.mp4'
+                },
+                {
+                    title: 'Mammography',
+                    thumbnail: 'https://static.detectedx.com/instruction_video/mammography/thumbnail.png',
+                    video: 'https://static.detectedx.com/instruction_video/mammography/video.mp4'
                 }
             ],
             selectedId: null,
@@ -67,7 +73,7 @@ export default class list extends Component {
             });
         } else if (modality_type === 'covid') {
             this.setState({
-                isShowModalType: 'covid',
+                isShowModalType: has_post ? 'has_post_covid' : 'covid',
                 selectedId: value
             });
         } else {
@@ -99,7 +105,7 @@ export default class list extends Component {
 
     renderInstructionVideo(video, index) {
         return (
-            <div key={index} onClick={() => this.setState({isShowModalType: 'video', selectedVideoLink: video.video})}>
+            <div className={'instruction-video'} key={index} onClick={() => this.setState({isShowModalType: 'video', selectedVideoLink: video.video})}>
                 <img src={video.thumbnail} alt=''/>
                 <p>{video.title}</p>
                 <i className="zmdi zmdi-play-circle-outline"/>
@@ -142,15 +148,20 @@ export default class list extends Component {
                             })
                         }
                     </div>
-                    <div className={'col-sm-12 col-md-4 instruction-video'}>
+                    <div className={'col-sm-12 col-md-4'}>
                         <PageTitleBar title={<IntlMessages id="test.instructionVideos"/>} match={this.props.match} enableBreadCrumb={false}/>
                         {
                             this.state.instructionVideos.map((video, index) => this.renderInstructionVideo(video, index))
                         }
                     </div>
                 </div>
-                <StartModal
+                <USStartModal
                     open={this.state.isShowModalType === 'has_post'}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                    onNext={() => this.onGoAttempt()}
+                />
+                <USCovidStartModal
+                    open={this.state.isShowModalType === 'has_post_covid'}
                     onClose={() => this.setState({isShowModalType: ''})}
                     onNext={() => this.onGoAttempt()}
                 />

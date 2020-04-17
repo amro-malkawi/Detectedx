@@ -313,7 +313,11 @@ export default class PostQuestionForm extends Component {
                 </FormGroup>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'sub-label mt-15'}>• Recognize a range of cancer appearances demonstrated in the image learning set and therefore maximize cancer detection</Label>
+                        {
+                            !this.props.isCovid ?
+                                <Label className={'sub-label mt-15'}>• Recognize a range of cancer appearances demonstrated in the image learning set and therefore maximize cancer detection</Label> :
+                                <Label className={'sub-label mt-15'}>• Recognize A Range Of COVID-19 Appearances Demonstrated In The Image Learning Set And Therefore Maximize COVID-19 Detection.</Label>
+                        }
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q1', 'sub1')}
@@ -321,7 +325,11 @@ export default class PostQuestionForm extends Component {
                 </FormGroup>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'sub-label mt-15'}>• Be aware of the range of appearances of images without cancer and therefore minimize unnecessary call-backs</Label>
+                        {
+                            !this.props.isCovid ?
+                                <Label className={'sub-label mt-15'}>• Be aware of the range of appearances of images without cancer and therefore minimize unnecessary call-backs</Label> :
+                                <Label className={'sub-label mt-15'}>• Be Aware Of The Range Of Appearances Of Images Without COVID-19 And Therefore Minimize Unnecessary Call-Backs</Label>
+                        }
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q1', 'sub2')}
@@ -329,7 +337,11 @@ export default class PostQuestionForm extends Component {
                 </FormGroup>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'sub-label mt-15'}>• Improve perception and interpretation skills in the reading of digital mammograms</Label>
+                        {
+                            !this.props.isCovid ?
+                                <Label className={'sub-label mt-15'}>• Improve perception and interpretation skills in the reading of digital mammograms</Label> :
+                                <Label className={'sub-label mt-15'}>• Improve Perception And Interpretation Skills In The Reading Of Lung CT Scans</Label>
+                        }
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q1', 'sub3')}
@@ -374,7 +386,11 @@ export default class PostQuestionForm extends Component {
                 </FormGroup>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'sub-label mt-15'}>• Mary T Rickard, MB BS BSc(Med) FRANZCR DDU MPH</Label>
+                        {
+                            !this.props.isCovid ?
+                                <Label className={'sub-label mt-15'}>• Mary T Rickard, MB BS BSc(Med) FRANZCR DDU MPH</Label> :
+                                <Label className={'sub-label mt-15'}>• Stuart Grieve, MB BS BSc(Med), PhD</Label>
+                        }
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q3', 'sub2')}

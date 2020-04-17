@@ -94,6 +94,12 @@ const INIT_STATE = {
 			name: 'Spanish',
 			icon: 'es',
 		},
+		{
+			languageId: 'chinese',
+			locale: 'zh',
+			name: 'Chinese',
+			icon: 'zh',
+		},
 		// {
 		// 	languageId: 'russian',
 		// 	locale: 'ru',
@@ -111,12 +117,6 @@ const INIT_STATE = {
 		// 	locale: 'it',
 		// 	name: 'Italian',
 		// 	icon: 'it',
-		// },
-		// {
-		// 	languageId: 'chinese',
-		// 	locale: 'zh',
-		// 	name: 'Chinese',
-		// 	icon: 'zh',
 		// },
 	],
 	agencyLayoutBgColors: [

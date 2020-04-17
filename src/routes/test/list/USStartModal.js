@@ -3,9 +3,7 @@ import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/co
 import {Button} from "reactstrap";
 import IntlMessages from "Util/IntlMessages";
 
-const content = require('./StartModalContent.html');
-
-export default class StartModal extends Component {
+export default class USStartModal extends Component {
     render() {
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>

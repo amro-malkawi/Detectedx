@@ -969,6 +969,7 @@ export default class Attempt extends Component {
                                 answer={this.state.postQuestions}
                                 onRef={ref => (this.postQuestionFormRef = ref)}
                                 complete={this.state.attemptInfo.complete && this.state.post_stage > 1}
+                                isCovid={this.state.attemptInfo.test_sets.modalities.modality_type === 'covid'}
                             />
                             {/*{this.renderQuestionnaire()}*/}
                             <div className={'text-center mt-70'}>

@@ -117,7 +117,7 @@ export default class CovidQuestions extends Component {
 
     getCovidAnswer() {
         const getCovidAnswer = this.props.isTruth ?
-            Apis.attepmtsGetCovidTruth(this.props.attempts_id, this.props.test_case_id) : Apis.attepmtsGetCovidAnswer(this.props.attempts_id, this.props.test_case_id);
+            Apis.attepmtsGetCovidTruth(this.props.attempts_id, this.props.test_case_id) : Apis.attepmtsGetCovidAnswer(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest);
         getCovidAnswer.then(resp => {
             this.setState({
                 selectedRating: resp.rating.toString(),
@@ -130,7 +130,7 @@ export default class CovidQuestions extends Component {
 
     saveCovidAnswer() {
         if (!this.props.isTruth) {
-            Apis.attemptsSetCovidAnswer(this.props.attempts_id, this.props.test_case_id, this.state.selectedRating, this.state.selectedValue).then(resp => {
+            Apis.attemptsSetCovidAnswer(this.props.attempts_id, this.props.test_case_id, this.state.selectedRating, this.state.selectedValue, this.props.isPostTest).then(resp => {
 
             }).catch(error => {
                 NotificationManager.error(error.response ? error.response.data.error.message : error.message);

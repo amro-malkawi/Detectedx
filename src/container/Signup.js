@@ -31,7 +31,7 @@ import LanguageProvider from "Components/Header/LanguageProvider";
 class Signup extends Component {
 
     state = {
-        formType: 'email1',
+        formType: 'email',
         email: '',
         emailInvalid: false,
         password: '',
