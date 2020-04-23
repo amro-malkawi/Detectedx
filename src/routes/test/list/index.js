@@ -88,18 +88,29 @@ export default class list extends Component {
         let attempt = attempts[0];
         if (attempt === undefined) {
             return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
-                <IntlMessages id="test.start" />
+                <IntlMessages id="test.start"/>
             </Button>);
         } else if (attempt.complete) {
             return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
-                <IntlMessages id="test.reStart" />
+                <IntlMessages id="test.reStart"/>
             </Button>);
         } else {
             // let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
-            let path = '/app/test/attempt/' + attempt.id;
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, modality_type, has_post)}>
-                <IntlMessages id="test.continue"/>
-            </Button>);
+            if (attempt.progress === '') {
+                const path = '/app/test/attempt/' + attempt.id;
+                return (
+                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(path, modality_type, has_post)}>
+                        <IntlMessages id="test.continue"/>
+                    </Button>
+                );
+            } else {
+                const path = '/app/test/attempt/' + attempt.id + '/' + attempt.progress;
+                return (
+                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
+                        <IntlMessages id="test.continue"/>
+                    </Button>
+                );
+            }
         }
     }
 
@@ -136,7 +147,7 @@ export default class list extends Component {
                                                                 className="mr-10 mt-5 mb-5"
                                                                 outline color="info" size="sm"
                                                                 onClick={() => this.props.history.push('/app/test/complete-list/' + item.test_sets.id)}>
-                                                                <IntlMessages id="test.scores" />
+                                                                <IntlMessages id="test.scores"/>
                                                             </Button> : null
                                                     }
                                                     {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.modality_type, item.test_sets.has_post)}

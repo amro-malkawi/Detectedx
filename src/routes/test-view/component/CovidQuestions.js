@@ -185,7 +185,7 @@ export default class CovidQuestions extends Component {
                         aria-label="position"
                         name="position"
                         value={value}
-                        onClick={(event) => this.onChangeQuestionOptions(parentId, questionObj.id, event.target.value)}
+                        onClick={(event) => this.props.complete ? null : this.onChangeQuestionOptions(parentId, questionObj.id, event.target.value)}
                         row
                         disabled={this.props.complete}
                     >
@@ -241,7 +241,7 @@ export default class CovidQuestions extends Component {
                         aria-label="position"
                         name="position"
                         value={value}
-                        onClick={(event) => this.onChangeQuestionOptions(null, questionObj.id, event.target.value)}
+                        onClick={(event) => this.props.complete ? null : this.onChangeQuestionOptions(null, questionObj.id, event.target.value)}
                         row
                         disabled={this.props.complete}
                     >

@@ -675,6 +675,11 @@ export function attemptGetTestCaseComment(id, test_case_id) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsSetProgress(id, progress) {
+    let url = '/attempts/' + id + '/set_progress?progress=' + progress + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * answer operation
  */

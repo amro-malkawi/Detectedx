@@ -63,6 +63,13 @@ export default class Attempt extends Component {
         this.getData();
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.state.stepIndex !== nextState.stepIndex) {
+            Apis.attemptsSetProgress(nextState.attempts_id, nextState.steps[nextState.stepIndex]);
+        }
+        return true;
+    }
+
     getData() {
         const that = this;
         let promise0 = new Promise(function (resolve, reject) {
