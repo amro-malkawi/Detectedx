@@ -21,18 +21,18 @@ export default class CovidQuestions extends Component {
                             id: '7c9eb926-f547-4443-bf49-6f9e3566e13c',
                             type: 'option',
                             items: [
-                                { id: 'a5b9608e-dc06-4bde-912a-f3ce5ec8ee01', text: 'Left' },
-                                { id: '9c779848-1acb-4ca6-b34a-99d7c5373c27', text: 'Right' },
-                                { id: 'b5cacd42-8d48-49ac-be6d-59b46cadd65e', text: 'Both' }
+                                {id: 'a5b9608e-dc06-4bde-912a-f3ce5ec8ee01', text: 'Left'},
+                                {id: '9c779848-1acb-4ca6-b34a-99d7c5373c27', text: 'Right'},
+                                {id: 'b5cacd42-8d48-49ac-be6d-59b46cadd65e', text: 'Both'}
                             ]
                         },
                         {
                             id: '314fe197-d53a-4931-bfa1-6722acd19e2b',
                             type: 'option',
                             items: [
-                                { id: '89afb153-29d3-43c4-b50c-19a28c1fe2ac', text: 'Upper' },
-                                { id: 'f85caecc-ef82-41a1-a104-d2f9bdbb9298', text: 'Lower' },
-                                { id: 'f1e4f572-9569-4146-bab1-987860b6dee1', text: 'Both' }
+                                {id: '89afb153-29d3-43c4-b50c-19a28c1fe2ac', text: 'Upper'},
+                                {id: 'f85caecc-ef82-41a1-a104-d2f9bdbb9298', text: 'Lower'},
+                                {id: 'f1e4f572-9569-4146-bab1-987860b6dee1', text: 'Both'}
                             ]
                         }
                     ]
@@ -46,18 +46,18 @@ export default class CovidQuestions extends Component {
                             id: '87ddc0c0-075d-4c0f-a630-7a032acc989c',
                             type: 'option',
                             items: [
-                                { id: '0bf01c89-f309-4c93-87db-01ae6fd04714', text: 'Left' },
-                                { id: '91714d15-79da-4d86-a2e5-748ce0deecee', text: 'Right' },
-                                { id: 'd739471d-c05f-49fc-af1a-6f2ec80efd64', text: 'Both' }
+                                {id: '0bf01c89-f309-4c93-87db-01ae6fd04714', text: 'Left'},
+                                {id: '91714d15-79da-4d86-a2e5-748ce0deecee', text: 'Right'},
+                                {id: 'd739471d-c05f-49fc-af1a-6f2ec80efd64', text: 'Both'}
                             ]
                         },
                         {
                             id: '46ffb67b-244a-4ac5-928a-969f42ec3b9d',
                             type: 'option',
                             items: [
-                                { id: '30ca7edd-03a3-45da-94d9-037f49796145', text: 'Upper' },
-                                { id: '9722b64f-4394-442d-beea-7bf2be8e44eb', text: 'Lower' },
-                                { id: '07aed5d4-3000-407b-aaf0-8f267f7d9831', text: 'Both' }
+                                {id: '30ca7edd-03a3-45da-94d9-037f49796145', text: 'Upper'},
+                                {id: '9722b64f-4394-442d-beea-7bf2be8e44eb', text: 'Lower'},
+                                {id: '07aed5d4-3000-407b-aaf0-8f267f7d9831', text: 'Both'}
                             ]
                         }
                     ]
@@ -71,18 +71,18 @@ export default class CovidQuestions extends Component {
                             id: '08a1fe7a-bb32-4a29-a9b1-fc7a75ae269c',
                             type: 'option',
                             items: [
-                                { id: '7ec27faf-aeb6-493d-a102-810b31957bc4', text: 'Left' },
-                                { id: '13065601-b9f8-4df4-b2f3-642d608e5881', text: 'Right' },
-                                { id: '5e36cf09-ac05-42ec-b6e8-92d522f5b74e', text: 'Both' }
+                                {id: '7ec27faf-aeb6-493d-a102-810b31957bc4', text: 'Left'},
+                                {id: '13065601-b9f8-4df4-b2f3-642d608e5881', text: 'Right'},
+                                {id: '5e36cf09-ac05-42ec-b6e8-92d522f5b74e', text: 'Both'}
                             ]
                         },
                         {
                             id: 'b6daf420-68d5-4532-b429-dfb131bf8112',
                             type: 'option',
                             items: [
-                                { id: '71376c7b-af66-497a-b406-47077a763dd4', text: 'Upper' },
-                                { id: 'd501f1bf-0aab-4d01-9358-4b866d61328e', text: 'Lower' },
-                                { id: '11780958-ac5c-45b9-b636-995d6e7cde9a', text: 'Both' }
+                                {id: '71376c7b-af66-497a-b406-47077a763dd4', text: 'Upper'},
+                                {id: 'd501f1bf-0aab-4d01-9358-4b866d61328e', text: 'Lower'},
+                                {id: '11780958-ac5c-45b9-b636-995d6e7cde9a', text: 'Both'}
                             ]
                         }
                     ]
@@ -91,18 +91,18 @@ export default class CovidQuestions extends Component {
                     id: '9c3e4dc5-99ed-48e3-8994-71c6e1817a9c',
                     type: 'option',
                     items: [
-                        { id: '4344e71c-c2b8-46fd-b420-4a1a11ee8125', text: 'Peripheral' },
-                        { id: '3aafed20-5447-45ee-8030-2019640d52ef', text: 'Central' },
-                        { id: '823f9f78-7564-4a70-82f7-c31a10c4d9a0', text: 'Both' }
+                        {id: '4344e71c-c2b8-46fd-b420-4a1a11ee8125', text: 'Peripheral'},
+                        {id: '3aafed20-5447-45ee-8030-2019640d52ef', text: 'Central'},
+                        {id: '823f9f78-7564-4a70-82f7-c31a10c4d9a0', text: 'Both'}
                     ]
                 },
                 {
                     id: '1e6d895c-8132-4985-933a-81968aef1b64',
                     type: 'option',
                     items: [
-                        { id: 'b53c8030-cb70-4098-a086-07e88d6fae46', text: 'Anterior' },
-                        { id: '9450b634-f859-4687-ac38-3d3b59bf9d38', text: 'Posterior' },
-                        { id: '17bcb600-5f2a-428e-b32d-7e61b84975e9', text: 'Both' }
+                        {id: 'b53c8030-cb70-4098-a086-07e88d6fae46', text: 'Anterior'},
+                        {id: '9450b634-f859-4687-ac38-3d3b59bf9d38', text: 'Posterior'},
+                        {id: '17bcb600-5f2a-428e-b32d-7e61b84975e9', text: 'Both'}
                     ]
                 }
             ],
@@ -140,14 +140,14 @@ export default class CovidQuestions extends Component {
 
     onChangeQuestionOptions(parentId, questionId, value) {
         const {selectedValue} = this.state;
-        if(parentId === null) {
-            if(selectedValue[questionId] === value) {
+        if (parentId === null) {
+            if (selectedValue[questionId] === value) {
                 delete selectedValue[questionId];
             } else {
                 selectedValue[questionId] = value;
             }
         } else {
-            if(selectedValue[parentId][questionId] === value) {
+            if (selectedValue[parentId][questionId] === value) {
                 delete selectedValue[parentId][questionId];
             } else {
                 selectedValue[parentId][questionId] = value;
@@ -177,9 +177,9 @@ export default class CovidQuestions extends Component {
     }
 
     renderChildQuestion(parentId, questionObj) {
-        if(questionObj.type === 'option') {
+        if (questionObj.type === 'option') {
             const value = this.state.selectedValue[parentId][questionObj.id] === undefined ? '' : this.state.selectedValue[parentId][questionObj.id];
-            return(
+            return (
                 <div className={'ml-30'} key={questionObj.id}>
                     <RadioGroup
                         aria-label="position"
@@ -212,7 +212,7 @@ export default class CovidQuestions extends Component {
     }
 
     renderQuestion(questionObj) {
-        if(questionObj.type === 'checkbox') {
+        if (questionObj.type === 'checkbox') {
             const selected = this.state.selectedValue[questionObj.id] !== undefined;
             return (
                 <div key={questionObj.id} className={'mt-25'}>
@@ -298,7 +298,7 @@ export default class CovidQuestions extends Component {
                     }
                 </div>
                 <div className={'covid-confidence'}>
-                    <p><IntlMessages id={"testView.covidQuestion.title2"} /></p>
+                    <p><IntlMessages id={"testView.covidQuestion.title2"}/></p>
                     <RadioGroup
                         aria-label="position"
                         name="position"

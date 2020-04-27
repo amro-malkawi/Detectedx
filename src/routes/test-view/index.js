@@ -2,13 +2,9 @@ import React, {Component} from 'react'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {changeHangingLayout, setImageListAction, setShowImageBrowser, setImageQuality} from 'Actions';
-import {Col, FormGroup, Label} from "reactstrap";
-import {Button, Radio, RadioGroup, FormControlLabel, Switch} from '@material-ui/core';
-import Select from 'react-select';
+import {Button, Switch} from '@material-ui/core';
 import {Input} from "reactstrap";
-import yellow from '@material-ui/core/colors/yellow';
 import {withStyles} from '@material-ui/core/styles';
-import chroma from 'chroma-js';
 import {NotificationManager} from "react-notifications";
 import {DndProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend'
@@ -25,7 +21,6 @@ import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import ImageViewerContainer from './component/ImageViewerContainer'
 import ImageViewer from './component/ImageViewer'
 import Marker from './lib/tools/MarkerTool';
-import panZoomSynchronizer from "./lib/panZoomSynchronizer";
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from './InstructionModal';
 import CovidQuestions from "Routes/test-view/component/CovidQuestions";
@@ -34,6 +29,7 @@ import ConfirmQualityModal from './ConfirmQualityModal';
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
+import MarkerPopup from "./lib/markerPopup";
 import * as Apis from 'Api';
 import IntlMessages from "Util/IntlMessages";
 
@@ -51,15 +47,11 @@ class TestView extends Component {
             test_case: {},
             test_set_cases: [],
             complete: false,
-            selectedRating: '2',
-            lesionsValue: [],
-            selectedLesions: [],
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
             imageAnswers: [],
             currentTool: 'Pan',
             isShowPopup: false,
-            isShowPopupDelete: true,
             selectedMarkData: {},
             isShowInstructionModal: false,
             isShowQualityModal: false,
@@ -326,73 +318,11 @@ class TestView extends Component {
     }
 
     handleShowPopup(markData, cancelCallback, deleteCallback, saveCallback) {
-        let isShowDeleteButton = true;
-        if (markData.isNew) {
-            isShowDeleteButton = false;
-        }
-
-        let lesionsValue = [];
-        let lesions = markData.lesionTypes.map(v => v.toString());
-        this.state.test_case.modalities.lesion_types.forEach(v => {
-            if (lesions.indexOf(v.id.toString()) !== -1) {
-                lesionsValue.push({value: v.id, label: v.name});
-            }
-        });
-        let rating = (markData.rating === undefined || isNaN(markData.rating)) ? '2' : markData.rating;
-        if (Number(rating) < 3) {
-            this.setState({selectedLesions: []});
-        }
-        this.setState({isShowPopup: true, selectedMarkData: markData, isShowPopupDelete: isShowDeleteButton, selectedLesions: lesionsValue, selectedRating: rating.toString()});
         this.popupCancelHandler = cancelCallback;
         this.popupDeleteHandler = deleteCallback;
         this.popupSaveHandler = saveCallback;
-    }
+        this.setState({isShowPopup: true, selectedMarkData: markData});
 
-    handleClosePopup(type) {
-        if (type === 'save' && Number(this.state.selectedRating) > 2 && (this.state.selectedLesions === null || this.state.selectedLesions.length === 0)) {
-            NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
-            return;
-        }
-        this.setState({isShowPopup: false});
-        switch (type) {
-            case 'cancel':
-            case 'ok':
-                this.popupCancelHandler();
-                break;
-            case 'delete':
-                if (!confirm('Are you sure you want to delete this mark?')) break;
-                this.popupDeleteHandler(this.state.selectedMarkData.id);
-                break;
-            case 'save':
-                let data = {
-                    id: this.state.selectedMarkData.id,
-                    x: this.state.selectedMarkData.handles.end.x,
-                    y: this.state.selectedMarkData.handles.end.y,
-                    attempt_id: this.state.attempts_id,
-                    test_case_id: this.state.test_cases_id,
-                    rating: this.state.selectedRating,
-                    answer_lesion_types: this.state.selectedLesions.map((v) => v.value.toString()),
-                    isNew: this.state.selectedMarkData.isNew,
-                    is_post_test: this.state.isPostTest
-                };
-                this.popupSaveHandler(data);
-                break;
-        }
-    }
-
-    setSelectedRating(value) {
-        if (Number(value) < 3) {
-            this.setState({selectedLesions: []});
-        }
-        this.setState({selectedRating: value});
-    }
-
-    onChangeRating(event) {
-        this.setSelectedRating(event.target.value);
-    }
-
-    onChangeLesions(value) {
-        this.setState({selectedLesions: value})
     }
 
     renderHeaderNumber() {
@@ -739,70 +669,19 @@ class TestView extends Component {
                     </div>
                     {
                         this.state.isShowPopup ?
-                            <div id="cover" ref={this.myRef}>
-                                <div id="mark-details">
-                                    <form>
-                                        <FormGroup className={'mb-5'} row>
-                                            <Label sm={3} style={{marginTop: 6}}><IntlMessages id="testView.rating"/></Label>
-                                            <Col sm={9}>
-                                                <RadioGroup
-                                                    disabled
-                                                    aria-label="position"
-                                                    name="position"
-                                                    value={this.state.selectedRating}
-                                                    onChange={this.onChangeRating.bind(this)}
-                                                    row
-                                                >
-                                                    {
-                                                        this.state.test_case.ratings.map((v, i) => {   // [0, 1, 2, 3...]
-                                                            return (
-                                                                <CustomFormControlLabel
-                                                                    disabled={this.state.complete}
-                                                                    value={v.toString()}
-                                                                    control={<CustomRadio/>}
-                                                                    label={v}
-                                                                    key={i}
-                                                                />
-                                                            )
-                                                        })
-                                                    }
-                                                </RadioGroup>
-                                            </Col>
-                                        </FormGroup>
-                                        <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
-                                        <Select
-                                            isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
-                                            isMulti
-                                            name="lesions"
-                                            options={lesions}
-                                            value={this.state.selectedLesions}
-                                            styles={selectStyles}
-                                            onChange={this.onChangeLesions.bind(this)}
-                                        />
-
-                                        <div className="actions">
-                                            <div className="left">
-                                                <Button variant="contained" className="text-black bg-white cancel" disabled={this.state.complete}
-                                                        onClick={() => this.handleClosePopup('cancel')}><IntlMessages id={"testView.cancel"}/></Button>
-                                            </div>
-                                            {
-                                                this.state.complete ?
-                                                    <div className="right">
-                                                        <Button variant="contained" className="ok" onClick={() => this.handleClosePopup('ok')}>&nbsp;&nbsp;<IntlMessages id={"testView.ok"}/>&nbsp;&nbsp;</Button>
-                                                    </div> :
-                                                    <div className="right">
-                                                        {
-                                                            this.state.isShowPopupDelete ?
-                                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}><IntlMessages id={"testView.delete"}/></Button> : null
-                                                        }
-                                                        <Button variant="contained" className="save" onClick={() => this.handleClosePopup('save')}><IntlMessages id={"testView.save"}/></Button>
-                                                    </div>
-                                            }
-                                        </div>
-                                    </form>
-                                </div>
-                            </div> : null
+                            <MarkerPopup
+                                attempts_id={this.state.attempts_id}
+                                test_cases_id={this.state.test_cases_id}
+                                lesion_types={this.state.test_case.modalities.lesion_types}
+                                isPostTest={this.state.isPostTest}
+                                markData={this.state.selectedMarkData}
+                                ratings={this.state.test_case.ratings}
+                                complete={this.state.complete}
+                                popupCancelHandler={this.popupCancelHandler}
+                                popupDeleteHandler={this.popupDeleteHandler}
+                                popupSaveHandler={this.popupSaveHandler}
+                                onClose={() => this.setState({isShowPopup: false})}
+                            /> : null
                     }
                     <InstructionModal
                         isOpen={this.state.isShowInstructionModal}
@@ -892,80 +771,3 @@ const AntSwitch = withStyles(theme => ({
         boxShadow: theme.shadows[1],
     },
 }))(Switch);
-
-const CustomRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {},
-}))(Radio);
-
-const CustomFormControlLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {},
-}))(FormControlLabel);
-
-const selectStyles = {
-    control: styles => ({...styles, backgroundColor: 'black'}),
-    menu: styles => ({...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
-    option: (styles, {data, isDisabled, isFocused, isSelected}) => {
-        const color = chroma('yellow');
-        return {
-            ...styles,
-            backgroundColor: isDisabled
-                ? null
-                : isSelected
-                    ? 'yellow'
-                    : isFocused
-                        ? color.alpha(0.1).css()
-                        : null,
-            color: isDisabled
-                ? '#ccc'
-                : isSelected
-                    ? chroma.contrast(color, 'white') > 2
-                        ? 'white'
-                        : 'black'
-                    : 'yellow',
-            cursor: isDisabled ? 'not-allowed' : 'default',
-
-            ':active': {
-                ...styles[':active'],
-                backgroundColor: !isDisabled && (isSelected ? 'yellow' : color.alpha(0.3).css()),
-            },
-        };
-    },
-    multiValue: (styles, {data}) => {
-        const color = chroma('yellow');
-        return {
-            ...styles,
-            backgroundColor: color.alpha(0.1).css(),
-        };
-    },
-    multiValueLabel: (styles, {data}) => ({
-        ...styles,
-        color: 'yellow',
-    }),
-    multiValueRemove: (styles, {data}) => ({
-        ...styles,
-        color: 'yellow',
-        ':hover': {
-            backgroundColor: 'yellow',
-            color: 'black',
-        },
-    }),
-};
