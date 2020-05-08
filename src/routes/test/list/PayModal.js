@@ -16,6 +16,7 @@ import {connect} from "react-redux";
 import * as selectors from "Selectors";
 import * as Apis from 'Api';
 import PaypalButton from "./PaypalButton";
+import PropTypes from "prop-types";
 
 class _OrderForm extends Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class _OrderForm extends Component {
             paymentType: 'card',
             cardBrand: 'pf-credit-card',
             cardBrandError: false,
-            cardName: '',
+            cardName: this.props.userName,
             cardNumberError: false,
             cardExpiryError: false,
             cardCVCError: false,
@@ -81,7 +82,7 @@ class _OrderForm extends Component {
                 this.setState({paying: true});
                 this.props.stripe.createToken({
                     type: 'card',
-                    name: this.state.cardName + '(' + this.props.userName + ')'
+                    name: this.state.cardName + '(' + this.props.userEmail + ')'
                 }).then(resp => {
                     if (resp.error === undefined) {
                         //success
@@ -99,13 +100,14 @@ class _OrderForm extends Component {
                         throw new Error('card information invalidate');
                     }
                 }).then((token) => {
-                    return Apis.orderChargeCard(this.props.plan.id, token);
+                    // return Apis.orderChargeCard(this.props.plan.id, token);
+                    return this.props.onStripeOrder(token);
                 }).then((result) => {
                     const that = this;
                     this.setState({payFinished: true}, () => {
                         setTimeout(() => {
-                            // that.props.onClose()
-                            that.props.history.push('/app/test/profile');
+                            // that.props.history.push('/app/test/profile');
+                            that.props.onFinish();
                         }, 500);
                     });
                     console.log(result, result);
@@ -118,20 +120,30 @@ class _OrderForm extends Component {
         }
     }
 
-    onPaypalCreateSubscription(data, actions) {
-        return Apis.orderPaypalCreateSubscription(this.props.plan.id);
+    onPaypalCreateOrder(data, actions) {
+        // return Apis.orderPaypalCreateSubscription(this.props.plan.id).then(resp => resp.id);
+        return this.props.onPaypalOrderCreate();
     }
 
     onPaypalApprove(data, actions) {
-        return Apis.orderPaypalApprove(JSON.stringify(data), this.props.plan.id).then((resp) => {
+        // return Apis.orderPaypalApprove(JSON.stringify(data), this.props.plan.id).then((resp) => {
+        //     const that = this;
+        //     setTimeout(() => {
+        //         // that.props.onClose()
+        //         that.props.history.push('/app/test/profile');
+        //     }, 500);
+        // }).catch((e) => {
+        //     if (e.response) NotificationManager.error(e.response.data.error.message);
+        // });
+        return this.props.onPaypalOrderApprove(data).then((resp) => {
             const that = this;
             setTimeout(() => {
-                // that.props.onClose()
-                that.props.history.push('/app/test/profile');
+                // that.props.history.push('/app/test/profile');
+                that.props.onFinish();
             }, 500);
-        }).catch((e) => {
+        }).catch(e => {
             if (e.response) NotificationManager.error(e.response.data.error.message);
-        });
+        })
     }
 
     renderCardBlock() {
@@ -203,7 +215,7 @@ class _OrderForm extends Component {
             return (
                 <PaypalButton
                     planId=''
-                    onCreateSubscription={this.onPaypalCreateSubscription.bind(this)}
+                    createOrder={this.onPaypalCreateOrder.bind(this)}
                     onApprove={this.onPaypalApprove.bind(this)}
                     onSuccess={null}
                     onCancel={null}
@@ -250,17 +262,13 @@ class _OrderForm extends Component {
                         <div className={'order-info'}>
                             <p className={'order-summery'}>Order Summary</p>
                             <div className={'order-info-item'}>
-                                <span>Plan</span>
-                                <span>{this.props.plan.name}</span>
-                            </div>
-                            <div className={'order-info-item'}>
-                                <span>Duration</span>
-                                <span>Until Canceled</span>
+                                <span>Name</span>
+                                <span>{this.props.productName}</span>
                             </div>
                             <div className={'order-info-split'}/>
                             <div className={'order-info-item'}>
-                                <span>Billed yearly</span>
-                                <span className={'order-info-price'}>${this.props.plan.amount}</span>
+                                <span>Cost</span>
+                                <span className={'order-info-price'}>{this.props.productPrice} {this.props.productCurrency}</span>
                             </div>
                             {this.renderBuyButton()}
                         </div>
@@ -273,9 +281,32 @@ class _OrderForm extends Component {
 
 const OrderForm = injectStripe(_OrderForm);
 
-class PlanOrder extends Component {
+class PayModal extends Component {
+
+    static propTypes = {
+        productPrice: PropTypes.number.isRequired,
+        productName: PropTypes.string,
+        userName: PropTypes.string,
+        isOpen: PropTypes.bool.isRequired,
+        onStripeOrder: PropTypes.func.isRequired,
+        onPaypalOrderCreate: PropTypes.func.isRequired,
+        onPaypalOrderApprove: PropTypes.func.isRequired,
+        onFinish: PropTypes.func,
+        onClose: PropTypes.func.isRequired,
+    };
+
+    static defaultProps = {
+        productPrice: 0,
+        productName: '',
+        userName: '',
+        onFinish: () => null,
+    };
+
     render() {
-        const {plan, isOpen, onClose} = this.props;
+        const {
+            isOpen,
+            onClose,
+        } = this.props;
         return (
             <FullDialog open={isOpen} onClose={onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth style={{container: {height: '100%'}}}>
                 <StripeScriptLoader
@@ -285,7 +316,7 @@ class PlanOrder extends Component {
                 >
                     <StripeProvider apiKey={'pk_test_o94dTQYi7yrYebuzehraBcqk00QCQPvwhk'}>
                         <Elements>
-                            <OrderForm plan={plan} onClose={onClose} userName={this.props.userName} history={this.props.history}/>
+                            <OrderForm {...this.props} />
                         </Elements>
                     </StripeProvider>
                 </StripeScriptLoader>
@@ -298,11 +329,11 @@ const mapStateToProps = (state) => ({
     userName: selectors.getUserName(state),
 });
 
-export default connect(mapStateToProps, {})(PlanOrder);
+export default connect(mapStateToProps, {})(PayModal);
 
 const FullDialog = withStyles(theme => ({
     paper: {
-        height: '75%',
+        height: 570,
         maxWidth: 1100
     }
 }))(Dialog);

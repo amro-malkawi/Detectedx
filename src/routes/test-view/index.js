@@ -732,42 +732,36 @@ export default withRouter(connect(mapStateToProps, {
 
 const AntSwitch = withStyles(theme => ({
     root: {
-        width: 27,
-        height: 16,
+        width: 30,
+        height: 18,
+        marginBottom: 8,
+        marginLeft: 5,
         padding: 0,
-        margin: 0,
+        display: 'flex',
     },
     switchBase: {
-        color: '#7da5c7',
-        marginTop: -23,
-        marginLeft: -14,
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-            easing: theme.transitions.easing.sharp,
-        }),
+        padding: 2,
+        color: theme.palette.grey[500],
+        '&$checked': {
+            transform: 'translateX(12px)',
+            color: theme.palette.common.white,
+            '& + $track': {
+                opacity: 1,
+                backgroundColor: theme.palette.primary.main,
+                borderColor: theme.palette.primary.main,
+            },
+        },
     },
-    checked: {
-        transform: 'translateX(15px)',
+    thumb: {
+        width: 14,
+        height: 14,
+        boxShadow: 'none',
+    },
+    track: {
+        border: `1px solid ${theme.palette.grey[500]}`,
+        borderRadius: 18 / 2,
         opacity: 1,
-        border: 'none',
+        backgroundColor: theme.palette.common.white,
     },
-    bar: {
-        borderRadius: 7.5,
-        width: 28,
-        height: 16,
-        marginTop: -15,
-        marginLeft: -11.5,
-        border: 'solid 1px',
-        borderColor: theme.palette.grey[400],
-        backgroundColor: theme.palette.grey[50],
-        opacity: 1,
-        transition: theme.transitions.create(['background-color', 'border']),
-    },
-    icon: {
-        width: 16,
-        height: 16,
-    },
-    iconChecked: {
-        boxShadow: theme.shadows[1],
-    },
+    checked: {},
 }))(Switch);

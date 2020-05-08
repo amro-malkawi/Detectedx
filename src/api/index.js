@@ -747,21 +747,39 @@ export function getProductPlans() {
 }
 
 /**
- * order opertaion
+ * order subscriptions
  */
 
 export function orderChargeCard(planId, token) {
-    const url = 'user_orders/charge_card?access_token=' + getAccessToken();
+    const url = 'user_subscriptions/subscription_charge_card?access_token=' + getAccessToken();
     return instance.post(url, {planId, token}).then((response) => response.data);
 }
 
 export function orderPaypalCreateSubscription(planId) {
-    const url = 'user_orders/paypal_create_subscription?access_token=' + getAccessToken();
+    const url = 'user_subscriptions/subscription_paypal_create?access_token=' + getAccessToken();
     return instance.post(url, {planId}).then((response) => response.data);
 }
 
 export function orderPaypalApprove(paymentInfo, planId) {
-    const url = 'user_orders/paypal_approve?access_token=' + getAccessToken();
+    const url = 'user_subscriptions/subscription_paypal_approve?access_token=' + getAccessToken();
     return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
+}
+
+/**
+ * order orders
+ */
+export function orderTestSetStripe(testSetId, price, currency, token) {
+    const url = 'user_orders/test_set_stripe?access_token=' + getAccessToken();
+    return instance.post(url, {testSetId, price, currency, token}).then((response) => response.data);
+}
+
+export function orderTestSetPaypalCreate(testSetId, price, currency) {
+    const url = 'user_orders/test_set_paypal_create?access_token=' + getAccessToken();
+    return instance.post(url, {testSetId, currency, price}).then((response) => response.data);
+}
+
+export function orderTestSetPaypalApprove(paymentInfo, testSetId) {
+    const url = 'user_orders/test_set_paypal_approve?access_token=' + getAccessToken();
+    return instance.post(url, {paymentInfo, testSetId}).then((response) => response.data);
 }
 

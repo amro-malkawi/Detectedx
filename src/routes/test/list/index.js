@@ -5,19 +5,25 @@
 import React, {Component} from 'react'
 import PageTitleBar from "Components/PageTitleBar/PageTitleBar";
 import {Card, CardBody, Button} from "reactstrap";
+import {AppBar, Tabs, Tab} from '@material-ui/core';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
+import SwipeableViews from 'react-swipeable-views';
 import * as Apis from 'Api';
 import USStartModal from './USStartModal';
 import USCovidStartModal from './USCovidStartModal';
 import LearningModal from "./LearningModal";
 import LearningCovidModal from "./LearningCovidModal";
 import VideoModal from "./VideoModal";
+import PayModal from "./PayModal";
 import IntlMessages from "Util/IntlMessages";
+import {connect} from "react-redux";
 
-export default class list extends Component {
+class List extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            tabIndex: 0,
             testSetsList: [],
             instructionVideos: [
                 {
@@ -31,6 +37,7 @@ export default class list extends Component {
                     video: 'https://static.detectedx.com/instruction_video/mammography/video.mp4'
                 }
             ],
+            selectedItem: {},
             selectedId: null,
             isShowModalType: '',
         }
@@ -84,16 +91,52 @@ export default class list extends Component {
         }
     }
 
-    renderStartButton(test_set_id, attempts, modality_type, has_post) {
+    onPay(test_set_item) {
+        this.setState({
+            selectedItem: test_set_item,
+            isShowModalType: 'pay'
+        });
+    }
+
+    onStripeOrder(token, test_set_id, price, currency) {
+        return Apis.orderTestSetStripe(test_set_id, price, currency, token);
+    }
+
+    onPaypalOrderCreate(test_set_id, price, currency) {
+        return Apis.orderTestSetPaypalCreate(test_set_id, price, currency);
+    }
+
+    onPaypalOrderApprove(data, test_set_id) {
+        return Apis.orderTestSetPaypalApprove(JSON.stringify(data), test_set_id);
+    }
+
+    onPaymentSuccess() {
+        this.setState({isShowModalType: ''});
+        this.getTestSetsList();
+    }
+
+    renderStartButton(test_set_item, modality_type) {
+        const {id, attempts, has_post, paid, price, currency} = test_set_item;
+        const test_set_id = id;
         let attempt = attempts[0];
-        if (attempt === undefined) {
-            return (<Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
-                <IntlMessages id="test.start"/>
-            </Button>);
+        if (!paid) {
+            return (
+                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm" onClick={() => price === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
+                    {price === 0 ? <IntlMessages id="test.free"/> : (price + ' ' + currency)}
+                </Button>
+            );
+        } else if (attempt === undefined) {
+            return (
+                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                    <IntlMessages id="test.start"/>
+                </Button>
+            );
         } else if (attempt.complete) {
-            return (<Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
-                <IntlMessages id="test.reStart"/>
-            </Button>);
+            return (
+                <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                    <IntlMessages id="test.reStart"/>
+                </Button>
+            );
         } else {
             // let path = '/test-view/' + test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             if (attempt.progress === '') {
@@ -114,58 +157,101 @@ export default class list extends Component {
         }
     }
 
-    renderInstructionVideo(video, index) {
+    renderInstructionVideo(thumbnail, video) {
+        if (video === null) return null;
         return (
-            <div className={'instruction-video'} key={index} onClick={() => this.setState({isShowModalType: 'video', selectedVideoLink: video.video})}>
-                <img src={video.thumbnail} alt=''/>
-                <p>{video.title}</p>
+            <div className={'instruction-video'} onClick={() => this.setState({isShowModalType: 'video', selectedVideoLink: video})}>
+                <img src={thumbnail} alt=''/>
+                <p/>
                 <i className="zmdi zmdi-play-circle-outline"/>
             </div>
         );
     }
 
+    renderModalityTab({modality_info}) {
+        return (
+            <ModalityTab
+                key={modality_info.id}
+                label={
+                    <div className={'modality-tab-item'}>
+                        <p>{modality_info.name}</p>
+                        <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
+                    </div>
+                }
+            />
+        )
+    }
+
+    renderTestSets({test_sets, modality_info}) {
+        return (
+            <div className={'row align-items-start m-0 '} key={modality_info.id}>
+                <div className="col-sm-12 col-md-8">
+                    {
+                        test_sets.map((item, index) => {
+                            return (
+                                <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1" key={index}>
+                                    <Card className="rct-block">
+                                        <CardBody className="d-flex justify-content-between">
+                                            <div>
+                                                <p className="fs-14 fw-bold mb-5">{item.name}</p>
+                                                <span className="fs-12 d-block text-muted">{modality_info.name}</span>
+                                            </div>
+                                            <div className={'test-list-action-buttons'}>
+                                                {
+                                                    item.attempts.some((v) => v.complete) ?
+                                                        <Button
+                                                            className="mr-10 mt-5 mb-5"
+                                                            outline color="info" size="sm"
+                                                            onClick={() => this.props.history.push('/app/test/complete-list/' + item.id)}>
+                                                            <IntlMessages id="test.scores"/>
+                                                        </Button> : null
+                                                }
+                                                {this.renderStartButton(item, modality_info.modality_type)}
+                                            </div>
+                                        </CardBody>
+                                    </Card>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+                <div className={'col-sm-12 col-md-4'}>
+                    <PageTitleBar title={<IntlMessages id="test.instructionVideos"/>} match={this.props.match} enableBreadCrumb={false}/>
+                    {
+                        this.renderInstructionVideo(modality_info.modality_video_thumbnail, modality_info.modality_video)
+                    }
+                </div>
+            </div>
+        )
+    }
+
     render() {
         return (
             <div className="news-dashboard-wrapper mt-30 mb-20">
-                <div className={'row align-items-start'}>
-                    <div className="col-sm-12 col-md-8">
-                        <PageTitleBar title={<IntlMessages id="test.moduleSets"/>} match={this.props.match} enableBreadCrumb={false}/>
+                <AppBar position="static" color="default" className={'mb-50'}>
+                    <ModalityTabs
+                        value={this.state.tabIndex}
+                        onChange={(e, value) => this.setState({tabIndex: value})}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                        indicatorColor="primary"
+                        textColor="primary"
+                        aria-label="scrollable force tabs example"
+                    >
                         {
-                            this.state.testSetsList.map((item, index) => {
-                                return (
-                                    <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1" key={index}>
-                                        <Card className="rct-block">
-                                            <CardBody className="d-flex justify-content-between">
-                                                <div>
-                                                    <p className="fs-14 fw-bold mb-5">{item.test_sets.name}</p>
-                                                    <span className="fs-12 d-block text-muted">{item.test_sets.modalities.name}</span>
-                                                </div>
-                                                <div>
-                                                    {
-                                                        item.test_sets.attempts.some((v) => v.complete) ?
-                                                            <Button
-                                                                className="mr-10 mt-5 mb-5"
-                                                                outline color="info" size="sm"
-                                                                onClick={() => this.props.history.push('/app/test/complete-list/' + item.test_sets.id)}>
-                                                                <IntlMessages id="test.scores"/>
-                                                            </Button> : null
-                                                    }
-                                                    {this.renderStartButton(item.test_sets.id, item.test_sets.attempts, item.test_sets.modalities.modality_type, item.test_sets.has_post)}
-                                                </div>
-                                            </CardBody>
-                                        </Card>
-                                    </div>
-                                )
-                            })
+                            this.state.testSetsList.map((v) => this.renderModalityTab(v))
                         }
-                    </div>
-                    <div className={'col-sm-12 col-md-4'}>
-                        <PageTitleBar title={<IntlMessages id="test.instructionVideos"/>} match={this.props.match} enableBreadCrumb={false}/>
-                        {
-                            this.state.instructionVideos.map((video, index) => this.renderInstructionVideo(video, index))
-                        }
-                    </div>
-                </div>
+                    </ModalityTabs>
+                </AppBar>
+                <SwipeableViews
+                    index={this.state.tabIndex}
+                    style={{display: 'flex', flex: 1}}
+                    containerStyle={{width: '100%', height: '100%'}}
+                >
+                    {
+                        this.state.testSetsList.map(v => this.renderTestSets(v))
+                    }
+                </SwipeableViews>
                 <USStartModal
                     open={this.state.isShowModalType === 'has_post'}
                     onClose={() => this.setState({isShowModalType: ''})}
@@ -191,7 +277,45 @@ export default class list extends Component {
                     onClose={() => this.setState({isShowModalType: ''})}
                     link={this.state.selectedVideoLink}
                 />
+                <PayModal
+                    productPrice={this.state.selectedItem.price}
+                    productCurrency={this.state.selectedItem.currency}
+                    productName={this.state.selectedItem.name}
+                    userName={this.props.userName}
+                    userEmail={this.props.userEmail}
+                    isOpen={this.state.isShowModalType === 'pay'}
+                    onStripeOrder={(token) => this.onStripeOrder(token, this.state.selectedItem.id, this.state.selectedItem.price, this.state.selectedItem.currency)}
+                    onPaypalOrderCreate={() => this.onPaypalOrderCreate(this.state.selectedItem.id, this.state.selectedItem.price, this.state.selectedItem.currency)}
+                    onPaypalOrderApprove={(data) => this.onPaypalOrderApprove(data, this.state.selectedItem.id)}
+                    onFinish={() => this.onPaymentSuccess()}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                />
             </div>
         )
     }
 }
+
+const mapStateToProps = ({authUser}) => {
+    const {userName, userEmail} = authUser;
+    return {userName, userEmail};
+};
+
+export default connect(mapStateToProps, null)(List);
+
+const ModalityTabs = withStyles({
+    root: {},
+    indicator: {
+        height: 3,
+    },
+})(Tabs);
+
+const ModalityTab = withStyles((theme) => ({
+    root: {
+        '&$selected': {
+            fontWeight: 'bold',
+        },
+    },
+    selected: {
+        fontWeight: 'bold',
+    },
+}))(Tab);
