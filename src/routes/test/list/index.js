@@ -218,7 +218,7 @@ class List extends Component {
                 <div className={'col-sm-12 col-md-4'}>
                     <PageTitleBar title={<IntlMessages id="test.instructionVideos"/>} match={this.props.match} enableBreadCrumb={false}/>
                     {
-                        this.renderInstructionVideo(modality_info.modality_video_thumbnail, modality_info.modality_video)
+                        this.renderInstructionVideo(modality_info.instruction_video_thumbnail, modality_info.instruction_video)
                     }
                 </div>
             </div>
