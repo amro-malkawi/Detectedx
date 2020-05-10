@@ -83,6 +83,7 @@ module.exports = {
 	"testView.Lesions": "Lésions",
 	"testView.cannotSelectLesion": "Impossible de sélectionner le type de lésion",
 	"testView.selectLesion": "Sélectionnez le type de lésion",
+	"testView.selectChildLesion": "Sélectionnez de lésion",
 	"testView.cancel": "Annuler",
 	"testView.ok": "Ok",
 	"testView.delete": "Supprimer",

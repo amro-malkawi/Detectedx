@@ -54,7 +54,6 @@ const theme = createMuiTheme({
             fontWeight: 400,
             textAlign: 'capitalize'
         },
-        useNextVariants: true,
     },
 });
 

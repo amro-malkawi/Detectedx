@@ -54,22 +54,6 @@ class ImageViewer extends Component {
         };
         this.markList = this.props.imageInfo.answers.markList;
         this.shapeList = this.props.imageInfo.answers.shapeList;
-        // this.props.answers.answers && this.props.answers.answers.forEach((mark) => {
-        //     mark.isTruth = false;
-        //     mark.lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
-        //     this.markList.push(mark);
-        // });
-        // this.props.answers.truths && this.props.answers.truths.forEach((mark) => {
-        //     mark.isTruth = true;
-        //     mark.lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id);
-        //     this.markList.push(mark);
-        // });
-        // this.shapeList = {};
-        // this.props.answers.shapes && this.props.answers.shapes.forEach((shape) => {
-        //     let measurementData = JSON.parse(shape.data);
-        //     if(this.shapeList[shape.type] === undefined) this.shapeList[shape.type] = [];
-        //     this.shapeList[shape.type].push({stack: shape.stack, measurementData});
-        // });
         this.tempModifiedShape = null;
         this.imageElementRef = React.createRef();
     }
@@ -263,6 +247,7 @@ class ImageViewer extends Component {
             imageId: this.props.imageInfo.id,
             radius: this.props.radius,
             lesionTypes: [],
+            lesionList: {},
             isTruth: false,
             imageElement: this.imageElement,
             originalX: undefined,
@@ -306,6 +291,7 @@ class ImageViewer extends Component {
         }
         Apis[act](data).then(response => {
             response.lesionTypes = response.answer_lesion_types;
+            response.lesionList = JSON.parse(response.answer_lesion_list);
             if (data.isNew) {
                 this.markList.push(response);
             } else {
@@ -318,7 +304,6 @@ class ImageViewer extends Component {
             alert('An error occurred saving this mark');
         }).finally(() => {
         });
-        console.warn('save')
     }
 
     handleAddShape(event) {
@@ -410,6 +395,7 @@ class ImageViewer extends Component {
                     rating: mark.rating,
                     radius: this.props.radius,
                     lesionTypes: mark.lesionTypes,
+                    lesionList: mark.lesionList,
                     imageElement: this.imageElement,
                     originalX: undefined,
                     originalY: undefined,

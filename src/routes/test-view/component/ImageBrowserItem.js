@@ -28,7 +28,7 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                         <div className="image-thumbnail-canvas">
                             <img
                                 className="static-image"
-                                src={'https://static.detectedx.com/images/' + item.id + '/0/0/0_0.png'}
+                                src={item.image_thumbnail}
                                 height={123}
                                 alt={''}
                             />

@@ -98,13 +98,6 @@ class TestView extends Component {
     getData() {
         this.props.setImageListAction([], []);
         const that = this;
-        let promise0 = new Promise(function (resolve, reject) {
-            Apis.testCasesViewInfo(that.state.test_cases_id).then((data) => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
         let promise1 = new Promise(function (resolve, reject) {
             if (!that.state.isPostTest) {
                 Apis.testSetsCases(that.state.test_sets_id).then((data) => {
@@ -122,23 +115,13 @@ class TestView extends Component {
                 });
             }
         });
-        let promise2 = new Promise(function (resolve, reject) {
-            Apis.attemptsDetail(that.state.attempts_id, that.state.test_cases_id).then(data => {
-                resolve(data);
-            }).catch(e => {
-                reject(e);
-            });
-        });
-        let promise3 = new Promise(function (resolve, reject) {
-            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest).then((imageAnswers) => {
-                resolve(imageAnswers);
-            }).catch(e => {
-                reject(e);
-            })
-        });
 
-        Promise.all([promise0, promise1, promise2, promise3]).then(function (values) {
-            const [testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers] = values;
+        Promise.all([
+            Apis.testCasesViewInfo(that.state.test_cases_id),
+            promise1,
+            Apis.attemptsDetail(that.state.attempts_id, that.state.test_cases_id),
+            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest)
+        ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers]) {
             let complete = false;
             if (!attemptsDetail.test_sets.has_post) {
                 complete = attemptsDetail.complete;
@@ -604,10 +587,6 @@ class TestView extends Component {
 
     render() {
         if (!this.state.loading) {
-            let disabled = this.state.complete ? {'disabled': 'disabled'} : {};
-            let lesions = this.state.test_case.modalities.lesion_types.map((v, i) => {
-                return {label: v.name, value: v.id}
-            });
             return (
                 <div className="viewer">
                     <div id="toolbar">
@@ -673,6 +652,7 @@ class TestView extends Component {
                                 attempts_id={this.state.attempts_id}
                                 test_cases_id={this.state.test_cases_id}
                                 lesion_types={this.state.test_case.modalities.lesion_types}
+                                lesion_list={this.state.test_case.modalities.lesion_list}
                                 isPostTest={this.state.isPostTest}
                                 markData={this.state.selectedMarkData}
                                 ratings={this.state.test_case.ratings}
@@ -732,42 +712,36 @@ export default withRouter(connect(mapStateToProps, {
 
 const AntSwitch = withStyles(theme => ({
     root: {
-        width: 27,
-        height: 16,
+        width: 30,
+        height: 18,
+        marginBottom: 8,
+        marginLeft: 5,
         padding: 0,
-        margin: 0,
+        display: 'flex',
     },
     switchBase: {
-        color: '#7da5c7',
-        marginTop: -23,
-        marginLeft: -14,
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-            easing: theme.transitions.easing.sharp,
-        }),
+        padding: 2,
+        color: theme.palette.grey[500],
+        '&$checked': {
+            transform: 'translateX(12px)',
+            color: theme.palette.common.white,
+            '& + $track': {
+                opacity: 1,
+                backgroundColor: theme.palette.primary.main,
+                borderColor: theme.palette.primary.main,
+            },
+        },
     },
-    checked: {
-        transform: 'translateX(15px)',
+    thumb: {
+        width: 14,
+        height: 14,
+        boxShadow: 'none',
+    },
+    track: {
+        border: `1px solid ${theme.palette.grey[500]}`,
+        borderRadius: 18 / 2,
         opacity: 1,
-        border: 'none',
+        backgroundColor: theme.palette.common.white,
     },
-    bar: {
-        borderRadius: 7.5,
-        width: 28,
-        height: 16,
-        marginTop: -15,
-        marginLeft: -11.5,
-        border: 'solid 1px',
-        borderColor: theme.palette.grey[400],
-        backgroundColor: theme.palette.grey[50],
-        opacity: 1,
-        transition: theme.transitions.create(['background-color', 'border']),
-    },
-    icon: {
-        width: 16,
-        height: 16,
-    },
-    iconChecked: {
-        boxShadow: theme.shadows[1],
-    },
+    checked: {},
 }))(Switch);

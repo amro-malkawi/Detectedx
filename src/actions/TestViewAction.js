@@ -36,11 +36,23 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         imageAnswers.answers && imageAnswers.answers.forEach((mark) => {
             mark.isTruth = false;
             mark.lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
+            mark.lesionList = {};
+            try {
+                mark.lesionList = JSON.parse(mark.answer_lesion_list);
+            } catch (e) {
+
+            }
             markList.push(mark);
         });
         imageAnswers.truths && imageAnswers.truths.forEach((mark) => {
             mark.isTruth = true;
             mark.lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id);
+            mark.lesionList = {};
+            try {
+                mark.lesionList = JSON.parse(mark.truth_lesion_list);
+            } catch (e) {
+
+            }
             markList.push(mark);
         });
         const shapeList = {};

@@ -13,9 +13,6 @@ const theme = createMuiTheme({
             main: AppConfig.themeColors.primary
         }
     },
-    typography: {
-        useNextVariants: true,
-    }
 });
 
 export default theme;

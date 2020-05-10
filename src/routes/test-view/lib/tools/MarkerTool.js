@@ -68,11 +68,13 @@ export default class MarkerTool extends BaseAnnotationTool {
 
             draw(context, context => {
                 let lesionNames = [];
+                console.log('asdf', mark);
                 MarkerTool.lesions.forEach((v) => {
                     if(mark.lesionTypes.indexOf(v.id) !== -1) {
                         lesionNames.push(v.name);
                     }
                 });
+                lesionNames = lesionNames.concat(Object.keys(mark.lesionList));
                 let colour;
                 let padding;
                 if (mark.isTruth) {

@@ -12,31 +12,37 @@ export default class MarkerPopup extends Component {
     constructor(props) {
         super(props);
 
-        const {attempts_id, test_cases_id, markData, lesion_types, isPostTest, ratings, complete} = props;
+        const {attempts_id, test_cases_id, markData, lesion_types, lesion_list, isPostTest, ratings, complete} = props;
         let isShowDeleteButton = true;
         if (markData.isNew) {
             isShowDeleteButton = false;
         }
 
-        let lesionsValue = [];
+        let selectedLesionTypes = [];
         let lesions = markData.lesionTypes.map(v => v.toString());
         lesion_types.forEach(v => {
             if (lesions.indexOf(v.id.toString()) !== -1) {
-                lesionsValue.push({value: v.id, label: v.name});
+                selectedLesionTypes.push({value: v.id, label: v.name});
             }
         });
         let rating = (markData.rating === undefined || isNaN(markData.rating)) ? '2' : markData.rating;
         if (Number(rating) < 3) {
-            lesionsValue = [];
+            selectedLesionTypes = [];
         }
 
+        let lesionList = [];
+        try{
+            lesionList = JSON.parse(lesion_list);
+        } catch (e) {}
         this.state = {
             attempts_id,
             test_cases_id,
             isPostTest,
+            selectedLesionTypes,
             selectedMarkData: markData,
             selectedRating: rating.toString(),
-            selectedLesions: lesionsValue,
+            lesionList: lesionList,
+            selectedLesionList: markData.lesionList || {},
             ratings,
             complete,
             isShowPopupDelete: isShowDeleteButton,
@@ -46,7 +52,7 @@ export default class MarkerPopup extends Component {
 
     setSelectedRating(value) {
         if (Number(value) < 3) {
-            this.setState({selectedLesions: []});
+            this.setState({selectedLesionList: {}});
         }
         this.setState({selectedRating: value});
     }
@@ -55,15 +61,40 @@ export default class MarkerPopup extends Component {
         this.setSelectedRating(event.target.value);
     }
 
-    onChangeLesions(value) {
-        this.setState({selectedLesions: value})
-    }
-
     handleClosePopup(type) {
         const {onClose, popupCancelHandler, popupDeleteHandler, popupSaveHandler} = this.props;
-        if (type === 'save' && Number(this.state.selectedRating) > 2 && (this.state.selectedLesions === null || this.state.selectedLesions.length === 0)) {
-            NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
-            return;
+        if (
+            type === 'save' && Number(this.state.selectedRating) > 2
+        ) {
+            if(this.state.lesionList.length === 0) {
+                // old lesion types check
+                if (this.state.selectedLesionTypes === null || this.state.selectedLesionTypes.length === 0) {
+                    NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                    return;
+                }
+            } else {
+                // new lesion types check
+                const {lesionList, selectedLesionList} = this.state;
+                if(Object.keys(selectedLesionList).length === 0) {
+                    NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                    return;
+                }
+                const rootLesionObj = lesionList.find((v) => v.name === Object.keys(selectedLesionList)[0]);
+                if(rootLesionObj !== undefined && rootLesionObj.children !== undefined && rootLesionObj.children.length > 0) {
+                    if (rootLesionObj.children[0].children !== undefined && rootLesionObj.children[0].children.length > 0) {
+                        // has sublesions
+                        if (rootLesionObj.children.some((v) => selectedLesionList[Object.keys(selectedLesionList)[0]][v.name] === undefined)) {
+                            NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                            return;
+                        }
+                    } else {
+                        if (selectedLesionList[Object.keys(selectedLesionList)[0]] === '') {
+                            NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                            return;
+                        }
+                    }
+                }
+            }
         }
         onClose();
         switch (type) {
@@ -83,18 +114,104 @@ export default class MarkerPopup extends Component {
                     attempt_id: this.state.attempts_id,
                     test_case_id: this.state.test_cases_id,
                     rating: this.state.selectedRating,
-                    answer_lesion_types: this.state.selectedLesions.map((v) => v.value.toString()),
+                    answer_lesion_types: this.state.selectedLesionTypes.map((v) => v.value.toString()),
+                    answer_lesion_list: JSON.stringify(this.state.selectedLesionList),
                     isNew: this.state.selectedMarkData.isNew,
                     is_post_test: this.state.isPostTest
                 };
                 popupSaveHandler(data);
                 break;
+            default:
+                break;
         }
+    }
+
+    onChangeLesionList(type, subType, option) {
+        const {selectedLesionList} = this.state;
+        if(type === 'root') {
+            this.setState({selectedLesionList: {[option.label]: ''}});
+        } else if(subType !== undefined && subType !== '') {
+            if(typeof selectedLesionList[type] !== 'object') selectedLesionList[type] = {};
+            selectedLesionList[type][subType] = option.label;
+            this.setState({selectedLesionList: selectedLesionList});
+        } else {
+            this.setState({selectedLesionList: {[type]: option.label}});
+        }
+    }
+
+    renderSubLesion(parent, item) {
+        const {selectedLesionList} = this.state;
+        const options = item.children.map((v) => ({value: v.id, label: v.name}));
+        const selectedOptionObj = item.children.find((v) => v.name === selectedLesionList[parent][item.name]);
+        const selectedOption = selectedOptionObj !== undefined ? [{value: selectedOptionObj.id, label: selectedOptionObj.name}] : [];
+        return (
+            <Select
+                key={item.id}
+                isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
+                placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : 'Select ' + item.name}
+                name="lesions"
+                options={options}
+                value={selectedOption}
+                styles={selectStyles}
+                onChange={(option) => this.onChangeLesionList(parent, item.name, option)}
+            />
+        )
+    }
+
+    renderLesion() {
+        // value example {Mass: {Shape: 'Oval', Margin: 'Circumscribed}}
+        // value example {Asymmetry: 'Global'}
+        const {lesionList, selectedLesionList} = this.state;
+        let options = lesionList.map((v, i) => {
+            return {label: v.name, value: v.id}
+        });
+        let selectedLesionObj = lesionList.find((v) => v.name === Object.keys(selectedLesionList)[0]);
+        const selectedOption = selectedLesionObj === undefined ? [] : [{value: selectedLesionObj.id, label: selectedLesionObj.name}];
+        let hasSubLesion;
+        let childrenOptions = [];
+        let selectedChildrenOption = [];
+        if(selectedLesionObj !== undefined && selectedLesionObj.children !== undefined && selectedLesionObj.children.length > 0) {
+            if(selectedLesionObj.children[0].children !== undefined && selectedLesionObj.children[0].children.length > 0) {
+                hasSubLesion = true;
+            } else {
+                hasSubLesion = false;
+                childrenOptions = selectedLesionObj.children.map((v) => ({value: v.id, label: v.name}));
+                const selectedChildLesionObj = selectedLesionObj.children.find((v) => v.name === selectedLesionList[selectedLesionObj.name]);
+                if(selectedChildLesionObj !== undefined) {
+                    selectedChildrenOption = [{value: selectedChildLesionObj.id, label: selectedChildLesionObj.name}];
+                }
+            }
+        }
+        return (
+            <div>
+                <Select
+                    isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
+                    placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
+                    name="lesions"
+                    options={options}
+                    value={selectedOption}
+                    styles={selectStyles}
+                    onChange={(option) => this.onChangeLesionList('root', '', option)}
+                />
+                {
+                    hasSubLesion !== undefined && (hasSubLesion ?
+                        selectedLesionObj.children && selectedLesionObj.children.map((v, i) => this.renderSubLesion(selectedLesionObj.name, v)) :
+                        <Select
+                            isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
+                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectChildLesion"}/>}
+                            options={childrenOptions}
+                            value={selectedChildrenOption}
+                            styles={selectStyles}
+                            onChange={(option) => this.onChangeLesionList(selectedLesionObj.name, '', option)}
+                        />)
+                }
+            </div>
+        );
     }
 
     render() {
         const {lesion_types} = this.props;
-        let lesions = lesion_types.map((v, i) => {
+        let lesionsTypes = lesion_types.map((v, i) => {
             return {label: v.name, value: v.id}
         });
         return (
@@ -129,16 +246,19 @@ export default class MarkerPopup extends Component {
                             </Col>
                         </FormGroup>
                         <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
-                        <Select
-                            isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
-                            isMulti
-                            name="lesions"
-                            options={lesions}
-                            value={this.state.selectedLesions}
-                            styles={selectStyles}
-                            onChange={this.onChangeLesions.bind(this)}
-                        />
+                        {
+                            this.state.lesionList.length !== 0 ? this.renderLesion() :
+                                <Select
+                                    isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
+                                    placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
+                                    isMulti
+                                    name="lesions"
+                                    options={lesionsTypes}
+                                    value={this.state.selectedLesionTypes}
+                                    styles={selectStyles}
+                                    onChange={(options) => this.setState({selectedLesionTypes: options})}
+                                />
+                        }
 
                         <div className="actions">
                             <div className="left">
@@ -195,6 +315,12 @@ const CustomRadio = withStyles(theme => ({
 
 
 const selectStyles = {
+    container: (styles, {data}) => {
+        return {
+            ...styles,
+            marginBottom: 7,
+        };
+    },
     control: styles => ({...styles, backgroundColor: 'black'}),
     menu: styles => ({...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
     option: (styles, {data, isDisabled, isFocused, isSelected}) => {
@@ -221,6 +347,12 @@ const selectStyles = {
                 ...styles[':active'],
                 backgroundColor: !isDisabled && (isSelected ? 'yellow' : color.alpha(0.3).css()),
             },
+        };
+    },
+    singleValue: (styles, {data}) => {
+        return {
+            ...styles,
+            color: 'yellow',
         };
     },
     multiValue: (styles, {data}) => {
