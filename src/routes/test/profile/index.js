@@ -49,7 +49,7 @@ export default class Profile extends Component {
                 postcode: '',
                 referrer_by: '',
                 extra_info: '',
-                user_order: [],
+                user_subscription: [],
             },
             birthday: '',
             interestList: [],
@@ -429,13 +429,13 @@ export default class Profile extends Component {
                                             </thead>
                                             <tbody>
                                             {
-                                                this.state.userInfo.user_order.length === 0 ? null :
+                                                this.state.userInfo.user_subscription.length === 0 ? null :
                                                     <tr>
-                                                        <td className="text-center">{this.state.userInfo.user_order[0].product_plans.name} <IntlMessages id={"profile.plan"}/></td>
-                                                        <td className='text-center'><span className='text-primary'>{this.state.userInfo.user_order[0].status}</span></td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].created_at).format('MMM Do YYYY, HH:mm:ss')} <IntlMessages id={"profile.plan"}/></td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_order[0].expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                                        <td className="text-center">{this.state.userInfo.user_order[0].payment_type}</td>
+                                                        <td className="text-center">{this.state.userInfo.user_subscription[0].product_plans.name} <IntlMessages id={"profile.plan"}/></td>
+                                                        <td className='text-center'><span className='text-primary'>{this.state.userInfo.user_subscription[0].status}</span></td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_subscription[0].created_at).format('MMM Do YYYY, HH:mm:ss')} <IntlMessages id={"profile.plan"}/></td>
+                                                        <td className="text-center">{moment(this.state.userInfo.user_subscription[0].expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
+                                                        <td className="text-center">{this.state.userInfo.user_subscription[0].payment_type}</td>
                                                         <td />
                                                     </tr>
                                             }
@@ -460,7 +460,7 @@ export default class Profile extends Component {
                                 </thead>
                                 <tbody>
                                 {
-                                    this.state.userInfo.user_order.map((v, i) => (
+                                    this.state.userInfo.user_subscription.map((v, i) => (
                                         <tr key={i}>
                                             <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                             <td className="text-center">{v.product_plans.name} <IntlMessages id={"profile.plan"}/></td>

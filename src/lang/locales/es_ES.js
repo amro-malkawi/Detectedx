@@ -3,6 +3,7 @@ module.exports = {
     "test.moduleSets": "Conjuntos de módulos",
     "test.scores": "Puntuaciones",
     "test.start": "Inicio",
+    "test.free": "Gratis",
     "test.reStart": "Reiniciar",
     "test.continue": "Continuar",
     "test.instructionVideos": "Videos de instrucciones",

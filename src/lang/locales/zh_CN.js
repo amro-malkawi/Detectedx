@@ -3,6 +3,7 @@ module.exports = {
     "test.moduleSets": "模块集",
     "test.scores": "分数",
     "test.start": "开始",
+    "test.free": "免费",
     "test.reStart": "重新启动",
     "test.continue": "继续",
     "test.instructionVideos": "说明视频",
