@@ -4,6 +4,8 @@
    .app-container {
       margin: 0 auto;
       .app-header {
+         position: relative;
+         z-index: 2;
          padding: 1rem 0;
          margin: 0 1rem;
          .rct-header {

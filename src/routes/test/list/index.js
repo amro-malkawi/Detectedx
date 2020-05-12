@@ -158,7 +158,7 @@ class List extends Component {
     }
 
     renderInstructionVideo(thumbnail, video) {
-        if (video === null) return null;
+        if (video === null || video === '' || thumbnail === '' || thumbnail === null) return null;
         return (
             <div className={'instruction-video'} onClick={() => this.setState({isShowModalType: 'video', selectedVideoLink: video})}>
                 <img src={thumbnail} alt=''/>
@@ -227,7 +227,7 @@ class List extends Component {
 
     render() {
         return (
-            <div className="news-dashboard-wrapper mt-30 mb-20">
+            <div className="test-list-container news-dashboard-wrapper mt-30 mb-20">
                 <AppBar position="static" color="default" className={'mb-50'}>
                     <ModalityTabs
                         value={this.state.tabIndex}

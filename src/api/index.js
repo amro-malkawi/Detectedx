@@ -88,27 +88,12 @@ export function resetPassword(newPassword, accessToken) {
 /**
  * user operation
  */
-export function userList(page) {
-    let url = '/users?access_token=' + getAccessToken();
-    url += page !== undefined ? "&page=" + page : '';
-    return instance.get(url).then((response) => response.data);
-}
-
-export function userAdd(data) {
-    const url = '/users?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
 
 export function userUpdate(data) {
     const url = '/users/update-info?access_token=' + getAccessToken();
     delete data["created_at"];
     delete data["updated_at"];
     return instance.post(url, data).then((response) => response.data);
-}
-
-export function userDelete(id) {
-    const url = '/users/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
 }
 
 export function userInfo() {
@@ -153,41 +138,6 @@ export function countryList() {
  * test sets operation
  */
 
-export function testSetsList(page) {
-    let url = '/test_sets?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "modalities"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function testSetsAdd(data) {
-    const url = '/test_sets?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function testSetsUpdate(id, data) {
-    const url = '/test_sets/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function testSetsDelete(id) {
-    const url = '/test_sets/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-export function testSetsInfo(id) {
-    const url = '/test_sets/' + id + '?access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
-
-export function testSetsModality(id) {
-    const url = '/test_sets/' + id + '/modalities?access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
-
 export function testSetsCases(id) {
     const url = '/test_sets/' + id + '/test_set_cases?access_token=' + getAccessToken() + '&filter=' + encodeURI('{"order": "position ASC"}');
     return instance.get(url).then((response) => response.data);
@@ -199,62 +149,8 @@ export function postTestSetsCases(id) {
 }
 
 /**
- * modalities operation
- */
-
-export function modalitiesList(page) {
-    let url = '/modalities?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function modalitiesAdd(data) {
-    const url = '/modalities?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function modalitiesUpdate(id, data) {
-    const url = '/modalities/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function modalitiesDelete(id) {
-    const url = '/modalities/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-/**
  * test_set_cases operation
  */
-
-export function testSetCasesList(page) {
-    let url = '/test_set_cases?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "test_sets"}, {"relation": "test_cases"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function testSetCasesAdd(data) {
-    const url = '/test_set_cases?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function testSetCasesUpdate(id, data) {
-    const url = '/test_set_cases/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function testSetCasesDelete(id) {
-    const url = '/test_set_cases/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
 
 /**
  * test cases operation
@@ -274,217 +170,18 @@ export function testCasesAnswers(id, attempt_id, isPostTest) {
  * test-set-assignments operation
  */
 
-export function testSetAssignmentsList(page) {
-    let url = '/test_set_assignments?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "user"}, {"relation": "test_sets"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function testSetAssignmentsAdd(data) {
-    const url = '/test_set_assignments?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function testSetAssignmentsUpdate(id, data) {
-    const url = '/test_set_assignments/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function testSetAssignmentsDelete(id) {
-    const url = '/test_set_assignments/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
 export function currentTestSets() {
     const url = '/test_set_assignments/current_set_tests?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
 /**
- * roles operation
- */
-
-export function rolesList(page) {
-    let url = '/roles?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "user"}, {"relation": "clinics"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function rolesAdd(data) {
-    const url = '/roles?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function rolesUpdate(id, data) {
-    const url = '/roles/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function rolesDelete(id) {
-    const url = '/roles/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-/**
- * clinics operation
- */
-
-export function clinicsList(page) {
-    let url = '/clinics?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function clinicsAdd(data) {
-    const url = '/clinics?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function clinicsUpdate(id, data) {
-    const url = '/clinics/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function clinicsDelete(id) {
-    const url = '/clinics/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-/**
- * metrics operation
- */
-
-export function metricsList(page) {
-    let url = '/metrics?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function metricsAdd(data) {
-    const url = '/metrics?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function metricsUpdate(id, data) {
-    const url = '/metrics/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function metricsDelete(id) {
-    const url = '/metrics/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-/**
  * images operation
  */
-
-export function imagesList(page) {
-    let url = '/images?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += '&filter=' + encodeURI('{"include": [{"relation": "test_cases"}]}') + "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function imagesAdd(data) {
-    const url = '/images?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function imagesUpdate(id, data) {
-    const url = '/images/' + id + '?access_token=' + getAccessToken();
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function imagesDelete(id) {
-    const url = '/images/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
 
 export function imagesUrlTemplate(id, stack) {
     const url = '/images/' + id + '/urlTemplate/' + stack + '?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
-}
-
-/**
- * truths operation
- */
-
-export function truthsList(page) {
-    let url = '/truths?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function truthsAdd(data) {
-    const url = '/truths?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function truthsUpdate(id, data) {
-    const url = '/truths/' + id + '?access_token=' + getAccessToken();
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function truthsDelete(id) {
-    const url = '/truths/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-export function truthsBatchAdd(data) {
-    const url = '/truths/batchAdd?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-/**
- * rating-scales operation
- */
-
-export function ratingScalesList(page) {
-    let url = '/rating_scales?access_token=' + getAccessToken();
-    if (page !== undefined) {
-        url += "&page=" + page;
-    }
-    return instance.get(url).then((response) => response.data);
-}
-
-export function ratingScalesAdd(data) {
-    const url = '/rating_scales?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
-}
-
-export function ratingScalesUpdate(id, data) {
-    const url = '/rating_scales/' + id + '?access_token=' + getAccessToken();
-    return instance.patch(url, data).then((response) => response.data);
-}
-
-export function ratingScalesDelete(id) {
-    const url = '/rating_scales/' + id + '?access_token=' + getAccessToken();
-    return instance.delete(url).then((response) => response.data);
-}
-
-export function ratingScalesBatchAdd(data) {
-    const url = '/rating_scales/batchAdd?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
 }
 
 /**
@@ -494,13 +191,6 @@ export function ratingScalesBatchAdd(data) {
 export function attemptsAdd(data) {
     const url = '/attempts?access_token=' + getAccessToken();
     return instance.post(url, data).then((response) => response.data);
-}
-
-export function attemptsUpdate(id, data) {
-    const url = '/attempts/' + id + '?access_token=' + getAccessToken();
-    delete data["created_at"];
-    delete data["updated_at"];
-    return instance.patch(url, data).then((response) => response.data);
 }
 
 export function attemptsMoveTestCase(id, testCaseId) {
