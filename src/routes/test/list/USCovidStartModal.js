@@ -24,8 +24,8 @@ export default class USStartModal extends Component {
                             <p className="MsoNormal" align="center" style={{marginBottom: '.0001pt', textAlign: 'center', lineHeight: 'normal'}}>
             <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
-                CovED:  Improving recognition of COVID-19 on lung CT.<span style={{background: 'lime', msoHighlight: 'lime'}}><br/>
-                </span>April 3rd 2020 – April  3rd 2021
+                COVED I CME<span style={{background: 'lime', msoHighlight: 'lime'}}><br/>
+                </span>May 1, 2020 –April 30, 2020
               </span>
             </span>
                             </p>
@@ -35,11 +35,12 @@ export default class USStartModal extends Component {
               </span></span>
                                 <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif'}}>
-                This educational activity based on radiologic test sets and an interactive platform are designed to improve the diagnostic efficacy of radiologists and other clinicians.
-                  Each individual will be asked to assess clinically relevant lung CT images and try to identify appearances of COVID-19.
-                  Each individual will receive immediate feedback with scores for sensitivity, specificity and receiver operating characteristic (ROC).
-                  Personalized image files for each case judged will then be instantly provided showing correct decisions and any errors made.
-                  At the end there will be an 8-image posttest and if passed a CME certificate will be issued.
+                The CovED module is an educational platform to enhance radiologic detection of COVID-19 appearances on computed tomography images of the lung.
+                  The system is based on three parts. Firstly, individuals diagnose lung CT cases with known truth based on an expert panel. Once completed,
+                  background algorithms instantly assess and present the diagnostic performance of each individual.
+                  Finally, by analysing every reader-interaction with each image, a detailed review of each case is provided,
+                  allowing the individual to compare his or her judgement with that of an expert consensus and identify every diagnostic error made.
+                  The individual then completes a post test with a further set of images to be diagnosed to show their improvement in reading lung CT cases.
               </span>
             </span>
                             </p>
@@ -48,7 +49,7 @@ export default class USStartModal extends Component {
                 <b>Target Audience</b><br/>
               </span></span> <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
-                This activity is designed to meet the needs of physicians and other health care professionals involved in judging radiologic images.
+                This activity is designed to meet the needs of physicians and other health care professionals to recognize appearances of COVID-19 in Lung CT scans.
                 <span style={{color: '#333333'}}>
                   <br/>
                   <br/>
@@ -74,7 +75,7 @@ export default class USStartModal extends Component {
               <span style={{fontSize: '10.0pt', fontFamily: 'Symbol', msoFareastFontFamily: 'Symbol', msoBidiFontFamily: 'Symbol'}}><span style={{msoList: 'Ignore'}}>·<span
                   style={{font: '7.0pt "Times New Roman"'}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span></span></span><span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black', msoColorAlt: 'windowtext'}}>
-                Improved recognition of a range of COVID-19 appearances demonstrated in the image learning set;</span>
+                Recognize basic appearances of COVID-19 including: GGO, Consolidation and Crazy paving</span>
             </span>
                                 <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
@@ -96,7 +97,7 @@ export default class USStartModal extends Component {
               <span style={{fontSize: '10.0pt', fontFamily: 'Symbol', msoFareastFontFamily: 'Symbol', msoBidiFontFamily: 'Symbol'}}><span style={{msoList: 'Ignore'}}>·<span
                   style={{font: '7.0pt "Times New Roman"'}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span></span></span><span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black', msoColorAlt: 'windowtext'}}>
-                Be aware of the range of appearances of images without COVID-19 appearances and therefore minimise unnecessary call-backs;</span>
+                Identify where these appearances lie including the position in the lung.</span>
             </span>
                                 <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
@@ -118,79 +119,14 @@ export default class USStartModal extends Component {
               <span style={{fontSize: '10.0pt', fontFamily: 'Symbol', msoFareastFontFamily: 'Symbol', msoBidiFontFamily: 'Symbol'}}><span style={{msoList: 'Ignore'}}>·<span
                   style={{font: '7.0pt "Times New Roman"'}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span></span></span><span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black', msoColorAlt: 'windowtext'}}>
-                Improve perception and interpretation skills in the reading of Lung CT;</span>
+                Assess from these appearances as whether the case is COVID-19 Positive.</span>
             </span>
                                 <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
               </span>
             </span>
                             </p>
-                            <p className="MsoListParagraphCxSpMiddle" style={{
-                                marginTop: '0cm',
-                                marginRight: '0cm',
-                                marginBottom: '.0001pt',
-                                marginLeft: '54.0pt',
-                                msoAddSpace: 'auto',
-                                textIndent: '-18.0pt',
-                                lineHeight: 'normal',
-                                msoList: 'l3 level1 lfo5',
-                                background: 'white'
-                            }}>
-            <span>
-              <span style={{fontSize: '10.0pt', fontFamily: 'Symbol', msoFareastFontFamily: 'Symbol', msoBidiFontFamily: 'Symbol'}}><span style={{msoList: 'Ignore'}}>·<span
-                  style={{font: '7.0pt "Times New Roman"'}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </span></span></span><span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black', msoColorAlt: 'windowtext'}}>
-                Demonstrate an awareness of any personal weaknesses when searching for COVID-19 appearances or trying to recognise normal images;</span>
-            </span>
-                                <span>
-              <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
-              </span>
-            </span>
-                            </p>
-                            <p className="MsoListParagraphCxSpMiddle" style={{
-                                marginTop: '0cm',
-                                marginRight: '0cm',
-                                marginBottom: '.0001pt',
-                                marginLeft: '54.0pt',
-                                msoAddSpace: 'auto',
-                                textIndent: '-18.0pt',
-                                lineHeight: 'normal',
-                                msoList: 'l3 level1 lfo5',
-                                background: 'white'
-                            }}>
-            <span>
-              <span style={{fontSize: '10.0pt', fontFamily: 'Symbol', msoFareastFontFamily: 'Symbol', msoBidiFontFamily: 'Symbol'}}><span style={{msoList: 'Ignore'}}>·<span
-                  style={{font: '7.0pt "Times New Roman"'}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </span></span></span><span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black', msoColorAlt: 'windowtext'}}>
-                Assess detailed scores on personal performance levels using internationally recognised metrics;</span>
-            </span>
-                                <span>
-              <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
-              </span>
-            </span>
-                            </p>
-                            <p className="MsoListParagraphCxSpMiddle" style={{
-                                marginTop: '0cm',
-                                marginRight: '0cm',
-                                marginBottom: '.0001pt',
-                                marginLeft: '54.0pt',
-                                msoAddSpace: 'auto',
-                                textIndent: '-18.0pt',
-                                lineHeight: 'normal',
-                                msoList: 'l3 level1 lfo5',
-                                background: 'white'
-                            }}>
-            <span>
-              <span style={{fontSize: '10.0pt', fontFamily: 'Symbol', msoFareastFontFamily: 'Symbol', msoBidiFontFamily: 'Symbol'}}><span style={{msoList: 'Ignore'}}>·<span
-                  style={{font: '7.0pt "Times New Roman"'}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </span></span></span><span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black', msoColorAlt: 'windowtext'}}>
-                Demonstrate increased confidence when visualising radiologic images.</span>
-            </span>
-                                <span>
-              <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"'}}>
-              </span>
-            </span>
-                            </p>
+
                             <p className="MsoListParagraphCxSpLast"
                                style={{marginTop: '0cm', marginRight: '0cm', marginBottom: '.0001pt', marginLeft: '54.0pt', msoAddSpace: 'auto', lineHeight: 'normal', background: 'white'}}>
                                 <span/>
@@ -203,8 +139,7 @@ export default class USStartModal extends Component {
             <span>
               <b style={{msoBidiFontWeight: 'normal'}}>
                 <span style={{fontSize: '9.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: '#333333'}}>
-                  Activity is jointly-provided by AKH Inc.,
-                  Advancing Knowledge in Healthcare and DetectED-X.
+                 Activity is jointly-provided by AKH Inc., Advancing Knowledge in Healthcare and DetectED-X.
                 </span>
               </b>
             </span>
@@ -347,201 +282,8 @@ export default class USStartModal extends Component {
                                         </p>
                                     </td>
                                 </tr>
-                                <tr style={{msoYftiIrow: 2}}>
-                                    <td width={165} valign="top" style={{
-                                        width: '123.65pt',
-                                        border: 'solid black 1.0pt',
-                                        msoBorderThemecolor: 'text1',
-                                        borderTop: 'none',
-                                        msoBorderTopAlt: 'solid black .5pt',
-                                        msoBorderTopThemecolor: 'text1',
-                                        msoBorderAlt: 'solid black .5pt',
-                                        padding: '0cm 5.4pt 0cm 5.4pt'
-                                    }}>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Mary T Rickard, MB BS BSc(Med) FRANZCR DDU MPH
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Founder, DetectED-X
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Consultant Radiologist ,Breas tScreen <span style={{msoSpacerun: 'yes'}}>&nbsp;</span>NSW <span style={{msoSpacerun: 'yes'}}>&nbsp;</span>Adjunct
-                        Professor, Medical Imaging
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        University of Sydney
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Centennial Park, NSW, Australia
-                      </span>
-                    </span>
-                                        </p>
-                                    </td>
-                                    <td width={127} valign="top" style={{
-                                        width: '95.35pt',
-                                        borderTop: 'none',
-                                        borderLeft: 'none',
-                                        borderBottom: 'solid black 1.0pt',
-                                        msoBorderBottomThemecolor: 'text1',
-                                        borderRight: 'solid black 1.0pt',
-                                        msoBorderRightThemecolor: 'text1',
-                                        msoBorderTopAlt: 'solid black .5pt',
-                                        msoBorderTopThemecolor: 'text1',
-                                        msoBorderLeftAlt: 'solid black .5pt',
-                                        msoBorderLeftThemecolor: 'text1',
-                                        msoBorderAlt: 'solid black .5pt',
-                                        msoBorderThemecolor: 'text1',
-                                        padding: '0cm 5.4pt 0cm 5.4pt'
-                                    }}>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black'}}>
-                        N/A
-                      </span>
-                    </span>
-                                        </p>
-                                    </td>
-                                    <td width={331} valign="top" style={{
-                                        width: '248.5pt',
-                                        borderTop: 'none',
-                                        borderLeft: 'none',
-                                        borderBottom: 'solid black 1.0pt',
-                                        msoBorderBottomThemecolor: 'text1',
-                                        borderRight: 'solid black 1.0pt',
-                                        msoBorderRightThemecolor: 'text1',
-                                        msoBorderTopAlt: 'solid black .5pt',
-                                        msoBorderTopThemecolor: 'text1',
-                                        msoBorderLeftAlt: 'solid black .5pt',
-                                        msoBorderLeftThemecolor: 'text1',
-                                        msoBorderAlt: 'solid black .5pt',
-                                        msoBorderThemecolor: 'text1',
-                                        padding: '0cm 5.4pt 0cm 5.4pt'
-                                    }}>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black'}}>
-                        Nothing to disclose
-                      </span>
-                    </span>
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr style={{msoYftiIrow: 3}}>
-                                    <td width={165} valign="top" style={{
-                                        width: '123.65pt',
-                                        border: 'solid black 1.0pt',
-                                        msoBorderThemecolor: 'text1',
-                                        borderTop: 'none',
-                                        msoBorderTopAlt: 'solid black .5pt',
-                                        msoBorderTopThemecolor: 'text1',
-                                        msoBorderAlt: 'solid black .5pt',
-                                        padding: '0cm 5.4pt 0cm 5.4pt'
-                                    }}>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Mo'ayyad E. Suleiman, PhD
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        CTO at DetectED-X
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Post Doctoral fellow
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        University of Sydney
-                      </span>
-                    </span>
-                                        </p>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal', msoLayoutGridAlign: 'none', textAutospace: 'none'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif'}}>
-                        Padstow, NSW, Australia
-                        <span style={{background: 'lime', msoHighlight: 'lime'}}>
-                        </span>
-                      </span>
-                    </span>
-                                        </p>
-                                    </td>
-                                    <td width={127} valign="top" style={{
-                                        width: '95.35pt',
-                                        borderTop: 'none',
-                                        borderLeft: 'none',
-                                        borderBottom: 'solid black 1.0pt',
-                                        msoBorderBottomThemecolor: 'text1',
-                                        borderRight: 'solid black 1.0pt',
-                                        msoBorderRightThemecolor: 'text1',
-                                        msoBorderTopAlt: 'solid black .5pt',
-                                        msoBorderTopThemecolor: 'text1',
-                                        msoBorderLeftAlt: 'solid black .5pt',
-                                        msoBorderLeftThemecolor: 'text1',
-                                        msoBorderAlt: 'solid black .5pt',
-                                        msoBorderThemecolor: 'text1',
-                                        padding: '0cm 5.4pt 0cm 5.4pt'
-                                    }}>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black'}}>
-                        N/A
-                      </span>
-                    </span>
-                                        </p>
-                                    </td>
-                                    <td width={331} valign="top" style={{
-                                        width: '248.5pt',
-                                        borderTop: 'none',
-                                        borderLeft: 'none',
-                                        borderBottom: 'solid black 1.0pt',
-                                        msoBorderBottomThemecolor: 'text1',
-                                        borderRight: 'solid black 1.0pt',
-                                        msoBorderRightThemecolor: 'text1',
-                                        msoBorderTopAlt: 'solid black .5pt',
-                                        msoBorderTopThemecolor: 'text1',
-                                        msoBorderLeftAlt: 'solid black .5pt',
-                                        msoBorderLeftThemecolor: 'text1',
-                                        msoBorderAlt: 'solid black .5pt',
-                                        msoBorderThemecolor: 'text1',
-                                        padding: '0cm 5.4pt 0cm 5.4pt'
-                                    }}>
-                                        <p className="MsoNormal" style={{marginBottom: '.0001pt', lineHeight: 'normal'}}>
-                    <span>
-                      <span style={{fontSize: '8.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: 'black'}}>
-                        Nothing to disclose
-                      </span>
-                    </span>
-                                        </p>
-                                    </td>
-                                </tr>
+
+
                                 <tr style={{msoYftiIrow: 4}}>
                                     <td width={623} colSpan={3} valign="top" style={{
                                         width: '467.5pt',
@@ -843,13 +585,10 @@ export default class USStartModal extends Component {
                   Healthcare</a><br/>
                 <br/>
                 <b>Physicians</b><br/>
-                This activity has been planned and implemented in accordance with the
-                accreditation requirements and policies of the Accreditation Council for
-                Continuing Medical Education (ACCME) through the joint providership of AKH
-                Inc., Advancing Knowledge in Healthcare and Practice Profitability MD. AKH Inc.,
-                Advancing Knowledge in Healthcare is accredited by the Accreditation Council
-                for Continuing Medical Education (ACCME) to provide continuing medical
-                education for physicians.
+                This activity has been planned and implemented in accordance with the accreditation requirements and policies
+                  of the Accreditation Council for Continuing Medical Education (ACCME) through the joint providership of AKH Inc.,
+                  Advancing Knowledge in Healthcare and Practice Profitability MD. AKH Inc.,
+                  Advancing Knowledge in Healthcare is accredited by the Accreditation Council for Continuing Medical Education (ACCME) to provide continuing medical education for physicians
               </span>
             </span>
                             </p>
@@ -857,13 +596,11 @@ export default class USStartModal extends Component {
             <span>
               <span style={{fontSize: '10.0pt', fontFamily: '"Arial",sans-serif', msoFareastFontFamily: '"Times New Roman"', color: '#333333'}}>
                 <br/>
-                AKH Inc., Advancing Knowledge in Healthcare designates each live activity for a
-                maximum of 6.0 <i>AMA PRA Category 1 Credit(s)™</i>. Physicians should claim
-                only the credit commensurate with the extent of their participation in the
-                activity.<br/>
+                AKH Inc., Advancing Knowledge in Healthcare designates each live activity for a maximum of 2.0<i>AMA PRA Category 1 Credit(s)™</i>.
+                  Physicians should claim only the credit commensurate with the extent of their participation in the activity.<br/>
                 <br/>
                 <b>Physician Assistants</b><br/>
-                NCCPA accepts A<i>MA PRA Category 1&nbsp;Credit™</i>&nbsp;from organizations
+                NCCPA accepts <i>AMA PRA Category 1&nbsp;Credit™</i>&nbsp;from organizations
                 accredited by ACCME.
               </span>
             </span>
