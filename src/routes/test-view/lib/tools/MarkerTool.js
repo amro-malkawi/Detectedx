@@ -51,7 +51,7 @@ export default class MarkerTool extends BaseAnnotationTool {
         const toolData  = cornerstoneTools.getToolState(evt.currentTarget, this.name);
 
         // we can't draw anything unless the tool instance has some marks
-        if (toolData == undefined || toolData.data == undefined) {
+        if (toolData === undefined || toolData.data === undefined) {
             return;
         }
 
@@ -67,14 +67,32 @@ export default class MarkerTool extends BaseAnnotationTool {
             let radius = mark.radius * viewport.scale;
 
             draw(context, context => {
-                let lesionNames = [];
-                console.log('asdf', mark);
+                let lesionNameObj = [];
                 MarkerTool.lesions.forEach((v) => {
                     if(mark.lesionTypes.indexOf(v.id) !== -1) {
-                        lesionNames.push(v.name);
+                        lesionNameObj.push(v.name);
                     }
                 });
-                lesionNames = lesionNames.concat(Object.keys(mark.lesionList));
+                let lesionNames = '';
+                if(lesionNameObj.length === 0 && mark.lesionList !== undefined && mark.lesionList !== null && mark.lesionList !== {}) {
+                    const rootLesion = Object.keys(mark.lesionList)[0];
+                    if(rootLesion === undefined) {
+                        lesionNames = '';
+                    } else {
+                        if(typeof mark.lesionList[rootLesion] === "object") {
+                            lesionNames = rootLesion + ' > ';
+                            Object.keys(mark.lesionList[rootLesion]).forEach((key) => {
+                                 lesionNames += key + '(' + mark.lesionList[rootLesion][key] + '),';
+                            });
+                        } else if(typeof mark.lesionList[rootLesion] === "string" && mark.lesionList[rootLesion].length > 0) {
+                            lesionNames = rootLesion + ' > ' + mark.lesionList[rootLesion];
+                        } else {
+                            lesionNames = rootLesion;
+                        }
+                    }
+                } else {
+                    lesionNames = lesionNameObj.join(',');
+                }
                 let colour;
                 let padding;
                 if (mark.isTruth) {
@@ -100,7 +118,7 @@ export default class MarkerTool extends BaseAnnotationTool {
                         drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {centering: {x: true, y: true}});
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)}) (R = ${mark.radius})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     }
-                    drawTextBox(context, lesionNames.join(','), textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
+                    drawTextBox(context, lesionNames, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                 }
             });
         }
