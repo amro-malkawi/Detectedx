@@ -215,6 +215,7 @@ class _OrderForm extends Component {
             return (
                 <PaypalButton
                     planId=''
+                    currency={this.props.productCurrency}
                     createOrder={this.onPaypalCreateOrder.bind(this)}
                     onApprove={this.onPaypalApprove.bind(this)}
                     onSuccess={null}
