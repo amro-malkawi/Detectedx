@@ -116,10 +116,10 @@ class List extends Component {
     }
 
     renderStartButton(test_set_item, modality_type) {
-        const {id, attempts, has_post, paid, price, currency} = test_set_item;
+        const {id, attempts, has_post, test_set_paid, price, currency} = test_set_item;
         const test_set_id = id;
         let attempt = attempts[0];
-        if (!paid) {
+        if (!test_set_paid) {
             return (
                 <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm" onClick={() => price === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
                     {price === 0 ? <IntlMessages id="test.free"/> : (price + ' ' + currency)}
