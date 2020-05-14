@@ -392,7 +392,7 @@ export function orderPaypalApprove(paymentInfo, planId) {
 }
 
 /**
- * order orders
+ * user orders
  */
 export function orderTestSetStripe(testSetId, price, currency, token) {
     const url = 'user_orders/test_set_stripe?access_token=' + getAccessToken();
