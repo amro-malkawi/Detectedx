@@ -13,15 +13,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import MenuIcon from '@material-ui/icons/Menu';
 import { withRouter } from 'react-router-dom';
 import $ from 'jquery';
-
-// actions
 import { collapsedSidebarAction } from 'Actions';
-// helpers
 import { getAppLayout } from "Helpers/helpers";
 import UserInfo from './UserInfo';
 import Logout from './Logout';
 import LanguageProvider from "./LanguageProvider";
 import InstructionModal from "Routes/test-view/InstructionModal";
+import SubscriptionPlansModal from "Components/Payment/SubscriptionPlansModal";
 import IntlMessages from "Util/IntlMessages";
 
 class Header extends Component {
@@ -30,7 +28,8 @@ class Header extends Component {
       customizer: false,
       isMobileSearchFormVisible: false,
       isShowInstructionModal: false,
-   }
+      isShowSubscriptionPlanModal: false,
+   };
 
    // function to change the state of collapsed sidebar
    onToggleNavCollapsed = (event) => {
@@ -97,6 +96,11 @@ class Header extends Component {
                            <IntlMessages id={"header.instructions"}/>
                         </Button>
                   </li>
+                  <li className="list-inline-item">
+                        <Button onClick={() => this.setState({isShowSubscriptionPlanModal: true})} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">
+                           <IntlMessages id={"header.subscribe"}/>
+                        </Button>
+                  </li>
                   <LanguageProvider />
                   <UserInfo history={this.props.history}/>
                   <Logout />
@@ -106,6 +110,10 @@ class Header extends Component {
                 isOpen={this.state.isShowInstructionModal}
                 toggle={() => this.setState({isShowInstructionModal: false})}
                 theme={'white'}
+            />
+            <SubscriptionPlansModal
+                isOpen={this.state.isShowSubscriptionPlanModal}
+                onClose={() => this.setState({isShowSubscriptionPlanModal: false})}
             />
          </AppBar>
       );

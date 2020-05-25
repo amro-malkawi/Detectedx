@@ -1,0 +1,27 @@
+/*====== Components styles ======*/
+
+/*====== Payment component ======*/
+
+.modal-plan-container {
+  .price-list {
+    height: 510px;
+  }
+
+  .subscription-modal-title {
+    padding: 20px 80px 10px 80px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #dddddd;
+
+    span {
+      color: #444444;
+      font-family: din-next-w01-light, sans-serif;
+      font-size: 30px;
+      font-weight: 900;
+    }
+  }
+
+  .plan-zoom-out {
+    transform: scale( 0.8 );
+    margin-top: -41px;
+  }
+}

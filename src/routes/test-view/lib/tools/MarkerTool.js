@@ -74,7 +74,7 @@ export default class MarkerTool extends BaseAnnotationTool {
                     }
                 });
                 let lesionNames = '';
-                if(lesionNameObj.length === 0 && mark.lesionList !== undefined && mark.lesionList !== null && mark.lesionList !== {}) {
+                if(mark.lesionList !== undefined && mark.lesionList !== null && mark.lesionList !== {}) {
                     const rootLesion = Object.keys(mark.lesionList)[0];
                     if(rootLesion === undefined) {
                         lesionNames = '';

@@ -594,16 +594,14 @@
       font-size: 42px;
     }
   }
+}
 
-  .price-list {
+.plan-item {
+  padding: 3.125rem;
+  box-shadow: 1px 1px 7px 1px #aaaaaa80 !important;
 
-    .rct-block {
-      padding: 3.125rem;
-      box-shadow: 1px 1px 7px 1px #aaaaaa80;
-      p {
-        margin-bottom: 1.25rem; //20px;
-      }
-    }
+  p {
+    margin-bottom: 1.25rem; //20px;
   }
 
   .pricing-title {
@@ -702,10 +700,12 @@
   .row {
     margin: 0;
   }
+
   .order-title {
     padding: 20px 80px 10px 80px;
     margin-bottom: 20px;
     border-bottom: 2px solid #dddddd;
+
     span {
       color: #444444;
       font-family: din-next-w01-light, sans-serif;
@@ -713,17 +713,21 @@
       font-weight: 900;
     }
   }
+
   .payment-type {
     width: 100%;
     padding: 0;
     background-color: white;
+
     .payment-type-header {
       border: 1px solid #d9dbdd;
+
       i {
         font-size: 27px;
         color: #0D47A1;
       }
     }
+
     .payment-type-text {
       span {
         font-size: 15px;
@@ -731,9 +735,11 @@
         color: #242424;
       }
     }
+
     .payment-radio {
       padding: 5px 12px;
     }
+
     .payment-content {
       border: 1px solid #d9dbdd;
       border-top-width: 0;
@@ -754,13 +760,16 @@
         border-radius: 2px;
         border-width: 1px;
       }
+
       .invalid {
         .StripeElement {
           border: 1px solid red;
         }
       }
+
       .payment-card-number {
         position: relative;
+
         i {
           position: absolute;
           top: 10px;
@@ -768,23 +777,28 @@
           font-size: 18px;
         }
       }
+
       .payment-card-list {
         text-align: center;
         margin-top: 25px;
+
         img {
           width: 40px;
           height: auto;
           margin: 0 5px;
         }
       }
+
       &.paypal {
         border-bottom-width: 1px;
         padding: 30px;
+
         p:nth-child(1) {
           font-family: Avenir, sans-serif;
           font-size: 16px;
           color: #242424;
         }
+
         p:nth-child(2) {
           font-family: Avenir, sans-serif;
           font-size: 16px;
@@ -797,6 +811,7 @@
   .order-info {
     background-color: #f4f4f4;
     padding: 30px 50px;
+
     .order-summery {
       font-family: din-next-w01-light, sans-serif;
       font-size: 24px;
@@ -805,27 +820,32 @@
       color: #242424;
       margin-bottom: 20px;
     }
+
     .order-info-item {
       font-family: din-next-w01-light, sans-serif;
       font-size: 16px;
       color: #242424;
       margin: 5px 0;
+
       span:nth-child(2) {
         float: right;
       }
     }
+
     .order-info-split {
       width: 100%;
       height: 1px;
       background-color: #ddd;
       margin: 30px 0;
     }
+
     .order-info-price {
       font-family: din-next-w01-light, sans-serif;
       font-size: 24px;
       font-weight: 900;
       color: #242424;
     }
+
     .buy-button {
       width: 100%;
       height: 45px;
@@ -837,11 +857,13 @@
       color: white;
       background-color: #2c2e2f;
       background-image: none;
+
       i {
         font-size: 25px;
         line-height: 33px;
         color: #08e408;
       }
+
       .paypal-button {
         text-align: center;
         padding-top: 5px;

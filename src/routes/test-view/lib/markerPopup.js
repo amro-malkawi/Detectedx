@@ -66,7 +66,7 @@ export default class MarkerPopup extends Component {
         if (
             type === 'save' && Number(this.state.selectedRating) > 2
         ) {
-            if(this.state.lesionList.length === 0) {
+            if(this.state.lesionList === null || this.state.lesionList.length === 0) {
                 // old lesion types check
                 if (this.state.selectedLesionTypes === null || this.state.selectedLesionTypes.length === 0) {
                     NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
@@ -247,7 +247,7 @@ export default class MarkerPopup extends Component {
                         </FormGroup>
                         <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
                         {
-                            this.state.lesionList.length !== 0 ? this.renderLesion() :
+                            this.state.lesionList !== null && this.state.lesionList.length !== 0 ? this.renderLesion() :
                                 <Select
                                     isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
                                     placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}

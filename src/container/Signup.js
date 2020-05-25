@@ -229,7 +229,6 @@ class Signup extends Component {
 
     onNextForm() {
         if(this.validate()) {
-            console.log('asdfasdfasdf');
             this.setState({formType: 'info'});
         }
     }
@@ -698,7 +697,7 @@ class Signup extends Component {
                                 <div className="d-flex justify-content-between">
                                     <div className="session-logo">
                                         <Link to="/">
-                                            <img src={AppConfig.appLogo} alt="session-logo" width="209" height="44"/>
+                                            <img src={AppConfig.appLogo} alt="session-logo" width="120" height="29"/>
                                         </Link>
                                     </div>
                                     <div>

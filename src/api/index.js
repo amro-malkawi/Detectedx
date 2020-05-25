@@ -368,7 +368,7 @@ export function shapeDeleteAll(imageId, attemptId, testCaseId, type) {
  */
 
 export function getProductPlans() {
-    const url = '/product_plans/list?access_token=' + getAccessToken();
+    const url = '/subscription_plans/list?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -388,6 +388,22 @@ export function orderPaypalCreateSubscription(planId) {
 
 export function orderPaypalApprove(paymentInfo, planId) {
     const url = 'user_subscriptions/subscription_paypal_approve?access_token=' + getAccessToken();
+    return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
+}
+
+
+export function subscriptionPlanStripe(planId, price, currency, token) {
+    const url = 'user_subscriptions/plan_stripe?access_token=' + getAccessToken();
+    return instance.post(url, {planId, price, currency, token}).then((response) => response.data);
+}
+
+export function subscriptionPlanPaypalCreate(planId, price, currency) {
+    const url = 'user_subscriptions/plan_paypal_create?access_token=' + getAccessToken();
+    return instance.post(url, {planId, currency, price}).then((response) => response.data);
+}
+
+export function subscriptionPlanPaypalApprove(paymentInfo, planId) {
+    const url = 'user_subscriptions/plan_paypal_approve?access_token=' + getAccessToken();
     return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
 }
 

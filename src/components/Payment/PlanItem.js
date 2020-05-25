@@ -3,15 +3,10 @@
  */
 import React from 'react';
 import { Button } from 'reactstrap';
-
-// component
 import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
 
-// intl messages
-import IntlMessages from 'Util/IntlMessages'
-
-const PricingBlock = ({ planType, type, description, price, users, features, color, buttonText, onClick }) => (
-   <RctCollapsibleCard customClasses="text-center" colClasses="col-md-4">
+const PlanItem = ({ planType, type, description, price, currency, planSubscribed, users, features, color, onClick }) => (
+   <RctCollapsibleCard customClasses="text-center plan-item" colClasses="col-md-4">
       <div className="pricing-icon mb-40">
          <img src={require('Assets/img/pricing-icon.png')} alt="pricing icon" className="img-fluid" width="" height="" />
       </div>
@@ -21,12 +16,12 @@ const PricingBlock = ({ planType, type, description, price, users, features, col
       <div className="mb-10">
          {planType === 'free' ?
             <h2 className="amount-title">price</h2>
-            : <h2 className="amount-title">${price}<sub>/year</sub></h2>
+            : <h2 className="amount-title">{price} {currency}<sub>/year</sub></h2>
          }
          <span className="text-muted small">For {users} user</span>
       </div>
-       <Button color={color} className='btn-block btn-lg mb-20' onClick={onClick}>
-           {buttonText}
+       <Button color={color} className='btn-block btn-lg mb-20' onClick={onClick} disabled={planSubscribed}>
+           {planSubscribed ? "Subscribed" : "Select"}
        </Button>
       <ul className="price-detail list-unstyled">
          {features.map((feature, key) => (
@@ -36,4 +31,4 @@ const PricingBlock = ({ planType, type, description, price, users, features, col
    </RctCollapsibleCard>
 );
 
-export default PricingBlock;
+export default PlanItem;

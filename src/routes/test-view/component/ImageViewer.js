@@ -340,11 +340,13 @@ class ImageViewer extends Component {
         setTimeout(function () {
             const shapeId = event.detail.measurementData.id;
             const type = event.detail.toolName || event.detail.toolType;
-            Apis.shapeDelete(shapeId).then(resp => {
-                const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
-                that.shapeList[type].splice(index, 1);
-                this.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', that.shapeList);
-            });
+            if(that.shapeList[type] !== undefined) {
+                Apis.shapeDelete(shapeId).then(resp => {
+                    const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
+                    that.shapeList[type].splice(index, 1);
+                    this.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', that.shapeList);
+                });
+            }
         }, 500);
     }
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 // components
-import PricingBlock from './PricingBlock';
+import PlanItem from 'Components/Payment/PlanItem';
 import * as selectors from "Selectors";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -55,7 +55,7 @@ class Pricing extends Component{
                     <div className="row row-eq-height">
                         {
                             this.state.plans.map((v) => (
-                                <PricingBlock
+                                <PlanItem
                                     key={v.id}
                                     planType={v.name}
                                     type={v.name}

@@ -198,6 +198,7 @@ module.exports = {
 
     "header.modules": "Módulos",
     "header.instructions": "Instrucciones",
+    "header.subscribe": "Subscribir",
     "header.userInfo": "Información del usuario",
     "header.logout": "Cerrar sesión",
     "header.languages": "Idiomas",

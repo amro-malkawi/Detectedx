@@ -198,6 +198,7 @@ module.exports = {
 
     "header.modules": "模块",
     "header.instructions": "指令",
+    "header.subscribe": "订阅",
     "header.userInfo": "用户信息",
     "header.logout": "注销",
     "header.languages": "语言",

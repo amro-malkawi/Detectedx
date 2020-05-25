@@ -1,22 +1,12 @@
 import React, {Component} from 'react';
-import {Dialog, Button, List, ListItem, ListItemIcon, ListItemText, Collapse, Radio, CircularProgress} from "@material-ui/core";
-import {withStyles} from "@material-ui/core/styles";
-import {Col, Input} from "reactstrap";
-import StripeScriptLoader from 'react-stripe-script-loader';
-import {
-    Elements,
-    CardNumberElement,
-    CardExpiryElement,
-    CardCVCElement,
-    StripeProvider,
-    injectStripe
-} from 'react-stripe-elements';
-import {NotificationManager} from "react-notifications";
-import {connect} from "react-redux";
+import {CardCVCElement, CardExpiryElement, CardNumberElement, Elements, injectStripe, StripeProvider} from "react-stripe-elements";
+import StripeScriptLoader from "react-stripe-script-loader";
 import * as selectors from "Selectors";
-import * as Apis from 'Api';
+import {connect} from "react-redux";
+import {NotificationManager} from "react-notifications";
+import {Col, Input} from "reactstrap";
+import {Button, CircularProgress, Collapse, List, ListItem, ListItemIcon, ListItemText, Radio} from "@material-ui/core";
 import PaypalButton from "./PaypalButton";
-import PropTypes from "prop-types";
 
 class _OrderForm extends Component {
     constructor(props) {
@@ -121,24 +111,13 @@ class _OrderForm extends Component {
     }
 
     onPaypalCreateOrder(data, actions) {
-        // return Apis.orderPaypalCreateSubscription(this.props.plan.id).then(resp => resp.id);
         return this.props.onPaypalOrderCreate();
     }
 
     onPaypalApprove(data, actions) {
-        // return Apis.orderPaypalApprove(JSON.stringify(data), this.props.plan.id).then((resp) => {
-        //     const that = this;
-        //     setTimeout(() => {
-        //         // that.props.onClose()
-        //         that.props.history.push('/app/test/profile');
-        //     }, 500);
-        // }).catch((e) => {
-        //     if (e.response) NotificationManager.error(e.response.data.error.message);
-        // });
         return this.props.onPaypalOrderApprove(data).then((resp) => {
             const that = this;
             setTimeout(() => {
-                // that.props.history.push('/app/test/profile');
                 that.props.onFinish();
             }, 500);
         }).catch(e => {
@@ -282,59 +261,35 @@ class _OrderForm extends Component {
 
 const OrderForm = injectStripe(_OrderForm);
 
-class PayModal extends Component {
+class Checkout extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
 
-    static propTypes = {
-        productPrice: PropTypes.number.isRequired,
-        productName: PropTypes.string,
-        userName: PropTypes.string,
-        isOpen: PropTypes.bool.isRequired,
-        onStripeOrder: PropTypes.func.isRequired,
-        onPaypalOrderCreate: PropTypes.func.isRequired,
-        onPaypalOrderApprove: PropTypes.func.isRequired,
-        onFinish: PropTypes.func,
-        onClose: PropTypes.func.isRequired,
-    };
-
-    static defaultProps = {
-        productPrice: 0,
-        productName: '',
-        userName: '',
-        onFinish: () => null,
-    };
+        }
+    }
 
     render() {
-        const {
-            isOpen,
-            onClose,
-        } = this.props;
         return (
-            <FullDialog open={isOpen} onClose={onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth style={{container: {height: '100%'}}}>
-                <StripeScriptLoader
-                    uniqueId='lhojhkjhi9879798799'
-                    script='https://js.stripe.com/v3/'
-                    loader="Loading..."
-                >
-                    <StripeProvider apiKey={'pk_test_o94dTQYi7yrYebuzehraBcqk00QCQPvwhk'}>
-                        <Elements>
-                            <OrderForm {...this.props} />
-                        </Elements>
-                    </StripeProvider>
-                </StripeScriptLoader>
-            </FullDialog>
-        )
+            <StripeScriptLoader
+                uniqueId='lhojhkjhi9879798799'
+                script='https://js.stripe.com/v3/'
+                loader="Loading..."
+            >
+                <StripeProvider apiKey={'pk_test_o94dTQYi7yrYebuzehraBcqk00QCQPvwhk'}>
+                    <Elements>
+                        <OrderForm {...this.props} />
+                    </Elements>
+                </StripeProvider>
+            </StripeScriptLoader>
+        );
     }
+
 }
 
 const mapStateToProps = (state) => ({
     userName: selectors.getUserName(state),
+    userEmail: selectors.getUserEmail(state),
 });
 
-export default connect(mapStateToProps, {})(PayModal);
-
-const FullDialog = withStyles(theme => ({
-    paper: {
-        height: 570,
-        maxWidth: 1100
-    }
-}))(Dialog);
+export default connect(mapStateToProps, {})(Checkout);

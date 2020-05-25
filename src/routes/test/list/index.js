@@ -9,16 +9,16 @@ import {AppBar, Tabs, Tab} from '@material-ui/core';
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import SwipeableViews from 'react-swipeable-views';
 import * as Apis from 'Api';
+import IntlMessages from "Util/IntlMessages";
+import {connect} from "react-redux";
 import USStartModal from './USStartModal';
 import USCovidStartModal from './USCovidStartModal';
 import LearningModal from "./LearningModal";
 import LearningCovidModal from "./LearningCovidModal";
 import VideoModal from "./VideoModal";
-import PayModal from "./PayModal";
-import IntlMessages from "Util/IntlMessages";
-import {connect} from "react-redux";
+import CheckoutModal from "Components/Payment/CheckoutModal";
 
-class List extends Component {
+export default class List extends Component {
 
     constructor(props) {
         super(props);
@@ -115,6 +115,10 @@ class List extends Component {
         this.getTestSetsList();
     }
 
+    onShowDescription(id) {
+
+    }
+
     renderStartButton(test_set_item, modality_type) {
         const {id, attempts, has_post, test_set_paid, price, currency} = test_set_item;
         const test_set_id = id;
@@ -191,23 +195,31 @@ class List extends Component {
                             return (
                                 <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1" key={index}>
                                     <Card className="rct-block">
-                                        <CardBody className="d-flex justify-content-between">
-                                            <div>
-                                                <p className="fs-14 fw-bold mb-5">{item.name}</p>
-                                                <span className="fs-12 d-block text-muted">{modality_info.name}</span>
+                                        <CardBody>
+                                            <div className="d-flex justify-content-between">
+                                                <div>
+                                                    <p className="fs-14 fw-bold mb-5">{item.name}</p>
+                                                    <span className="test-list-desc" onClick={() => this.onShowDescription(item.id)}>Description</span>
+                                                </div>
+                                                <div className={'test-list-action-buttons'}>
+                                                    {
+                                                        item.attempts.some((v) => v.complete) ?
+                                                            <Button
+                                                                className="mr-10 mt-5 mb-5"
+                                                                outline color="info" size="sm"
+                                                                onClick={() => this.props.history.push('/app/test/complete-list/' + item.id)}>
+                                                                <IntlMessages id="test.scores"/>
+                                                            </Button> : null
+                                                    }
+                                                    {this.renderStartButton(item, modality_info.modality_type)}
+                                                </div>
                                             </div>
-                                            <div className={'test-list-action-buttons'}>
-                                                {
-                                                    item.attempts.some((v) => v.complete) ?
-                                                        <Button
-                                                            className="mr-10 mt-5 mb-5"
-                                                            outline color="info" size="sm"
-                                                            onClick={() => this.props.history.push('/app/test/complete-list/' + item.id)}>
-                                                            <IntlMessages id="test.scores"/>
-                                                        </Button> : null
-                                                }
-                                                {this.renderStartButton(item, modality_info.modality_type)}
-                                            </div>
+                                            {
+                                                item.test_set_desc !== null && item.test_set_desc !== '' &&
+                                                <div className={'test-list-desc-text'}>
+                                                    {item.test_set_desc}
+                                                </div>
+                                            }
                                         </CardBody>
                                     </Card>
                                 </div>
@@ -277,12 +289,10 @@ class List extends Component {
                     onClose={() => this.setState({isShowModalType: ''})}
                     link={this.state.selectedVideoLink}
                 />
-                <PayModal
+                <CheckoutModal
                     productPrice={this.state.selectedItem.price}
                     productCurrency={this.state.selectedItem.currency}
                     productName={this.state.selectedItem.name}
-                    userName={this.props.userName}
-                    userEmail={this.props.userEmail}
                     isOpen={this.state.isShowModalType === 'pay'}
                     onStripeOrder={(token) => this.onStripeOrder(token, this.state.selectedItem.id, this.state.selectedItem.price, this.state.selectedItem.currency)}
                     onPaypalOrderCreate={() => this.onPaypalOrderCreate(this.state.selectedItem.id, this.state.selectedItem.price, this.state.selectedItem.currency)}
@@ -294,13 +304,6 @@ class List extends Component {
         )
     }
 }
-
-const mapStateToProps = ({authUser}) => {
-    const {userName, userEmail} = authUser;
-    return {userName, userEmail};
-};
-
-export default connect(mapStateToProps, null)(List);
 
 const ModalityTabs = withStyles({
     root: {},
