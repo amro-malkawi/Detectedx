@@ -19,7 +19,7 @@ import UserInfo from './UserInfo';
 import Logout from './Logout';
 import LanguageProvider from "./LanguageProvider";
 import InstructionModal from "Routes/test-view/InstructionModal";
-import SubscriptionPlansModal from "Components/Payment/SubscriptionPlansModal";
+import PaymentModal from "Components/Payment/PaymentModal";
 import IntlMessages from "Util/IntlMessages";
 
 class Header extends Component {
@@ -111,10 +111,14 @@ class Header extends Component {
                 toggle={() => this.setState({isShowInstructionModal: false})}
                 theme={'white'}
             />
-            <SubscriptionPlansModal
-                isOpen={this.state.isShowSubscriptionPlanModal}
-                onClose={() => this.setState({isShowSubscriptionPlanModal: false})}
-            />
+             {
+                 this.state.isShowSubscriptionPlanModal &&
+                 <PaymentModal
+                     type={'plan'}
+                     onFinish={() => {this.setState({isShowSubscriptionPlanModal: false}); window.location.reload();}}
+                     onClose={() => {this.setState({isShowSubscriptionPlanModal: false})}}
+                 />
+             }
          </AppBar>
       );
    }

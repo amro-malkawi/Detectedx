@@ -73,31 +73,30 @@ export default class MarkerTool extends BaseAnnotationTool {
                         lesionNameObj.push(v.name);
                     }
                 });
-                let lesionNames = '';
+                let lesionNames = [];
                 if(mark.lesionList !== undefined && mark.lesionList !== null && mark.lesionList !== {}) {
                     const rootLesion = Object.keys(mark.lesionList)[0];
-                    if(rootLesion === undefined) {
-                        lesionNames = '';
-                    } else {
+                    if(rootLesion !== undefined) {
                         if(typeof mark.lesionList[rootLesion] === "object") {
-                            lesionNames = rootLesion + ' > ';
+                            lesionNames.push(rootLesion);
                             Object.keys(mark.lesionList[rootLesion]).forEach((key) => {
-                                 lesionNames += key + '(' + mark.lesionList[rootLesion][key] + '),';
+                                lesionNames.push(mark.lesionList[rootLesion][key]);
                             });
                         } else if(typeof mark.lesionList[rootLesion] === "string" && mark.lesionList[rootLesion].length > 0) {
-                            lesionNames = rootLesion + ' > ' + mark.lesionList[rootLesion];
+                            lesionNames.push(rootLesion);
+                            lesionNames.push(mark.lesionList[rootLesion]);
                         } else {
-                            lesionNames = rootLesion;
+                            lesionNames.push(rootLesion);
                         }
                     }
                 } else {
-                    lesionNames = lesionNameObj.join(',');
+                    lesionNames = lesionNameObj;
                 }
                 let colour;
                 let padding;
                 if (mark.isTruth) {
                     colour = this.configuration.truthColour;
-                    padding = (lesionNames.length > 0 ? -30 : -15) - radius;
+                    padding = -15 - ((lesionNames.length + 1) * 15) - radius;
                 }
                 else {
                     colour = this.configuration.answerColour;
@@ -118,7 +117,9 @@ export default class MarkerTool extends BaseAnnotationTool {
                         drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {centering: {x: true, y: true}});
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)}) (R = ${mark.radius})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     }
-                    drawTextBox(context, lesionNames, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
+                    lesionNames.forEach((v, i) => {
+                        drawTextBox(context, v, textCoords.x, textCoords.y + padding + (15 * (i + 1)), colour, {centering: {x: true, y: true}});
+                    });
                 }
             });
         }

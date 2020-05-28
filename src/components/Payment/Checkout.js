@@ -208,52 +208,47 @@ class _OrderForm extends Component {
 
     render() {
         return (
-            <div className={'site-order'}>
-                <div className={'order-title'}>
-                    <span>Checkout</span>
-                </div>
-                <div className={'row p-20'}>
-                    <Col sm={7}>
-                        <List component="nav" className={'payment-type'}>
-                            <ListItem button onClick={() => this.onChangePaymentType('card')} className={'payment-type-header'}>
-                                <ListItemIcon>
-                                    <i className={'zmdi zmdi-card'}/>
-                                </ListItemIcon>
-                                <ListItemText inset primary="Credit / Debit Card" className={'payment-type-text'}/>
-                                <Radio color="primary" className={'payment-radio'} checked={this.state.paymentType === 'card'}/>
-                            </ListItem>
-                            <Collapse in={this.state.paymentType === 'card'} timeout="auto" unmountOnExit>
-                                {this.renderCardBlock()}
-                            </Collapse>
+            <div className={'row p-20 site-order'}>
+                <Col sm={7}>
+                    <List component="nav" className={'payment-type'}>
+                        <ListItem button onClick={() => this.onChangePaymentType('card')} className={'payment-type-header'}>
+                            <ListItemIcon>
+                                <i className={'zmdi zmdi-card'}/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Credit / Debit Card" className={'payment-type-text'}/>
+                            <Radio color="primary" className={'payment-radio'} checked={this.state.paymentType === 'card'}/>
+                        </ListItem>
+                        <Collapse in={this.state.paymentType === 'card'} timeout="auto" unmountOnExit>
+                            {this.renderCardBlock()}
+                        </Collapse>
 
-                            <ListItem button onClick={() => this.onChangePaymentType('paypal')} className={'payment-type-header'}>
-                                <ListItemIcon>
-                                    <i className={'zmdi zmdi-paypal-alt'}/>
-                                </ListItemIcon>
-                                <ListItemText inset primary="Paypal" className={'payment-type-text'}/>
-                                <Radio color="primary" className={'payment-radio'} checked={this.state.paymentType === 'paypal'}/>
-                            </ListItem>
-                            <Collapse in={this.state.paymentType === 'paypal'} timeout="auto" unmountOnExit>
-                                {this.renderPaypalBlock()}
-                            </Collapse>
-                        </List>
-                    </Col>
-                    <Col sm={5}>
-                        <div className={'order-info'}>
-                            <p className={'order-summery'}>Order Summary</p>
-                            <div className={'order-info-item'}>
-                                <span>Name</span>
-                                <span>{this.props.productName}</span>
-                            </div>
-                            <div className={'order-info-split'}/>
-                            <div className={'order-info-item'}>
-                                <span>Cost</span>
-                                <span className={'order-info-price'}>{this.props.productPrice} {this.props.productCurrency}</span>
-                            </div>
-                            {this.renderBuyButton()}
+                        <ListItem button onClick={() => this.onChangePaymentType('paypal')} className={'payment-type-header'}>
+                            <ListItemIcon>
+                                <i className={'zmdi zmdi-paypal-alt'}/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Paypal" className={'payment-type-text'}/>
+                            <Radio color="primary" className={'payment-radio'} checked={this.state.paymentType === 'paypal'}/>
+                        </ListItem>
+                        <Collapse in={this.state.paymentType === 'paypal'} timeout="auto" unmountOnExit>
+                            {this.renderPaypalBlock()}
+                        </Collapse>
+                    </List>
+                </Col>
+                <Col sm={5}>
+                    <div className={'order-info'}>
+                        <p className={'order-summery'}>Order Summary</p>
+                        <div className={'order-info-item'}>
+                            <span>Name</span>
+                            <span>{this.props.productName}</span>
                         </div>
-                    </Col>
-                </div>
+                        <div className={'order-info-split'}/>
+                        <div className={'order-info-item'}>
+                            <span>Cost</span>
+                            <span className={'order-info-price'}>{this.props.productPrice} {this.props.productCurrency}</span>
+                        </div>
+                        {this.renderBuyButton()}
+                    </div>
+                </Col>
             </div>
         )
     }
@@ -261,12 +256,10 @@ class _OrderForm extends Component {
 
 const OrderForm = injectStripe(_OrderForm);
 
-class Checkout extends Component{
+class Checkout extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-
-        }
+        this.state = {}
     }
 
     render() {

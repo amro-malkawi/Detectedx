@@ -13,6 +13,7 @@ import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
 import LengthTool from "../lib/tools/LengthTool";
 import IntlMessages from "Util/IntlMessages";
+import { v4 as uuidv4 } from 'uuid';
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -27,12 +28,6 @@ const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
 const EraserTool = cornerstoneTools.EraserTool;
 
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
-
-function uuidv4() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-}
 
 class ImageViewer extends Component {
 

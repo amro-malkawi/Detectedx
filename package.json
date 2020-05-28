@@ -101,6 +101,7 @@
       "redux": "^4.0.1",
       "redux-thunk": "^2.3.0",
       "reselect": "^4.0.0",
-      "styled-jss": "^2.2.3"
+      "styled-jss": "^2.2.3",
+      "uuid": "^8.1.0"
    }
 }
