@@ -114,7 +114,7 @@ class Header extends Component {
              {
                  this.state.isShowSubscriptionPlanModal &&
                  <PaymentModal
-                     type={'plan'}
+                     type={'planSubscribe'}
                      onFinish={() => {this.setState({isShowSubscriptionPlanModal: false}); window.location.reload();}}
                      onClose={() => {this.setState({isShowSubscriptionPlanModal: false})}}
                  />

@@ -23,7 +23,6 @@ import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
-import {Instagram} from "react-content-loader";
 
 export default class Profile extends Component {
 
@@ -50,6 +49,8 @@ export default class Profile extends Component {
                 referrer_by: '',
                 extra_info: '',
                 user_subscription: undefined,
+                payment_history: [],
+                user_credit_history: []
             },
             birthday: '',
             interestList: [],
@@ -175,6 +176,7 @@ export default class Profile extends Component {
                                         <div className="media-body pt-10">
                                             <h1 className="mb-5">{this.state.userInfo.email}</h1>
                                             <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMM Do YYYY, HH:mm:ss')}</span>
+                                            <h3 className="mt-20 mb-5">Current Credits: {this.state.userInfo.user_credit}</h3>
                                         </div>
                                     </div>
                                     <div className="card-footer">
@@ -446,27 +448,57 @@ export default class Profile extends Component {
                             </ExpansionPanel>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-12 col-md-12 col-xl-12 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-6 col-xl-6 b-100 w-xs-full"
                         >
                             <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.billingHistory"}/></span>
                             <table className="table table-middle table-hover mb-0">
                                 <thead>
                                 <tr>
-                                    <th className="text-center"><IntlMessages id={"profile.date"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.paymentType"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.description"}/></th>
-                                    <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.total"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.date"}/></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {
-                                    this.state.userInfo.user_subscription !== undefined &&
+                                    this.state.userInfo.payment_history.map((v) => (
                                         <tr>
-                                            <td className="text-center">{moment(this.state.userInfo.user_subscription.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                            <td className="text-center">{this.state.userInfo.user_subscription.subscription_plans.name}</td>
-                                            <td className="text-center">{this.state.userInfo.user_subscription.payment_type}</td>
-                                            <td className="text-center">{this.state.userInfo.user_subscription.amount} {this.state.userInfo.user_subscription.currency}</td>
+                                            <td className="text-center">{v.payment_history_type}</td>
+                                            <td className="text-center">{v.payment_history_desc}</td>
+                                            <td className="text-center">{v.payment_history_amount} {v.payment_history_currency}</td>
+                                            <td className="text-center">{v.payment_history_pay_type}</td>
+                                            <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                         </tr>
+                                    ))
+                                }
+                                </tbody>
+                            </table>
+                        </RctCollapsibleCard>
+                        <RctCollapsibleCard
+                            colClasses="col-sm-12 col-md-6 col-xl-6 b-100 w-xs-full"
+                        >
+                            <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.creditHistory"}/></span>
+                            <table className="table table-middle table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th className="text-center"><IntlMessages id={"profile.paymentType"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.description"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.total"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.date"}/></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    this.state.userInfo.user_credit_history.map((v) => (
+                                        <tr>
+                                            <td className="text-center">{v.credit_history_type}</td>
+                                            <td className="text-center">{v.credit_history_desc}</td>
+                                            <td className="text-center">{v.credit_history_amount} credit</td>
+                                            <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
+                                        </tr>
+                                    ))
                                 }
                                 </tbody>
                             </table>

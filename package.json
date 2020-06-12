@@ -70,7 +70,7 @@
       "query-string": "^6.11.1",
       "rc-queue-anim": "^1.6.10",
       "react-async-script-loader": "^0.3.0",
-      "react-bootstrap-sweetalert": "^4.4.1",
+      "react-bootstrap-sweetalert": "^5.1.11",
       "react-content-loader": "^3.4.2",
       "react-cookie": "^4.0.3",
       "react-countup": "^4.0.0",

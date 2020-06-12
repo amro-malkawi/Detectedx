@@ -35,11 +35,17 @@ export default class Tile {
     }
 
     load() {
+        if(this.image.src === '') {
+            this.pyramid.context.clearRect(
+                this.x, this.y,
+                this.width, this.height
+            );
+        }
         this.image.src = this.url;
     }
 
     draw() {
-        if (!this.isLoaded)
+        if (!this.isLoaded || !this.pyramid.pyramidShow)
             return;
 
         this.pyramid.context.drawImage(

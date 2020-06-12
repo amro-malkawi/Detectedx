@@ -13,28 +13,29 @@ import PropTypes from "prop-types";
 export default class PaymentModal extends Component {
 
     static propTypes = {
-        type: PropTypes.oneOf(['onetime','plan']).isRequired,
-        testSetInfo: PropTypes.object,
+        type: PropTypes.oneOf(['creditPurchase','planSubscribe']).isRequired,
         onFinish: PropTypes.func,
         onClose: PropTypes.func
     };
 
     static defaultProps = {
-        type: 'plan',
-        testSetInfo: {}
+        type: 'planSubscribe',
     };
 
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
-            swipeIndex: props.type === 'plan' ? 1 : 0,
-            selectedType: props.type === 'plan' ? 'plan' : 'onetime',
+            swipeIndex: 0,
+            selectedType: props.type === 'creditPurchase' ?  'creditPurchase' : 'planSubscribe',
             plans: [],
+            ratioInfo: {ratio: 1, currency: 'USD'},
             selectedPlan: {},
             productPrice: '',
             productCurrency: '',
             productName: '',
+            resultPrice: '',
+            resultCurrency: ''
         }
     }
 
@@ -44,17 +45,9 @@ export default class PaymentModal extends Component {
 
     getData() {
         Apis.getProductPlans().then(resp => {
-            this.setState({plans: resp, loading: false});
+            this.setState({plans: resp.planList, ratioInfo: resp.ratioInfo, loading: false});
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
-        });
-    }
-
-    onSelectType(type) {
-        this.setState({
-            selectedType: type
-        }, () => {
-            this.setState({swipeIndex: 1});
         });
     }
 
@@ -72,32 +65,34 @@ export default class PaymentModal extends Component {
         });
     }
 
-    onStripeOrder(token, product_id, price, currency) {
-        if(this.state.selectedType === 'onetime') {
-            return Apis.orderTestSetStripe(product_id, price, currency, token);
-        } else if (this.state.selectedType === 'plan') {
-            return Apis.subscriptionPlanStripe(product_id, price, currency, token);
+    onStripeOrder(product_id, price, currency, couponCode, token) {
+        if(this.state.selectedType === 'creditPurchase') {
+            return Apis.orderCreditStripe(price, currency, couponCode, token);
+        } else if (this.state.selectedType === 'planSubscribe') {
+            return Apis.subscriptionPlanStripe(product_id, price, currency, couponCode, token);
         }
     }
 
-    onPaypalOrderCreate(product_id, price, currency) {
-        if(this.state.selectedType === 'onetime') {
-            return Apis.orderTestSetPaypalCreate(product_id, price, currency);
-        } else if (this.state.selectedType === 'plan') {
-            return Apis.subscriptionPlanPaypalCreate(product_id, price, currency);
+    onPaypalOrderCreate(product_id, price, currency, couponCode) {
+        if(this.state.selectedType === 'creditPurchase') {
+            return Apis.orderCreditPaypalCreate(price, currency, couponCode);
+        } else if (this.state.selectedType === 'planSubscribe') {
+            return Apis.subscriptionPlanPaypalCreate(product_id, price, currency, couponCode);
         }
     }
 
-    onPaypalOrderApprove(data, product_id) {
-        if(this.state.selectedType === 'onetime') {
-            return Apis.orderTestSetPaypalApprove(JSON.stringify(data), product_id);
-        } else if (this.state.selectedType === 'plan') {
-            return Apis.subscriptionPlanPaypalApprove(JSON.stringify(data), product_id);
+    onPaypalOrderApprove(product_id, price, currency, couponCode, approveData) {
+        if(this.state.selectedType === 'creditPurchase') {
+            return Apis.orderCreditPaypalApprove(price, currency, couponCode, JSON.stringify(approveData));
+        } else if (this.state.selectedType === 'planSubscribe') {
+            return Apis.subscriptionPlanPaypalApprove(product_id, price, currency, couponCode, JSON.stringify(approveData));
         }
     }
 
-    onPaymentSuccess() {
+    onPaymentSuccess(resultPrice, resultCurrency) {
         this.setState({
+            resultPrice,
+            resultCurrency,
             swipeIndex: this.state.swipeIndex + 1,
         });
     }
@@ -111,42 +106,12 @@ export default class PaymentModal extends Component {
         this.props.onClose();
     }
 
-    renderSelectType() {
-        return (
-            <div className={'payment-slide-container'}>
-                <div className={'payment-slide-title'}>
-                    <span>Payment Type</span>
-                </div>
-                <div className={'row mt-10 ml-70 mr-70 pl-50 pr-50'}>
-                    <div className={'col-sm-6 select-type'}>
-                        <div onClick={() => this.onSelectType('plan')}>
-                            <h2>Subscription</h2>
-                            <img src={require('Assets/img/icon_subscription.png')} alt={''}/>
-                            <p>
-                                You can subscription
-                            </p>
-                        </div>
-                    </div>
-                    <div className={'col-sm-6 select-type'}>
-                        <div onClick={() => this.onSelectType('onetime')}>
-                            <h2>Payment</h2>
-                            <img src={require('Assets/img/icon_payment.png')} alt={''}/>
-                            <p>
-                                You can buy test set
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
     renderPlans() {
         return (
             <div className={'payment-slide-container'}>
                 <div className={'payment-slide-title'}>
                     {
-                        this.props.type !== 'onetime' ? null :
+                        this.props.type !== 'creditPurchase' ? null :
                             <i className="zmdi zmdi-arrow-left" onClick={() => this.onBackSwipe()}/>
                     }
                     <span>Subscription Plan</span>
@@ -163,7 +128,7 @@ export default class PaymentModal extends Component {
                                     price={v.amount}
                                     currency={v.currency}
                                     planSubscribed={v.plan_subscribed}
-                                    users={1}
+                                    planCredit={v.plan_credit}
                                     features={JSON.parse(v.functions)}
                                     onClick={() => this.onSelectPlan(v)}
                                 />
@@ -177,35 +142,39 @@ export default class PaymentModal extends Component {
 
     renderOrder() {
         const {selectedType, selectedPlan} = this.state;
-        const {testSetInfo} = this.props;
-        const productPrice = selectedType === 'onetime' ? testSetInfo.price : selectedPlan.amount;
-        const productCurrency = selectedType === 'onetime' ? testSetInfo.currency : selectedPlan.currency;
-        const productName = selectedType === 'onetime' ? testSetInfo.name + ' Test Set' : selectedPlan.name + ' Subscription';
-        const productId = selectedType === 'onetime' ? testSetInfo.id : selectedPlan.id;
+        const productPrice = selectedType === 'creditPurchase' ? 0 : selectedPlan.amount;
+        const productCurrency = selectedType === 'creditPurchase' ? this.state.ratioInfo.currency : selectedPlan.currency;
+        const productName = selectedType === 'creditPurchase' ? '' : selectedPlan.name + ' Subscription';
+        const productId = selectedType === 'creditPurchase' ? '' : selectedPlan.id;
         return (
             <div className={'payment-slide-container'}>
                 <div className={'payment-slide-title'}>
-                    <i className="zmdi zmdi-arrow-left" onClick={() => this.onBackSwipe()}/>
-                    <span>Checkout</span>
+                    {
+                        productName !== '' &&
+                        <i className="zmdi zmdi-arrow-left" onClick={() => this.onBackSwipe()}/>
+                    }
+                    <span>
+                        {
+                            productName !== '' ? 'Checkout' : 'Purchase Credits'
+                        }
+                    </span>
                 </div>
                 <Checkout
                     productPrice={productPrice}
                     productCurrency={productCurrency}
                     productName={productName}
-                    onStripeOrder={(token) => this.onStripeOrder(token, productId, productPrice, productCurrency)}
-                    onPaypalOrderCreate={() => this.onPaypalOrderCreate(productId, productPrice, productCurrency)}
-                    onPaypalOrderApprove={(data) => this.onPaypalOrderApprove(data, productId)}
-                    onFinish={() => this.onPaymentSuccess()}
+                    creditRatio={this.state.ratioInfo.ratio}
+                    onStripeOrder={(price, currency, couponCode, token) => this.onStripeOrder(productId, price, currency, couponCode, token)}
+                    onPaypalOrderCreate={(price, currency, couponCode) => this.onPaypalOrderCreate(productId, price, currency, couponCode)}
+                    onPaypalOrderApprove={(price, currency, couponCode, approveData) => this.onPaypalOrderApprove(productId, price, currency, couponCode, approveData)}
+                    onFinish={(resultPrice, resultCurrency) => this.onPaymentSuccess(resultPrice, resultCurrency)}
                 />
             </div>
         )
     }
 
     renderSuccess() {
-        const {selectedType, selectedPlan} = this.state;
-        const {testSetInfo} = this.props;
-        const productPrice = selectedType === 'onetime' ? testSetInfo.price : selectedPlan.amount;
-        const productCurrency = selectedType === 'onetime' ? testSetInfo.currency : selectedPlan.currency;
+        const {resultPrice, resultCurrency} = this.state;
         return (
             <div className={'payment-slide-container'}>
                 <div className={'payment-slide-title'}>
@@ -214,7 +183,7 @@ export default class PaymentModal extends Component {
                 <div className={'payment-result'}>
                     <i className="zmdi zmdi-check-circle"/>
                     <h2>Payment Success</h2>
-                    <p>Your payment of {productPrice} {productCurrency} was successfully completed</p>
+                    <p>Your payment of {resultPrice} {resultCurrency} was successfully completed</p>
                     <Button variant="contained" color="primary" size={'large'} onClick={() => this.onFinish()}><IntlMessages id={"testView.ok"}/></Button>
                 </div>
             </div>
@@ -222,7 +191,7 @@ export default class PaymentModal extends Component {
     }
 
     renderContent() {
-        if(this.state.selectedType === 'onetime') {
+        if(this.state.selectedType === 'creditPurchase') {
             return (
                 <SwipeableViews
                     index={this.state.swipeIndex}
@@ -230,12 +199,11 @@ export default class PaymentModal extends Component {
                     containerStyle={{width: '100%', height: '100%'}}
                     className={'payment-modal'}
                 >
-                    {this.renderSelectType()}
                     {this.renderOrder()}
                     {this.renderSuccess()}
                 </SwipeableViews>
             )
-        } else if(this.state.selectedType === 'plan') {
+        } else if(this.state.selectedType === 'planSubscribe') {
             return (
                 <SwipeableViews
                     index={this.state.swipeIndex}
@@ -243,7 +211,6 @@ export default class PaymentModal extends Component {
                     containerStyle={{width: '100%', height: '100%'}}
                     className={'payment-modal'}
                 >
-                    {this.renderSelectType()}
                     {this.renderPlans()}
                     {this.renderOrder()}
                     {this.renderSuccess()}

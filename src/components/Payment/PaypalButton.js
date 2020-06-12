@@ -30,12 +30,13 @@ export default class PaypalButton extends Component {
             },
             createOrder: createOrder,
             onApprove: onApprove,
+            onCancel: onCancel
         }).render('#paypal-button-container');
     }
 
     render() {
         return (
-            <div className={!this.state.scriptLoaded ? 'buy-button' : ''} style={{marginTop: 32}}>
+            <div className={!this.state.scriptLoaded ? 'buy-button' : ''} style={{marginTop: 25}}>
                 <Script
                     url={'https://www.paypal.com/sdk/js?client-id=' + PAYPAL_CLIENT_ID + '&currency=' + this.props.currency + '&disable-funding=credit,card&vault=true'}
                     onCreate={() => this.setState({scriptLoaded: false})}

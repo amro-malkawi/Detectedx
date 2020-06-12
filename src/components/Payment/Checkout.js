@@ -6,23 +6,56 @@ import {connect} from "react-redux";
 import {NotificationManager} from "react-notifications";
 import {Col, Input} from "reactstrap";
 import {Button, CircularProgress, Collapse, List, ListItem, ListItemIcon, ListItemText, Radio} from "@material-ui/core";
+import * as Apis from 'Api';
 import PaypalButton from "./PaypalButton";
 
 class _OrderForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            price: props.productPrice,
+            creditPrice: 0,
+            creditPriceError: false,
+            currency: props.productCurrency,
             paymentType: 'card',
             cardBrand: 'pf-credit-card',
             cardBrandError: false,
-            cardName: this.props.userName,
+            cardName: props.userName,
             cardNumberError: false,
             cardExpiryError: false,
             cardCVCError: false,
             cardNameError: false,
             paying: false,
             payFinished: false,
+            couponCode: '',
+            couponData: null
         }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return {
+            price: nextProps.productPrice,
+            currency: nextProps.productCurrency
+        }
+    }
+
+    calcTotalPrice() {
+        let price = this.state.price;
+        if (this.props.productName === '') {
+            price = this.state.creditPrice;
+        }
+        let discountPrice = price;
+        let couponCode = '';
+        if (this.state.couponData !== null && this.state.couponData.valid) {
+            discountPrice = price * ((100 - this.state.couponData.coupon_discount_value) / 100).toFixed(2);
+            couponCode = this.state.couponData.coupon_code;
+        }
+        return {
+            price,
+            currency: this.state.currency,
+            discountPrice,
+            couponCode
+        };
     }
 
     onChangePaymentType(paymentType) {
@@ -65,6 +98,7 @@ class _OrderForm extends Component {
     }
 
     onChargeCard() {
+        const {price, currency, discountPrice, couponCode} = this.calcTotalPrice();
         if (this.state.paymentType === 'card') {
             if (this.state.cardName === '') {
                 this.setState({cardNameError: true});
@@ -91,16 +125,14 @@ class _OrderForm extends Component {
                     }
                 }).then((token) => {
                     // return Apis.orderChargeCard(this.props.plan.id, token);
-                    return this.props.onStripeOrder(token);
+                    return this.props.onStripeOrder(price, currency, couponCode, token);
                 }).then((result) => {
                     const that = this;
                     this.setState({payFinished: true}, () => {
                         setTimeout(() => {
-                            // that.props.history.push('/app/test/profile');
-                            that.props.onFinish();
+                            that.props.onFinish(discountPrice, currency);
                         }, 500);
                     });
-                    console.log(result, result);
                 }).catch(e => {
                     if (e.response) NotificationManager.error(e.response.data.error.message);
                 }).finally(() => {
@@ -110,19 +142,40 @@ class _OrderForm extends Component {
         }
     }
 
+    onCheckCouponCode() {
+        Apis.couponInfo(this.state.couponCode).then((resp) => {
+            this.setState({
+                couponData: resp
+            });
+        }).catch((e) => {
+            if (e.response) NotificationManager.error(e.response.data.error.message);
+        });
+    }
+
     onPaypalCreateOrder(data, actions) {
-        return this.props.onPaypalOrderCreate();
+        const {price, currency, discountPrice, couponCode} = this.calcTotalPrice();
+        this.setState({paying: true});
+        return this.props.onPaypalOrderCreate(price, currency, couponCode);
     }
 
     onPaypalApprove(data, actions) {
-        return this.props.onPaypalOrderApprove(data).then((resp) => {
+        const {price, currency, discountPrice, couponCode} = this.calcTotalPrice();
+        return this.props.onPaypalOrderApprove(price, currency, couponCode, data).then((resp) => {
             const that = this;
-            setTimeout(() => {
-                that.props.onFinish();
-            }, 500);
+            this.setState({payFinished: true}, () => {
+                setTimeout(() => {
+                    that.props.onFinish(discountPrice, currency);
+                }, 500);
+            });
         }).catch(e => {
             if (e.response) NotificationManager.error(e.response.data.error.message);
+        }).finally(() => {
+            this.setState({paying: false});
         })
+    }
+
+    onPaypalCancel() {
+        this.setState({paying: false});
     }
 
     renderCardBlock() {
@@ -170,7 +223,6 @@ class _OrderForm extends Component {
         )
     }
 
-
     renderPaypalBlock() {
         return (
             <div className={'payment-content paypal'}>
@@ -178,6 +230,43 @@ class _OrderForm extends Component {
                 <p>When you hit "PayPal" button you will be redirected to PayPal where you can complete your purchase securely.</p>
             </div>
         )
+    }
+
+    renderResult() {
+        const {price, currency, discountPrice, couponCode} = this.calcTotalPrice();
+        return (
+            <div>
+                <div className={'order-info-item row ml-0 mr-0'}>
+                    <Col sm={7} className={'p-0 coupon-input-container'}>
+                        <Input
+                            type="text"
+                            name="couponCode"
+                            id="couponCode"
+                            placeholder="Enter coupon code"
+                            value={this.state.couponCode}
+                            invalid={false}
+                            spellCheck="false"
+                            onChange={(e) => this.setState({couponCode: e.target.value, couponData: null})}
+                        />
+                    </Col>
+                    <Col sm={5} className={'coupon-button-container'}>
+                        <Button variant="contained" className="btn-light" onClick={() => this.onCheckCouponCode()}>
+                            APPLY
+                        </Button>
+                    </Col>
+                </div>
+                <p className={'coupon-error'} style={{color: (this.state.couponData && this.state.couponData.valid ? 'green' : 'red')}}>
+                    {this.state.couponData === null ? '' : (this.state.couponData.valid ? this.state.couponData.coupon_discount_value + '% discount is available' : 'The coupon code you entered is invalid')}
+                </p>
+                <div className={'order-info-item'}>
+                    <span className={'mt-5'}>Total</span>
+                    <span className={'order-info-price'}>
+                        {couponCode !== '' && <span className={'original-price'}>{price}</span>}
+                        <span>{discountPrice} {currency}</span>
+                    </span>
+                </div>
+            </div>
+        );
     }
 
     renderBuyButton() {
@@ -192,14 +281,26 @@ class _OrderForm extends Component {
             )
         } else if (this.state.paymentType === 'paypal') {
             return (
-                <PaypalButton
-                    planId=''
-                    currency={this.props.productCurrency}
-                    createOrder={this.onPaypalCreateOrder.bind(this)}
-                    onApprove={this.onPaypalApprove.bind(this)}
-                    onSuccess={null}
-                    onCancel={null}
-                />
+                <div style={{position: 'relative'}}>
+                    <PaypalButton
+                        planId=''
+                        currency={this.props.productCurrency}
+                        createOrder={this.onPaypalCreateOrder.bind(this)}
+                        onApprove={this.onPaypalApprove.bind(this)}
+                        onSuccess={null}
+                        onCancel={this.onPaypalCancel.bind(this)}
+                    />
+                    {
+                        (this.state.payFinished || this.state.paying) &&
+                        <div className={'buy-button paypal-overlap'}>
+                            <div className={'paypal-button'}>
+                                {
+                                    this.state.payFinished ? <i className={'ti-check-box'}/> : <CircularProgress size={23} style={{margin: 6}}/>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
             )
         } else {
             return null;
@@ -235,19 +336,48 @@ class _OrderForm extends Component {
                     </List>
                 </Col>
                 <Col sm={5}>
-                    <div className={'order-info'}>
-                        <p className={'order-summery'}>Order Summary</p>
-                        <div className={'order-info-item'}>
-                            <span>Name</span>
-                            <span>{this.props.productName}</span>
-                        </div>
-                        <div className={'order-info-split'}/>
-                        <div className={'order-info-item'}>
-                            <span>Cost</span>
-                            <span className={'order-info-price'}>{this.props.productPrice} {this.props.productCurrency}</span>
-                        </div>
-                        {this.renderBuyButton()}
-                    </div>
+                    {
+                        this.props.productName !== '' ?
+                            <div className={'order-info'}>
+                                <p className={'order-summery'}>Order Summary</p>
+                                <div className={'order-info-item'}>
+                                    <span>Name</span>
+                                    <span>{this.props.productName}</span>
+                                </div>
+                                <div className={'order-info-item'}>
+                                    <span>Cost</span>
+                                    <span className={'order-info-price'}>{this.state.price} {this.state.currency}</span>
+                                </div>
+                                <div className={'order-info-split'}/>
+                                {this.renderResult()}
+                                {this.renderBuyButton()}
+                            </div> :
+                            <div className={'order-info'}>
+                                <p className={'order-summery'}>Order Summary</p>
+                                <div className={'order-info-item row ml-0 mr-0'}>
+                                    <span className={'mt-5'}>Amount: </span>
+                                    <Col>
+                                        <Input
+                                            type="number"
+                                            name="amount"
+                                            id="amount"
+                                            placeholder=""
+                                            value={this.state.creditPrice}
+                                            invalid={this.state.creditPriceError}
+                                            onChange={(e) => this.setState({creditPrice: e.target.value, creditPriceError: false})}
+                                        />
+                                    </Col>
+                                    <span className={'mt-5'}> {this.props.productCurrency}</span>
+                                </div>
+                                <div className={'order-info-item'}>
+                                    <span>Result</span>
+                                    <span className={'order-result'}>You will get <b>{(this.state.creditPrice * this.props.creditRatio).toFixed(0)}</b> credits</span>
+                                </div>
+                                <div className={'order-info-split'}/>
+                                {this.renderResult()}
+                                {this.renderBuyButton()}
+                            </div>
+                    }
                 </Col>
             </div>
         )

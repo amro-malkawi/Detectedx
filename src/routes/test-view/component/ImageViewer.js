@@ -85,7 +85,11 @@ class ImageViewer extends Component {
     }
 
     componentWillUnmount() {
-
+        if(this.imageElement.pyramid !== undefined && this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined) {
+            // set width and height to 0 for memory leak
+            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 0;
+            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
+        }
     }
 
     initEvents() {
@@ -221,6 +225,12 @@ class ImageViewer extends Component {
     }
 
     handleChangeStack(e, data) {
+        this.imageElement.pyramid[this.stack.currentImageIdIndex].reset();
+        for(let i = 0; i < this.stack.imageIds.length; i++) {
+            if(i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
+                this.imageElement.pyramid[i].pyramidShow = false
+            }
+        }
         this.setState({currentStack: this.stack.currentImageIdIndex + 1}, () => {
             this.renderShapes();
             this.renderMarks();
@@ -489,7 +499,9 @@ class ImageViewer extends Component {
     // }
 
     _renderPyramid(viewport) {
-        this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
+        if(this.imageElement.pyramid[this.stack.currentImageIdIndex]) {
+            this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
+        }
     }
 
     _updateImageInfo(event) {

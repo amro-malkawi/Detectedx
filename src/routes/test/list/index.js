@@ -9,6 +9,7 @@ import {AppBar, Tabs, Tab} from '@material-ui/core';
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import SwipeableViews from 'react-swipeable-views';
 import * as Apis from 'Api';
+import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
 import {connect} from "react-redux";
 import USStartModal from './USStartModal';
@@ -16,8 +17,9 @@ import USCovidStartModal from './USCovidStartModal';
 import LearningModal from "./LearningModal";
 import LearningCovidModal from "./LearningCovidModal";
 import VideoModal from "./VideoModal";
-import CheckoutModal from "Components/Payment/CheckoutModal";
+import SweetAlert from 'react-bootstrap-sweetalert'
 import PaymentModal from "Components/Payment/PaymentModal";
+import {NotificationManager} from "react-notifications";
 
 export default class List extends Component {
 
@@ -26,18 +28,7 @@ export default class List extends Component {
         this.state = {
             tabIndex: 0,
             testSetsList: [],
-            instructionVideos: [
-                {
-                    title: 'CovED',
-                    thumbnail: 'https://static.detectedx.com/instruction_video/covid/thumbnail.png',
-                    video: 'https://static.detectedx.com/instruction_video/covid/video.mp4'
-                },
-                {
-                    title: 'Mammography',
-                    thumbnail: 'https://static.detectedx.com/instruction_video/mammography/thumbnail.png',
-                    video: 'https://static.detectedx.com/instruction_video/mammography/video.mp4'
-                }
-            ],
+            userInfo: {},
             selectedItem: {},
             selectedId: null,
             isShowModalType: '',
@@ -45,14 +36,12 @@ export default class List extends Component {
     }
 
     componentDidMount() {
-        this.getTestSetsList();
+        this.getData();
     }
 
-    getTestSetsList() {
-        Apis.currentTestSets().then(resp => {
-            this.setState({testSetsList: resp});
-        }).catch(e => {
-
+    getData() {
+        Apis.currentTestSets().then((testSetsInfo) => {
+            this.setState({testSetsList: testSetsInfo.testSetsList, userInfo: testSetsInfo.userInfo});
         });
     }
 
@@ -93,37 +82,44 @@ export default class List extends Component {
     }
 
     onPay(test_set_item) {
+        const {userInfo} = this.state;
+        let isShowModalType = '';
+        if (userInfo.user_subscription_id === null || moment(userInfo.subscription_expire_date) < moment()) {
+            isShowModalType = 'sweetSubscribe';
+        } else if (userInfo.user_credit < test_set_item.test_set_credit) {
+            isShowModalType = 'sweetPurchase';
+        } else {
+            isShowModalType = 'sweetConfirm';
+        }
         this.setState({
             selectedItem: test_set_item,
-            isShowModalType: 'pay'
+            isShowModalType: isShowModalType
         });
     }
 
-    onStripeOrder(token, test_set_id, price, currency) {
-        return Apis.orderTestSetStripe(test_set_id, price, currency, token);
-    }
-
-    onPaypalOrderCreate(test_set_id, price, currency) {
-        return Apis.orderTestSetPaypalCreate(test_set_id, price, currency);
-    }
-
-    onPaypalOrderApprove(data, test_set_id) {
-        return Apis.orderTestSetPaypalApprove(JSON.stringify(data), test_set_id);
+    onBuyTestSetWithCredit() {
+        this.setState({isShowModalType: ''});
+        Apis.buyTestSet(this.state.selectedItem.id).then(resp => {
+            NotificationManager.success(this.state.selectedItem.name + 'test set purchase succeeded.');
+            this.getData();
+        }).catch(e => {
+            if (e.response) NotificationManager.error(e.response.data.error.message);
+        });
     }
 
     onPaymentSuccess() {
         this.setState({isShowModalType: ''});
-        this.getTestSetsList();
+        this.getData();
     }
 
     renderStartButton(test_set_item, modality_type) {
-        const {id, attempts, has_post, test_set_paid, price, currency} = test_set_item;
+        const {id, attempts, has_post, test_set_paid, test_set_credit} = test_set_item;
         const test_set_id = id;
         let attempt = attempts[0];
         if (!test_set_paid) {
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm" onClick={() => price === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
-                    {price === 0 ? <IntlMessages id="test.free"/> : (price + ' ' + currency)}
+                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm" onClick={() => test_set_credit === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
+                    {test_set_credit === 0 ? <IntlMessages id="test.free"/> : (test_set_credit + ' Credits')}
                 </Button>
             );
         } else if (attempt === undefined) {
@@ -287,25 +283,68 @@ export default class List extends Component {
                     link={this.state.selectedVideoLink}
                 />
                 {
-                    this.state.isShowModalType === 'pay' &&
-                        <PaymentModal
-                            type={'onetime'}
-                            testSetInfo={this.state.selectedItem}
-                            onFinish={() => this.onPaymentSuccess()}
-                            onClose={() => this.setState({isShowModalType: ''})}
-                        />
+                    (this.state.isShowModalType === 'creditPurchase' || this.state.isShowModalType === 'planSubscribe') &&
+                    <PaymentModal
+                        type={this.state.isShowModalType}
+                        onFinish={() => this.onPaymentSuccess()}
+                        onClose={() => this.setState({isShowModalType: ''})}
+                    />
                 }
-                {/*<CheckoutModal*/}
-                {/*    productPrice={this.state.selectedItem.price}*/}
-                {/*    productCurrency={this.state.selectedItem.currency}*/}
-                {/*    productName={this.state.selectedItem.name}*/}
-                {/*    isOpen={this.state.isShowModalType === 'pay'}*/}
-                {/*    onStripeOrder={(token) => this.onStripeOrder(token, this.state.selectedItem.id, this.state.selectedItem.price, this.state.selectedItem.currency)}*/}
-                {/*    onPaypalOrderCreate={() => this.onPaypalOrderCreate(this.state.selectedItem.id, this.state.selectedItem.price, this.state.selectedItem.currency)}*/}
-                {/*    onPaypalOrderApprove={(data) => this.onPaypalOrderApprove(data, this.state.selectedItem.id)}*/}
-                {/*    onFinish={() => this.onPaymentSuccess()}*/}
-                {/*    onClose={() => this.setState({isShowModalType: ''})}*/}
-                {/*/>*/}
+                <SweetAlert
+                    type={'warning'}
+                    show={this.state.isShowModalType === 'sweetSubscribe'}
+                    title={<IntlMessages id={'test.purchase.warning'}/>}
+                    confirmBtnText={<IntlMessages id={"test.purchase.subscribe"}/>}
+                    confirmBtnCssClass={'sweetalert-confirm-btn'}
+                    cancelBtnText={<IntlMessages id={"testView.cancel"}/>}
+                    cancelBtnBsStyle={'danger'}
+                    cancelBtnCssClass={'sweetalert-cancel-btn'}
+                    showConfirm
+                    showCancel
+                    reverseButtons
+                    closeOnClickOutside
+                    onConfirm={() => this.setState({isShowModalType: 'planSubscribe'})}
+                    onCancel={() => this.setState({isShowModalType: ''})}
+                >
+                    <IntlMessages id={"test.purchase.message1"}/>
+                </SweetAlert>
+                <SweetAlert
+                    type={'warning'}
+                    show={this.state.isShowModalType === 'sweetPurchase'}
+                    title={<IntlMessages id={'test.purchase.attention'}/>}
+                    confirmBtnText={<IntlMessages id={"test.purchase.charge"}/>}
+                    confirmBtnCssClass={'sweetalert-confirm-btn'}
+                    cancelBtnText={<IntlMessages id={"testView.cancel"}/>}
+                    cancelBtnBsStyle={'danger'}
+                    cancelBtnCssClass={'sweetalert-cancel-btn'}
+                    showConfirm
+                    showCancel
+                    reverseButtons
+                    closeOnClickOutside
+                    onConfirm={() => this.setState({isShowModalType: 'creditPurchase'})}
+                    onCancel={() => this.setState({isShowModalType: ''})}
+                >
+                    <IntlMessages id={"test.purchase.message2"}/>
+                </SweetAlert>
+                <SweetAlert
+                    type={'info'}
+                    show={this.state.isShowModalType === 'sweetConfirm'}
+                    title={<IntlMessages id={'test.purchase.confirm'}/>}
+                    confirmBtnText={<IntlMessages id={"testView.ok"}/>}
+                    confirmBtnCssClass={'sweetalert-confirm-btn'}
+                    cancelBtnText={<IntlMessages id={"testView.cancel"}/>}
+                    cancelBtnBsStyle={'danger'}
+                    cancelBtnCssClass={'sweetalert-cancel-btn'}
+                    showConfirm
+                    showCancel
+                    reverseButtons
+                    closeOnClickOutside
+                    onConfirm={() => this.onBuyTestSetWithCredit()}
+                    onCancel={() => this.setState({isShowModalType: ''})}
+                >
+                    <IntlMessages id={"test.purchase.message3"}/>
+                    {this.state.selectedItem.name} ?
+                </SweetAlert>
             </div>
         )
     }

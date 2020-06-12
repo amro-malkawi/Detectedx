@@ -14,7 +14,7 @@ export const apiAddress = apiHost + '/api/';
 
 const instance = axios.create({
     baseURL: apiAddress,
-    timeout: 20000
+    timeout: 40000
 });
 
 instance.interceptors.response.use(response => {
@@ -171,7 +171,12 @@ export function testCasesAnswers(id, attempt_id, isPostTest) {
  */
 
 export function currentTestSets() {
-    const url = '/test_set_assignments/current_set_tests?access_token=' + getAccessToken();
+    const url = '/test_set_assignments/current_test_sets?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function buyTestSet(test_set_id) {
+    const url = '/test_set_assignments/buy_test_set?test_set_id=' + test_set_id +'&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -392,36 +397,44 @@ export function orderPaypalApprove(paymentInfo, planId) {
 }
 
 
-export function subscriptionPlanStripe(planId, price, currency, token) {
+export function subscriptionPlanStripe(planId, price, currency, couponCode, token) {
     const url = 'user_subscriptions/plan_stripe?access_token=' + getAccessToken();
-    return instance.post(url, {planId, price, currency, token}).then((response) => response.data);
+    return instance.post(url, {planId, price, currency, couponCode, token}).then((response) => response.data);
 }
 
-export function subscriptionPlanPaypalCreate(planId, price, currency) {
+export function subscriptionPlanPaypalCreate(planId, price, currency, couponCode) {
     const url = 'user_subscriptions/plan_paypal_create?access_token=' + getAccessToken();
-    return instance.post(url, {planId, currency, price}).then((response) => response.data);
+    return instance.post(url, {planId, currency, price, couponCode}).then((response) => response.data);
 }
 
-export function subscriptionPlanPaypalApprove(paymentInfo, planId) {
+export function subscriptionPlanPaypalApprove(planId, price, currency, couponCode, paymentInfo) {
     const url = 'user_subscriptions/plan_paypal_approve?access_token=' + getAccessToken();
-    return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
+    return instance.post(url, {planId, price, currency, couponCode, paymentInfo}).then((response) => response.data);
 }
 
 /**
  * user orders
  */
-export function orderTestSetStripe(testSetId, price, currency, token) {
-    const url = 'user_orders/test_set_stripe?access_token=' + getAccessToken();
-    return instance.post(url, {testSetId, price, currency, token}).then((response) => response.data);
+export function orderCreditStripe(price, currency, couponCode, token) {
+    const url = 'user_orders/credit_stripe?access_token=' + getAccessToken();
+    return instance.post(url, {price, currency, couponCode, token}).then((response) => response.data);
 }
 
-export function orderTestSetPaypalCreate(testSetId, price, currency) {
-    const url = 'user_orders/test_set_paypal_create?access_token=' + getAccessToken();
-    return instance.post(url, {testSetId, currency, price}).then((response) => response.data);
+export function orderCreditPaypalCreate(price, currency, couponCode) {
+    const url = 'user_orders/credit_paypal_create?access_token=' + getAccessToken();
+    return instance.post(url, {currency, price, couponCode}).then((response) => response.data);
 }
 
-export function orderTestSetPaypalApprove(paymentInfo, testSetId) {
-    const url = 'user_orders/test_set_paypal_approve?access_token=' + getAccessToken();
-    return instance.post(url, {paymentInfo, testSetId}).then((response) => response.data);
+export function orderCreditPaypalApprove(price, currency, couponCode, paymentInfo) {
+    const url = 'user_orders/credit_paypal_approve?access_token=' + getAccessToken();
+    return instance.post(url, {price, currency, couponCode, paymentInfo}).then((response) => response.data);
+}
+
+/**
+ * coupons functions
+ */
+export function couponInfo(couponCode) {
+    const url = 'coupons/info?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 

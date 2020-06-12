@@ -708,7 +708,7 @@ class Signup extends Component {
                                             variant="contained"
                                             className="btn-light mr-10"
                                         >
-                                            Sign In
+                                            <IntlMessages id={"user.signin"}/>
                                         </Button>
                                         <LanguageProvider />
                                     </div>

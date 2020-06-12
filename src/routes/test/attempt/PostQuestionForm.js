@@ -78,9 +78,10 @@ export default class PostQuestionForm extends Component {
             error = true;
             console.log('q1');
         }
-        if(q2 === '' || q3.sub1 === '' || q3.sub2 === '' || q3.sub3 === '') {
+        // if(q2 === '' || q3.sub1 === '' || q3.sub2 === '' || q3.sub3 === '') {
+        if(q2 === '' || q3.sub3 === '') {
             error = true;
-            console.log('q2');
+            console.log('q3');
         }
         if(q4 === '' || q5 === '' || q6 === '' || q7 === '') {
             error = true;
@@ -376,26 +377,26 @@ export default class PostQuestionForm extends Component {
                         <Label>3. The following speaker(s) demonstrated experiential knowledge of the topic</Label>
                     </Col>
                 </FormGroup>
-                <FormGroup className={'post-questionnaire'} row>
-                    <Col sm={7}>
-                        <Label className={'sub-label mt-15'}>• Patrick C. Brennan, PhD</Label>
-                    </Col>
-                    <Col sm={5}>
-                        {this.renderRadioGroupWithoutText(complete, 'q3', 'sub1')}
-                    </Col>
-                </FormGroup>
-                <FormGroup className={'post-questionnaire'} row>
-                    <Col sm={7}>
-                        {
-                            !this.props.isCovid ?
-                                <Label className={'sub-label mt-15'}>• Mary T Rickard, MB BS BSc(Med) FRANZCR DDU MPH</Label> :
-                                <Label className={'sub-label mt-15'}>• Stuart Grieve, MB BS BSc(Med), PhD</Label>
-                        }
-                    </Col>
-                    <Col sm={5}>
-                        {this.renderRadioGroupWithoutText(complete, 'q3', 'sub2')}
-                    </Col>
-                </FormGroup>
+                {/*<FormGroup className={'post-questionnaire'} row>*/}
+                {/*    <Col sm={7}>*/}
+                {/*        <Label className={'sub-label mt-15'}>• Patrick C. Brennan, PhD</Label>*/}
+                {/*    </Col>*/}
+                {/*    <Col sm={5}>*/}
+                {/*        {this.renderRadioGroupWithoutText(complete, 'q3', 'sub1')}*/}
+                {/*    </Col>*/}
+                {/*</FormGroup>*/}
+                {/*<FormGroup className={'post-questionnaire'} row>*/}
+                {/*    <Col sm={7}>*/}
+                {/*        {*/}
+                {/*            !this.props.isCovid ?*/}
+                {/*                <Label className={'sub-label mt-15'}>• Mary T Rickard, MB BS BSc(Med) FRANZCR DDU MPH</Label> :*/}
+                {/*                <Label className={'sub-label mt-15'}>• Stuart Grieve, MB BS BSc(Med), PhD</Label>*/}
+                {/*        }*/}
+                {/*    </Col>*/}
+                {/*    <Col sm={5}>*/}
+                {/*        {this.renderRadioGroupWithoutText(complete, 'q3', 'sub2')}*/}
+                {/*    </Col>*/}
+                {/*</FormGroup>*/}
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
                         <Label className={'sub-label mt-15'}>• Mo'ayyad E. Suleiman, PhD</Label>
