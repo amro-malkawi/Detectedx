@@ -433,8 +433,12 @@ export function orderCreditPaypalApprove(price, currency, couponCode, paymentInf
 /**
  * coupons functions
  */
-export function couponInfo(couponCode) {
-    const url = 'coupons/info?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
+export function couponInfo(couponCode, type) {
+    const url = 'coupons/info?coupon_code=' + couponCode + '&type=' + type + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
+export function couponApplyTestSetCoupon(couponCode) {
+    const url = 'coupons/apply_test_set_coupon?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
