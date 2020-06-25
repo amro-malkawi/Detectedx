@@ -110,8 +110,12 @@ export default class MarkerTool extends BaseAnnotationTool {
 
                 if(isShowInfo) {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
+                    let ratingLabel = mark.rating;
+                    const ratingLabelObj = MarkerTool.modalityRatings.find((v) => v.value === mark.rating);
+                    if(ratingLabelObj !== undefined) ratingLabel = ratingLabelObj.label;
+
                     if ( !mark.isTruth ) {
-                        drawTextBox(context, 'Your answer. Rate: ' + mark.rating, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
+                        drawTextBox(context, 'Your answer. Rate: ' + ratingLabel, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     } else {
                         drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {centering: {x: true, y: true}});
