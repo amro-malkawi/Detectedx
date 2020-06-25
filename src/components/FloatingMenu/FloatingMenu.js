@@ -63,8 +63,8 @@ class FloatingMenu extends Component {
                 direction={direction}
             >
                 <MainButton
-                    iconResting={<MdAdd style={{fontSize: 20}} nativeColor="#FFB300"/>}
-                    iconActive={<MdClose style={{fontSize: 20}} nativeColor="#FFB300"/>}
+                    iconResting={<MdAdd style={{fontSize: 20, color: '#FFB300"'}}/>}
+                    iconActive={<MdClose style={{fontSize: 20, color: '#FFB300'}}/>}
                     background={"transparent"}
                     isOpen={isOpen}
                     onClick={onClose}

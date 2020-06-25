@@ -165,10 +165,10 @@ export default class Profile extends Component {
             const interestOptions = this.state.interestList.map(v => ({value: v.id, label: v.name}));
             const interestDefault = this.state.userInfo.interest === null ? [] : interestOptions.filter((v) => this.state.userInfo.interest.split(',').indexOf(v.value.toString()) !== -1);
             return (
-                <div className={'p-30'}>
-                    <div className={'row'}>
+                <div>
+                    <div className={'row m-0'}>
                         <RctCollapsibleCard
-                            colClasses="col-sm-4 col-md-4 col-xl-4 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-4 col-xl-4 b-100 w-xs-full"
                         >
                             <div className="">
                                 <div className="p-0">
@@ -190,7 +190,7 @@ export default class Profile extends Component {
                             </div>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-8 col-md-8 col-xl-8 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-8 col-xl-8 b-100 w-xs-full"
                         >
                             <ExpansionPanel expanded={this.state.expanded === 'personalInfo'} onChange={this.onExpandeChange('personalInfo')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
@@ -418,7 +418,7 @@ export default class Profile extends Component {
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <div className={'d-flex justify-content-center'}>
-                                        <table className="table table-middle table-hover mb-0">
+                                        <table className="table table-middle table-hover mb-0 mobile-table">
                                             <thead>
                                             <tr>
                                                 <th className="text-center"><IntlMessages id={"profile.subscriptionType"}/></th>
@@ -433,12 +433,11 @@ export default class Profile extends Component {
                                             {
                                                 this.state.userInfo.user_subscription === undefined ? null :
                                                     <tr>
-                                                        <td className="text-center">{this.state.userInfo.user_subscription.subscription_plans.name}</td>
-                                                        <td className='text-center'><span className='text-primary'>{this.state.userInfo.user_subscription.status}</span></td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_subscription.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                                        <td className="text-center">{moment(this.state.userInfo.user_subscription.expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                                        <td className="text-center">{this.state.userInfo.user_subscription.payment_type}</td>
-                                                        <td />
+                                                        <td className="text-center" data-title={'Subscription Type'}>{this.state.userInfo.user_subscription.subscription_plans.name}</td>
+                                                        <td className='text-center' data-title={'Status'}><span className='text-primary'>{this.state.userInfo.user_subscription.status}</span></td>
+                                                        <td className="text-center" data-title={'Last Payment'}>{moment(this.state.userInfo.user_subscription.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
+                                                        <td className="text-center" data-title={'Next Payment Due'}>{moment(this.state.userInfo.user_subscription.expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
+                                                        <td className="text-center" data-title={'Payment Method'}>{this.state.userInfo.user_subscription.payment_type}</td>
                                                     </tr>
                                             }
                                             </tbody>
@@ -448,10 +447,10 @@ export default class Profile extends Component {
                             </ExpansionPanel>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-12 col-md-6 col-xl-6 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-12 col-xl-6 b-100 w-xs-full"
                         >
                             <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.billingHistory"}/></span>
-                            <table className="table table-middle table-hover mb-0">
+                            <table className="table table-middle table-hover mb-0 mobile-table">
                                 <thead>
                                 <tr>
                                     <th className="text-center"><IntlMessages id={"profile.paymentType"}/></th>
@@ -465,11 +464,11 @@ export default class Profile extends Component {
                                 {
                                     this.state.userInfo.payment_history.map((v) => (
                                         <tr>
-                                            <td className="text-center">{v.payment_history_type}</td>
-                                            <td className="text-center">{v.payment_history_desc}</td>
-                                            <td className="text-center">{v.payment_history_amount} {v.payment_history_currency}</td>
-                                            <td className="text-center">{v.payment_history_pay_type}</td>
-                                            <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
+                                            <td className="text-center" data-title={'Type'}>{v.payment_history_type}</td>
+                                            <td className="text-center" data-title={'Description'}>{v.payment_history_desc}</td>
+                                            <td className="text-center" data-title={'Total'}>{v.payment_history_amount} {v.payment_history_currency}</td>
+                                            <td className="text-center" data-title={'Payment Method'}>{v.payment_history_pay_type}</td>
+                                            <td className="text-center" data-title={'Date'}>{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                         </tr>
                                     ))
                                 }
@@ -477,10 +476,10 @@ export default class Profile extends Component {
                             </table>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-12 col-md-6 col-xl-6 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-12 col-xl-6 b-100 w-xs-full"
                         >
                             <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.creditHistory"}/></span>
-                            <table className="table table-middle table-hover mb-0">
+                            <table className="table table-middle table-hover mb-0 mobile-table">
                                 <thead>
                                 <tr>
                                     <th className="text-center"><IntlMessages id={"profile.paymentType"}/></th>
@@ -493,10 +492,10 @@ export default class Profile extends Component {
                                 {
                                     this.state.userInfo.user_credit_history.map((v) => (
                                         <tr>
-                                            <td className="text-center">{v.credit_history_type}</td>
-                                            <td className="text-center">{v.credit_history_desc}</td>
-                                            <td className="text-center">{v.credit_history_amount} credit</td>
-                                            <td className="text-center">{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
+                                            <td className="text-center" data-title={'Type'}>{v.credit_history_type}</td>
+                                            <td className="text-center" data-title={'Description'}>{v.credit_history_desc}</td>
+                                            <td className="text-center" data-title={'Total'}>{v.credit_history_amount} credit</td>
+                                            <td className="text-center" data-title={'Date'}>{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                         </tr>
                                     ))
                                 }

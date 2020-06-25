@@ -672,7 +672,7 @@ export default class Attempt extends Component {
     renderStepper() {
         return (
             <div>
-                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex}>
+                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'attempt-stepper'}>
                     {this.state.steps.map((label, index) => {
                         label = stepName[label];
                         const props = {};
@@ -891,7 +891,7 @@ export default class Attempt extends Component {
                         <div className="row">
                             <RctCollapsibleCard
                                 customClasses="p-20"
-                                colClasses="col-sm-12 col-lg-9"
+                                colClasses="col-sm-12 col-md-6 col-lg-9"
                                 fullBlock
                             >
                                 <table className="table table-middle table-hover mb-0">
@@ -916,7 +916,7 @@ export default class Attempt extends Component {
                                 </table>
                             </RctCollapsibleCard>
                             <RctCollapsibleCard
-                                colClasses="col-sm-12 col-lg-3"
+                                colClasses="col-sm-12 col-md-6 col-lg-3"
                             >
                                 {this.renderGaugeChart()}
                             </RctCollapsibleCard>
@@ -1035,7 +1035,7 @@ export default class Attempt extends Component {
     render() {
         if (!this.state.loading) {
             return (
-                <div className={'questionnaire-wrapper mt-30 mb-30'}>
+                <div className={'questionnaire-wrapper'}>
                     <h1>{stepName[this.state.steps[this.state.stepIndex]]}</h1>
                     {this.renderStepper()}
                     {this.renderStepContent()}

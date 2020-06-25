@@ -3,13 +3,22 @@ import { Cookies } from 'react-cookie';
 
 const cookie = new Cookies();
 
-export default axios.create({
-    baseURL: 'http://reactify.theironnetwork.org/data/',
-    timeout: 15000
-});
 
-export const apiHost = window.location.protocol + '//' + (window.location.hostname === 'localhost' ? 'localhost:3000' : window.location.hostname);
-    // window.location.hostname.split('.')[0].split('-')[0] + '-api' + window.location.hostname.substr(window.location.hostname.split('.')[0].length));
+function getApiHost()
+{
+    let hostname = window.location.hostname;
+    if (
+        hostname === 'localhost' ||
+        /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(hostname)
+    )
+    {
+        hostname = hostname + ':3000';
+    }
+    return window.location.protocol + '//' + hostname;
+}
+
+export const apiHost = getApiHost();
+
 export const apiAddress = apiHost + '/api/';
 
 const instance = axios.create({

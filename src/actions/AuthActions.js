@@ -23,7 +23,7 @@ const cookie = new Cookies();
 export const signinUserInEmail = (user, history) => (dispatch) => {
     Apis.login(user.email, user.password).then((result) => {
         dispatch({type: LOGIN_USER});
-        if (Apis.apiHost.indexOf('localhost') !== -1) {
+        if (Apis.apiHost.indexOf(':') !== -1) {
             cookie.set('user_id', result.userId, {path: '/'});
             cookie.set('user_name', result.userName, {path: '/'});
             cookie.set('user_email', result.userEmail, {path: '/'});
@@ -50,7 +50,7 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
 export const logoutUserFromEmail = () => (dispatch) => {
     Apis.logout().then(() => {
     }).finally(() => {
-        if (Apis.apiHost.indexOf('localhost') !== -1) {
+        if (Apis.apiHost.indexOf(':') !== -1) {
             cookie.remove('user_id', {path: '/'});
             cookie.remove('access_token', {path: '/'});
         }

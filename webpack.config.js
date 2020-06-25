@@ -51,7 +51,8 @@ module.exports = {
         hotUpdateMainFilename: 'hot/hot-update.json'
     },
     devServer: {
-        contentBase: './src/index.js',
+        // contentBase: './src/index.js',
+        contentBase: './public',
         host: '0.0.0.0',
         compress: true,
         port: 3002, // port number

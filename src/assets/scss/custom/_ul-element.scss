@@ -209,46 +209,48 @@
     background-color: $block-bg;
   }
 }
+.app-wrapper {
+  .menu-icon {
+    display: none;
+    button {
+      width: 30px !important;
+      height: 30px !important;
+      color: white !important;
+    }
+
+  }
+}
+
 /*========= Responsive ========*/
 @media (max-width: 1024px) and (min-width: 320px) {
-  .cardsmasonry-wrapper {
-    .card-columns {
-    	column-count: 2;
-    }
-  }
+
 }
 @media (max-width: 768px) {
   .app-wrapper {
     .navbar-right {
-      li:last-child {
+      li.list-inline-item:nth-child(-n+3) {
         display: none;
       }
+    }
+    .site-logo {
+      display: none;
+    }
+    .menu-icon {
+      display: block !important;
     }
   }
 }
 @media (max-width: 480px) {
   .app-wrapper {
     .navbar-right {
-      li {
-        width: 1.75rem;
-        a {
-          font-size: 1.4rem;
-        }
-      }
-    }
-  }
-  .cardsmasonry-wrapper {
-    .card-columns {
-      column-count: 1;
+
     }
   }
 }
 @media (max-width: 390px) {
   .app-wrapper {
     .navbar-right {
-      li:nth-child(n+2) {
-        display: none;
-      }
+
     }
   }
 }

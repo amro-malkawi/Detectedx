@@ -92,6 +92,7 @@ module.exports = {
     "testView.delete": "Eliminar",
     "testView.save": "Guardar",
     "testView.tool.series": "Serie",
+    "testView.tool.moreTools": "Más",
     "testView.tool.pan": "Pan",
     "testView.tool.zoom": "Zoom",
     "testView.tool.window": "Ventana",

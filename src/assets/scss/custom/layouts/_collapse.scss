@@ -57,15 +57,6 @@
                   align-items: center;
                }
             }
-            .menu-icon {
-               float: left;
-               text-align: center;
-            }
-            >a {
-               .menu-icon {
-                  @extend .menu-icon;
-               }
-            }
             >a .menu {
                left: 35px;
             }

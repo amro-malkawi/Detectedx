@@ -30,6 +30,7 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                                 className="static-image"
                                 src={item.image_thumbnail}
                                 height={123}
+                                crossOrigin={'anonymous'}
                                 alt={''}
                             />
                         </div>

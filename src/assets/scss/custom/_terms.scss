@@ -13,3 +13,23 @@
     color: #4f81bd;
   }
 }
+
+/*========= Responsive ========*/
+
+@media (max-width: 1200px) {
+  .terms-content {
+    width: 90%;
+  }
+}
+
+@media (max-width: 992px) {
+  .terms-content {
+    width: 80%;
+  }
+}
+
+@media (max-width: 768px) {
+  .terms-content {
+    width: 100%;
+  }
+}

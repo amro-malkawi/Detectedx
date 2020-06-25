@@ -186,15 +186,14 @@ export default class List extends Component {
                     {
                         test_sets.map((item, index) => {
                             return (
-                                <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1" key={index}>
+                                <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
                                     <Card className="rct-block">
                                         <CardBody>
-                                            <div className="d-flex justify-content-between">
-                                                <div>
+                                            <div className="row d-flex justify-content-between">
+                                                <div className={'col-sm-12 col-md'}>
                                                     <p className="fs-14 fw-bold mb-5">{item.name}</p>
-                                                    {/*<span className="test-list-desc" onClick={() => null}>Description</span>*/}
                                                 </div>
-                                                <div className={'test-list-action-buttons'}>
+                                                <div className={'col-sm-12 col-md test-list-action-buttons'}>
                                                     {
                                                         item.attempts.some((v) => v.complete) ?
                                                             <Button

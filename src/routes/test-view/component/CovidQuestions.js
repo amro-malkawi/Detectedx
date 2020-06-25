@@ -236,7 +236,7 @@ export default class CovidQuestions extends Component {
         } else {
             const value = this.state.selectedValue[questionObj.id] === undefined ? '' : this.state.selectedValue[questionObj.id];
             return (
-                <div className={'mt-25'} key={questionObj.id}>
+                <div className={'mt-20'} key={questionObj.id}>
                     <RadioGroup
                         aria-label="position"
                         name="position"
@@ -281,6 +281,7 @@ export default class CovidQuestions extends Component {
     render() {
         return (
             <div className={'pl-10 covid-question-container '}>
+                <div>
                 <p className={'covid-question-title'}>
                     {
                         this.renderTitle()
@@ -291,7 +292,7 @@ export default class CovidQuestions extends Component {
                         this.state.question.slice(0, 3).map(v => this.renderQuestion(v))
                     }
                 </div>
-                <div className={'covid-option-questions mb-20'}>
+                <div className={'covid-option-questions mb-20 mt-20'}>
                     <p><IntlMessages id={"testView.covidQuestion.title1"}/></p>
                     {
                         this.state.question.slice(3, 5).map(v => this.renderQuestion(v))
@@ -302,6 +303,7 @@ export default class CovidQuestions extends Component {
                     <RadioGroup
                         aria-label="position"
                         name="position"
+                        className={'ml-15'}
                         value={this.state.selectedRating}
                         onChange={(event) => this.onChangeRating(event.target.value)}
                         row
@@ -320,6 +322,7 @@ export default class CovidQuestions extends Component {
                             })
                         }
                     </RadioGroup>
+                </div>
                 </div>
             </div>
         )
