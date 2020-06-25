@@ -19,6 +19,7 @@ const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
+const ZoomTouchPinch = cornerstoneTools.ZoomTouchPinchTool;
 // const LengthTool = cornerstoneTools.LengthTool;
 const AngleTool = cornerstoneTools.AngleTool;
 const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
@@ -106,6 +107,7 @@ class ImageViewer extends Component {
 
         if (!this.props.complete && this.props.tools.indexOf('Marker') !== -1) {
             this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleAddMark(event.detail.currentPoints.image));
+            this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleAddMark(event.detail.currentPoints.image));
         }
 
         this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack.bind(this));
@@ -160,7 +162,8 @@ class ImageViewer extends Component {
                 minScale: viewport.scale
             }
         });
-
+        cornerstoneTools.addTool(ZoomTouchPinch);
+        cornerstoneTools.setToolActive('ZoomTouchPinch', {});
 
         // the marker tool is always in passive or active mode (passive so
         // existing marks can be rendered at all times)

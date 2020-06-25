@@ -92,6 +92,7 @@ module.exports = {
     "testView.delete": "删除",
     "testView.save": "保存",
     "testView.tool.series": "系列",
+    "testView.tool.moreTools": "工具",
     "testView.tool.pan": "潘",
     "testView.tool.zoom": "缩放",
     "testView.tool.window": "窗口",

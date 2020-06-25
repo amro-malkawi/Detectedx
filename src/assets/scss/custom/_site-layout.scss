@@ -158,5 +158,13 @@
   }
 }
 
+@media (max-width: 992px) {
+  .rct-site-page {
+    >.rct-scroll {
+      height: calc(100vh - 7.75rem) !important;
+    }
+  }
+}
+
 @media (max-width: 500px) {
 }

@@ -710,7 +710,7 @@ class Signup extends Component {
                                         >
                                             <IntlMessages id={"user.signin"}/>
                                         </Button>
-                                        <LanguageProvider />
+                                        {/*<LanguageProvider />*/}
                                     </div>
                                 </div>
                             </div>

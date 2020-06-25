@@ -1,8 +1,6 @@
 /*======= Include All App Css =======*/
 // Use Themify Icon
 import 'Assets/themify-icons/themify-icons.css';
-//Use Payment Icon
-import 'Assets/payment-icons/paymentfont.css';
 // notifications
 import 'react-notifications/lib/notifications.css';
 // tour

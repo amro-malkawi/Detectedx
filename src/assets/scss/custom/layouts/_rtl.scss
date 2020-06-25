@@ -415,9 +415,6 @@
          }
          .rct-mainMenu {
             >li {
-               .menu-icon {
-                  float: right;
-               }
                .side-arrow {
                   transform: rotate(180deg) !important;
                   right: 13.5rem;
@@ -480,10 +477,6 @@
             }
          }
          >li {
-            .menu-icon {
-               margin-left: 0.9375rem;
-               margin-right: inherit;
-            }
             &.item-active {
                .side-arrow {
                   transform: rotate(90deg) !important;

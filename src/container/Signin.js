@@ -73,7 +73,7 @@ class Signin extends Component {
                                     <div>
                                         <a className="mr-15" onClick={() => this.onUserSignUp()}><IntlMessages id={"user.createNew"}/></a>
                                         <Button variant="contained" className="btn-light mr-10" onClick={() => this.onUserSignUp()}><IntlMessages id={"user.signup"}/></Button>
-                                        <LanguageProvider />
+                                        {/*<LanguageProvider />*/}
                                     </div>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@ class Signin extends Component {
                     <div className="session-inner-wrapper">
                         <div className="container">
                             <div className="row row-eq-height">
-                                <div className="col-sm-12 col-md-8 col-lg-6 offset-md-2 offset-md-3">
+                                <div className="col-sm-12 col-md-8 col-lg-6 offset-md-2 offset-lg-3">
                                     <div className="session-body text-center">
                                         <div className="session-head mb-30">
                                             <h1 className="font-weight-bold">{AppConfig.brandName} <IntlMessages id={"user.login"}/></h1>

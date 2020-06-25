@@ -290,10 +290,19 @@
    }
 }
 
+@media (max-width: 992px) {
+   .app-boxed {
+      .rct-page {
+         >.rct-scroll {
+            height: calc(100vh - 7.75rem) !important;
+         }
+      }
+   }
+}
+
 @media (max-width: 500px) {
    .app-boxed {
       .rct-header .site-logo {
-         display: block !important;
          .logo-normal {
             display: none !important;
          }

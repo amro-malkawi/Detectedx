@@ -39,18 +39,18 @@ export default class CompleteList extends Component {
             }
         });
         return scoreValues.map((vv, ii) => (
-            <td key={ii} className={'text-center'}>{vv}</td>
+            <td key={ii} className={'text-center'} data-title={this.state.completeList.metrics[ii].name}>{vv}</td>
         ))
     }
 
     render() {
         if (!this.state.loading) {
             return (
-                <div className="table-responsive mt-30 mb-30">
+                <div className="complete-list-container table-responsive">
                     <div className="d-flex justify-content-between py-20 px-10 border-bottom">
                         <h3><IntlMessages id="test.attemptFor"/> {this.state.completeList.test_set_name}</h3>
                     </div>
-                    <table className="table table-middle table-hover mb-0">
+                    <table className="table table-middle table-hover mb-0 mobile-table">
                         <thead>
                         <tr>
                             <th className={'text-center'}><IntlMessages id={"test.attemptNumber"}/></th>
@@ -67,25 +67,19 @@ export default class CompleteList extends Component {
                         <tbody>
                         {this.state.completeList.attempts && this.state.completeList.attempts.map((item, i) => (
                             <tr key={i}>
-                                <td className={'text-center'}>{this.state.completeList.attempts.length - i}</td>
+                                <td className={'text-center'} data-title={'Attempt Number'}>{this.state.completeList.attempts.length - i}</td>
                                 {
                                     this.renderScores(item.scores)
                                 }
-                                <td className={'text-center'}>{moment(item.created_at).format('MM/DD/YYYY, HH:mm:ss')}</td>
-                                <td className={'text-center'}>{moment(item.updated_at).format('MM/DD/YYYY, HH:mm:ss')}</td>
-                                <td className="list-action text-center">
+                                <td className={'text-center'} data-title={'Start'}>{moment(item.created_at).format('MM/DD/YYYY, HH:mm:ss')}</td>
+                                <td className={'text-center'} data-title={'Finish'}>{moment(item.updated_at).format('MM/DD/YYYY, HH:mm:ss')}</td>
+                                <td className="list-action text-center" data-title={'Action'}>
                                     <Button variant="contained" className={'text-white'} color="primary" size="small"
                                             onClick={() => this.props.history.push('/app/test/attempt/' + item.id)}><IntlMessages id={"test.view"}/></Button>
                                 </td>
                             </tr>
                         ))}
                         </tbody>
-                        <tfoot className="border-top">
-                        <tr>
-                            <td colSpan="100%">
-                            </td>
-                        </tr>
-                        </tfoot>
                     </table>
                 </div>
             );

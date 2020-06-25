@@ -191,13 +191,12 @@ class _OrderForm extends Component {
                 <div className={'row'}>
                     <Col sm={8} className={'p-0 ' + (this.state.cardExpiryError ? 'invalid' : '')}>
                         <CardExpiryElement
-                            className={'mr-5'}
+                            className={'mr-10'}
                             onChange={(value) => this.onChangeCardExpiry(value)}
                         />
                     </Col>
                     <Col sm={4} className={'p-0 ' + (this.state.cardCVCError ? 'invalid' : '')}>
                         <CardCVCElement
-                            className={'ml-5'}
                             onChange={(value) => this.onChangeCardCVC(value)}
                         />
                     </Col>
@@ -237,7 +236,7 @@ class _OrderForm extends Component {
         return (
             <div>
                 <div className={'order-info-item row ml-0 mr-0'}>
-                    <Col sm={7} className={'p-0 coupon-input-container'}>
+                    <Col sm={12} md={7} className={'p-0 coupon-input-container'}>
                         <Input
                             type="text"
                             name="couponCode"
@@ -249,7 +248,7 @@ class _OrderForm extends Component {
                             onChange={(e) => this.setState({couponCode: e.target.value, couponData: null})}
                         />
                     </Col>
-                    <Col sm={5} className={'coupon-button-container'}>
+                    <Col sm={12} md={5} className={'coupon-button-container'}>
                         <Button variant="contained" className="btn-light" onClick={() => this.onCheckCouponCode()}>
                             APPLY
                         </Button>
@@ -310,7 +309,7 @@ class _OrderForm extends Component {
     render() {
         return (
             <div className={'row p-20 site-order'}>
-                <Col sm={7}>
+                <Col sm={12} md={7}>
                     <List component="nav" className={'payment-type'}>
                         <ListItem button onClick={() => this.onChangePaymentType('card')} className={'payment-type-header'}>
                             <ListItemIcon>
@@ -335,7 +334,7 @@ class _OrderForm extends Component {
                         </Collapse>
                     </List>
                 </Col>
-                <Col sm={5}>
+                <Col sm={12} md={5}>
                     {
                         this.props.productName !== '' ?
                             <div className={'order-info'}>

@@ -1,16 +1,16 @@
 {
-   "name": "reactify",
-   "version": "4.2.1",
-   "description": "A Material Design Reactjs + Redux Admin Template",
+   "name": "Detectedx",
+   "version": "3.0.0",
+   "description": "Detectedx site",
    "scripts": {
       "start": "webpack-dev-server --mode development --inline --progress",
-      "build": "webpack --mode production"
+      "build": "webpack --mode production",
+      "postbuild": "node scripts/postbuild.js"
    },
    "keywords": [
-      "reactjs"
+      "detectedx medical"
    ],
-   "author": "The Iron Network",
-   "license": "ISC",
+   "author": "www.detectedx.com",
    "devDependencies": {
       "babel-core": "^6.26.0",
       "babel-eslint": "^7.2.3",
@@ -59,6 +59,7 @@
       "d3": "^5.9.7",
       "detect-browser": "^5.0.0",
       "dicom-parser": "^1.8.3",
+      "fs-extra": "^9.0.1",
       "hammerjs": "^2.0.8",
       "immutability-helper": "^3.0.1",
       "instantsearch.css": "^7.1.0",

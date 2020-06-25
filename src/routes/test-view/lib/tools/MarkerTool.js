@@ -13,7 +13,7 @@ export default class MarkerTool extends BaseAnnotationTool {
     constructor(configuration = {}) {
         const defaultConfig = {
             name: 'Marker',
-            supportedInteractionTypes: ['Mouse'],
+            supportedInteractionTypes: ['Mouse', 'Touch'],
             configuration: {
                 truthColour: 'red',
                 answerColour: 'yellow'
