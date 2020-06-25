@@ -350,6 +350,58 @@
   }
 }
 
+/*====== test set coupon component ======*/
+.test-set-coupon-info {
+  margin: 10px 0 0 0;
+
+  span {
+    text-align: right;
+  }
+
+  button {
+    border-radius: 2px;
+    font-family: din-next-w01-light, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 3px;
+    background-color: #978765;
+    background-image: none;
+
+    &:hover {
+      background: #97876588;
+    }
+  }
+}
+
+.test-set-coupon-error {
+    height: 15px;
+    margin: 5px 0 0 3px;
+    font-size: 12px;
+}
+
+.test-set-coupon-result {
+  font-size: 22px;
+  color: #43A047;
+}
+
+button.test-set-coupon-apply {
+  padding-left: 50px;
+  padding-right: 50px;
+  border-radius: 2px;
+  font-family: din-next-w01-light, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 3px;
+  background-color: #1E88E5;
+  background-image: none;
+
+  &:hover {
+    background: #64B5F6;
+  }
+}
+
 /*========= Responsive ========*/
 
 @media (max-width: 1200px) {

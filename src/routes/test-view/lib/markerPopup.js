@@ -234,9 +234,9 @@ export default class MarkerPopup extends Component {
                                             return (
                                                 <CustomFormControlLabel
                                                     disabled={this.state.complete}
-                                                    value={v.toString()}
+                                                    value={v.value.toString()}
                                                     control={<CustomRadio/>}
-                                                    label={v}
+                                                    label={v.label}
                                                     key={i}
                                                 />
                                             )

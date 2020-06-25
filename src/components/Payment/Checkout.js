@@ -47,7 +47,7 @@ class _OrderForm extends Component {
         let discountPrice = price;
         let couponCode = '';
         if (this.state.couponData !== null && this.state.couponData.valid) {
-            discountPrice = price * ((100 - this.state.couponData.coupon_discount_value) / 100).toFixed(2);
+            discountPrice = (price * ((100 - this.state.couponData.coupon_discount_value) / 100)).toFixed(2);
             couponCode = this.state.couponData.coupon_code;
         }
         return {
@@ -143,7 +143,7 @@ class _OrderForm extends Component {
     }
 
     onCheckCouponCode() {
-        Apis.couponInfo(this.state.couponCode).then((resp) => {
+        Apis.couponInfo(this.state.couponCode, 'discount_percent').then((resp) => {
             this.setState({
                 couponData: resp
             });
@@ -255,7 +255,7 @@ class _OrderForm extends Component {
                     </Col>
                 </div>
                 <p className={'coupon-error'} style={{color: (this.state.couponData && this.state.couponData.valid ? 'green' : 'red')}}>
-                    {this.state.couponData === null ? '' : (this.state.couponData.valid ? this.state.couponData.coupon_discount_value + '% discount is available' : 'The coupon code you entered is invalid')}
+                    {this.state.couponData === null ? '' : (this.state.couponData.valid ? this.state.couponData.coupon_discount_value + '% discount is available' : this.state.couponData.errorMsg)}
                 </p>
                 <div className={'order-info-item'}>
                     <span className={'mt-5'}>Total</span>

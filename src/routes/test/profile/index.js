@@ -23,6 +23,7 @@ import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
+import TestSetCouponModal from 'Components/Payment/TestSetCouponModal';
 
 export default class Profile extends Component {
 
@@ -61,6 +62,7 @@ export default class Profile extends Component {
             newPassword: '',
             confirmNewPassword: '',
             showChangePasswordModal: false,
+            showTestSetCouponModal: false,
             loading: true,
         }
     }
@@ -153,6 +155,11 @@ export default class Profile extends Component {
         })
 
     }
+
+    onShowTestSetCouponModal() {
+        this.setState({showTestSetCouponModal: true});
+    }
+
     render() {
         if (!this.state.loading) {
             const countryOptions = this.state.countryList.map((v) => ({value: v.country_name, label: v.country_name}));
@@ -183,6 +190,11 @@ export default class Profile extends Component {
                                         <div className="d-flex justify-content-center mt-10">
                                             <Button variant="contained" className="btn-primary text-white" onClick={() => this.onShowPasswordChangeModal()}>
                                                 <IntlMessages id="profile.changePassword" />
+                                            </Button>
+                                        </div>
+                                        <div className="d-flex justify-content-center mt-10">
+                                            <Button variant="contained" className="btn-primary text-white" onClick={() => this.onShowTestSetCouponModal()}>
+                                                Test Set Coupon
                                             </Button>
                                         </div>
                                     </div>
@@ -569,6 +581,10 @@ export default class Profile extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
+                    <TestSetCouponModal
+                        isOpen={this.state.showTestSetCouponModal}
+                        onClose={() => this.setState({showTestSetCouponModal: false})}
+                    />
                 </div>
             )
         } else {

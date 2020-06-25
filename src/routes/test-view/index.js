@@ -155,6 +155,7 @@ class TestView extends Component {
                 loading: false
             }, () => {
                 Marker.lesions = that.state.test_case.modalities.lesion_types;
+                Marker.modalityRatings = that.state.test_case.ratings;
                 ImageViewer.adjustSlideSize();
             });
             // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));

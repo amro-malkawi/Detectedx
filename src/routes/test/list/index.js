@@ -84,7 +84,7 @@ export default class List extends Component {
     onPay(test_set_item) {
         const {userInfo} = this.state;
         let isShowModalType = '';
-        if (userInfo.user_subscription_id === null || moment(userInfo.subscription_expire_date) < moment()) {
+        if (userInfo.user_subscription_id === null || userInfo.is_subscription_expired) {
             isShowModalType = 'sweetSubscribe';
         } else if (userInfo.user_credit < test_set_item.test_set_credit) {
             isShowModalType = 'sweetPurchase';
@@ -112,11 +112,47 @@ export default class List extends Component {
         this.getData();
     }
 
-    renderStartButton(test_set_item, modality_type) {
+    renderExpireDate(test_set_item) {
+        const {test_set_credit, test_set_expiry_date, is_test_set_expired} = test_set_item;
+        if(test_set_credit === 0 || test_set_expiry_date === 'unpaid') {
+            return null;
+        } else {
+            if(is_test_set_expired) {
+                return (
+                    <span className={'fs-12 text-pink'}>Expired</span>
+                )
+            } else {
+                return (
+                    <span className={'fs-12'}>Expires: {moment(test_set_expiry_date).format('MM/DD/YYYY')}</span>
+                )
+            }
+        }
+    }
+
+    renderScoresButton(test_set_item) {
         const {id, attempts, has_post, test_set_paid, test_set_credit} = test_set_item;
+        if(
+            (test_set_credit === 0 || (this.state.userInfo.user_subscription_id !== null && !this.state.userInfo.is_subscription_expired)) &&
+            attempts.some((v) => v.complete)
+        ) {
+            return (
+                <Button
+                    className="mr-10 mt-5 mb-5"
+                    outline color="info" size="sm"
+                    onClick={() => this.props.history.push('/app/test/complete-list/' + id)}>
+                    <IntlMessages id="test.scores"/>
+                </Button>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderStartButton(test_set_item, modality_type) {
+        const {id, attempts, has_post, test_set_paid, test_set_credit, is_test_set_expired} = test_set_item;
         const test_set_id = id;
         let attempt = attempts[0];
-        if (!test_set_paid) {
+        if (!test_set_paid || is_test_set_expired) {
             return (
                 <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm" onClick={() => test_set_credit === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
                     {test_set_credit === 0 ? <IntlMessages id="test.free"/> : (test_set_credit + ' Credits')}
@@ -186,23 +222,16 @@ export default class List extends Component {
                     {
                         test_sets.map((item, index) => {
                             return (
-                                <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
+                                <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1" key={index}>
                                     <Card className="rct-block">
                                         <CardBody>
-                                            <div className="row d-flex justify-content-between">
-                                                <div className={'col-sm-12 col-md'}>
+                                            <div className="d-flex justify-content-between">
+                                                <div>
                                                     <p className="fs-14 fw-bold mb-5">{item.name}</p>
+                                                    {this.renderExpireDate(item)}
                                                 </div>
-                                                <div className={'col-sm-12 col-md test-list-action-buttons'}>
-                                                    {
-                                                        item.attempts.some((v) => v.complete) ?
-                                                            <Button
-                                                                className="mr-10 mt-5 mb-5"
-                                                                outline color="info" size="sm"
-                                                                onClick={() => this.props.history.push('/app/test/complete-list/' + item.id)}>
-                                                                <IntlMessages id="test.scores"/>
-                                                            </Button> : null
-                                                    }
+                                                <div className={'test-list-action-buttons'}>
+                                                    {this.renderScoresButton(item)}
                                                     {this.renderStartButton(item, modality_info.modality_type)}
                                                 </div>
                                             </div>
