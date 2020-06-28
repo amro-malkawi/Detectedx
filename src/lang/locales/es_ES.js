@@ -68,6 +68,7 @@ module.exports = {
     "profile.lastPayment": "Último pago",
     "profile.nextPayment": "Próximo pago vencido",
     "profile.paymentMethod": "Método de pago",
+    "profile.invoice": "Factura",
     "profile.paymentType": "Tipo",
     "profile.plan": "Plan",
     "profile.billingHistory": "Historial de facturación",

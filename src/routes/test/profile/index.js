@@ -14,11 +14,14 @@ import {
     ExpansionPanelSummary,
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import {withStyles} from '@material-ui/core/styles';
 import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import ReactSelect from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import {NavLink} from "react-router-dom";
+import Tooltip from "@material-ui/core/Tooltip";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import moment from 'moment';
@@ -158,6 +161,14 @@ export default class Profile extends Component {
 
     onShowTestSetCouponModal() {
         this.setState({showTestSetCouponModal: true});
+    }
+
+    onDownloadInvoice(id) {
+        Apis.paymentHistoryReceipt(id).then((result) => {
+            window.open(result.url, "_blank");
+        }).catch(e => {
+            NotificationManager.error(e.response.data.error.message);
+        });
     }
 
     render() {
@@ -469,6 +480,7 @@ export default class Profile extends Component {
                                     <th className="text-center"><IntlMessages id={"profile.description"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.total"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
+                                    <th className="text-center"><IntlMessages id={"profile.invoice"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.date"}/></th>
                                 </tr>
                                 </thead>
@@ -480,6 +492,11 @@ export default class Profile extends Component {
                                             <td className="text-center" data-title={'Description'}>{v.payment_history_desc}</td>
                                             <td className="text-center" data-title={'Total'}>{v.payment_history_amount} {v.payment_history_currency}</td>
                                             <td className="text-center" data-title={'Payment Method'}>{v.payment_history_pay_type}</td>
+                                            <td className="text-center" data-title={'Invoice'}>
+                                                <NavLink to="#" replace onClick={() => this.onDownloadInvoice(v.id)}>
+                                                    <Tooltip id="tooltip-icon" title="Download Invoice"><DescriptionOutlinedIcon /></Tooltip>
+                                                </NavLink>
+                                            </td>
                                             <td className="text-center" data-title={'Date'}>{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                         </tr>
                                     ))

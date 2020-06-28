@@ -68,6 +68,7 @@ module.exports = {
     "profile.lastPayment": "最后付款",
     "profile.nextPayment": "下次还款",
     "profile.paymentMethod": "付款方式",
+    "profile.invoice": "发票",
     "profile.paymentType": "类型",
     "profile.plan": "计划",
     "profile.billingHistory": "计费历史",

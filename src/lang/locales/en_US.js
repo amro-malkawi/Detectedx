@@ -76,6 +76,7 @@ module.exports = {
 	"profile.lastPayment": "Last Payment",
 	"profile.nextPayment": "Next Payment Due",
 	"profile.paymentMethod": "Payment Method",
+	"profile.invoice": "Invoice",
 	"profile.paymentType": "Type",
 	"profile.plan": "Plan",
 	"profile.billingHistory": "Billing History",

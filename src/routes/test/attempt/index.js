@@ -656,7 +656,7 @@ export default class Attempt extends Component {
         }
         for (let i = 0; i < questions.length; i += 2) {
             result.push(
-                <div className={'row'} key={i}>
+                <div className={'row m-0'} key={i}>
                     <Col sm={6}>
                         {this.renderQuestionnaireItem(questions[i], i, isDisable)}
                     </Col>

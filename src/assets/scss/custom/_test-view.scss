@@ -924,16 +924,17 @@ div.viewer {
     }
 
     .correct-result {
-      width: 34px !important;
-      overflow: hidden;
-      padding: 5px !important;
-      text-align: center;
-
-      span {
-        width: 10px;
-        display: inline-block;
-        overflow: hidden;
-      }
+      display: none;
+      //width: 34px !important;
+      //overflow: hidden;
+      //padding: 5px !important;
+      //text-align: center;
+      //
+      //span {
+      //  width: 10px;
+      //  display: inline-block;
+      //  overflow: hidden;
+      //}
     }
   }
 
@@ -1002,6 +1003,13 @@ div.viewer {
   .instruction-container {
     .MuiTab-root {
       min-width: 100px;
+    }
+  }
+
+  .hanging-type-container {
+    .hanging-button {
+      padding-left: 0;
+      padding-right: 0;
     }
   }
 }

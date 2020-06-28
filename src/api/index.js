@@ -439,6 +439,15 @@ export function orderCreditPaypalApprove(price, currency, couponCode, paymentInf
     return instance.post(url, {price, currency, couponCode, paymentInfo}).then((response) => response.data);
 }
 
+
+/**
+ * payment_history functions
+ */
+export function paymentHistoryReceipt(id) {
+    let url = '/payment_histories/' + id + '/receipt?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * coupons functions
  */
