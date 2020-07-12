@@ -6,6 +6,7 @@ import yellow from "@material-ui/core/colors/yellow";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
+import CommentInfo from "Routes/test-view/component/CommentInfo";
 
 export default class CovidQuestions extends Component {
     constructor(props) {
@@ -282,47 +283,55 @@ export default class CovidQuestions extends Component {
         return (
             <div className={'pl-10 covid-question-container '}>
                 <div>
-                <p className={'covid-question-title'}>
-                    {
-                        this.renderTitle()
-                    }
-                </p>
-                <div className={'covid-questions'}>
-                    {
-                        this.state.question.slice(0, 3).map(v => this.renderQuestion(v))
-                    }
-                </div>
-                <div className={'covid-option-questions mb-20 mt-20'}>
-                    <p><IntlMessages id={"testView.covidQuestion.title1"}/></p>
-                    {
-                        this.state.question.slice(3, 5).map(v => this.renderQuestion(v))
-                    }
-                </div>
-                <div className={'covid-confidence'}>
-                    <p><IntlMessages id={"testView.covidQuestion.title2"}/></p>
-                    <RadioGroup
-                        aria-label="position"
-                        name="position"
-                        className={'ml-15'}
-                        value={this.state.selectedRating}
-                        onChange={(event) => this.onChangeRating(event.target.value)}
-                        row
-                    >
+                    <p className={'covid-question-title'}>
                         {
-                            [0, 1, 2, 3, 4, 5].map((v, i) => {   // [0, 1, 2, 3...]
-                                return (
-                                    <CustomFormControlLabel2
-                                        value={v.toString()}
-                                        control={<CustomRadio2/>}
-                                        label={v}
-                                        key={i}
-                                        disabled={this.props.complete}
-                                    />
-                                )
-                            })
+                            this.renderTitle()
                         }
-                    </RadioGroup>
-                </div>
+                    </p>
+                    {
+                        this.props.isTruth &&
+                        <CommentInfo
+                            test_case_id={this.props.test_case_id}
+                            attempts_id={this.props.attempts_id}
+                            isCovid={true}
+                        />
+                    }
+                    <div className={'covid-questions'}>
+                        {
+                            this.state.question.slice(0, 3).map(v => this.renderQuestion(v))
+                        }
+                    </div>
+                    <div className={'covid-option-questions mb-20 mt-20'}>
+                        <p><IntlMessages id={"testView.covidQuestion.title1"}/></p>
+                        {
+                            this.state.question.slice(3, 5).map(v => this.renderQuestion(v))
+                        }
+                    </div>
+                    <div className={'covid-confidence'}>
+                        <p><IntlMessages id={"testView.covidQuestion.title2"}/></p>
+                        <RadioGroup
+                            aria-label="position"
+                            name="position"
+                            className={'ml-15'}
+                            value={this.state.selectedRating}
+                            onChange={(event) => this.onChangeRating(event.target.value)}
+                            row
+                        >
+                            {
+                                [0, 1, 2, 3, 4, 5].map((v, i) => {   // [0, 1, 2, 3...]
+                                    return (
+                                        <CustomFormControlLabel2
+                                            value={v.toString()}
+                                            control={<CustomRadio2/>}
+                                            label={v}
+                                            key={i}
+                                            disabled={this.props.complete}
+                                        />
+                                    )
+                                })
+                            }
+                        </RadioGroup>
+                    </div>
                 </div>
             </div>
         )

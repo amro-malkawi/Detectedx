@@ -5,6 +5,7 @@ import {Scrollbars} from "react-custom-scrollbars";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
+import $ from 'jquery';
 
 export default class CommentInfo extends Component {
 
@@ -33,6 +34,8 @@ export default class CommentInfo extends Component {
     }
 
     togglePanel() {
+        //control overlap in mobile browser
+        $('.covid-question-container ').css('overflow', !this.state.panelOpen ? 'inherit' : 'auto');
         this.setState({
             panelOpen: !this.state.panelOpen
         });

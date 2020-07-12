@@ -1,4 +1,7 @@
 /*======== Header Scss ========*/
+.main-header {
+   min-height: 43px !important;
+}
 
 .app-header {
    .rct-header {
@@ -104,6 +107,7 @@
    }
 }
 
+
 //Cart Dropdown
 .cart-dropdown,
 .notification-dropdown {
@@ -131,13 +135,20 @@
 }
 
 .language-icon {
+   display: flex !important;
+   justify-content: center;
+   align-items: center;
    height: 2.25rem;
-   width: 5rem;
+   width: 181px;
    line-height: 26px;
-   padding: 0.25rem;
+   padding: 0.25rem !important;
    color:$body-color;
    box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
    background-color: $white;
+   span {
+      color: $black;
+      font-size: 13px;
+   }
 }
 
 .cart-dropdown{
@@ -153,6 +164,75 @@
    border: 1px solid $input-border-color !important;
    height: 2.5rem !important;
    width: 2.5rem !important;
+}
+
+.user-block {
+   .rct-dropdown {
+      cursor: pointer;
+      .user-profile {
+         width: 30px;
+         height: 30px;
+         border-radius: 20px;
+         text-align: center;
+         color: white;
+         margin: auto;
+         background-color: #AB47BC;
+         span {
+            font-weight: 500;
+            font-size: 17px;
+            color: white;
+            line-height: 30px;
+            user-select: none;
+         }
+      }
+      .dropdown-menu {
+         background-color: $base-light;
+         width: 190px;
+         transform: translate3d(-145px, 37px, 0px) !important;
+         ul {
+            background-color: transparent;
+            li:not(.user-profile-top) {
+               box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.02);
+               margin: 0.3125rem;
+               a {
+                  background-color: $white;
+                  padding: 0.75rem 1rem;
+                  display: block;
+                  i {
+                     font-size: 1rem;
+                  }
+                  span:not(.badge) {
+                     color: $body-color;
+                     font-size: $font-size-sm;
+                     transition: color 0.3s ease;
+                  }
+                  &:hover {
+                     span:not(.badge) {
+                        color: $primary;
+                     }
+                  }
+               }
+            }
+         }
+
+         .user-profile-top {
+            p {
+               margin-bottom: 0;
+               width: 100%;
+               white-space: nowrap;
+               overflow: hidden;
+               text-overflow: ellipsis;
+            }
+         }
+
+         .language-dropdown {
+            .dropdown-menu {
+               width: 321px !important;
+               transform: translate3d(84px, 34px, 0px) !important;
+            }
+         }
+      }
+   }
 }
 
 @media (max-width: 1199px) and (min-width: 320px) {

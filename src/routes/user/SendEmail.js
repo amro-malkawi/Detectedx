@@ -64,7 +64,6 @@ export default class SendEmail extends Component {
                                         </Link>
                                     </div>
                                     <div>
-                                        <Link to="/signin" className="mr-15 text-white"><IntlMessages id={"user.alreadyAccount"} /></Link>
                                         <Button
                                             component={Link}
                                             to="/signin"

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button} from "reactstrap";
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import IntlMessages from "Util/IntlMessages";
+import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 
 export default class QualityModal extends Component{
     constructor(props) {
@@ -21,9 +22,9 @@ export default class QualityModal extends Component{
         return (
             <Dialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md' >
                 <div className={'quality-container'}>
-                    <DialogTitle>
+                    <CustomDialogTitle onClose={toggle}>
                         <span className={'quality-title'}><IntlMessages id={"testView.modal.selectImageQuality"}/></span>
-                    </DialogTitle>
+                    </CustomDialogTitle>
                     <DialogContent>
                         <div className={'quality-button-container'}>
                             <div className={'quality-button ' + (this.state.quality === 3 ? 'active' : '')} onClick={() => this.setState({quality: 3})}>

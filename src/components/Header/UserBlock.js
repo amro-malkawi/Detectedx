@@ -2,7 +2,8 @@
  * User Block Component
  */
 import React, {Component} from 'react';
-import {Dropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
+import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Modal} from 'reactstrap';
+import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as selectors from 'Selectors';
@@ -11,12 +12,15 @@ import * as selectors from 'Selectors';
 // intl messages
 import IntlMessages from 'Util/IntlMessages';
 import {logoutUserFromEmail} from "Actions";
+import LanguageProvider from "Components/Header/LanguageProvider";
+import PaymentModal from "Components/Payment/PaymentModal";
 
 class UserBlock extends Component {
 
     state = {
         userDropdownMenu: false,
-        isSupportModal: false
+        isSupportModal: false,
+        isShowSubscriptionModal: false,
     };
 
     /**
@@ -33,13 +37,19 @@ class UserBlock extends Component {
         this.setState({userDropdownMenu: !this.state.userDropdownMenu});
     }
 
+    onFinishSubscribe() {
+        this.setState({isShowSubscriptionModal: false});
+        window.location.reload();
+    }
+
     render() {
         return (
-            <div className="user-block ml-15">
+            <div className="user-block mr-15">
                 <Dropdown
                     isOpen={this.state.userDropdownMenu}
                     toggle={() => this.toggleUserDropdownMenu()}
                     className="rct-dropdown"
+                    direction={'down'}
                 >
                     <DropdownToggle
                         tag="div"
@@ -48,16 +58,12 @@ class UserBlock extends Component {
                         <div className="user-profile">
                             <span>{this.props.userName === undefined ? '' : this.props.userName.charAt(0).toUpperCase()}</span>
                         </div>
-                        <div className="user-info">
-                            <span className="user-name">{this.props.userName}</span>
-                            <i className="zmdi zmdi-chevron-down dropdown-icon"/>
-                        </div>
                     </DropdownToggle>
                     <DropdownMenu>
                         <ul className="list-unstyled mb-0">
                             <li className="p-15 border-bottom user-profile-top bg-primary rounded-top">
                                 <p className="text-white mb-0 fs-14">{this.props.userName}</p>
-                                <span className="text-white fs-14">{this.props.userEmail}</span>
+                                <p className="text-white fs-14">{this.props.userEmail}</p>
                             </li>
                             <li>
                                 <Link
@@ -77,18 +83,38 @@ class UserBlock extends Component {
                                     onClick={() => this.setState({userDropdownMenu: false})}
                                 >
                                     <i className="zmdi zmdi-edit text-warning mr-3"/>
-                                    <span>Modules</span>
+                                    <span><IntlMessages id={'header.modules'}/></span>
                                 </Link>
                             </li>
+                            <li>
+                                <Link
+                                    to="/app/test"
+                                    onClick={() => this.setState({isShowSubscriptionModal: true, userDropdownMenu: false})}
+                                >
+                                    <SubscriptionsIcon style={{fontSize: 11.5, marginRight: 15, color: 'red'}}/>
+                                    <span><IntlMessages id={'header.subscribe'}/></span>
+                                </Link>
+                        </li>
+
+                            <LanguageProvider/>
+                            <DropdownItem divider />
                             <li className="border-top">
                                 <a onClick={() => this.logoutUser()}>
                                     <i className="zmdi zmdi-power text-danger mr-3"/>
-                                    <span>Log out</span>
+                                    <span><IntlMessages id={'header.logout'}/></span>
                                 </a>
                             </li>
                         </ul>
                     </DropdownMenu>
                 </Dropdown>
+                {
+                    this.state.isShowSubscriptionModal &&
+                    <PaymentModal
+                        type={'planSubscribe'}
+                        onFinish={() => this.onFinishSubscribe()}
+                        onClose={() => this.setState({isShowSubscriptionModal: false})}
+                    />
+                }
             </div>
         );
     }

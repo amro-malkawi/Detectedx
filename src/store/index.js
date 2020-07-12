@@ -1,11 +1,19 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import Thunk from 'redux-thunk';
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import reducers from '../reducers';
+
+const persistConfig = {
+    key: 'root',
+    storage,
+    whitelist: ['settings']
+};
 
 export function configureStore(initialState) {
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
     const store = createStore(
-        reducers,
+        persistReducer(persistConfig, reducers),
         initialState,
         composeEnhancers(applyMiddleware(Thunk))
     );
@@ -17,6 +25,6 @@ export function configureStore(initialState) {
             store.replaceReducer(nextRootReducer);
         });
     }
-
-    return store;
+    const persistor = persistStore(store);
+    return { store, persistor };
 }

@@ -14,7 +14,9 @@
     }
 
     .payment-slide-title {
-      padding: 20px 80px 10px 30px;
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 30px 10px 30px;
       border-bottom: 2px solid #dddddd;
 
       i {
@@ -86,6 +88,12 @@
         font-size: 70px;
         color: green;
         margin-bottom: 30px;
+        &.success {
+          color: green;
+        }
+        &.fault {
+          color: red;
+        }
       }
 
       h2 {

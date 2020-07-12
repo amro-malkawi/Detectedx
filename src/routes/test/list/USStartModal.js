@@ -1002,11 +1002,11 @@ export default class USStartModal extends Component {
                                 </p>
                             </div>
                         </div>
-                    <DialogActions>
-                        <div style={{margin: 'auto'}}>
-                            <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>
-                        </div>
-                    </DialogActions>
+                    {/*<DialogActions>*/}
+                    {/*    <div style={{margin: 'auto'}}>*/}
+                    {/*        <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>*/}
+                    {/*    </div>*/}
+                    {/*</DialogActions>*/}
                 </div>
             </Dialog>
         )

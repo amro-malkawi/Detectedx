@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {NotificationContainer} from 'react-notifications';
-import {detect} from 'detect-browser';
+import {browserName, isChrome, isFirefox} from 'react-device-detect';
 import RctThemeProvider from './RctThemeProvider';
 import RctDefaultLayout from './DefaultLayout';
 import RctSiteLayout from './SiteLayout';
@@ -47,8 +47,7 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        const browser = detect();
-        // if(!browser || (browser.name !== 'chrome' && browser.name !== 'firefox')) {
+        // if(browserName !== 'Chrome' && browserName !== 'Firefox') {
         //     return (<Route component={ChromeError}/>);
         // }
         const {isLogin, location, match} = this.props;

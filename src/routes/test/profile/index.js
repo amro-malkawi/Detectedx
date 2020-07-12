@@ -11,10 +11,11 @@ import {
     RadioGroup,
     ExpansionPanel,
     ExpansionPanelDetails,
-    ExpansionPanelSummary,
+    ExpansionPanelSummary
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import { red } from '@material-ui/core/colors';
 import {withStyles} from '@material-ui/core/styles';
 import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
@@ -26,7 +27,7 @@ import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
-import TestSetCouponModal from 'Components/Payment/TestSetCouponModal';
+import PaymentModal from "Components/Payment/PaymentModal";
 
 export default class Profile extends Component {
 
@@ -53,6 +54,7 @@ export default class Profile extends Component {
                 referrer_by: '',
                 extra_info: '',
                 user_subscription: undefined,
+                need_user_subscribe: false,
                 payment_history: [],
                 user_credit_history: []
             },
@@ -65,7 +67,7 @@ export default class Profile extends Component {
             newPassword: '',
             confirmNewPassword: '',
             showChangePasswordModal: false,
-            showTestSetCouponModal: false,
+            isShowSubscriptionModal: false,
             loading: true,
         }
     }
@@ -159,16 +161,18 @@ export default class Profile extends Component {
 
     }
 
-    onShowTestSetCouponModal() {
-        this.setState({showTestSetCouponModal: true});
-    }
-
     onDownloadInvoice(id) {
         Apis.paymentHistoryReceipt(id).then((result) => {
             window.open(result.url, "_blank");
         }).catch(e => {
             NotificationManager.error(e.response.data.error.message);
         });
+    }
+
+    onFinishSubscribe() {
+        this.setState({isShowSubscriptionModal: false, loading: true}, () => {
+            this.getData();
+        })
     }
 
     render() {
@@ -194,18 +198,13 @@ export default class Profile extends Component {
                                         <div className="media-body pt-10">
                                             <h1 className="mb-5">{this.state.userInfo.email}</h1>
                                             <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMM Do YYYY, HH:mm:ss')}</span>
-                                            <h3 className="mt-20 mb-5">Current Credits: {this.state.userInfo.user_credit}</h3>
+                                            <h3 className="mt-20 mb-5">Current Points: {this.state.userInfo.user_credit}</h3>
                                         </div>
                                     </div>
                                     <div className="card-footer">
                                         <div className="d-flex justify-content-center mt-10">
                                             <Button variant="contained" className="btn-primary text-white" onClick={() => this.onShowPasswordChangeModal()}>
                                                 <IntlMessages id="profile.changePassword" />
-                                            </Button>
-                                        </div>
-                                        <div className="d-flex justify-content-center mt-10">
-                                            <Button variant="contained" className="btn-primary text-white" onClick={() => this.onShowTestSetCouponModal()}>
-                                                Test Set Coupon
                                             </Button>
                                         </div>
                                     </div>
@@ -438,6 +437,15 @@ export default class Profile extends Component {
                             <ExpansionPanel expanded={this.state.expanded === 'payment'} onChange={this.onExpandeChange('payment')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
                                     <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.subscriptions"}/></span>
+                                    <SubscriptionButton
+                                        variant="contained"
+                                        size="small"
+                                        color="primary"
+                                        disabled={!this.state.userInfo.need_user_subscribe}
+                                        onClick={(e) => this.setState({isShowSubscriptionModal: true})}
+                                    >
+                                        <IntlMessages id={"profile.subscribe"}/>
+                                    </SubscriptionButton>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
                                     <div className={'d-flex justify-content-center'}>
@@ -449,7 +457,6 @@ export default class Profile extends Component {
                                                 <th className="text-center"><IntlMessages id={"profile.lastPayment"}/></th>
                                                 <th className="text-center"><IntlMessages id={"profile.nextPayment"}/></th>
                                                 <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
-                                                <th className="text-center"/>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -523,7 +530,7 @@ export default class Profile extends Component {
                                         <tr>
                                             <td className="text-center" data-title={'Type'}>{v.credit_history_type}</td>
                                             <td className="text-center" data-title={'Description'}>{v.credit_history_desc}</td>
-                                            <td className="text-center" data-title={'Total'}>{v.credit_history_amount} credit</td>
+                                            <td className="text-center" data-title={'Total'}>{v.credit_history_amount} points</td>
                                             <td className="text-center" data-title={'Date'}>{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                         </tr>
                                     ))
@@ -598,10 +605,14 @@ export default class Profile extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-                    <TestSetCouponModal
-                        isOpen={this.state.showTestSetCouponModal}
-                        onClose={() => this.setState({showTestSetCouponModal: false})}
-                    />
+                    {
+                        this.state.isShowSubscriptionModal &&
+                        <PaymentModal
+                            type={'planSubscribe'}
+                            onFinish={() => this.onFinishSubscribe()}
+                            onClose={() => this.setState({isShowSubscriptionModal: false})}
+                        />
+                    }
                 </div>
             )
         } else {
@@ -628,3 +639,15 @@ const CustomInputLabel = withStyles(theme => ({
         paddingRight: 2,
     }
 }))(InputLabel);
+
+const SubscriptionButton = withStyles((theme) => ({
+    root: {
+        padding: '0 10px',
+        marginLeft: 20,
+        color: theme.palette.getContrastText(red[500]),
+        backgroundColor: red[500],
+        '&:hover': {
+            backgroundColor: red[700],
+        },
+    },
+}))(Button);

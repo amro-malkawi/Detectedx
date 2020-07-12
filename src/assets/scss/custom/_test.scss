@@ -1,8 +1,10 @@
 .questionnaire-wrapper {
   margin: 30px 0;
+
   .attempt-stepper {
     overflow: auto;
   }
+
   .questionnaire {
     margin: 20px 0 0 0;
     border-bottom: 1px solid #9E9E9E;
@@ -96,9 +98,22 @@
 }
 
 .test-list-container {
+  .test-set-coupon {
+    display: flex;
+    justify-content: flex-end;
+    margin: -20px 0 10px;
+
+    button {
+
+    }
+  }
 
   .modality-tab-item {
-    padding: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    padding: 15px 10px 5px;
 
     p {
       font-size: 16px;
@@ -110,10 +125,21 @@
       height: 60px;
       padding: 0 65px
     }
+
+    button {
+      margin-top: 12px;
+      padding: 0 9px;
+    }
+  }
+
+  .learning-objective {
+    margin-left: 12px;
+    margin-top: 3px;
+    font-size: 12px;
   }
 
   .test-list-desc-text {
-    margin-top: 3px;
+    margin-top: 12px;
     font-size: 12px;
     color: grey;
   }
@@ -124,43 +150,48 @@
 
     button {
       min-width: 80px;
+      max-height: 29px;
     }
   }
+}
 
-  .instruction-video {
-    position: relative;
-    cursor: pointer;
+.instruction-video {
+  position: relative;
+  max-width: 450px;
+  cursor: pointer;
+  margin: 45px auto;
+  border: 1px solid #555555;
+  border-radius: 5px;
 
-    img {
-      width: 100%;
-      border-radius: 15px;
-    }
+  img {
+    width: 100%;
+    border-radius: 15px;
+  }
 
-    p {
-      margin-top: 10px;
-      margin-bottom: 25px;
-      text-align: center;
+  p {
+    margin-top: 10px;
+    margin-bottom: 25px;
+    text-align: center;
 
 
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: 4px;
-      color: #5D92F4;
-    }
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #5D92F4;
+  }
 
-    i {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 50px;
-      right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 4.5vw;
-      color: white;
-    }
+  i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 4.5vw;
+    color: white;
   }
 }
 
@@ -168,14 +199,27 @@
   margin: 30px 0;
 }
 
-.sweetalert-confirm-btn {
-  padding: 5px 15px !important;
-  border-width: 0;
-}
+.sweetalert-container {
+  padding: 20px 50px !important;
 
-.sweetalert-cancel-btn {
-  padding: 5px 15px !important;
-  border-width: 0;
+  h2 {
+    font-size: 27px !important;
+    margin-top: 10px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .sweetalert-confirm-btn {
+    margin-top: 15px;
+    min-width: 80px;
+    padding: 5px 15px !important;
+    border-width: 0;
+  }
+
+  .sweetalert-cancel-btn {
+    margin-top: 15px;
+    padding: 5px 15px !important;
+    border-width: 0;
+  }
 }
 
 /*======= Responsive =======*/
@@ -198,6 +242,7 @@
   }
   table.mobile-table {
     display: block;
+
     thead, tbody, th, td, tr {
       display: block;
     }
@@ -208,7 +253,9 @@
       left: -9999px;
     }
 
-    tr { border: 1px solid #ccc; }
+    tr {
+      border: 1px solid #ccc;
+    }
 
     td {
       border: none;
@@ -226,7 +273,7 @@
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
-        text-align:left;
+        text-align: left;
         font-weight: bold;
       }
     }
@@ -236,6 +283,9 @@
     .MuiTabs-scrollButtonsDesktop {
       display: inline-flex;
       width: 20px;
+    }
+    .test-set-coupon {
+      margin: -4px 0 7px;
     }
   }
 

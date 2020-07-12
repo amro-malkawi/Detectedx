@@ -150,6 +150,7 @@ export default class MarkerPopup extends Component {
                 isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
                 placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : 'Select ' + item.name}
                 name="lesions"
+                isSearchable={false}
                 options={options}
                 value={selectedOption}
                 styles={selectStyles}
@@ -188,6 +189,7 @@ export default class MarkerPopup extends Component {
                     isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
                     placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
                     name="lesions"
+                    isSearchable={false}
                     options={options}
                     value={selectedOption}
                     styles={selectStyles}
@@ -199,6 +201,7 @@ export default class MarkerPopup extends Component {
                         <Select
                             isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
                             placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectChildLesion"}/>}
+                            isSearchable={false}
                             options={childrenOptions}
                             value={selectedChildrenOption}
                             styles={selectStyles}
@@ -253,6 +256,7 @@ export default class MarkerPopup extends Component {
                                     placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
                                     isMulti
                                     name="lesions"
+                                    isSearchable={false}
                                     options={lesionsTypes}
                                     value={this.state.selectedLesionTypes}
                                     styles={selectStyles}

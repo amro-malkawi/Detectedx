@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import {Button} from "reactstrap";
 import IntlMessages from "Util/IntlMessages";
+import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 
 export default class LearningCovidModal extends Component {
     renderCovid() {
@@ -70,17 +71,17 @@ export default class LearningCovidModal extends Component {
     render() {
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
-                <DialogTitle id="alert-dialog-title">
+                <CustomDialogTitle id="alert-dialog-title" onClose={this.props.onClose}>
                     <span className={'fs-23'}><IntlMessages id="test.learningObject"/>:</span>
-                </DialogTitle>
+                </CustomDialogTitle>
                 <DialogContent>
                     {this.renderCovid()}
                 </DialogContent>
-                <DialogActions>
-                    <div style={{margin: 'auto'}}>
-                        <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>
-                    </div>
-                </DialogActions>
+                {/*<DialogActions>*/}
+                {/*    <div style={{margin: 'auto'}}>*/}
+                {/*        <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>*/}
+                {/*    </div>*/}
+                {/*</DialogActions>*/}
             </Dialog>
         )
     }

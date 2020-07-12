@@ -12,10 +12,6 @@ import {
     Stepper,
     Step,
     StepButton,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     CircularProgress,
 } from '@material-ui/core';
 import SchoolIcon from '@material-ui/icons/School';
@@ -30,7 +26,7 @@ const stepName = {
     additionalQuestions: <IntlMessages id="test.additionalQuestions"/>,
     test: <IntlMessages id="test.test"/>,
     score: <IntlMessages id="test.scores"/>,
-    answer: <IntlMessages id="test.answers"/>,
+    answer: <IntlMessages id={"test.viewAnswer"}/>,
     postTest: <IntlMessages id="test.postTest"/>,
     postQuestions: <IntlMessages id="test.evaluationForm"/>,
     postScore: <IntlMessages id="test.results"/>
@@ -53,14 +49,13 @@ export default class Attempt extends Component {
             percentile: {},
             steps: [],
             stepIndex: 0,
-            showConsentModal: false,
             loading: true,
             isDownCert: false,
         }
     }
 
     componentDidMount() {
-        this.getData();
+        this.getData(true);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -70,51 +65,38 @@ export default class Attempt extends Component {
         return true;
     }
 
-    getData() {
+    getData(isMount) {
         const that = this;
-        let promise0 = new Promise(function (resolve, reject) {
-            Apis.attemptsQuestionnaire(that.state.attempts_id).then((resp) => {
-                resolve(resp);
-            }).catch((e) => {
-                reject(e);
-            });
-        });
-
-        let promise1 = new Promise(function (resolve, reject) {
-            Apis.attemptsDetail(that.state.attempts_id).then((resp) => {
-                resolve(resp);
-            }).catch((e) => {
-                reject(e);
-            })
-        });
-
-        let promise2 = new Promise(function (resolve, reject) {
-            Apis.attemptsPercentile(that.state.attempts_id).then((resp) => {
-                resolve(resp);
-            }).catch((e) => {
-                reject(e);
-            });
-        });
-
-        Promise.all([promise0, promise1, promise2]).then(function (values) {
-            const [questionnaires, detail, percentile] = values;
+        Promise.all([
+            Apis.attemptsQuestionnaire(that.state.attempts_id),
+            Apis.attemptsDetail(that.state.attempts_id),
+            Apis.attemptsPercentile(that.state.attempts_id)
+        ]).then(function ([questionnaires, detail, percentile]) {
             let steps;
-            if (!detail.complete) {
-                steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
+            const isFinishMainQuestions = questionnaires.main.length === 0 || questionnaires.main.some((v) => v.answer.length !== 0);
+            const isFinishAdditionalQuestions = questionnaires.additional.length === 0 || questionnaires.additional.some((v) => v.answer.length !== 0);
+            if (!detail.complete || !isFinishMainQuestions || !isFinishAdditionalQuestions) {
+                // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
+                steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
             } else {
                 if (detail.test_sets.modalities.modality_type === 'image_quality') {
+                    // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
                     steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
                 } else {
-                    steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
+                    // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
+                    steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'score', 'answer'] : ['mainQuestions', 'score', 'answer'];
                 }
                 if (detail.test_sets.has_post) {
                     steps = steps.concat(['postTest', 'postQuestions', 'postScore']);
                 }
             }
-            const stepIndex = that.props.match.params.step === undefined ? 0 : (steps.indexOf(that.props.match.params.step) > -1 ? steps.indexOf(that.props.match.params.step) : 0);
+            const stepIndex = !isMount ? that.state.stepIndex + 1 :
+                (that.props.match.params.step === undefined ? 0 : (steps.indexOf(that.props.match.params.step) > -1 ? steps.indexOf(that.props.match.params.step) : 0));
             that.setState({
                 mainQuestions: questionnaires.main,
+                isFinishMainQuestions,
                 additionalQuestions: questionnaires.additional,
+                isFinishAdditionalQuestions,
                 postQuestions: questionnaires.post,
                 attemptInfo: detail,
                 post_stage: detail.post_stage,
@@ -247,14 +229,33 @@ export default class Attempt extends Component {
             if (isChanged) {
                 this.setState({loading: true});
                 this.saveQuestions(questions, type).then((resp) => {
-                    if ((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length === 0) ||
-                        this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
-                        this.setState({showConsentModal: true});
-                    } else if (type === 'post') {
-                        this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1});
+                    if(!resp.complete) {
+                        const updateValue = {
+                            stepIndex: this.state.stepIndex + 1
+                        };
+                        if (type === 'main') {
+                            updateValue.isFinishMainQuestions = true;
+                            updateValue.isChangeMainQuestions = false;
+                        } else if (type === 'additional') {
+                            updateValue.isFinishAdditionalQuestions = true;
+                            updateValue.isChangeAdditionalQuestions = false;
+                        } else if (type === 'post') {
+                            updateValue.post_stage === 2;
+                            updateValue.isChangePostQuestions = false;
+                        }
+                        this.setState(updateValue);
                     } else {
-                        this.setState({stepIndex: this.state.stepIndex + 1});
+                        this.getData(false)
                     }
+                    // if ((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length === 0) ||
+                    //     this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
+                    //     this.setState({stepIndex: this.state.stepIndex + 1});
+                    // } else if (type === 'post') {
+                    //     updateValue.post_stage === 2;
+                    //     this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1});
+                    // } else {
+                    //     this.setState({stepIndex: this.state.stepIndex + 1});
+                    // }
                 }).catch((e) => {
                     console.warn(e);
                     NotificationManager.error(e.message);
@@ -265,14 +266,10 @@ export default class Attempt extends Component {
                 if ((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length !== 0) || this.state.attemptInfo.complete) {
                     this.setState({stepIndex: this.state.stepIndex + 1});
                 } else {
-                    this.setState({showConsentModal: true});
+                    this.setState({stepIndex: this.state.stepIndex + 1});
                 }
             }
         }
-    }
-
-    onAcceptConsent() {
-        this.setState({showConsentModal: false, stepIndex: this.state.stepIndex + 1});
     }
 
     onBack() {
@@ -641,11 +638,14 @@ export default class Attempt extends Component {
     renderQuestionnaire() {
         let result = [];
         let questions;
-        let isDisable = this.state.attemptInfo.complete;
+        let isDisable = true;
+        // let isDisable = this.state.attemptInfo.complete;
         if (this.state.steps[this.state.stepIndex] === 'mainQuestions') {
             questions = this.state.mainQuestions;
+            isDisable = this.state.isFinishMainQuestions;
         } else if (this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
             questions = this.state.additionalQuestions;
+            isDisable = this.state.isFinishAdditionalQuestions;
         } else if (this.state.steps[this.state.stepIndex] === 'postQuestions') {
             questions = this.state.postQuestions;
             if (this.state.attemptInfo.complete && this.state.post_stage === 1) {
@@ -1039,34 +1039,6 @@ export default class Attempt extends Component {
                     <h1>{stepName[this.state.steps[this.state.stepIndex]]}</h1>
                     {this.renderStepper()}
                     {this.renderStepContent()}
-                    <Dialog open={this.state.showConsentModal} onClose={() => null} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
-                        <DialogTitle id="alert-dialog-title">
-                            <div className={'text-center fs-23'}><IntlMessages id={"test.consent"}/></div>
-                        </DialogTitle>
-                        <DialogContent>
-                            <span className={'fs-17'}><IntlMessages id={"test.attempt.consent.understand"}/></span>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text1"}/></span>
-                            </div>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text2"}/></span>
-                            </div>
-                            <div className={'fs-17 mt-15'}><IntlMessages id={"test.attempt.consent.consent"}/></div>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text3"}/></span>
-                            </div>
-                            <div>
-                                <span className="dot badge-secondary mr-10">&nbsp;</span>
-                                <span className="fs-14 mr-10"><IntlMessages id={"test.attempt.consent.text4"}/></span>
-                            </div>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button variant="contained" onClick={() => this.onAcceptConsent()} color="primary" className="text-white" autoFocus> <IntlMessages id={"test.agree"}/> </Button>
-                        </DialogActions>
-                    </Dialog>
                 </div>
             )
         } else {

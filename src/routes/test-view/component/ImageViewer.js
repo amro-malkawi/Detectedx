@@ -14,6 +14,7 @@ import * as Apis from "Api/index";
 import LengthTool from "../lib/tools/LengthTool";
 import IntlMessages from "Util/IntlMessages";
 import { v4 as uuidv4 } from 'uuid';
+import {isMobile} from 'react-device-detect';
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -35,7 +36,7 @@ class ImageViewer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isShowMarkInfo: true,
+            isShowMarkInfo: !isMobile,
             stackCount: this.props.imageInfo.stack_count,
             currentStack: 1,
             isShowFloatingMenu: false,
@@ -67,6 +68,7 @@ class ImageViewer extends Component {
             this.initTools();
         });
         this.initEvents();
+        ImageViewer.adjustSlideSize();
     }
 
     // static getDerivedStateFromProps(nextProps, prevState) {
@@ -162,7 +164,7 @@ class ImageViewer extends Component {
                 minScale: viewport.scale
             }
         });
-        cornerstoneTools.addTool(ZoomTouchPinch);
+        cornerstoneTools.addTool(ZoomTouchPinch, {configuration: {minScale: viewport.scale}});
         cornerstoneTools.setToolActive('ZoomTouchPinch', {});
 
         // the marker tool is always in passive or active mode (passive so

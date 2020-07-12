@@ -410,8 +410,12 @@ div.viewer {
       border-radius: 10px 0 0 10px;
 
       &.covid-comment {
-        top: 40px;
-        left: 80px;
+        //top: 40px;
+        //left: 80px;
+        position: relative;
+        top: 13px;
+        left: 0;
+        margin: -28px auto 0;
 
         .dropdown {
           .dropdown-menu {
@@ -741,6 +745,10 @@ div.viewer {
     background-color: black;
   }
 
+  .instruction-title {
+    color: #afafaf;
+  }
+
   .instruction-content {
     max-height: 80%;
 
@@ -786,6 +794,18 @@ div.viewer {
       color: #42A5F5;
     }
 
+    .circle-number {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      border: 1px solid red !important;
+      color: red;
+      border-radius: 13px;
+      text-align: center;
+      font-size: 17px;
+      margin-right: 5px;
+    }
+
     .side-img {
       margin: 45px auto;
     }
@@ -809,6 +829,14 @@ div.viewer {
 
   .instruction-header {
     background-color: white;
+  }
+
+  .instruction-title {
+    color: #333333;
+  }
+
+  .instruction-video {
+    border-width: 0;
   }
 
   .instruction-container {
@@ -883,9 +911,6 @@ div.viewer {
 }
 
 @media (max-width: 992px) {
-}
-
-@media (max-width: 768px) {
   #toolbar {
     .test-view-toolbar > .tool-container > .tool {
       display: none;
@@ -992,10 +1017,31 @@ div.viewer {
   div.viewer {
     .test-content {
       .covid-question-container {
-        width: 300px;
+        position: relative;
+        width: 150px;
+
+        .covid-question-title {
+          margin: 10px 3px 0 3px;
+          text-align: center;
+        }
 
         .covid-questions {
           overflow-y: inherit;
+        }
+
+        .covid-comment {
+          position: relative;
+          top: 13px;
+          left: 0;
+        }
+      }
+    }
+
+    #cover {
+      #mark-details {
+        .css-iorems-menu {
+          max-height: 100px;
+          overflow-y: scroll;
         }
       }
     }

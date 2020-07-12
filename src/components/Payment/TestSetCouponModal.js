@@ -1,8 +1,14 @@
 import React, {Component} from 'react';
-import {Dialog, DialogTitle, DialogContent, withStyles, Button} from "@material-ui/core";
+import {
+    Dialog,
+    withStyles,
+    Button
+} from "@material-ui/core";
+import CustomDialogTitle from 'Components/Dialog/CustomDialogTitle';
 import {Input} from "reactstrap";
 import * as Apis from "Api/index";
 import {NotificationManager} from "react-notifications";
+import IntlMessages from "Util/IntlMessages";
 
 export default class TestSetCouponModal extends Component {
     constructor() {
@@ -30,6 +36,15 @@ export default class TestSetCouponModal extends Component {
         }).catch((e) => {
             if (e.response) NotificationManager.error(e.response.data.error.message);
         });
+    }
+
+    onFinish() {
+        this.setState({
+            couponCode: '',
+            couponData: null,
+            applyResult: null,
+        });
+        this.props.onFinish();
     }
 
     onClose() {
@@ -92,8 +107,8 @@ export default class TestSetCouponModal extends Component {
                         <p className={'test-set-coupon-result'}>{`Success! ${this.state.applyResult.totalCount} test sets were unlocked`}</p>
                     </div>
                     <div className={'row m-0 pt-30 justify-content-center align-items-center'}>
-                        <Button variant="contained" className="test-set-coupon-apply" onClick={() => this.onClose()}>
-                            OK
+                        <Button variant="contained" className="test-set-coupon-apply" onClick={() => this.onFinish()}>
+                            <IntlMessages id={"testView.ok"}/>
                         </Button>
                     </div>
                 </div>
@@ -105,13 +120,12 @@ export default class TestSetCouponModal extends Component {
         const {isOpen} = this.props;
         return (
             <FullDialog open={isOpen} onClose={() => this.onClose()}>
-                <DialogTitle>Test Set Coupon</DialogTitle>
+                <CustomDialogTitle onClose={() => this.onClose()}><IntlMessages id={"test.testSetCoupon"}/></CustomDialogTitle>
                 {this.renderContent()}
             </FullDialog>
         )
     }
 }
-
 
 const FullDialog = withStyles(theme => ({
     paper: {

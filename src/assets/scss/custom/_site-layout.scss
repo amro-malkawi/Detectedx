@@ -62,68 +62,6 @@
             }
           }
         }
-
-        .user-block {
-          .rct-dropdown {
-            cursor: pointer;
-            .user-profile {
-              width: 30px;
-              height: 30px;
-              border-radius: 20px;
-              text-align: center;
-              color: white;
-              margin: auto;
-              background-color: #9E9E9E;
-              span {
-                font-weight: bold;
-                font-size: 17px;
-                color: white;
-                line-height: 30px;
-              }
-            }
-            .user-info {
-              color: #2f2e2e;
-              .user-name {
-                //display: inline-block;
-                //max-width: 70px;
-                //overflow:hidden;
-                //text-overflow:ellipsis;
-                //white-space:nowrap;
-                padding-left: 7px;
-                padding-right: 7px;
-              }
-            }
-            .dropdown-menu {
-              background-color: $base-light;
-              width: 160px;
-              ul {
-                background-color: transparent;
-                li:not(.user-profile-top) {
-                  box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.02);
-                  margin: 0.3125rem;
-                  a {
-                    background-color: $white;
-                    padding: 0.75rem 1rem;
-                    display: block;
-                    i {
-                      font-size: 1rem;
-                    }
-                    span:not(.badge) {
-                      color: $body-color;
-                      font-size: $font-size-sm;
-                      transition: color 0.3s ease;
-                    }
-                    &:hover {
-                      span:not(.badge) {
-                        color: $primary;
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
     .rct-site-page {

@@ -29,7 +29,7 @@
   border:none;
   @include border-radius($dropdown-border-radius);
   @include box-shadow($block-shadow);
-  transition: all .2s linear !important;
+  transition: opacity .2s linear !important;
 }
 
 // Allow for dropdowns to go bottom up (aka, dropup-menu)

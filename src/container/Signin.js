@@ -71,7 +71,6 @@ class Signin extends Component {
                                         </Link>
                                     </div>
                                     <div>
-                                        <a className="mr-15" onClick={() => this.onUserSignUp()}><IntlMessages id={"user.createNew"}/></a>
                                         <Button variant="contained" className="btn-light mr-10" onClick={() => this.onUserSignUp()}><IntlMessages id={"user.signup"}/></Button>
                                         {/*<LanguageProvider />*/}
                                     </div>

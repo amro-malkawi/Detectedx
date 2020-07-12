@@ -47,7 +47,7 @@ class _OrderForm extends Component {
         let discountPrice = price;
         let couponCode = '';
         if (this.state.couponData !== null && this.state.couponData.valid) {
-            discountPrice = (price * ((100 - this.state.couponData.coupon_discount_value) / 100)).toFixed(2);
+            discountPrice = Number((price * ((100 - this.state.couponData.coupon_discount_value) / 100)).toFixed(2));
             couponCode = this.state.couponData.coupon_code;
         }
         return {
@@ -283,6 +283,7 @@ class _OrderForm extends Component {
                 <div style={{position: 'relative'}}>
                     <PaypalButton
                         planId=''
+                        paypalKey={this.props.paypalKey}
                         currency={this.props.productCurrency}
                         createOrder={this.onPaypalCreateOrder.bind(this)}
                         onApprove={this.onPaypalApprove.bind(this)}
@@ -370,7 +371,7 @@ class _OrderForm extends Component {
                                 </div>
                                 <div className={'order-info-item'}>
                                     <span>Result</span>
-                                    <span className={'order-result'}>You will get <b>{(this.state.creditPrice * this.props.creditRatio).toFixed(0)}</b> credits</span>
+                                    <span className={'order-result'}>You will get <b>{(this.state.creditPrice * this.props.creditRatio).toFixed(2)}</b> points</span>
                                 </div>
                                 <div className={'order-info-split'}/>
                                 {this.renderResult()}
@@ -394,11 +395,11 @@ class Checkout extends Component {
     render() {
         return (
             <StripeScriptLoader
-                uniqueId='lhojhkjhi9879798799'
+                uniqueId='dkwieiaksdfek8584532'
                 script='https://js.stripe.com/v3/'
                 loader="Loading..."
             >
-                <StripeProvider apiKey={'pk_test_o94dTQYi7yrYebuzehraBcqk00QCQPvwhk'}>
+                <StripeProvider apiKey={this.props.stripeKey}>
                     <Elements>
                         <OrderForm {...this.props} />
                     </Elements>

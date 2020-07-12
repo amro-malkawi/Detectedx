@@ -13,7 +13,9 @@ import {Input} from "reactstrap";
 import {withStyles} from '@material-ui/core/styles';
 import {NotificationManager} from "react-notifications";
 import {DndProvider} from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend'
+import HTML5Backend from 'react-dnd-html5-backend';
+import TouchBackend from 'react-dnd-touch-backend';
+import {isMobile} from 'react-device-detect';
 
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
@@ -28,7 +30,7 @@ import ImageViewerContainer from './component/ImageViewerContainer'
 import ImageViewer from './component/ImageViewer'
 import Marker from './lib/tools/MarkerTool';
 import viewerSynchronizer from "./lib/viewerSynchronizer";
-import InstructionModal from './InstructionModal';
+import InstructionModal from '../instructions';
 import CovidQuestions from "Routes/test-view/component/CovidQuestions";
 import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
@@ -152,11 +154,12 @@ class TestView extends Component {
                 complete,
                 isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
                 isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
+                currentTool: 'Pan',
                 loading: false
             }, () => {
                 Marker.lesions = that.state.test_case.modalities.lesion_types;
                 Marker.modalityRatings = that.state.test_case.ratings;
-                ImageViewer.adjustSlideSize();
+                // ImageViewer.adjustSlideSize();
             });
             // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
             that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, complete);
@@ -223,24 +226,45 @@ class TestView extends Component {
     onComplete() {
         this.setState({loading: true}, () => {
             if (!this.state.isPostTest) {
-                Apis.attemptsComplete(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
-                    if (!resp.complete && resp.stage === 2) {
+                Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
+                    if (resp.stage === 2) {
                         let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
                         this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
                             this.getData();
                             this.props.history.replace(nextPath);
                         });
-                    } else if (resp.complete) {
+                    } else {
                         if (this.state.test_case.modalities.modality_type === 'image_quality') {
                             NotificationManager.success(<IntlMessages id={"testView.testFinishMessage"}/>);
                             this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
                         } else {
-                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
+                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
+                            // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
                         }
                     }
                 }).catch((e) => {
                     console.warn(e.response ? e.response.data.error.message : e.message);
                 });
+
+                // Apis.attemptsComplete(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
+                //     if (!resp.complete && resp.stage === 2) {
+                //         let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
+                //         this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
+                //             this.getData();
+                //             this.props.history.replace(nextPath);
+                //         });
+                //     } else if (resp.complete) {
+                //         if (this.state.test_case.modalities.modality_type === 'image_quality') {
+                //             NotificationManager.success(<IntlMessages id={"testView.testFinishMessage"}/>);
+                //             this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
+                //         } else {
+                //             this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
+                //             // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
+                //         }
+                //     }
+                // }).catch((e) => {
+                //     console.warn(e.response ? e.response.data.error.message : e.message);
+                // });
             } else {
                 Apis.attemptsPostTestComplete(this.state.attempts_id).then(resp => {
                     this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
@@ -350,7 +374,7 @@ class TestView extends Component {
                 {
                     this.state.complete || test_case_index + 1 !== test_case_length ? null :
                         <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.finish"}/></span>
+                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
                             <CheckCircleOutlineIcon size="small"/>
                         </Button>
                 }
@@ -575,14 +599,14 @@ class TestView extends Component {
                             {this.renderNav()}
                         </div>
                         <div className={'test-content'}>
-                            <DndProvider backend={HTML5Backend}>
+                            <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
                                 <ImageBrowser/>
                                 {
-                                    this.state.complete &&
+                                    (this.state.complete && this.state.test_case.modalities.modality_type !== 'covid') &&
                                     <CommentInfo
                                         test_case_id={this.state.test_cases_id}
                                         attempts_id={this.state.attempts_id}
-                                        isCovid={this.state.test_case.modalities.modality_type === 'covid'}
+                                        isCovid={false}
                                     />
                                 }
                                 {
@@ -653,8 +677,10 @@ class TestView extends Component {
                     }
                     <InstructionModal
                         isOpen={this.state.isShowInstructionModal}
-                        toggle={() => this.setState({isShowInstructionModal: false})}
+                        onClose={() => this.setState({isShowInstructionModal: false})}
                         theme={'black'}
+                        type={this.state.test_case.modalities.instruction_type}
+                        video={{thumbnail: this.state.test_case.modalities.instruction_video_thumbnail, link: this.state.test_case.modalities.instruction_video}}
                     />
                     <QualityModal
                         isOpen={this.state.isShowQualityModal}

@@ -653,6 +653,14 @@
     }
   }
 
+  .price-button {
+    &:disabled {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      background-image: none;
+    }
+  }
+
   .price-detail {
     margin-bottom: 0; //35px;
     li {

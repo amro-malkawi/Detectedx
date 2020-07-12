@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
 import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
-import {Button} from "reactstrap";
-import IntlMessages from "Util/IntlMessages";
+import CustomDialogTitle from 'Components/Dialog/CustomDialogTitle';
 
 export default class LearningModal extends Component{
     render() {
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
                 <div style={{padding: 30}}>
-                    <DialogTitle id="alert-dialog-title">
+                    <CustomDialogTitle id="alert-dialog-title" onClose={this.props.onClose}>
                         <span className={'fs-23'}>LEARNING OBJECTIVES FOR:</span>
-                    </DialogTitle>
+                    </CustomDialogTitle>
                     <DialogContent>
                         <p>Interactive mammogram interpretation to improve breast cancer detection- module M1</p>
                         <div>
@@ -50,11 +49,11 @@ export default class LearningModal extends Component{
                             <span className="fs-14 mr-10">Mo'ayyad E Suleiman is an academic at the University of Sydney and Director and Co-founder of DetectED-X.</span>
                         </div>
                     </DialogContent>
-                    <DialogActions>
-                        <div style={{margin: 'auto'}}>
-                            <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>
-                        </div>
-                    </DialogActions>
+                    {/*<DialogActions>*/}
+                    {/*    <div style={{margin: 'auto'}}>*/}
+                    {/*        <Button variant="contained" onClick={this.props.onNext} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages id="test.next"/>&nbsp;&nbsp;</Button>*/}
+                    {/*    </div>*/}
+                    {/*</DialogActions>*/}
                 </div>
             </Dialog>
         )

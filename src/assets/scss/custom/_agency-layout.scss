@@ -354,7 +354,8 @@
 }
 
 .app-boxed.app-boxed-v2 {
-   animation: changeBg 25s linear infinite;
+   background-image: url("../img/bg-5.jpg");
+   //animation: changeBg 25s linear infinite;
    background-size: cover;
    background-position: center center;
    background-repeat: no-repeat;

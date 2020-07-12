@@ -38,7 +38,7 @@ export default class PaypalButton extends Component {
         return (
             <div className={!this.state.scriptLoaded ? 'buy-button' : ''} style={{marginTop: 25}}>
                 <Script
-                    url={'https://www.paypal.com/sdk/js?client-id=' + PAYPAL_CLIENT_ID + '&currency=' + this.props.currency + '&disable-funding=credit,card&vault=true'}
+                    url={'https://www.paypal.com/sdk/js?client-id=' + this.props.paypalKey + '&currency=' + this.props.currency + '&disable-funding=credit,card&vault=true'}
                     onCreate={() => this.setState({scriptLoaded: false})}
                     onError={() => this.setState({scriptError: false})}
                     onLoad={() => this.onScriptLoaded()}

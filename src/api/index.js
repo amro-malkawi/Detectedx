@@ -212,6 +212,11 @@ export function attemptsMoveTestCase(id, testCaseId) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsFinishTest(id, monitorWidth, monitorHeight) {
+    const url = '/attempts/' + id + '/finish_test?monitor_width=' + monitorWidth + '&monitor_height=' + monitorHeight + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 export function attemptsComplete(id, monitorWidth, monitorHeight) {
     const url = '/attempts/' + id + '/complete?monitor_width=' + monitorWidth + '&monitor_height=' + monitorHeight + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
