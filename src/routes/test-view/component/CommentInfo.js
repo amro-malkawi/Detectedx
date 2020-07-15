@@ -64,7 +64,7 @@ export default class CommentInfo extends Component {
                                         <IntlMessages id={"testView.comment"}/>
                                     </li>
                                     <li className={'comment-text'}>
-                                        {this.state.commentText}
+                                        <div dangerouslySetInnerHTML={{ __html: this.state.commentText}} />
                                     </li>
                                 </ul>
                             </Scrollbars>

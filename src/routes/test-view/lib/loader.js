@@ -1,4 +1,3 @@
-import cornerstoneTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
 import Pyramid from './pyramid/pyramid';
 import * as Apis from 'Api';
@@ -7,12 +6,12 @@ export default function DtxLoader(imageUrl) {
     imageUrl = imageUrl.replace('dtx://', '').split('/');
     let imageId = imageUrl[0];
     let stack = imageUrl[1];
-    var pyramid = null;
 
     const promise = new Promise((resolve, reject) => {
-        Apis.imagesUrlTemplate(imageId, stack).then((response) => {
+        Apis.imagesUrlTemplate(imageId).then((response) => {
             let data = response;
-            pyramid = new Pyramid(imageId, data, stack);
+            data.urlTemplate = data.urlTemplate.replace('[stack]', stack);
+            const pyramid = new Pyramid(imageId, data, stack);
 
             resolve({
                 imageId: imageId,

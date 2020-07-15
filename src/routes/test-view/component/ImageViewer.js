@@ -15,6 +15,8 @@ import LengthTool from "../lib/tools/LengthTool";
 import IntlMessages from "Util/IntlMessages";
 import { v4 as uuidv4 } from 'uuid';
 import {isMobile} from 'react-device-detect';
+import WebWorker from "../worker/WebWorker";
+import WorkerProc from "../worker/WorkerProc";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -69,6 +71,7 @@ class ImageViewer extends Component {
         });
         this.initEvents();
         ImageViewer.adjustSlideSize();
+        this.runWorker(imageInfo.id);
     }
 
     // static getDerivedStateFromProps(nextProps, prevState) {
@@ -93,6 +96,10 @@ class ImageViewer extends Component {
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 0;
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
         }
+    }
+
+    runWorker(imageId) {
+        const webInstance = new WebWorker(new WorkerProc({imageId}));
     }
 
     initEvents() {
