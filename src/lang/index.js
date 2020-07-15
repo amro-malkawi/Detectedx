@@ -6,6 +6,7 @@ import enLang from './locales/en_US';
 import frLang from './locales/fr_FR';
 import esLang from './locales/es_ES';
 import zhLang from './locales/zh_CN';
+import vnLang from './locales/vi_VN';
 
 const AppLocale = {
     en: {
@@ -23,6 +24,10 @@ const AppLocale = {
     zh: {
         locale: 'zh-Hans-CN',
         messages: zhLang
+    },
+    vn: {
+        locale: 'vi-VN',
+        messages: vnLang
     },
 
 };
