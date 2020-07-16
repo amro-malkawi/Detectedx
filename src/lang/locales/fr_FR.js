@@ -250,4 +250,5 @@ module.exports = {
 	"Spanish": "Espagnol",
 	"Italian": "Italien",
 	"Chinese": "Chinois",
+	"Vietnam": "Vietnam",
 };

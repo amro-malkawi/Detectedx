@@ -62,14 +62,14 @@ export default class TestSetCouponModal extends Component {
                 <div>
                     <div className={'row justify-content-center align-items-center test-set-coupon-info'}>
                         <div className={'col-sm-12 col-md-3'}>
-                            <span>Coupon Code</span>
+                            <span><IntlMessages id={'test.couponCode'}/></span>
                         </div>
                         <div className={'col-sm-12 col-md-5'}>
                             <Input
                                 type="text"
                                 name="couponCode"
                                 id="couponCode"
-                                placeholder="Enter coupon code"
+                                // placeholder="Enter coupon code"
                                 value={this.state.couponCode}
                                 invalid={false}
                                 spellCheck="false"
@@ -78,7 +78,7 @@ export default class TestSetCouponModal extends Component {
                         </div>
                         <div className={'col-sm-12 col-md-3'}>
                             <Button variant="contained" className="btn-light" onClick={() => this.onCheckCouponCode()}>
-                                VERIFY
+                                <IntlMessages id={'test.verify'}/>
                             </Button>
                         </div>
                     </div>
@@ -95,7 +95,7 @@ export default class TestSetCouponModal extends Component {
                     </div>
                     <div className={'row m-0 pt-30 justify-content-center align-items-center'}>
                         <Button variant="contained" className="btn-light test-set-coupon-apply" disabled={!(this.state.couponData && this.state.couponData.valid)} onClick={() => this.onApplyCouponCode()}>
-                            APPLY
+                            <IntlMessages id={'test.apply'}/>
                         </Button>
                     </div>
                 </div>

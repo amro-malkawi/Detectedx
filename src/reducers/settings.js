@@ -100,6 +100,12 @@ const INIT_STATE = {
 			name: 'Chinese',
 			icon: 'zh',
 		},
+		{
+			languageId: 'vietnam',
+			locale: 'vn',
+			name: 'Vietnam',
+			icon: 'vn',
+		},
 		// {
 		// 	languageId: 'russian',
 		// 	locale: 'ru',
