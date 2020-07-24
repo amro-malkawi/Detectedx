@@ -20,6 +20,8 @@ import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard
 import ReactSpeedometer from "Components/GaugeChart";
 import PostQuestionForm from "./PostQuestionForm";
 import IntlMessages from "Util/IntlMessages";
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
 
 const stepName = {
     mainQuestions: <IntlMessages id="test.questionnaires"/>,
@@ -32,7 +34,7 @@ const stepName = {
     postScore: <IntlMessages id="test.results"/>
 };
 
-export default class Attempt extends Component {
+class Attempt extends Component {
 
     constructor(props) {
         super(props);
@@ -829,50 +831,6 @@ export default class Attempt extends Component {
                         </div>
                     </div>
                 );
-            case 'test':
-                if (!this.state.attemptInfo.complete) {
-                    return (
-                        <div>
-                            <RctCollapsibleCard
-                                customClasses="p-20 text-center"
-                            >
-                                {
-                                    this.state.attemptInfo.test_sets.has_post ?
-                                        <p className="fs-17"><IntlMessages id="test.attempt.testText1"/></p> : null
-                                }
-
-                                <p className="mb-20 fs-17"><IntlMessages id="test.attempt.testText2"/></p>
-                                <div className="mb-20 fs-17"><IntlMessages id="test.attempt.testText3"/></div>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() => this.onTest()}
-                                >
-                                    <IntlMessages id="test.proceedToTest"/>
-                                </Button>
-                            </RctCollapsibleCard>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div>
-                            <RctCollapsibleCard
-                                customClasses="p-20 text-center"
-                            >
-                                <div className="mb-20 fs-17"><IntlMessages id="test.attempt.testExpiredText"/></div>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() => this.setState({stepIndex: this.state.stepIndex + 1})}
-                                >
-                                    <IntlMessages id="test.next"/>
-                                </Button>
-                            </RctCollapsibleCard>
-                        </div>
-                    )
-                }
             case 'score':
                 return (
                     <div>
@@ -908,7 +866,9 @@ export default class Attempt extends Component {
                                             <tr key={i}>
                                                 <td>{v.metrics.name}</td>
                                                 <td>{v.score}</td>
-                                                <td className={'fs-13'}>{v.metrics.description}</td>
+                                                <td className={'fs-13'}>
+                                                    {v.metrics['description_' + this.props.locale] === undefined ? v.metrics.description : v.metrics['description_' + this.props.locale]}
+                                                </td>
                                             </tr>
                                         ))
                                     }
@@ -1046,3 +1006,14 @@ export default class Attempt extends Component {
         }
     }
 }
+
+
+
+// map state to props
+const mapStateToProps = (state) => {
+    return {
+        locale: state.settings.locale.locale,
+    };
+};
+
+export default withRouter(connect(mapStateToProps)(Attempt));

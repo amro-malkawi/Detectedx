@@ -13,12 +13,7 @@ export default class Tile {
 
         // cache the pyramid
         this.pyramid  = level.pyramid;
-
-        // an Image object is used to load the tile image
-        this.image    = new Image();
-        this.image.crossOrigin="anonymous";
         this.isLoaded = false;
-        this.image.onload = _ => this._loaded();
 
         // construct the url for this tile
         this.url = urlTemplate.replace('[depth]', level.depth)
@@ -27,21 +22,6 @@ export default class Tile {
         if(urlTemplate.indexOf('http') !== 0) {
             this.url = Apis.apiHost + this.url;
         }
-    }
-
-    _loaded() {
-        this.isLoaded = true;
-        this.draw();
-    }
-
-    load() {
-        if(this.image.src === '') {
-            this.pyramid.context.clearRect(
-                this.x, this.y,
-                this.width, this.height
-            );
-        }
-        this.image.src = this.url;
     }
 
     draw() {
@@ -55,5 +35,47 @@ export default class Tile {
         );
 
         cornerstone.invalidateImageId(this.pyramid.imageId);
+    }
+
+    loadTileImage() {
+        return new Promise(((resolve, reject) => {
+            if(this.image === undefined) {
+                this.image = new Image();
+                this.image.crossOrigin="anonymous";
+                this.image.src = this.url;
+
+                this.image.onload = () => {
+                    this.isLoaded = true;
+                    this.draw();
+                    resolve();
+                };
+
+            } else {
+                this.pyramid.context.clearRect(
+                    this.x, this.y,
+                    this.width, this.height
+                );
+                this.draw();
+            }
+        }))
+    }
+
+    loadTileForWorker() {
+        return new Promise(((resolve, reject) => {
+            if(this.image === undefined) {
+                this.image = new Image();
+                this.image.crossOrigin="anonymous";
+                this.image.src = this.url;
+                this.image.onload = () => {
+                    this.isLoaded = true;
+                    resolve();
+                };
+                this.image.onerror = function(e) {
+                    resolve();
+                };
+            } else {
+                resolve()
+            }
+        }))
     }
 }

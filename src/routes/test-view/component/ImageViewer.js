@@ -58,11 +58,10 @@ class ImageViewer extends Component {
     }
 
     componentDidMount() {
-        console.log('component did mount');
         const {imageInfo} = this.props;
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
-            return `dtx://${imageInfo.id}/${v}`;
+            return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
         });
         cornerstone.enable(this.imageElement);
         cornerstone.loadImage(this.stack.imageIds[0]).then((image) => {
@@ -71,7 +70,7 @@ class ImageViewer extends Component {
         });
         this.initEvents();
         ImageViewer.adjustSlideSize();
-        this.runWorker(imageInfo.id);
+        this.runWorker();
     }
 
     // static getDerivedStateFromProps(nextProps, prevState) {
@@ -91,15 +90,17 @@ class ImageViewer extends Component {
     }
 
     componentWillUnmount() {
+        console.log('component unmount');
         if(this.imageElement.pyramid !== undefined && this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined) {
             // set width and height to 0 for memory leak
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 0;
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
         }
+        if(this.webWorker) this.webWorker.terminate();
     }
 
-    runWorker(imageId) {
-        const webInstance = new WebWorker(new WorkerProc({imageId}));
+    runWorker() {
+        // this.webWorker = new WebWorker(new WorkerProc({imageElement: this.imageElement, imageIds: this.stack.imageIds}));
     }
 
     initEvents() {
@@ -237,7 +238,8 @@ class ImageViewer extends Component {
     }
 
     handleChangeStack(e, data) {
-        this.imageElement.pyramid[this.stack.currentImageIdIndex].reset();
+        // this.imageElement.pyramid[this.stack.currentImageIdIndex].reset();
+        e.detail.image.pyramid.showPyramid(this.imageElement);
         for(let i = 0; i < this.stack.imageIds.length; i++) {
             if(i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
                 this.imageElement.pyramid[i].pyramidShow = false

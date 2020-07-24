@@ -45,6 +45,7 @@ class HangingSelector extends Component{
     }
 
     onChangeHanging(index) {
+        console.log(this.options[index]);
         this.setState({ selectedIndex: index, type: null });
         this.props.changeHangingLayout(this.options[index]);
     }
@@ -63,7 +64,7 @@ class HangingSelector extends Component{
                     'CC-L_CC-L-P',
                     'MLO-L_MLO-L-P',
                     'CC-R_CC-R-P_MLO-R_MLO-R-P',
-                    'MLO-L_MLO-L-P_CC-L-P_CC-L'
+                    'MLO-L-P_MLO-L_CC-L-P_CC-L'
                 ];
             } else {
                 this.options = [

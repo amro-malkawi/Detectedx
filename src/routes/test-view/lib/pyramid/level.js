@@ -25,11 +25,11 @@ export default class Level {
                 let height = tileSize * scale;
 
                 // adjust the height of the last row
-                if (row == (this.rows - 1))
+                if (row === (this.rows - 1))
                     height = lastRowHeight * scale;
 
                 // adjust the width of the last col
-                if (col == (this.cols - 1))
+                if (col === (this.cols - 1))
                     width = lastColWidth * scale;
 
                 let tile = new Tile({
@@ -50,10 +50,13 @@ export default class Level {
 
     load() {
         if (!this.isLoaded) {
-            console.log(`loading level ${this.depth} of image ${this.pyramid.imageId}`);
-            this.tiles.forEach(tile => tile.load())
+            this.tiles.forEach(tile => tile.loadTileImage())
             this.isLoaded = true;
         }
+    }
+
+    loadLevelForWorker() {
+        return Promise.all(this.tiles.map((tile) => tile.loadTileForWorker()));
     }
 
     tile(options) {

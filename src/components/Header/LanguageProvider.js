@@ -33,8 +33,8 @@ class LanguageProvider extends Component {
     render() {
         const {locale, languages} = this.props;
         return (
-            <Dropdown nav className="list-inline-item language-dropdown tour-step-5" isOpen={this.state.langDropdownOpen} toggle={this.toggle}>
-                <DropdownToggle caret nav className="header-icon language-icon">
+            <Dropdown nav className="language-dropdown tour-step-5" isOpen={this.state.langDropdownOpen} toggle={this.toggle}>
+                <DropdownToggle caret nav className="language-icon">
                     <img src={require(`Assets/flag-icons/${locale.icon}.png`)} className="mr-10" width="25" height="16" alt="lang-icon"/>
                     <span><IntlMessages id={"header.languages"}/></span>
                 </DropdownToggle>

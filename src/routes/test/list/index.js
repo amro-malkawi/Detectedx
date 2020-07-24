@@ -20,11 +20,12 @@ import PaymentModal from "Components/Payment/PaymentModal";
 import {NotificationManager} from "react-notifications";
 import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 import InstructionModal from "../../instructions";
-import {NavLink} from 'react-router-dom';
+import {NavLink, withRouter} from 'react-router-dom';
 import * as Apis from 'Api';
 import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
+import {connect} from "react-redux";
 
-export default class List extends Component {
+class List extends Component {
 
     constructor(props) {
         super(props);
@@ -328,6 +329,7 @@ export default class List extends Component {
                 />
                 <LearningModal
                     open={this.state.isShowModalType === 'normal'}
+                    locale={this.props.locale}
                     onClose={() => this.setState({isShowModalType: ''})}
                     // onNext={this.onGoAttempt.bind(this)}
                 />
@@ -380,6 +382,15 @@ export default class List extends Component {
         )
     }
 }
+
+// map state to props
+const mapStateToProps = (state) => {
+    return {
+        locale: state.settings.locale.locale,
+    };
+};
+
+export default withRouter(connect(mapStateToProps)(List));
 
 const ModalityTabs = withStyles({
     root: {},

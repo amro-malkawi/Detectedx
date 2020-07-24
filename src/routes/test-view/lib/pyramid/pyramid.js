@@ -4,9 +4,12 @@ export default class Pyramid {
     constructor(imageId, data, stack) {
         let {id, width, height, max_depth, tileSize, urlTemplate} = data;
         this.imageId = imageId;    // cornerstone image id, not db image id
+        this.urlTemplate = urlTemplate;
         this.max_depth = max_depth;
+        this.stack = stack;
         this.width = width;
         this.height = height;
+        this.tileSize = tileSize;
         this.levels = [];
         this.pyramidShow = true;
 
@@ -20,7 +23,9 @@ export default class Pyramid {
         // store a reference to this pyramid on the relevant image
         // element so layers can be loaded in response to pannning
         // and zooming.
-        let imageElement = document.querySelector(`#image${id} .dicom`);
+
+
+        /*let imageElement = document.querySelector(`#image${id} .dicom`);
         if (imageElement.pyramid === undefined) imageElement.pyramid = {};
         imageElement.pyramid[stack] = this;
 
@@ -35,6 +40,7 @@ export default class Pyramid {
         this.context = this.canvas.getContext('2d');
         this.context.fillStyle = 'black';
         this.context.fillRect(0, 0, width, height);
+        */
 
         // keep track of the current level's dimensions (lower levels
         // are half the size of the next level)
@@ -64,6 +70,28 @@ export default class Pyramid {
         return this.imageData.data;
     }
 
+    showPyramid(imageElement) {
+        if (imageElement.pyramid === undefined) imageElement.pyramid = {};
+        if(this.canvas === undefined) {
+            imageElement.pyramid[this.stack] = this;
+
+            // as tiles load they're drawn into this (offscreen) canvas
+            // before telling cornerstone to redraw from the canvas
+            if (imageElement.canvas === undefined) {
+                imageElement.canvas = document.createElement('canvas');
+            }
+            this.canvas = imageElement.canvas;
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+            this.context = this.canvas.getContext('2d');
+            this.context.fillStyle = 'black';
+            this.context.fillRect(0, 0, this.width, this.height);
+        }
+
+        this.pyramidShow = true;
+        this.levels.forEach((v) => v.isLoaded = false);
+    }
+
     reset() {
         // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.pyramidShow = true;
@@ -89,4 +117,13 @@ export default class Pyramid {
         this.maxLoadedLevel = level.depth;
         level.load();
     }
+
+    loadPyramidForWorker() {
+        return this.levels.reduce((prevPromise, level) => {
+            return prevPromise.then(() => {
+                return level.loadLevelForWorker();
+            })
+        }, Promise.resolve());
+    }
+
 }
