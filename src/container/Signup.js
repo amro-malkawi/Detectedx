@@ -60,8 +60,6 @@ class Signup extends Component {
         allowContactMe: false,
         checkTerms: false,
         checkTermsInvalid: false,
-        checkConsent: false,
-        checkConsentInvalid: false,
 
         positionList: [],
         interestList: [],
@@ -104,7 +102,7 @@ class Signup extends Component {
 
 
     validate() {
-        const {email, password, confirmPassword, checkTerms, checkConsent} = this.state;
+        const {email, password, confirmPassword, checkTerms} = this.state;
         let valid = true;
         let inValidObj = {};
         if (this.state.firstName.trim().length === 0) {
@@ -152,11 +150,6 @@ class Signup extends Component {
         if (!checkTerms) {
             valid = false;
             inValidObj.checkTermsInvalid = true;
-        }
-
-        if (!checkConsent) {
-            valid = false;
-            inValidObj.checkConsentInvalid = true;
         }
         if (!valid) {
             this.setState(inValidObj);
@@ -480,26 +473,7 @@ class Signup extends Component {
                         label={
                             <span>
                                 <IntlMessages id={"user.signup.agreeTerm"}/>
-                                <Link to='/terms'><IntlMessages id={"user.signup.term"}/></Link>
-                                &nbsp;*
-                            </span>
-                        }
-                    />
-                </div>
-
-                <div className={'d-flex justify-content-left'}>
-                    <FormControlLabel
-                        control={
-                            <GreenCheckbox
-                                checked={this.state.checkConsent}
-                                onChange={(event) => this.onSetValue('checkConsent', event.target.checked)}
-                                style={this.state.checkConsentInvalid ? {color: 'red'} : {} }
-                                value=""
-                            />
-                        }
-                        label={
-                            <span>
-                                <IntlMessages id={"user.signup.agreeTerm"}/>
+                                <Link to='/terms'><IntlMessages id={"user.signup.term"}/></Link>&nbsp;and&nbsp;
                                 <Link to="#" onClick={() => this.setState({showConsentModal: true})}><IntlMessages id={"user.signup.consentStatements"}/></Link>
                                 &nbsp;*
                             </span>
