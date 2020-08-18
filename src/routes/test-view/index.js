@@ -9,6 +9,7 @@ import HistoryOutlinedIcon from '@material-ui/icons/HistoryOutlined';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
+import CachedIcon from '@material-ui/icons/Cached';
 import {Input} from "reactstrap";
 import {withStyles} from '@material-ui/core/styles';
 import {NotificationManager} from "react-notifications";
@@ -27,20 +28,20 @@ import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 
 import ImageViewerContainer from './component/ImageViewerContainer'
-import ImageViewer from './component/ImageViewer'
 import Marker from './lib/tools/MarkerTool';
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from '../instructions';
 import CovidQuestions from "Routes/test-view/component/CovidQuestions";
 import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
+import ReattemptPostTestModal from './ReattemptPostTestModal';
 import CornerstoneToolIcon from "./component/CornerstoneToolIcon";
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
 import MarkerPopup from "./lib/markerPopup";
-import * as Apis from 'Api';
 import IntlMessages from "Util/IntlMessages";
+import * as Apis from 'Api';
 
 class TestView extends Component {
 
@@ -67,6 +68,11 @@ class TestView extends Component {
             isShowQualityModal: false,
             imageIdForQuality: '',
             isShowConfirmQualityModal: false,
+
+            possiblePostTestReattempt: false,
+            isShowPostTestReattemptModal: false,
+            reattemptScore: 0,
+            postTestRemainCount: 0,
         };
         this.covidQuestionRef = React.createRef();
         this.popupCancelHandler = null;
@@ -133,14 +139,18 @@ class TestView extends Component {
             Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest)
         ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers]) {
             let complete = false;
+            let possiblePostTestReattempt = false;
             if (!attemptsDetail.test_sets.has_post) {
                 complete = attemptsDetail.complete;
             } else {
                 if (that.state.isPostTest) {
                     if (!attemptsDetail.complete) {
-                        throw Error('can not test');
+                        throw new Error('can not test');
+                    } else if ((attemptsDetail.post_test_remain_count < 0) || (attemptsDetail.post_test_remain_count === 0 && attemptsDetail.post_test_complete)) {
+                        throw new Error("You will have to restart the test");
                     } else {
                         complete = attemptsDetail.post_stage !== 0;
+                        possiblePostTestReattempt = (attemptsDetail.post_stage === 0 && attemptsDetail.post_test_complete);
                     }
                 } else {
                     complete = attemptsDetail.complete;
@@ -152,8 +162,9 @@ class TestView extends Component {
                 test_set_cases: testSetsCases,
                 attemptDetail: attemptsDetail,
                 complete,
-                isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
-                isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
+                possiblePostTestReattempt,
+                isAnswerCancer: (complete || attemptsDetail.post_test_complete) ? testCasesAnswers.isAnswerCancer : undefined,
+                isTruthCancer: (complete || attemptsDetail.post_test_complete) ? testCasesAnswers.isTruthCancer : undefined,
                 currentTool: 'Pan',
                 loading: false
             }, () => {
@@ -245,33 +256,45 @@ class TestView extends Component {
                 }).catch((e) => {
                     console.warn(e.response ? e.response.data.error.message : e.message);
                 });
-
-                // Apis.attemptsComplete(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
-                //     if (!resp.complete && resp.stage === 2) {
-                //         let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
-                //         this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
-                //             this.getData();
-                //             this.props.history.replace(nextPath);
-                //         });
-                //     } else if (resp.complete) {
-                //         if (this.state.test_case.modalities.modality_type === 'image_quality') {
-                //             NotificationManager.success(<IntlMessages id={"testView.testFinishMessage"}/>);
-                //             this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
-                //         } else {
-                //             this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
-                //             // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
-                //         }
-                //     }
-                // }).catch((e) => {
-                //     console.warn(e.response ? e.response.data.error.message : e.message);
-                // });
             } else {
-                Apis.attemptsPostTestComplete(this.state.attempts_id).then(resp => {
-                    this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                Apis.attemptsPostTestFinish(this.state.attempts_id).then(resp => {
+                    if (resp.score < 75) {
+                        this.setState({
+                            isShowPostTestReattemptModal: true,
+                            reattemptScore: resp.score,
+                            postTestRemainCount: resp.post_test_remain_count,
+                            loading: false
+                        });
+                    } else {
+                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                    }
                 }).catch(e => {
                     console.warn(e.response ? e.response.data.error.message : e.message);
-                })
+                    this.setState({loading: false})
+                });
             }
+        });
+    }
+
+    onPostTestReviewAnswer() {
+        this.setState({
+            isShowPostTestReattemptModal: false,
+            loading: true
+        });
+        if (this.state.postTestRemainCount > 0) {
+            this.onSeek(0)
+        } else {
+            this.props.history.push('/app/test/list');
+        }
+    }
+
+    onPostTestReattempt() {
+        this.setState({loading: true});
+        Apis.attemptsPostTestReattempt(this.state.attempts_id).then((result) => {
+            this.onSeek(0)
+        }).catch((e) => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+            this.setState({loading: false});
         });
     }
 
@@ -372,7 +395,7 @@ class TestView extends Component {
                         </Button> : null
                 }
                 {
-                    this.state.complete || test_case_index + 1 !== test_case_length ? null :
+                    (this.state.complete || this.state.possiblePostTestReattempt || test_case_index + 1 !== test_case_length) ? null :
                         <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
                             <CheckCircleOutlineIcon size="small"/>
@@ -386,17 +409,25 @@ class TestView extends Component {
                         </Button> : null
                 }
                 {
-                    this.state.complete ? null :
-                        <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.instructions"}/></span>
-                            <InfoOutlinedIcon size="small"/>
-                        </Button>
-                }
-                {
                     this.state.complete ?
-                        <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary" onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>
+                        <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
+                                onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
                             <HistoryOutlinedIcon size="small"/>
+                        </Button> :
+                        (
+                            !this.state.possiblePostTestReattempt ?
+                                <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>
+                                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.instructions"}/></span>
+                                    <InfoOutlinedIcon size="small"/>
+                                </Button> : null
+                        )
+                }
+                {
+                    this.state.possiblePostTestReattempt ?
+                        <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary" onClick={() => this.onPostTestReattempt()}>
+                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.viewer.reattempt"}/></span>
+                            <CachedIcon size="small"/>
                         </Button> : null
                 }
                 <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => this.props.history.push('/app/test/list')}>
@@ -625,7 +656,7 @@ class TestView extends Component {
                                     currentTool={this.state.currentTool}
                                     synchronizer={this.synchronizer}
                                     radius={this.state.test_case.modalities.circle_size}
-                                    complete={this.state.complete}
+                                    complete={this.state.complete || this.state.possiblePostTestReattempt}
                                     stage={this.state.attemptDetail.stage}
                                     width={100 / this.state.test_case.images.length}
                                     tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
@@ -651,7 +682,7 @@ class TestView extends Component {
                         </div>
                     </div>
                     <div className={'rotate-error'}>
-                        <img src={require('Assets/img/rotate.png')} alt='' />
+                        <img src={require('Assets/img/rotate.png')} alt=''/>
                     </div>
                     <Dialog open={this.state.isShowToolModal} onClose={() => this.setState({isShowToolModal: false})} classes={{paper: 'test-view-toolbar-modal'}}>
                         <div className={'test-view-toolbar tooltip-toolbar-overlay'}>
@@ -698,6 +729,12 @@ class TestView extends Component {
                                 <IntlMessages id={"testView.quality.perfect"}/>
                             ][Number(this.state.test_case.quality)]}
                         confirm={(isAgree, msg) => this.onConfirmImageQuality(isAgree, msg)}
+                    />
+                    <ReattemptPostTestModal
+                        open={this.state.isShowPostTestReattemptModal}
+                        score={this.state.reattemptScore}
+                        remainCount={this.state.postTestRemainCount}
+                        onPostTestAgain={() => this.onPostTestReviewAnswer()}
                     />
                 </div>
             );

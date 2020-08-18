@@ -2,7 +2,77 @@
   margin: 30px 0;
 
   .attempt-stepper {
-    overflow: auto;
+    .normal-stepper {
+      overflow: auto;
+
+      .right-line {
+        position: absolute;
+        top: 12px;
+        left: calc(50% + 20px);
+        right: -9px
+      }
+
+      .vertical-line {
+        position: absolute;
+        top: 22px;
+        right: 0;
+        bottom: 2rem;
+        width: 1px;
+        background-color: rgba(0, 0, 0, 0.38);
+      }
+    }
+
+    .post-stepper {
+      position: relative;
+      overflow-y: hidden;
+      padding-right: 90px;
+
+      .post-stepper-background {
+        position: absolute;
+        top: 3px;
+        right: 5px;
+        bottom: 3px;
+        left: 5px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-right: 10px;
+        background-color: #d0f1fd;
+        border-radius: 7px;
+        span {
+          font-size: 14px;
+          font-weight: 600;
+          color: #516dc3;
+        }
+      }
+
+      .left-line {
+        position: absolute;
+        top: 12px;
+        left: 0;
+        right: calc(50% + 20px)
+      }
+
+      .left-line1 {
+        position: absolute;
+        top: 22px;
+        left: 0;
+        width: 30px;
+      }
+    }
+
+    .attempt-stepper-btn {
+      .MuiStepLabel-active {
+        font-weight: bold;
+        color: #1565C0;
+      }
+      &:hover {
+        .MuiStepLabel-alternativeLabel {
+          font-weight: bold;
+          color: #1565C0;
+        }
+      }
+    }
   }
 
   .questionnaire {
@@ -284,6 +354,7 @@
       display: inline-flex;
       width: 20px;
     }
+
     .test-set-coupon {
       margin: -4px 0 7px;
     }

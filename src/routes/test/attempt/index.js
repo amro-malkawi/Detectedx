@@ -20,6 +20,7 @@ import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard
 import ReactSpeedometer from "Components/GaugeChart";
 import PostQuestionForm from "./PostQuestionForm";
 import IntlMessages from "Util/IntlMessages";
+import JSONParseDefault from 'json-parse-default';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
@@ -61,7 +62,7 @@ class Attempt extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(this.state.stepIndex !== nextState.stepIndex) {
+        if (this.state.stepIndex !== nextState.stepIndex) {
             Apis.attemptsSetProgress(nextState.attempts_id, nextState.steps[nextState.stepIndex]);
         }
         return true;
@@ -70,13 +71,14 @@ class Attempt extends Component {
     getData(isMount) {
         const that = this;
         Promise.all([
-            Apis.attemptsQuestionnaire(that.state.attempts_id),
             Apis.attemptsDetail(that.state.attempts_id),
+            Apis.attemptsQuestionnaire(that.state.attempts_id),
             Apis.attemptsPercentile(that.state.attempts_id)
-        ]).then(function ([questionnaires, detail, percentile]) {
+        ]).then(function ([detail, questionnaires, percentile]) {
+            const hiddenTabs = JSONParseDefault(detail.test_sets.test_set_hidden_tabs, null, []);
             let steps;
-            const isFinishMainQuestions = questionnaires.main.length === 0 || questionnaires.main.some((v) => v.answer.length !== 0);
-            const isFinishAdditionalQuestions = questionnaires.additional.length === 0 || questionnaires.additional.some((v) => v.answer.length !== 0);
+            const isFinishMainQuestions = questionnaires.main.length === 0 || questionnaires.main.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('mainQuestions') !== -1);
+            const isFinishAdditionalQuestions = questionnaires.additional.length === 0 || questionnaires.additional.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('additionalQuestions') !== -1);
             if (!detail.complete || !isFinishMainQuestions || !isFinishAdditionalQuestions) {
                 // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
                 steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
@@ -92,6 +94,7 @@ class Attempt extends Component {
                     steps = steps.concat(['postTest', 'postQuestions', 'postScore']);
                 }
             }
+            steps = steps.filter((v) => (hiddenTabs.indexOf(v) === -1));
             const stepIndex = !isMount ? that.state.stepIndex + 1 :
                 (that.props.match.params.step === undefined ? 0 : (steps.indexOf(that.props.match.params.step) > -1 ? steps.indexOf(that.props.match.params.step) : 0));
             that.setState({
@@ -212,7 +215,7 @@ class Attempt extends Component {
             if (this.state.post_stage < 2) {
                 const postAnswer = this.postQuestionFormRef.getAnswerData();
                 if (!postAnswer) {
-                    NotificationManager.error('Please answer about all questions');
+                    NotificationManager.error('You have not completed all fields, please see highlighted fields');
                     return;
                 }
                 Apis.attemptsSavePostAnswer(this.state.attempts_id, JSON.stringify(postAnswer)).then((resp) => {
@@ -231,19 +234,22 @@ class Attempt extends Component {
             if (isChanged) {
                 this.setState({loading: true});
                 this.saveQuestions(questions, type).then((resp) => {
-                    if(!resp.complete) {
+                    if (!resp.complete) {
                         const updateValue = {
                             stepIndex: this.state.stepIndex + 1
                         };
                         if (type === 'main') {
                             updateValue.isFinishMainQuestions = true;
                             updateValue.isChangeMainQuestions = false;
+                            this.setState({isChangeMainQuestions: false});
                         } else if (type === 'additional') {
                             updateValue.isFinishAdditionalQuestions = true;
                             updateValue.isChangeAdditionalQuestions = false;
+                            this.setState({isChangeAdditionalQuestions: false});
                         } else if (type === 'post') {
                             updateValue.post_stage === 2;
                             updateValue.isChangePostQuestions = false;
+                            this.setState({postQuestions: false});
                         }
                         this.setState(updateValue);
                     } else {
@@ -671,10 +677,125 @@ class Attempt extends Component {
         return result;
     }
 
-    renderStepper() {
+    renderStepperWithPost() {
+        const normalStepCount = this.state.steps.filter((v) => v.indexOf('post') === -1).length;
         return (
-            <div>
-                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'attempt-stepper'}>
+            <div className={'row ml-0 mr-0 attempt-stepper'}>
+                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'normal-stepper col-12 col-sm-6 pt-40 pr-10'}>
+                    {this.state.steps.map((labelIndex, index) => {
+                        if (labelIndex.indexOf('post') !== -1) return null;
+
+                        const label = stepName[labelIndex];
+                        let stepCompleted = false;
+                        if (!this.state.attemptInfo.complete) {
+                            stepCompleted = index < this.state.stepIndex;
+                        } else {
+                            if (this.state.attemptInfo.test_sets.has_post) {
+                                if (this.state.post_stage === 0) {          // post test
+                                    stepCompleted = index < this.state.steps.indexOf('postTest');
+                                } else if (this.state.post_stage === 1) {   //post question
+                                    stepCompleted = index < this.state.steps.indexOf('postQuestions');
+                                } else if (this.state.post_stage >= 2) {   //post score
+                                    stepCompleted = true;
+                                }
+                            } else {
+                                stepCompleted = true;
+                            }
+                        }
+                        stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
+                        return (
+                            <Step key={label}>
+                                <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)} completed={stepCompleted}>
+                                    {label}
+                                </StepButton>
+                                {
+                                    labelIndex === "answer" &&
+                                    <div className="MuiStepConnector-root MuiStepConnector-horizontal right-line">
+                                        <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
+                                    </div>
+                                }
+                            </Step>
+                        );
+                    })}
+                    <div className={'vertical-line'}/>
+                </Stepper>
+                <div className={'col-12 col-sm-6 pl-0 pr-0'}>
+                    <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'post-stepper pt-10 pb-0 pl-0'}>
+                        <div className={'post-stepper-background'}>
+                            <span>AMA Credits</span>
+                        </div>
+                        {
+                            Array(normalStepCount > 0 ? (normalStepCount - 1) : 0).fill(0).map((v) => <div/>)
+                        }
+                        {this.state.steps.map((labelIndex, index) => {
+                            if (labelIndex.indexOf('post') === -1) return null;
+                            const label = stepName[labelIndex];
+                            let stepCompleted = false;
+                            if (!this.state.attemptInfo.complete) {
+                                stepCompleted = index < this.state.stepIndex;
+                            } else {
+                                if (this.state.attemptInfo.test_sets.has_post) {
+                                    if (this.state.post_stage === 0) {          // post test
+                                        stepCompleted = index < this.state.steps.indexOf('postTest');
+                                    } else if (this.state.post_stage === 1) {   //post question
+                                        stepCompleted = index < this.state.steps.indexOf('postQuestions');
+                                    } else if (this.state.post_stage >= 2) {   //post score
+                                        stepCompleted = true;
+                                    }
+                                } else {
+                                    stepCompleted = true;
+                                }
+                            }
+                            stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
+                            return (
+                                <Step key={label}>
+                                    {
+                                        labelIndex === "postTest" &&
+                                        <div className="MuiStepConnector-root MuiStepConnector-horizontal left-line">
+                                            <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
+                                        </div>
+                                    }
+                                    <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)} completed={stepCompleted}>
+                                        {label}
+                                    </StepButton>
+                                </Step>
+                            );
+                        })}
+                    </Stepper>
+                    <Stepper alternativeLabel nonLinear activeStep={0} className={'post-stepper pt-10 pb-10 pl-0'}>
+                        <div className={'post-stepper-background'}>
+                            <span>RANZCR</span>
+                        </div>
+                        <div>
+                            <div className="MuiStepConnector-root MuiStepConnector-horizontal left-line1">
+                                <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
+                            </div>
+                            <div>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className="text-white ml-20"
+                                    disabled={this.state.isDownCert}
+                                    onClick={() => this.onGetCertPdf('normal')}
+                                >
+                                    <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificateOfCompletion'/>
+                                </Button>
+                                {
+                                    this.state.isDownCert &&
+                                    <div style={{marginTop: -28, marginLeft: 110}}><CircularProgress size={20} style={{color: 'green'}}/></div>
+                                }
+                            </div>
+                        </div>
+                    </Stepper>
+                </div>
+            </div>
+        )
+    }
+
+    renderStepperNormal() {
+        return (
+            <div className={'d-flex'}>
+                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'attempt-stepper col'}>
                     {this.state.steps.map((label, index) => {
                         label = stepName[label];
                         const props = {};
@@ -834,18 +955,31 @@ class Attempt extends Component {
             case 'score':
                 return (
                     <div>
-                        <div className={'text-center p-10'}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                disabled={this.state.isDownCert}
-                                onClick={() => this.onGetCertPdf('normal')}
-                            >
-                                <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificate'/>
-                            </Button>
-                            {this.state.isDownCert &&
-                            <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>}
-                        </div>
+                        {
+                            !this.state.attemptInfo.test_sets.has_post ?
+                                <div className={'text-center p-10'}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        disabled={this.state.isDownCert}
+                                        onClick={() => this.onGetCertPdf('normal')}
+                                    >
+                                        <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificate'/>
+                                    </Button>
+                                    {
+                                        this.state.isDownCert &&
+                                        <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>
+                                    }
+                                </div> :
+                                <div className={'row m-10'}>
+                                    <div className={'col-6'}>
+                                        <IntlMessages id="test.attempt.scoreDesc1"/>
+                                    </div>
+                                    <div className={'col-6'}>
+                                        <IntlMessages id="test.attempt.scoreDesc2"/>
+                                    </div>
+                                </div>
+                        }
                         <div className="row">
                             <RctCollapsibleCard
                                 customClasses="p-20"
@@ -856,7 +990,7 @@ class Attempt extends Component {
                                     <thead>
                                     <tr>
                                         <th><IntlMessages id={"test.name"}/></th>
-                                        <th><IntlMessages id={"test.value"} /></th>
+                                        <th><IntlMessages id={"test.value"}/></th>
                                         <th><IntlMessages id={"test.description"}/></th>
                                     </tr>
                                     </thead>
@@ -916,6 +1050,7 @@ class Attempt extends Component {
                                     color="primary"
                                     className="text-white"
                                     onClick={() => this.onPostTest()}
+                                    disabled={(this.state.attemptInfo.post_test_remain_count < 0) || (this.state.attemptInfo.post_test_remain_count === 0 && this.state.attemptInfo.post_test_complete)}
                                 >
                                     {
                                         this.state.post_stage === 0 ?
@@ -930,8 +1065,14 @@ class Attempt extends Component {
                 }
             case 'postQuestions':
                 if (this.state.attemptInfo.complete && this.state.post_stage > 0) {
+                    const postScore = this.state.attemptInfo.scores_post === undefined || this.state.attemptInfo.scores_post.length === 0 ? 0 : this.state.attemptInfo.scores_post[0].score;
                     return (
                         <div>
+                            <div className={'mt-30 ml-20 mr-20'}>
+                                <IntlMessages id={"test.attempt.postScoreDesc1"} values={{score: <span className={'text-primary'}>{postScore}%</span>}}/><br/>
+                                <IntlMessages id={"test.attempt.postScoreDesc2"}/>
+                            </div>
+                            <hr className={'mb-0'}/>
                             <PostQuestionForm
                                 answer={this.state.postQuestions}
                                 onRef={ref => (this.postQuestionFormRef = ref)}
@@ -997,7 +1138,7 @@ class Attempt extends Component {
             return (
                 <div className={'questionnaire-wrapper'}>
                     <h1>{stepName[this.state.steps[this.state.stepIndex]]}</h1>
-                    {this.renderStepper()}
+                    {(this.state.attemptInfo.complete && this.state.attemptInfo.test_sets.has_post) ? this.renderStepperWithPost() : this.renderStepperNormal()}
                     {this.renderStepContent()}
                 </div>
             )
@@ -1006,7 +1147,6 @@ class Attempt extends Component {
         }
     }
 }
-
 
 
 // map state to props

@@ -122,6 +122,10 @@ export default class Profile extends Component {
     }
 
     onSaveData() {
+        if(this.state.userInfo.first_name === '' || this.state.userInfo.last_name === '') {
+            NotificationManager.error("Please input username");
+            return;
+        }
         this.setState({loading: true});
         Apis.userUpdate(this.state.userInfo).then(resp => {
             NotificationManager.success("User information was updated");

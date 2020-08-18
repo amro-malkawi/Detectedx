@@ -6,112 +6,189 @@ export default class PostQuestionForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-                top: {
-                    value: '',
-                    extra: ''
-                },
-                firstName: '',
-                lastName: '',
-                address: '',
-                city: '',
-                state: '',
-                zip: '',
-                stateLicense: '',
-                email: '',
-                q1: {
-                    sub1: '',   // 4, 3, 2, 1
-                    sub2: '',   // 4, 3, 2, 1
-                    sub3: '',   // 4, 3, 2, 1
-                },
-                q2: '',
-                q3: {
-                    sub1: '',   // 4, 3, 2, 1
-                    sub2: '',   // 4, 3, 2, 1
-                    sub3: '',   // 4, 3, 2, 1
-                },
-                q4: '',
-                q5: '',
-                q6: '',
-                q7: '',
-                q8: {
-                    value: '',
-                    extra: ''
-                },
-                q9: {
-                    value: '',
-                    extra_option: '',
-                    extra: '',
-                },
-                q10: '',
-                q11: '',
-                q12: '',
-                q13: {
-                    value: '',
-                    extra: ''
-                },
-                q14: ''
+            top: {
+                value: '',
+                extra: ''
+            },
+            invalidTop: false,
+            firstName: '',
+            invalidFirstName: false,
+            lastName: '',
+            invalidLastName: false,
+            address: '',
+            invalidAddress: false,
+            city: '',
+            invalidCity: false,
+            state: '',
+            invalidState: false,
+            zip: '',
+            invalidZip: false,
+            stateLicense: '',
+            invalidStateLicense: false,
+            email: '',
+            invalidEmail: false,
+            q1: {
+                sub1: '',   // 4, 3, 2, 1
+                sub2: '',   // 4, 3, 2, 1
+                sub3: '',   // 4, 3, 2, 1
+            },
+            invalidQ1: false,
+            q2: '',
+            invalidQ2: false,
+            q3: {
+                sub1: '',   // 4, 3, 2, 1
+                sub2: '',   // 4, 3, 2, 1
+                sub3: '',   // 4, 3, 2, 1
+            },
+            invalidQ3: false,
+            q4: '',
+            invalidQ4: false,
+            q5: '',
+            invalidQ5: false,
+            q6: '',
+            invalidQ6: false,
+            q7: '',
+            invalidQ7: false,
+            q8: {
+                value: '',
+                extra: ''
+            },
+            invalidQ8: false,
+            q9: {
+                value: '',
+                extra_option: '',
+                extra: '',
+            },
+            invalidQ9: false,
+            q10: '',
+            invalidQ10: false,
+            q11: '',
+            invalidQ11: false,
+            q12: '',
+            invalidQ12: false,
+            q13: {
+                value: '',
+                extra: ''
+            },
+            invalidQ13: false,
+            q14: '',
+            invalidQ14: false,
         }
     }
 
     componentDidMount() {
         this.props.onRef(this)
-        if(this.props.answer !== undefined && this.props.answer !== [] || this.props.answer !== {}) {
+        if (this.props.answer !== undefined && this.props.answer !== [] || this.props.answer !== {}) {
             this.setState({...this.state, ...this.props.answer});
         }
     }
+
     componentWillUnmount() {
         this.props.onRef(undefined)
     }
 
     validate() {
         let error = false;
-        const {top, firstName, lastName, email, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14} = this.state;
-        if(top.value === '' || (top.value.toLowerCase() === 'other' && top.extra === '')){
+        let invalid = {};
+        const {top, firstName, lastName, address, city, state, zip, stateLicense, email, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14} = this.state;
+        if (top.value === '' || (top.value.toLowerCase() === 'other' && top.extra === '')) {
             error = true;
-            console.log('top');
+            invalid.invalidTop = true;
         }
-        if(firstName === '' || lastName === '' || email === '') {
+        if(firstName === '') {
             error = true;
-            console.log('name');
+            invalid.invalidFirstName = true;
         }
-        if(q1.sub1 === '' || q1.sub2 === '' || q1.sub3 === '') {
+        if(lastName === '') {
             error = true;
-            console.log('q1');
+            invalid.invalidLastName = true;
         }
-        // if(q2 === '' || q3.sub1 === '' || q3.sub2 === '' || q3.sub3 === '') {
-        if(q2 === '' || q3.sub3 === '') {
+        if(address === '') {
             error = true;
-            console.log('q3');
+            invalid.invalidAddress = true;
         }
-        if(q4 === '' || q5 === '' || q6 === '' || q7 === '') {
+        if(city === '') {
             error = true;
-            console.log('q4');
+            invalid.invalidCity = true;
         }
-        if(q8.value === '' || (q8.value.toLowerCase() === 'no' && q8.extra === '')) {
+        if(state === '') {
             error = true;
-            console.log('q8');
+            invalid.invalidState = true;
         }
-        if(q9.value === '' || (q9.value === '4' && q9.extra_option === '') || (q9.value === '4' && q9.extra_option === 'other' && q9.extra === '') ){
+        if(zip === '') {
             error = true;
-            console.log('q9');
+            invalid.invalidZip = true;
         }
-        if(q10 === '' || q11 === '' || q12 === '') {
+        if(stateLicense === '') {
             error = true;
-            console.log('q10');
+            invalid.invalidStateLicense = true;
         }
-        if(q13.value === '' || (q13.value === 'yes' && q13.extra === '')) {
+        if (email === '') {
             error = true;
-            console.log('q13');
+            invalid.invalidEmail = true;
         }
-        if(q14 === '') {
+        if (q1.sub1 === '' || q1.sub2 === '' || q1.sub3 === '') {
             error = true;
-            console.log('q14');
+            invalid.invalidQ1 = true;
         }
+        if (q2 === '') {
+            error = true;
+            invalid.invalidQ2 = true;
+        }
+        if (q3.sub3 === '') {
+            error = true;
+            invalid.invalidQ3 = true;
+        }
+        if(q4 === '') {
+            error = true;
+            invalid.invalidQ4 = true;
+        }
+        if(q5 === '') {
+            error = true;
+            invalid.invalidQ5 = true;
+        }
+        if(q6 === '') {
+            error = true;
+            invalid.invalidQ6 = true;
+        }
+        if(q7 === '') {
+            error = true;
+            invalid.invalidQ7 = true;
+        }
+        if (q8.value === '' || (q8.value.toLowerCase() === 'no' && q8.extra === '')) {
+            error = true;
+            invalid.invalidQ8 = true;
+        }
+        if (q9.value === '' || (q9.value === '4' && q9.extra_option === '') || (q9.value === '4' && q9.extra_option === 'other' && q9.extra === '')) {
+            error = true;
+            invalid.invalidQ9 = true;
+        }
+        if(q10 === '') {
+            error = true;
+            invalid.invalidQ10 = true;
+        }
+        if(q11 === '') {
+            error = true;
+            invalid.invalidQ11 = true;
+        }
+        // if(q12 === '') {
+        //     error = true;
+        //     invalid.invalidQ12 = true;
+        // }
+        if (q13.value === '' || (q13.value === 'yes' && q13.extra === '')) {
+            error = true;
+            invalid.invalidQ13 = true;
+        }
+        // if (q14 === '') {
+        //     error = true;
+        //     invalid.invalidQ14 = true;
+        // }
+        this.setState(invalid);
         return error;
     }
 
     getAnswerData() {
-        if(this.validate()) {
+        if (this.validate()) {
             return false;
         } else {
             return this.state;
@@ -121,42 +198,44 @@ export default class PostQuestionForm extends Component {
 
     onChangeTopQuestion(value, isExtra) {
         if (isExtra !== undefined && isExtra) {
-            this.setState({top: {...this.state.top, extra: value}});
+            this.setState({top: {...this.state.top, extra: value}, invalidTop: false});
         } else {
-            this.setState({top: {value, extra: ''}});
+            this.setState({top: {value, extra: ''}, invalidTop: false});
         }
     }
 
     onChangeQ8Question(value, isExtra) {
         if (isExtra !== undefined && isExtra) {
-            this.setState({q8: {...this.state.q8, extra: value}});
+            this.setState({q8: {...this.state.q8, extra: value}, invalidQ8: false});
         } else {
-            this.setState({q8: {value, extra: ''}});
+            this.setState({q8: {value, extra: ''}, invalidQ8: false});
         }
     }
 
     onChangeQ9Question(value, isExtraOption, isExtra) {
-        if (isExtraOption!== undefined && isExtraOption && isExtra !== undefined && isExtra) {
-            this.setState({q9: {...this.state.q9, extra: value}});
-        } else if(isExtraOption!== undefined && isExtraOption && (isExtra === undefined || !isExtra)) {
-            this.setState({q9: {...this.state.q9, extra_option: value, extra: ''}});
+        if (isExtraOption !== undefined && isExtraOption && isExtra !== undefined && isExtra) {
+            this.setState({q9: {...this.state.q9, extra: value}, invalidQ9: false});
+        } else if (isExtraOption !== undefined && isExtraOption && (isExtra === undefined || !isExtra)) {
+            this.setState({q9: {...this.state.q9, extra_option: value, extra: ''}, invalidQ9: false});
         } else {
-            this.setState({q9: {value, extra_option: '', extra: ''}});
+            this.setState({q9: {value, extra_option: '', extra: ''}, invalidQ9: false});
         }
     }
 
     onChangeQ13Question(value, isExtra) {
         if (isExtra !== undefined && isExtra) {
-            this.setState({q13: {...this.state.q13, extra: value}});
+            this.setState({q13: {...this.state.q13, extra: value}, invalidQ13: false});
         } else {
-            this.setState({q13: {value, extra: ''}});
+            this.setState({q13: {value, extra: ''}, invalidQ13: false});
         }
     }
 
     renderTextItem(title, field, complete) {
         return (
             <FormGroup row>
-                <Label style={{height: 20, marginTop: 6, marginRight: 10}}>{title}: </Label>
+                <Label style={{height: 20, marginTop: 6, marginRight: 10}} className={this.state['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))] && 'text-red'}>
+                    {title}:
+                </Label>
                 <TextField
                     disabled={complete}
                     value={this.state[field]}
@@ -164,7 +243,7 @@ export default class PostQuestionForm extends Component {
                     inputProps={{
                         style: {height: 20, marginTop: 0}
                     }}
-                    onChange={(e) => this.setState({[field]: e.target.value})}
+                    onChange={(e) => this.setState({[field]: e.target.value, ['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))]: false})}
                 />
             </FormGroup>
         );
@@ -177,10 +256,10 @@ export default class PostQuestionForm extends Component {
                 value={subfield === undefined ? this.state[field] : this.state[field][subfield]}
                 row
                 onChange={(event) => {
-                    if(subfield === undefined) {
-                        this.setState({[field]: event.target.value})
+                    if (subfield === undefined) {
+                        this.setState({[field]: event.target.value, ['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))]: false})
                     } else {
-                        this.setState({[field]: {...this.state[field], [subfield]: event.target.value}})
+                        this.setState({[field]: {...this.state[field], [subfield]: event.target.value}, ['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))]: false})
                     }
                 }}
             >
@@ -218,7 +297,7 @@ export default class PostQuestionForm extends Component {
         return (
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'}>
-                    <Label>To facilitate accurate credit recording please provide the following information:</Label>
+                    <Label className={this.state.invalidTop && 'text-red'}>To facilitate accurate credit recording please provide the following information:</Label>
                     <RadioGroup
                         disabled
                         value={this.state.top.value}
@@ -235,19 +314,19 @@ export default class PostQuestionForm extends Component {
                             disabled={complete}
                             value={'Nurse'}
                             control={<Radio/>}
-                            label={'Nurse'}onChange={(event) => this.onChangeTopQuestion(event.target.value)}
+                            label={'Nurse'} onChange={(event) => this.onChangeTopQuestion(event.target.value)}
                         />
                         <FormControlLabel
                             disabled={complete}
                             value={'Nurse Practitioner'}
                             control={<Radio/>}
-                            label={'Nurse Practitioner'}onChange={(event) => this.onChangeTopQuestion(event.target.value)}
+                            label={'Nurse Practitioner'} onChange={(event) => this.onChangeTopQuestion(event.target.value)}
                         />
                         <FormControlLabel
                             disabled={complete}
                             value={'other'}
                             control={<Radio/>}
-                            label={'Other'}onChange={(event) => this.onChangeTopQuestion(event.target.value)}
+                            label={'Other'} onChange={(event) => this.onChangeTopQuestion(event.target.value)}
                         />
                         <TextField
                             id="standard-bare"
@@ -301,7 +380,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-40'}>1. As a result of my participation in this activity, I am better able to:</Label>
+                        <Label className={!this.state.invalidQ1 ? 'mt-40' : 'mt-40 text-red'}>1. As a result of my participation in this activity, I am better able to:</Label>
                     </Col>
                     <Col sm={5}>
                         <FormGroup row>
@@ -317,7 +396,8 @@ export default class PostQuestionForm extends Component {
                         {
                             !this.props.isCovid ?
                                 <Label className={'sub-label mt-15'}>• Recognize a range of cancer appearances demonstrated in the image learning set and therefore maximize cancer detection</Label> :
-                                <Label className={'sub-label mt-15'}>• Recognize A Range Of COVID-19 Appearances Demonstrated In The Image Learning Set And Therefore Maximize COVID-19 Detection.</Label>
+                                <Label className={'sub-label mt-15'}>• Recognize A Range Of COVID-19 Appearances Demonstrated In The Image Learning Set And Therefore Maximize COVID-19
+                                    Detection.</Label>
                         }
                     </Col>
                     <Col sm={5}>
@@ -358,7 +438,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-15'}>2. The activity was appropriate and met my educational needs.</Label>
+                        <Label className={!this.state.invalidQ2 ? 'mt-15' : 'mt-15 text-red'}>2. The activity was appropriate and met my educational needs.</Label>
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q2')}
@@ -374,29 +454,9 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label>3. The following speaker(s) demonstrated experiential knowledge of the topic</Label>
+                        <Label className={this.state.invalidQ3 && 'text-red'}>3. The following speaker(s) demonstrated experiential knowledge of the topic</Label>
                     </Col>
                 </FormGroup>
-                {/*<FormGroup className={'post-questionnaire'} row>*/}
-                {/*    <Col sm={7}>*/}
-                {/*        <Label className={'sub-label mt-15'}>• Patrick C. Brennan, PhD</Label>*/}
-                {/*    </Col>*/}
-                {/*    <Col sm={5}>*/}
-                {/*        {this.renderRadioGroupWithoutText(complete, 'q3', 'sub1')}*/}
-                {/*    </Col>*/}
-                {/*</FormGroup>*/}
-                {/*<FormGroup className={'post-questionnaire'} row>*/}
-                {/*    <Col sm={7}>*/}
-                {/*        {*/}
-                {/*            !this.props.isCovid ?*/}
-                {/*                <Label className={'sub-label mt-15'}>• Mary T Rickard, MB BS BSc(Med) FRANZCR DDU MPH</Label> :*/}
-                {/*                <Label className={'sub-label mt-15'}>• Stuart Grieve, MB BS BSc(Med), PhD</Label>*/}
-                {/*        }*/}
-                {/*    </Col>*/}
-                {/*    <Col sm={5}>*/}
-                {/*        {this.renderRadioGroupWithoutText(complete, 'q3', 'sub2')}*/}
-                {/*    </Col>*/}
-                {/*</FormGroup>*/}
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
                         <Label className={'sub-label mt-15'}>• Mo'ayyad E. Suleiman, PhD</Label>
@@ -415,7 +475,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-15'}>4. The educational materials were effective</Label>
+                        <Label className={!this.state.invalidQ4 ? 'mt-15' : 'mt-15 text-red'}>4. The educational materials were effective</Label>
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q4')}
@@ -431,7 +491,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-15'}>5. The faculty was knowledgeable, effective and free of bias.</Label>
+                        <Label className={!this.state.invalidQ5 ? 'mt-15' : 'mt-15 text-red'}>5. The faculty was knowledgeable, effective and free of bias.</Label>
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q5')}
@@ -447,7 +507,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-15'}>6. The learning activities were effective and incorporated active learning methods.</Label>
+                        <Label className={!this.state.invalidQ6 ? 'mt-15' : 'mt-15 text-red'}>6. The learning activities were effective and incorporated active learning methods.</Label>
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q6')}
@@ -463,7 +523,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-15'}>7. The content provided a fair and balanced coverage of the topic.</Label>
+                        <Label className={!this.state.invalidQ7 ? 'mt-15' : 'mt-15 text-red'}>7. The content provided a fair and balanced coverage of the topic.</Label>
                     </Col>
                     <Col sm={5}>
                         {this.renderRadioGroupWithoutText(complete, 'q7')}
@@ -480,7 +540,7 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <FormGroup className={'post-questionnaire'} row>
                     <Col sm={7}>
-                        <Label className={'mt-15'}>8. The content was objective, current, scientifically sound and free of commercial bias</Label>
+                        <Label className={!this.state.invalidQ8 ? 'mt-15' : 'mt-15 text-red'}>8. The content was objective, current, scientifically sound and free of commercial bias</Label>
                     </Col>
                     <Col sm={5}>
                         <RadioGroup
@@ -528,7 +588,7 @@ export default class PostQuestionForm extends Component {
         const isDisableText = (this.state.q9.extra_option.toLowerCase() !== 'other') || complete;
         return (
             <div className={'post-questionnaire-container'}>
-                <Label>9. Based on information presented in the activity, I will:</Label>
+                <Label className={this.state.invalidQ9 && 'text-red'}>9. Based on information presented in the activity, I will:</Label>
                 <RadioGroup
                     value={this.state.q9.value}
                     disabled
@@ -620,7 +680,7 @@ export default class PostQuestionForm extends Component {
         const options = ['Diagnosis', 'Patient Safety', 'Documentation (appropriate)', 'Treatment approach', 'Patient Education', 'Medication'];
         return (
             <div className={'post-questionnaire-container'}>
-                <Label>10. As a result of this course, I will likely make changes to my practice in these categories:</Label>
+                <Label className={this.state.invalidQ10 && 'text-red'}>10. As a result of this course, I will likely make changes to my practice in these categories:</Label>
                 <FormGroup row className={'sub-label'}>
                     <RadioGroup
                         disabled
@@ -633,7 +693,7 @@ export default class PostQuestionForm extends Component {
                                     disabled={complete}
                                     value={v}
                                     control={<Radio/>}
-                                    onChange={(event) => this.setState({q10: event.target.value})}
+                                    onChange={(event) => this.setState({q10: event.target.value, invalidQ10: false})}
                                     label={v}
                                     key={i}
                                 />
@@ -649,7 +709,7 @@ export default class PostQuestionForm extends Component {
         const {complete} = this.props;
         return (
             <div className={'post-questionnaire-container'}>
-                <Label>11. The most important takeaway I’ve learned from this activity: </Label>
+                <Label className={this.state.invalidQ11 && 'text-red'}>11. The most important takeaway I’ve learned from this activity: </Label>
                 <FormGroup className={'sub-label'}>
                     <TextField
                         disabled={complete}
@@ -658,7 +718,7 @@ export default class PostQuestionForm extends Component {
                         inputProps={{
                             style: {height: 20, marginTop: 0}
                         }}
-                        onChange={(event) => this.setState({q11: event.target.value})}
+                        onChange={(event) => this.setState({q11: event.target.value, invalidQ11: false})}
                     />
                 </FormGroup>
             </div>
@@ -669,7 +729,7 @@ export default class PostQuestionForm extends Component {
         const {complete} = this.props;
         return (
             <div className={'post-questionnaire-container'}>
-                <Label>12. Please suggest any other future topics you would be interested in:</Label>
+                <Label className={this.state.invalidQ12 && 'text-red'}>12. Please suggest any other future topics you would be interested in:</Label>
                 <FormGroup className={'sub-label'}>
                     <TextField
                         disabled={complete}
@@ -678,7 +738,7 @@ export default class PostQuestionForm extends Component {
                         inputProps={{
                             style: {height: 20, marginTop: 0}
                         }}
-                        onChange={(event) => this.setState({q12: event.target.value})}
+                        onChange={(event) => this.setState({q12: event.target.value, invalidQ12: false})}
                     />
                 </FormGroup>
             </div>
@@ -690,7 +750,7 @@ export default class PostQuestionForm extends Component {
         let isTextDisable = complete || this.state.q13.value.toLowerCase() !== 'yes';
         return (
             <div className={'post-questionnaire-container'}>
-                <Label>13. Would you be interested in participating in a phone interview to discuss your practice patterns?</Label>
+                <Label className={this.state.invalidQ13 && 'text-red'}>13. Would you be interested in participating in a phone interview to discuss your practice patterns?</Label>
                 <RadioGroup
                     disabled
                     row
@@ -729,7 +789,7 @@ export default class PostQuestionForm extends Component {
         const {complete} = this.props;
         return (
             <div className={'post-questionnaire-container'}>
-                <Label>14. Comments:</Label>
+                <Label className={this.state.invalidQ14 && 'text-red'}>14. Comments:</Label>
                 <FormGroup className={'sub-label'}>
                     <TextField
                         disabled={complete}
@@ -738,7 +798,7 @@ export default class PostQuestionForm extends Component {
                         inputProps={{
                             style: {height: 20, marginTop: 0}
                         }}
-                        onChange={(event) => this.setState({q14: event.target.value})}
+                        onChange={(event) => this.setState({q14: event.target.value, invalidQ14: false})}
                     />
                 </FormGroup>
             </div>

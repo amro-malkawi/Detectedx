@@ -217,13 +217,13 @@ export function attemptsFinishTest(id, monitorWidth, monitorHeight) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsComplete(id, monitorWidth, monitorHeight) {
-    const url = '/attempts/' + id + '/complete?monitor_width=' + monitorWidth + '&monitor_height=' + monitorHeight + '&access_token=' + getAccessToken();
+export function attemptsPostTestFinish(id) {
+    const url = '/attempts/' + id + '/post_test_finish?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptsPostTestComplete(id) {
-    const url = '/attempts/' + id + '/post_test_complete?access_token=' + getAccessToken();
+export function attemptsPostTestReattempt(id) {
+    const url = '/attempts/' + id + '/post_test_reattempt?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

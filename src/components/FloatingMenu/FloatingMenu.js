@@ -4,6 +4,8 @@ import styledJss from 'styled-jss';
 import MdAdd from '@material-ui/icons/Menu';
 import MdClose from '@material-ui/icons/Clear';
 import MainButton from "./MainButton";
+import IntlMessages from "Util/IntlMessages";
+import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 
 export const DIRECTIONS = {
     up: 'column-reverse',
@@ -63,7 +65,7 @@ class FloatingMenu extends Component {
                 direction={direction}
             >
                 <MainButton
-                    iconResting={<MdAdd style={{fontSize: 20, color: '#FFB300"'}}/>}
+                    iconResting={<Tooltip title={<IntlMessages id={"testView.viewer.viewSlice"}/>}><MdAdd style={{fontSize: 20, color: '#FFB300"'}}/></Tooltip>}
                     iconActive={<MdClose style={{fontSize: 20, color: '#FFB300'}}/>}
                     background={"transparent"}
                     isOpen={isOpen}
