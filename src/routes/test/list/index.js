@@ -23,6 +23,7 @@ import InstructionModal from "../../instructions";
 import {NavLink, withRouter} from 'react-router-dom';
 import * as Apis from 'Api';
 import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
+import JSONParseDefault from 'json-parse-default';
 import {connect} from "react-redux";
 
 class List extends Component {
@@ -96,7 +97,7 @@ class List extends Component {
             NotificationManager.warning(<IntlMessages id={"test.purchase.message2"}/>);
             isShowModalType = 'creditPurchase';
         } else {
-            isShowModalType = 'sweetConfirm';
+            isShowModalType = 'purchaseConfirmModal';
         }
         this.setState({
             selectedItem: test_set_item,
@@ -124,7 +125,8 @@ class List extends Component {
     }
 
     onPaymentSuccess() {
-        this.setState({isShowModalType: 'sweetConfirm'});
+        this.getData();
+        this.setState({isShowModalType: 'purchaseConfirmModal'});
     }
 
     onInstruction(modality_info) {
@@ -191,7 +193,8 @@ class List extends Component {
         if (!test_set_paid || is_test_set_expired) {
             // free test set
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm" onClick={() => test_set_credit === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
+                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm"
+                        onClick={() => test_set_credit === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
                     {test_set_credit === 0 ? <IntlMessages id="test.start"/> : (test_set_credit + ' Points')}
                 </Button>
             );
@@ -246,9 +249,32 @@ class List extends Component {
         )
     }
 
+    renderModalityDesc(modality_desc) {
+        if(modality_desc === undefined || modality_desc === null) return <div className={'mt-50'}/>
+        const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
+        let descText = '';
+        if(typeof modalityDesc !== 'object') {
+            // if desc is not JSON type, will be shown this text
+            descText = modality_desc;
+        } else if(modalityDesc[this.props.locale] !== undefined) {
+            descText = modalityDesc[this.props.locale];
+        } else if(modalityDesc['en'] !== undefined) {
+            descText = modalityDesc['en'];
+        }
+
+        if(descText === '') {
+            return <div className={'mt-50'}/>
+        } else {
+            return <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20 modality-desc-text" dangerouslySetInnerHTML={{__html: descText}} />
+        }
+    }
+
     renderTestSets({test_sets, modality_info}) {
         return (
-            <div className={'m-0 '} key={modality_info.id}>
+            <div className={'m-0'} key={modality_info.id}>
+                {
+                    this.renderModalityDesc(modality_info.modality_desc)
+                }
                 {
                     test_sets.map((item, index) => {
                         return (
@@ -292,7 +318,7 @@ class List extends Component {
                         <IntlMessages id={"test.testSetCoupon"}/>
                     </MuiButton>
                 </div>
-                <AppBar position="static" color="default" className={'mb-50'}>
+                <AppBar position="static" color="default">
                     <ModalityTabs
                         value={this.state.tabIndex}
                         onChange={(e, value) => this.setState({tabIndex: value})}
@@ -360,7 +386,7 @@ class List extends Component {
                 />
                 <SweetAlert
                     type={'default'}
-                    show={this.state.isShowModalType === 'sweetConfirm'}
+                    show={this.state.isShowModalType === 'purchaseConfirmModal'}
                     customClass={'sweetalert-container'}
                     title={<IntlMessages id={'test.purchase.confirm'}/>}
                     confirmBtnText={<IntlMessages id={"testView.ok"}/>}

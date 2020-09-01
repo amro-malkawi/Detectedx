@@ -39,8 +39,8 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
     }
 
     // Scale and/or translation are different, sync them
-    let targetIndex = targetElement.parentElement.dataset.index;
-    let sourceIndex = sourceElement.parentElement.dataset.index;
+    let targetIndex = targetElement.parentElement.dataset.index.split('_')[1];
+    let sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
     if(!isNaN(targetIndex) && !isNaN(sourceIndex) && !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
         targetViewport.translation.x = -sourceViewport.translation.x;
     } else {
@@ -59,8 +59,8 @@ function stackScrollSync(synchronizer, sourceElement, targetElement, eventData) 
     // }
 
     // Scale and/or translation are different, sync them
-    let targetIndex = targetElement.parentElement.dataset.index;
-    let sourceIndex = sourceElement.parentElement.dataset.index;
+    let targetIndex = targetElement.parentElement.dataset.index.split('_')[1];
+    let sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
     if(isNaN(targetIndex) || isNaN(sourceIndex) || !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
         return;
     }

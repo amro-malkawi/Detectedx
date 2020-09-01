@@ -11,6 +11,8 @@
 
     .price-list {
       height: 450px;
+      margin: auto 0;
+      padding: 0 20px;
     }
 
     .payment-slide-title {
@@ -88,9 +90,11 @@
         font-size: 70px;
         color: green;
         margin-bottom: 30px;
+
         &.success {
           color: green;
         }
+
         &.fault {
           color: red;
         }
@@ -113,11 +117,6 @@
       button {
         width: 150px;
       }
-    }
-
-    .plan-zoom-out {
-      transform: scale(0.8);
-      margin-top: -41px;
     }
   }
 }
@@ -287,6 +286,7 @@
     .coupon-input-container {
       input {
         border-color: #97876555;
+
         &:focus {
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 0.1rem #97876555;
         }
@@ -310,6 +310,7 @@
 
     .coupon-button-container {
       padding: 1px 0 1px 5px;
+
       button {
         border-radius: 2px;
         font-family: din-next-w01-light, sans-serif;
@@ -383,9 +384,9 @@
 }
 
 .test-set-coupon-error {
-    height: 15px;
-    margin: 5px 0 0 3px;
-    font-size: 12px;
+  height: 15px;
+  margin: 5px 0 0 3px;
+  font-size: 12px;
 }
 
 .test-set-coupon-result {
@@ -423,17 +424,21 @@ button.test-set-coupon-apply {
     .MuiListItemText-inset {
       padding-left: 0;
     }
+
     .payment-type {
       .payment-content {
         padding: 35px 10px;
+
         .StripeElement {
           margin-right: 0 !important;
         }
       }
     }
+
     .order-info {
       margin-top: 15px;
       padding: 20px 15px;
+
       .coupon-button-container {
         padding: 1px 0;
         margin-top: 10px;

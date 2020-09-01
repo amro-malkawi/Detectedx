@@ -17,7 +17,7 @@ const INIT_STATE = {
     attemptId: '',
     imageList: [],
     imageQuality: -1,
-    showImageList: [],
+    showImageList: [[]],
     isShowImageBrowser: false,
     hasAllTestImages: false,
     hasAllPriorImages: false,

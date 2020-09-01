@@ -11,7 +11,6 @@ import {NotificationManager} from "react-notifications";
 import MarkerTool from "../lib/tools/MarkerTool";
 import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
-import LengthTool from "../lib/tools/LengthTool";
 import IntlMessages from "Util/IntlMessages";
 import { v4 as uuidv4 } from 'uuid';
 import {isMobile} from 'react-device-detect';
@@ -23,7 +22,9 @@ const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
 const ZoomTouchPinch = cornerstoneTools.ZoomTouchPinchTool;
-// const LengthTool = cornerstoneTools.LengthTool;
+// import LengthTool from "../lib/tools/LengthTool";
+const MagnifyTool = cornerstoneTools.MagnifyTool;
+const LengthTool = cornerstoneTools.LengthTool;
 const AngleTool = cornerstoneTools.AngleTool;
 const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
 const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
@@ -43,8 +44,8 @@ class ImageViewer extends Component {
             currentStack: 1,
             isShowFloatingMenu: false,
         };
-        // this.toolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
-        this.toolList = ['Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
+        this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
+        // this.toolList = ['Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.originalViewport = undefined;
         this.stack = {
@@ -146,8 +147,8 @@ class ImageViewer extends Component {
             cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
             cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
         });
-        cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
-        cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
+        // cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+        // cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
         // cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
         // cornerstoneTools[setToolElementFunc](this.imageElement, 'Angle');
         // cornerstoneTools.addToolForElement(this.imageElement, EllipticalRoiTool);

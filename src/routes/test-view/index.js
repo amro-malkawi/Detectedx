@@ -39,6 +39,7 @@ import CornerstoneToolIcon from "./component/CornerstoneToolIcon";
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
+import GridToolButton from './lib/GridToolButton';
 import MarkerPopup from "./lib/markerPopup";
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
@@ -149,7 +150,7 @@ class TestView extends Component {
                     } else if ((attemptsDetail.post_test_remain_count < 0) || (attemptsDetail.post_test_remain_count === 0 && attemptsDetail.post_test_complete)) {
                         throw new Error("You will have to restart the test");
                     } else {
-                        complete = attemptsDetail.post_stage !== 0;
+                        complete = (attemptsDetail.post_stage >= 0 && attemptsDetail.post_test_complete);
                         possiblePostTestReattempt = (attemptsDetail.post_stage === 0 && attemptsDetail.post_test_complete);
                     }
                 } else {
@@ -163,8 +164,8 @@ class TestView extends Component {
                 attemptDetail: attemptsDetail,
                 complete,
                 possiblePostTestReattempt,
-                isAnswerCancer: (complete || attemptsDetail.post_test_complete) ? testCasesAnswers.isAnswerCancer : undefined,
-                isTruthCancer: (complete || attemptsDetail.post_test_complete) ? testCasesAnswers.isTruthCancer : undefined,
+                isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
+                isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
                 currentTool: 'Pan',
                 loading: false
             }, () => {
@@ -395,7 +396,7 @@ class TestView extends Component {
                         </Button> : null
                 }
                 {
-                    (this.state.complete || this.state.possiblePostTestReattempt || test_case_index + 1 !== test_case_length) ? null :
+                    (this.state.complete || test_case_index + 1 !== test_case_length) ? null :
                         <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
                             <CheckCircleOutlineIcon size="small"/>
@@ -409,19 +410,19 @@ class TestView extends Component {
                         </Button> : null
                 }
                 {
-                    this.state.complete ?
+                    (!this.state.complete && !this.state.possiblePostTestReattempt) &&
+                    <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>
+                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.instructions"}/></span>
+                        <InfoOutlinedIcon size="small"/>
+                    </Button>
+                }
+                {
+                    (this.state.complete && !this.state.possiblePostTestReattempt) &&
                         <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
                                 onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
                             <HistoryOutlinedIcon size="small"/>
-                        </Button> :
-                        (
-                            !this.state.possiblePostTestReattempt ?
-                                <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>
-                                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.instructions"}/></span>
-                                    <InfoOutlinedIcon size="small"/>
-                                </Button> : null
-                        )
+                        </Button>
                 }
                 {
                     this.state.possiblePostTestReattempt ?
@@ -526,6 +527,13 @@ class TestView extends Component {
                         </div> : null
                 }
                 {
+                    tools.indexOf('Magnify') === -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Magnify' ? ' active' : '')} data-tool="Magnify" onClick={() => this.onChangeCurrentTool('Magnify')}>
+                            {<CornerstoneToolIcon name={'Magnify'}/>}
+                            <p><IntlMessages id={"testView.tool.magnify"}/></p>
+                        </div> : null
+                }
+                {
                     tools.indexOf('Length') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => this.onChangeCurrentTool('Length')}>
                             {<CornerstoneToolIcon name={'Length'}/>}
@@ -588,6 +596,9 @@ class TestView extends Component {
                     {<CornerstoneToolIcon name={'Reset'}/>}
                     <p><IntlMessages id={"testView.tool.reset"}/></p>
                 </div>
+                {
+                    tools.indexOf('Grid') !== -1 && <GridToolButton />
+                }
             </div>
         )
     }
@@ -656,7 +667,7 @@ class TestView extends Component {
                                     currentTool={this.state.currentTool}
                                     synchronizer={this.synchronizer}
                                     radius={this.state.test_case.modalities.circle_size}
-                                    complete={this.state.complete || this.state.possiblePostTestReattempt}
+                                    complete={this.state.complete}
                                     stage={this.state.attemptDetail.stage}
                                     width={100 / this.state.test_case.images.length}
                                     tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}

@@ -230,7 +230,10 @@ class Attempt extends Component {
                 this.setState({stepIndex: this.state.stepIndex + 1});
             }
         } else {
-            if (!this.validateQuestions()) return true;
+            if (!this.validateQuestions()) {
+                NotificationManager.error('You have not completed all fields, please see highlighted fields');
+                return true;
+            }
             if (isChanged) {
                 this.setState({loading: true});
                 this.saveQuestions(questions, type).then((resp) => {

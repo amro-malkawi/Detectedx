@@ -2,14 +2,17 @@ import React from 'react';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {dropImage, setImageListAction, setShowImageBrowser} from 'Actions';
-import { useDrop } from 'react-dnd'
+import {v4 as uuidv4} from 'uuid';
+import {useDrop} from 'react-dnd'
 import ImageViewer from "./ImageViewer";
 
 
-const ImageViewerDropContainer = ({id, index, imageList, param}) => {
-    const [{ canDrop, isOver }, drop] = useDrop({
+const ImageViewerDropContainer = ({id, rowIndex, colIndex, imageList, param}) => {
+    const isBlankBox = id === '';
+    id = id === '' ? uuidv4() : id;
+    const [{canDrop, isOver}, drop] = useDrop({
         accept: "DicomImage",
-        drop: () => ({ id: id, index }),
+        drop: () => ({id, rowIndex, colIndex}),
         collect: monitor => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
@@ -17,29 +20,39 @@ const ImageViewerDropContainer = ({id, index, imageList, param}) => {
     });
     const isDragOverActive = canDrop && isOver;
     const item = imageList.find((v) => v.id === id);
-    return (
+    return isBlankBox ?
+        <div
+            className={"image " + (isDragOverActive ? 'drag-hover' : '')}
+            ref={drop}
+        /> :
         <ImageViewer
             {...param}
             imageInfo={item}
-            index={index}
+            index={`${rowIndex}_${colIndex}`}
             dndRef={drop}
             isDragOver={isDragOverActive}
         />
-    )
 };
 
 const ImageViewerContainer = (props) => {
     return (
         <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
             {
-                props.showImageList.map((id, index) => (
-                    <ImageViewerDropContainer
-                        id={id}
-                        index={index}
-                        imageList={props.imageList}
-                        param={props}
-                        key={index + '_' + props.resetId + '_' + id}
-                    />
+                props.showImageList.map((row, rowIndex) => (
+                    <div className={'image-row'} key={rowIndex}>
+                        {
+                            row.map((id, colIndex) => (
+                                <ImageViewerDropContainer
+                                    id={id}
+                                    rowIndex={rowIndex}
+                                    colIndex={colIndex}
+                                    imageList={props.imageList}
+                                    param={props}
+                                    key={`${rowIndex}_${colIndex}_${props.resetId}_${id}`}
+                                />
+                            ))
+                        }
+                    </div>
                 ))
             }
         </div>

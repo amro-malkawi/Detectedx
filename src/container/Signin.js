@@ -12,13 +12,8 @@ import {Form, FormGroup, Input} from 'reactstrap';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
 import LanguageProvider from "Components/Header/LanguageProvider";
-// app config
 import AppConfig from 'Constants/AppConfig';
-
-// redux action
-import {
-    signinUserInEmail,
-} from 'Actions';
+import { signinUserInEmail} from 'Actions';
 import * as selectors from "Selectors";
 import IntlMessages from "Util/IntlMessages";
 

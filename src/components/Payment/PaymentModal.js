@@ -41,7 +41,7 @@ export default class PaymentModal extends Component {
             resultPrice: '',
             resultCurrency: '',
             errorMessage: '',
-        }
+        };
     }
 
     componentDidMount() {
@@ -128,14 +128,14 @@ export default class PaymentModal extends Component {
                             this.props.type !== 'creditPurchase' ? null :
                                 <i className="zmdi zmdi-arrow-left" onClick={() => this.onBackSwipe()}/>
                         }
-                        <span><IntlMessages id={'test.purchase.subscriptionPlan'}/></span>
+                        <span><IntlMessages id={'test.purchase.packages'}/></span>
                     </div>
                     <IconButton onClick={() => this.onClose()}><CloseIcon/></IconButton>
                 </div>
                 <div className="price-list">
-                    <div className="row row-eq-height justify-content-md-center plan-zoom-out">
+                    <div className="row row-eq-height justify-content-md-center m-0">
                         {
-                            this.state.plans.map((v) => (
+                            this.state.plans.map((v, i) => (
                                 <PlanItem
                                     key={v.id}
                                     planType={v.name}

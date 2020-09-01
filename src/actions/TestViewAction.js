@@ -1,6 +1,7 @@
 /**
  * Test View Actions
  */
+import { batch } from 'react-redux'
 import {
     TEST_VIEW_SET_IMAGE_LIST,
     TEST_VIEW_CHANGE_IMAGE_LIST,
@@ -12,21 +13,25 @@ import {
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
 } from 'Actions/types';
 
-const getHangingImageOrder = (images, type) => {
-    const typeArray = type.split('_');
-    const idList = [];
-    typeArray.forEach((v) => {
-        const imageObj = images.find((vv) => vv.hangingId === v);
-        if(imageObj !== undefined) {
-            idList.push(imageObj.id);
-        }
-    });
-    if(idList.length === 0) {
-        images.forEach((v) => {
-            if(idList.length < typeArray.length) idList.push(v.id);
+const getHangingImageOrder = (images, hasAllTestImages, type) => {
+    if(!hasAllTestImages) {
+        return [images.map(v => v.id)];
+    } else {
+        const typeArray = type.split('_');
+        const idList = [];
+        typeArray.forEach((v) => {
+            const imageObj = images.find((vv) => vv.hangingId === v);
+            if (imageObj !== undefined) {
+                idList.push(imageObj.id);
+            }
         });
+        if (idList.length === 0) {
+            images.forEach((v) => {
+                if (idList.length < typeArray.length) idList.push(v.id);
+            });
+        }
+        return [idList]  // 1 row x 0 column
     }
-    return idList
 };
 
 export const setImageListAction = (list, answer, complete) => (dispatch, getState) => {
@@ -121,13 +126,8 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         }).length;
         if(priorCount !== 1) hasAllPriorImages = false;
     });
-    let showImageList;
     const currentHangingType = getState().testView.hangingType;
-    if(hasAllTestImages) {
-        showImageList = getHangingImageOrder(newList, currentHangingType);
-    } else {
-        showImageList = newList.map(v => v.id);
-    }
+    const showImageList = getHangingImageOrder(newList, hasAllTestImages, currentHangingType);
 
     dispatch({
         type: TEST_VIEW_SET_IMAGE_LIST,
@@ -139,24 +139,26 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
-    const list = getHangingImageOrder(getState().testView.imageList, type);
-    dispatch({
-        type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
-        payload: list,
-    });
-    dispatch({
-        type: TEST_VIEW_SET_RESET_ID,
-        payload: Math.random().toString(36).substring(7),
-    });
-    dispatch({
-        type: TEST_VIEW_SET_HANGING_TYPE,
-        payload: type
+    const list = getHangingImageOrder(getState().testView.imageList, getState().testView.hasAllTestImages, type);
+    batch(() => {
+        dispatch({
+            type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
+            payload: list,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_RESET_ID,
+            payload: Math.random().toString(36).substring(7),
+        });
+        dispatch({
+            type: TEST_VIEW_SET_HANGING_TYPE,
+            payload: type
+        });
     });
 };
 
-export const dropImage = (id, index) => (dispatch, getState) => {
+export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
     const showImageList = [...getState().testView.showImageList];
-    showImageList[index] = id;
+    showImageList[rowIndex][colIndex] = id;
     dispatch({
         type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
         payload: showImageList
@@ -198,5 +200,33 @@ export const setImageQuality = (imageId, value) => (dispatch, getState) => {
             }
         });
     }
+};
 
+export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) => {
+    const oldList = getState().testView.showImageList.flat();
+    const list = [];
+    let imageIndex = 0;
+    for(let i = 0; i < rowCount; i++) {
+        const row = [];
+        for(let j = 0; j < colCount; j++) {
+            if(imageIndex < oldList.length) {
+                row.push(oldList[imageIndex]);
+            } else {
+                row.push('');
+            }
+            imageIndex++;
+        }
+        list.push(row);
+    }
+
+    batch(() => {
+        dispatch({
+            type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
+            payload: list,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_RESET_ID,
+            payload: Math.random().toString(36).substring(7),
+        });
+    });
 };

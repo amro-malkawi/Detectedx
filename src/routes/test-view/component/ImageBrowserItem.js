@@ -3,7 +3,6 @@ import { useDrag } from 'react-dnd'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {dropImage} from "Actions";
-import * as Apis from 'Api';
 import IntlMessages from "Util/IntlMessages";
 
 const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
@@ -12,7 +11,7 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
         end: (dragItem, monitor) => {
             const dropResult = monitor.getDropResult();
             if (dragItem && dropResult) {
-                dropImage(item.id, dropResult.index);
+                dropImage(item.id, dropResult.rowIndex, dropResult.colIndex);
             }
         },
         collect: monitor => ({
