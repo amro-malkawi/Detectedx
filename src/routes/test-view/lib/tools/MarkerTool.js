@@ -8,6 +8,7 @@ const getNewContext = cornerstoneTools.import('drawing/getNewContext');
 const drawHandles = cornerstoneTools.import('drawing/drawHandles');
 const drawTextBox = cornerstoneTools.import('drawing/drawTextBox');
 const draw = cornerstoneTools.import('drawing/draw');
+const triggerEvent = cornerstoneTools.import('util/triggerEvent');
 
 export default class MarkerTool extends BaseAnnotationTool {
     constructor(configuration = {}) {
@@ -28,14 +29,40 @@ export default class MarkerTool extends BaseAnnotationTool {
     }
 
     createNewMeasurement(eventData) {
-        if (!eventData.currentPoints || !eventData.currentPoints.image)
+        const { currentPoints, element } = eventData;
+        if (!currentPoints || !currentPoints.image)
             throw 'currentPoints.image not supplied to MarkerTool createNewMeasurement';
 
+        const data  = {
+            toolName: this.name,
+            element,
+            measurementData: {
+                point: currentPoints.image
+            },
+        };
         this._handleMouseUp(_ => {
-            this.addMarkFunc(eventData.currentPoints.image);
+            triggerEvent(element, 'cornerstonetoolsmeasurementcompleted', data );
+            this.addMarkFunc && this.addMarkFunc(currentPoints.image);
         });
 
         // return mark;
+    }
+
+    handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
+        const { element } = evt.detail;
+        // precondition: toolData is a Mark object
+        moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
+        toolData.originalX = toolData.handles.end.x;
+        toolData.originalY = toolData.handles.end.y;
+        const data = {
+            toolName: this.name,
+            element,
+            measurementData: toolData,
+        };
+        this._handleMouseUp(_ => {
+            triggerEvent(element, 'cornerstonetoolsmarkerselected', data );
+            this.editMarkFunc && this.editMarkFunc(toolData);
+        });
     }
 
     pointNearTool(element, data, coords) {
@@ -96,7 +123,7 @@ export default class MarkerTool extends BaseAnnotationTool {
                 let padding;
                 if (mark.isTruth) {
                     colour = this.configuration.truthColour;
-                    padding = -15 - ((lesionNames.length + 1) * 15) - radius;
+                    padding = -15 - (lesionNames.length * 15) - radius;
                 }
                 else {
                     colour = this.configuration.answerColour;
@@ -107,8 +134,8 @@ export default class MarkerTool extends BaseAnnotationTool {
                     handleRadius: radius,
                     color: colour,
                 });
-
-                if(isShowInfo) {
+                console.log('isTruth', mark.isTruth);
+                if(isShowInfo && mark.isTruth !== undefined) {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
                     let ratingLabel = mark.rating;
                     const ratingLabelObj = MarkerTool.modalityRatings.find((v) => v.value === mark.rating);
@@ -127,17 +154,6 @@ export default class MarkerTool extends BaseAnnotationTool {
                 }
             });
         }
-    }
-
-    handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
-        // precondition: toolData is a Mark object
-        moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
-        toolData.originalX = toolData.handles.end.x;
-        toolData.originalY = toolData.handles.end.y;
-
-        this._handleMouseUp(_ => {
-            this.editMarkFunc(toolData);
-        });
     }
 
     _handleMouseUp(handler) {

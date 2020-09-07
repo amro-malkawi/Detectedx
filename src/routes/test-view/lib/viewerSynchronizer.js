@@ -39,12 +39,24 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
     }
 
     // Scale and/or translation are different, sync them
-    let targetIndex = targetElement.parentElement.dataset.index.split('_')[1];
-    let sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
-    if(!isNaN(targetIndex) && !isNaN(sourceIndex) && !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
-        targetViewport.translation.x = -sourceViewport.translation.x;
+    const targetIndex = targetElement.parentElement.dataset.index.split('_')[1];
+    const sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
+    const targetHangingId = targetElement.parentElement.dataset.hangingId;
+    const sourceHangingId = sourceElement.parentElement.dataset.hangingId;
+    if(
+        targetHangingId !== undefined && sourceHangingId !== undefined &&
+        targetHangingId.split('-')[1] !== undefined && sourceHangingId.split('-') !== undefined) {
+        if (targetHangingId.split('-')[1] !== sourceHangingId.split('-')[1]){
+            targetViewport.translation.x = -sourceViewport.translation.x;
+        } else {
+            targetViewport.translation.x = sourceViewport.translation.x;
+        }
     } else {
-        targetViewport.translation.x = sourceViewport.translation.x;
+        if (!isNaN(targetIndex) && !isNaN(sourceIndex) && !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
+            targetViewport.translation.x = -sourceViewport.translation.x;
+        } else {
+            targetViewport.translation.x = sourceViewport.translation.x;
+        }
     }
     targetViewport.translation.y = sourceViewport.translation.y;
     targetViewport.scale = sourceViewport.scale;
@@ -59,10 +71,20 @@ function stackScrollSync(synchronizer, sourceElement, targetElement, eventData) 
     // }
 
     // Scale and/or translation are different, sync them
-    let targetIndex = targetElement.parentElement.dataset.index.split('_')[1];
-    let sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
-    if(isNaN(targetIndex) || isNaN(sourceIndex) || !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
-        return;
+    const targetIndex = targetElement.parentElement.dataset.index.split('_')[1];
+    const sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
+    const targetHangingId = targetElement.parentElement.dataset.hangingId;
+    const sourceHangingId = sourceElement.parentElement.dataset.hangingId;
+    if(
+        targetHangingId !== undefined && sourceHangingId !== undefined &&
+        targetHangingId.split('-')[1] !== undefined && sourceHangingId.split('-') !== undefined) {
+        if (targetHangingId.split('-')[1] !== sourceHangingId.split('-')[1]){
+            return;
+        }
+    } else {
+        if (isNaN(targetIndex) || isNaN(sourceIndex) || !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
+            return;
+        }
     }
     if(cornerstoneTools.getToolState(sourceElement, 'stack') === undefined || cornerstoneTools.getToolState(targetElement, 'stack') === undefined) {
         return;

@@ -109,8 +109,7 @@ export default class MarkerPopup extends Component {
             case 'save':
                 let data = {
                     id: this.state.selectedMarkData.id,
-                    x: this.state.selectedMarkData.handles.end.x,
-                    y: this.state.selectedMarkData.handles.end.y,
+                    marker_tool_type: this.state.selectedMarkData.marker_tool_type,
                     attempt_id: this.state.attempts_id,
                     test_case_id: this.state.test_cases_id,
                     rating: this.state.selectedRating,
@@ -119,6 +118,13 @@ export default class MarkerPopup extends Component {
                     isNew: this.state.selectedMarkData.isNew,
                     is_post_test: this.state.isPostTest
                 };
+                if (data.marker_tool_type === 'Marker') {
+                    data.marker_data = JSON.stringify({x: this.state.selectedMarkData.handles.end.x, y: this.state.selectedMarkData.handles.end.y})
+                } else if(data.marker_tool_type === 'MarkerFreehand') {
+                    data.marker_data = JSON.stringify(this.state.selectedMarkData.handles).replace(/-?\d+\.\d+/g, function (x) {
+                        return parseFloat(x).toFixed(2)
+                    });
+                }
                 popupSaveHandler(data);
                 break;
             default:

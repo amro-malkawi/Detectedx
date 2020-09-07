@@ -8,14 +8,16 @@ import cornerstone from 'cornerstone-core';
 import Tooltip from "@material-ui/core/Tooltip";
 import cornerstoneTools from 'cornerstone-tools';
 import {NotificationManager} from "react-notifications";
-import MarkerTool from "../lib/tools/MarkerTool";
 import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
 import IntlMessages from "Util/IntlMessages";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import {isMobile} from 'react-device-detect';
 import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
+
+import MarkerTool from "../lib/tools/MarkerTool";
+import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -44,8 +46,8 @@ class ImageViewer extends Component {
             currentStack: 1,
             isShowFloatingMenu: false,
         };
-        this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
-        // this.toolList = ['Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
+        this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
+        // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.originalViewport = undefined;
         this.stack = {
@@ -54,7 +56,7 @@ class ImageViewer extends Component {
         };
         this.markList = this.props.imageInfo.answers.markList;
         this.shapeList = this.props.imageInfo.answers.shapeList;
-        this.tempModifiedShape = null;
+        this.tempMeasureToolData = null;
         this.imageElementRef = React.createRef();
     }
 
@@ -92,12 +94,12 @@ class ImageViewer extends Component {
 
     componentWillUnmount() {
         console.log('component unmount');
-        if(this.imageElement.pyramid !== undefined && this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined) {
+        if (this.imageElement.pyramid !== undefined && this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined) {
             // set width and height to 0 for memory leak
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 0;
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
         }
-        if(this.webWorker) this.webWorker.terminate();
+        if (this.webWorker) this.webWorker.terminate();
     }
 
     runWorker() {
@@ -117,8 +119,8 @@ class ImageViewer extends Component {
         });
 
         if (!this.props.complete && this.props.tools.indexOf('Marker') !== -1) {
-            this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleAddMark(event.detail.currentPoints.image));
-            this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleAddMark(event.detail.currentPoints.image));
+            this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleDoubleClickEvent(event));
+            this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
         }
 
         this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack.bind(this));
@@ -127,9 +129,10 @@ class ImageViewer extends Component {
             return false;
         }
 
-        this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', this.handleAddShape.bind(this));
-        this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleRemoveShape.bind(this));
-        this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', this.handleModifyShape.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', this.handleMeasureCompleteEvent.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', this.handleMeasureModifyEvent.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmarkerselected', (event) => this.handleEditMark(event.detail.toolName, event.detail));
         this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
     }
 
@@ -140,13 +143,16 @@ class ImageViewer extends Component {
         this.originalViewport = this.duplicateViewport(viewport);
         // add all tools to the image
         const setToolElementFunc = this.props.complete || this.props.stage >= 2 ? 'setToolEnabledForElement' : 'setToolPassiveForElement';
-        cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
+        // cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
+        cornerstoneTools.addToolForElement(this.imageElement, MarkerTool);
+        cornerstoneTools.addToolForElement(this.imageElement, MarkerFreehandTool);
         cornerstoneTools.addToolForElement(this.imageElement, PanTool);
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
         this.toolList.forEach(toolName => {
             cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
             cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
         });
+
         // cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
         // cornerstoneTools[setToolElementFunc](this.imageElement, 'Length');
         // cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
@@ -180,6 +186,9 @@ class ImageViewer extends Component {
         // existing marks can be rendered at all times)
         if (this.props.currentTool !== 'Marker') {
             cornerstoneTools[setToolElementFunc](this.imageElement, 'Marker');
+        }
+        if (this.props.currentTool !== 'MarkerFreehand') {
+            cornerstoneTools[setToolElementFunc](this.imageElement, 'MarkerFreehand');
         }
 
         // enable the current tool as well (used when adding a new image after
@@ -241,8 +250,8 @@ class ImageViewer extends Component {
     handleChangeStack(e, data) {
         // this.imageElement.pyramid[this.stack.currentImageIdIndex].reset();
         e.detail.image.pyramid.showPyramid(this.imageElement);
-        for(let i = 0; i < this.stack.imageIds.length; i++) {
-            if(i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
+        for (let i = 0; i < this.stack.imageIds.length; i++) {
+            if (i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
                 this.imageElement.pyramid[i].pyramidShow = false
             }
         }
@@ -252,34 +261,73 @@ class ImageViewer extends Component {
         });
     }
 
-    handleAddMark(point) {
-        if (this.props.currentTool === 'FreehandMouse') return;
+    handleDoubleClickEvent(event) {
+        // disable double click when current tool is freehand
+        if (this.props.currentTool === 'MarkerFreehand') return;
+        this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
+    }
+
+    handleMeasureCompleteEvent(event) {
+        if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
+            if(event.detail.measurementData.id === undefined) {
+                console.log('marker complete', event.detail.toolName)
+                this.handleAddMark(event.detail.toolName, event.detail);
+            } else {
+                this.handleEditMark(event.detail.toolName, event.detail);
+            }
+        } else {
+            this.handleAddShape(event);
+        }
+    }
+
+    handleMeasureModifyEvent(event) {
+        console.log('measure modify', event.detail.toolName)
+        this.tempMeasureToolData = event.detail;
+    }
+
+    handleMeasureRemoveEvent(event) {
+        console.log('measure remove', event.detail.toolName)
+        if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
+
+        } else {
+            this.handleRemoveShape(event)
+        }
+    }
+
+    handleAddMark(toolName, eventDetail) {
         let markerData = {
+            marker_tool_type: toolName,
             active: true,
-            handles: {
-                end: {
-                    x: point.x,
-                    y: point.y,
-                    active: true,
-                    highlight: true
-                }
-            },
             imageId: this.props.imageInfo.id,
-            radius: this.props.radius,
             lesionTypes: [],
             lesionList: {},
             isTruth: false,
             imageElement: this.imageElement,
-            originalX: undefined,
-            originalY: undefined,
             isNew: true,
         };
-        cornerstoneTools.addToolState(this.imageElement, 'Marker', markerData);
+        if (toolName === 'Marker') {
+            markerData.handles = {
+                    end: {
+                        x: eventDetail.measurementData.point.x,
+                        y: eventDetail.measurementData.point.y,
+                        active: true,
+                        highlight: true
+                    }
+                };
+            markerData.radius = this.props.radius;
+            cornerstoneTools.addToolState(this.imageElement, 'Marker', markerData);
+        } else if (toolName === 'MarkerFreehand') {
+            markerData.handles = eventDetail.measurementData.handles
+        }
         this.props.onShowPopup(markerData, this.handleMarkCancel.bind(this), this.handleMarkDelete.bind(this), this.handleMarkSave.bind(this));
         cornerstone.invalidate(this.imageElement);
     }
 
-    handleEditMark(markerData) {
+    handleEditMark(toolName, eventDetail) {
+        console.log('marker edit', toolName, eventDetail);
+        const markerData = eventDetail.measurementData;
+        markerData.isNew = false;
+        markerData.marker_tool_type = toolName;
         this.props.onShowPopup(markerData, this.handleMarkCancel.bind(this), this.handleMarkDelete.bind(this), this.handleMarkSave.bind(this));
     }
 
@@ -310,6 +358,7 @@ class ImageViewer extends Component {
             act = 'answersUpdate';
         }
         Apis[act](data).then(response => {
+            response.isTruth = false;
             response.lesionTypes = response.answer_lesion_types;
             response.lesionList = JSON.parse(response.answer_lesion_list);
             if (data.isNew) {
@@ -327,7 +376,7 @@ class ImageViewer extends Component {
     }
 
     handleAddShape(event) {
-        this.tempModifiedShape = null;
+        this.tempMeasureToolData = null;
         if (event.detail.measurementData.id === undefined) {
             event.detail.measurementData.id = uuidv4();
             const data = {
@@ -349,18 +398,14 @@ class ImageViewer extends Component {
         }
     }
 
-    handleModifyShape(event) {
-        this.tempModifiedShape = event.detail;
-    }
-
     handleRemoveShape(event) {
-        this.tempModifiedShape = null;
+        this.tempMeasureToolData = null;
         const that = this;
         // This timeout is needed because remove event is sometimes called before complete event is called.
         setTimeout(function () {
             const shapeId = event.detail.measurementData.id;
             const type = event.detail.toolName || event.detail.toolType;
-            if(that.shapeList[type] !== undefined) {
+            if (that.shapeList[type] !== undefined) {
                 Apis.shapeDelete(shapeId).then(resp => {
                     const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
                     that.shapeList[type].splice(index, 1);
@@ -372,57 +417,84 @@ class ImageViewer extends Component {
 
     handleMouseUp(event) {
         const that = this;
-        setTimeout(function () {
-            if (that.tempModifiedShape !== null && that.tempModifiedShape.measurementData.id !== undefined) {
-                const data = {
-                    id: that.tempModifiedShape.measurementData.id,
-                    image_id: that.props.imageInfo.id,
-                    attempt_id: that.props.attemptId,
-                    test_case_id: that.props.imageInfo.test_case_id,
-                    type: that.tempModifiedShape.toolName || that.tempModifiedShape.toolType,
-                    data: JSON.stringify(that.tempModifiedShape.measurementData).replace(/-?\d+\.\d+/g, function (x) {
-                        return parseFloat(x).toFixed(2)
-                    }),
-                    stack: Number(that.state.currentStack) - 1,
-                };
-                Apis.shapeUpdate(data).then(resp => {
-                    console.log('modified shape');
-                    const index = that.shapeList[data.type].map((v) => v.measurementData.id).indexOf(data.id);
-                    that.shapeList[data.type][index] = {stack: data.stack, measurementData: JSON.parse(data.data)};
-                    this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
-                });
+        if (that.tempMeasureToolData !== null && that.tempMeasureToolData.measurementData.id !== undefined) {
+            if (that.tempMeasureToolData.toolName === 'Marker' || that.tempMeasureToolData.toolName === 'MarkerFreehand') {
+
+            } else {
+                setTimeout(function () {
+                    const data = {
+                        id: that.tempMeasureToolData.measurementData.id,
+                        image_id: that.props.imageInfo.id,
+                        attempt_id: that.props.attemptId,
+                        test_case_id: that.props.imageInfo.test_case_id,
+                        type: that.tempMeasureToolData.toolName || that.tempMeasureToolData.toolType,
+                        data: JSON.stringify(that.tempMeasureToolData.measurementData).replace(/-?\d+\.\d+/g, function (x) {
+                            return parseFloat(x).toFixed(2)
+                        }),
+                        stack: Number(that.state.currentStack) - 1,
+                    };
+                    Apis.shapeUpdate(data).then(resp => {
+                        console.log('modified shape');
+                        const index = that.shapeList[data.type].map((v) => v.measurementData.id).indexOf(data.id);
+                        that.shapeList[data.type][index] = {stack: data.stack, measurementData: JSON.parse(data.data)};
+                        this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
+                    });
+                }, 500);
             }
-        }, 500);
+        }
     }
 
     renderMarks() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');
+        cornerstoneTools.clearToolState(this.imageElement, 'MarkerFreehand');
         this.markList.forEach((mark) => {
             if (mark.stack === Number(this.state.currentStack) - 1) {
-                let active = true;
-                let markerData = {
-                    active: active,
-                    handles: {
-                        end: {
-                            x: mark.x,
-                            y: mark.y,
-                            active: active,
-                            highlight: active
-                        }
-                    },
-                    id: mark.id,
-                    imageId: this.props.imageInfo.id,
-                    isTruth: mark.isTruth,
-                    lesionNumber: mark.number,
-                    rating: mark.rating,
-                    radius: this.props.radius,
-                    lesionTypes: mark.lesionTypes,
-                    lesionList: mark.lesionList,
-                    imageElement: this.imageElement,
-                    originalX: undefined,
-                    originalY: undefined,
-                };
-                cornerstoneTools.addToolState(this.imageElement, 'Marker', markerData);
+                try {
+                    const markHandlesData = JSON.parse(mark.marker_data);
+                    const active = true;
+                    const markerData = {
+                        active: active,
+                        id: mark.id,
+                        imageId: this.props.imageInfo.id,
+                        isTruth: mark.isTruth,
+                        lesionNumber: mark.number,
+                        rating: mark.rating,
+                        radius: this.props.radius,
+                        lesionTypes: mark.lesionTypes,
+                        lesionList: mark.lesionList,
+                        imageElement: this.imageElement
+                    };
+                    if (mark.marker_tool_type === 'Marker') {
+                        markerData.handles = {
+                            end: {
+                                x: markHandlesData.x,
+                                y: markHandlesData.y,
+                                active: active,
+                                highlight: active
+                            }
+                        };
+                        cornerstoneTools.addToolState(this.imageElement, 'Marker', markerData);
+                    } else if (mark.marker_tool_type === 'MarkerFreehand') {
+                        markerData.handles = markHandlesData;
+                        const topLeftPoint = {};
+                        const bottomRightPoint = {};
+                        markerData.handles.points.forEach((v) => {
+                            if(topLeftPoint.x === undefined || topLeftPoint.x > v.x) topLeftPoint.x = v.x;
+                            if(topLeftPoint.y === undefined || topLeftPoint.y > v.y) topLeftPoint.y = v.y;
+                            if(bottomRightPoint.x === undefined || bottomRightPoint.x < v.x) bottomRightPoint.x = v.x;
+                            if(bottomRightPoint.y === undefined || bottomRightPoint.y < v.y) bottomRightPoint.y = v.y;
+                        });
+                        markerData.polyBoundingBox = {
+                            left: topLeftPoint.x,
+                            top: topLeftPoint.y,
+                            width: Math.abs(bottomRightPoint.x - topLeftPoint.x),
+                            height: Math.abs(bottomRightPoint.y - topLeftPoint.y)
+                        };
+                        cornerstoneTools.addToolState(this.imageElement, 'MarkerFreehand', markerData);
+                    }
+                } catch (e) {
+                    console.error('mark parse error', e);
+                }
             }
         });
         cornerstone.invalidate(this.imageElement);
@@ -464,12 +536,7 @@ class ImageViewer extends Component {
     }
 
     resetTool(previousName, nextName) {
-        // deactive
-        // if (previousName != 'Marker') {
-        //     cornerstoneTools.setToolDisabled(previousName);
-        // } else {
         cornerstoneTools.setToolPassive(previousName);
-        // }
         //active
         cornerstoneTools.setToolActive(nextName, {
             mouseButtonMask: 1
@@ -506,15 +573,8 @@ class ImageViewer extends Component {
         }
     }
 
-    // onReset() {
-    //     // reset the pan, zoom, invert, and windowing levels
-    //     let original = this.duplicateViewport(this.originalViewport);
-    //     cornerstone.setViewport(this.imageElement, original);
-    //     this.setInitialSetParam();
-    // }
-
     _renderPyramid(viewport) {
-        if(this.imageElement.pyramid[this.stack.currentImageIdIndex]) {
+        if (this.imageElement.pyramid[this.stack.currentImageIdIndex]) {
             this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
         }
     }
@@ -558,7 +618,7 @@ class ImageViewer extends Component {
     }
 
     renderImageQuality() {
-        if(this.props.isShowQuality) {
+        if (this.props.isShowQuality) {
             const imageQuality = Number(this.props.stage === 1 ? this.props.imageInfo.imageQuality : this.props.imageInfo.quality);
             return (
                 <div className={'individual-quality-btn'}>
@@ -649,8 +709,16 @@ class ImageViewer extends Component {
     render() {
         const {imageInfo, dndRef, isDragOver} = this.props;
         return (
-            <div ref={dndRef} className={"image " + (isDragOver ? 'drag-hover' : '')} style={{width: this.props.width + '%'}} id={"image" + imageInfo.id} data-image-id={imageInfo.id} data-url={imageInfo.id}
-                 data-index={this.props.index} data-stack={imageInfo.stack_count}>
+            <div ref={dndRef}
+                 className={"image " + (isDragOver ? 'drag-hover' : '')}
+                 id={"image" + imageInfo.id}
+                 data-image-id={imageInfo.id}
+                 data-url={imageInfo.id}
+                 data-index={this.props.index}
+                 data-stack={imageInfo.stack_count}
+                 data-hanging-id={imageInfo.hangingId}
+                 style={{width: this.props.width + '%'}}
+            >
                 <div className={'control-btn'}>
                     <a className="eye" onClick={() => this.toggleMarkInfo()}>
                         <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">

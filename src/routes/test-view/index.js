@@ -418,11 +418,11 @@ class TestView extends Component {
                 }
                 {
                     (this.state.complete && !this.state.possiblePostTestReattempt) &&
-                        <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
-                                onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
-                            <HistoryOutlinedIcon size="small"/>
-                        </Button>
+                    <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
+                            onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>
+                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
+                        <HistoryOutlinedIcon size="small"/>
+                    </Button>
                 }
                 {
                     this.state.possiblePostTestReattempt ?
@@ -501,13 +501,13 @@ class TestView extends Component {
         return (
             <div className={'tool-container'}>
                 <div className={"tool option more-icon"} onClick={() => this.setState({isShowToolModal: true})}>
-                    {<CornerstoneToolIcon name={this.state.currentTool}/>}
+                    <CornerstoneToolIcon name={this.state.currentTool}/>
                     <p><IntlMessages id={"testView.tool.moreTools"}/>{this.state.isShowToolModal ? '▲' : '▼'}</p>
                 </div>
                 {
                     tools.indexOf('Pan') !== -1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
-                            {<CornerstoneToolIcon name={'Pan'}/>}
+                            <CornerstoneToolIcon name={'Pan'}/>
                             <p><IntlMessages id={"testView.tool.pan"}/></p>
                         </div> : null
                 }
@@ -515,35 +515,35 @@ class TestView extends Component {
                     tools.indexOf('Zoom') !== -1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"
                              onClick={() => this.onChangeCurrentTool('Zoom')}>
-                            {<CornerstoneToolIcon name={'Zoom'}/>}
+                            <CornerstoneToolIcon name={'Zoom'}/>
                             <p><IntlMessages id={"testView.tool.zoom"}/></p>
+                        </div> : null
+                }
+                {
+                    tools.indexOf('Magnify') !== -1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'Magnify' ? ' active' : '')} data-tool="Magnify" onClick={() => this.onChangeCurrentTool('Magnify')}>
+                            <CornerstoneToolIcon name={'Magnify'}/>
+                            <p><IntlMessages id={"testView.tool.magnify"}/></p>
                         </div> : null
                 }
                 {
                     tools.indexOf('Wwwc') !== -1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
-                            {<CornerstoneToolIcon name={'Wwwc'}/>}
+                            <CornerstoneToolIcon name={'Wwwc'}/>
                             <p><IntlMessages id={"testView.tool.window"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Magnify') === -1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Magnify' ? ' active' : '')} data-tool="Magnify" onClick={() => this.onChangeCurrentTool('Magnify')}>
-                            {<CornerstoneToolIcon name={'Magnify'}/>}
-                            <p><IntlMessages id={"testView.tool.magnify"}/></p>
                         </div> : null
                 }
                 {
                     tools.indexOf('Length') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => this.onChangeCurrentTool('Length')}>
-                            {<CornerstoneToolIcon name={'Length'}/>}
+                            <CornerstoneToolIcon name={'Length'}/>
                             <p><IntlMessages id={"testView.tool.length"}/></p>
                         </div> : null
                 }
                 {
                     tools.indexOf('Angle') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Angle' ? ' active' : '')} data-tool="Angle" onClick={() => this.onChangeCurrentTool('Angle')}>
-                            {<CornerstoneToolIcon name={'Angle'}/>}
+                            <CornerstoneToolIcon name={'Angle'}/>
                             <p><IntlMessages id={"testView.tool.angle"}/></p>
                         </div> : null
                 }
@@ -551,14 +551,14 @@ class TestView extends Component {
                     tools.indexOf('EllipticalRoi') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi"
                              onClick={() => this.onChangeCurrentTool('EllipticalRoi')}>
-                            {<CornerstoneToolIcon name={'EllipticalRoi'}/>}
+                            <CornerstoneToolIcon name={'EllipticalRoi'}/>
                             <p><IntlMessages id={"testView.tool.ellipse"}/></p>
                         </div> : null
                 }
                 {
                     tools.indexOf('RectangleRoi') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'RectangleRoi' ? ' active' : '')} data-tool="RectangleRoi" onClick={() => this.onChangeCurrentTool('RectangleRoi')}>
-                            {<CornerstoneToolIcon name={'RectangleRoi'}/>}
+                            <CornerstoneToolIcon name={'RectangleRoi'}/>
                             <p><IntlMessages id={"testView.tool.rectangle"}/></p>
                         </div> : null
                 }
@@ -566,34 +566,34 @@ class TestView extends Component {
                     tools.indexOf('ArrowAnnotate') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'ArrowAnnotate' ? ' active' : '')} data-tool="ArrowAnnotate"
                              onClick={() => this.onChangeCurrentTool('ArrowAnnotate')}>
-                            {<CornerstoneToolIcon name={'ArrowAnnotate'}/>}
+                            <CornerstoneToolIcon name={'ArrowAnnotate'}/>
                             <p><IntlMessages id={"testView.tool.arrow"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('FreehandMouse') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'FreehandMouse' ? ' active' : '')} data-tool="FreehandMouse"
-                             onClick={() => this.onChangeCurrentTool('FreehandMouse')}>
-                            {<CornerstoneToolIcon name={'FreehandMouse'}/>}
-                            <p><IntlMessages id={"testView.tool.freehand"}/></p>
                         </div> : null
                 }
                 {
                     tools.indexOf('Eraser') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Eraser' ? ' active' : '')} data-tool="Eraser" onClick={() => this.onChangeCurrentTool('Eraser')}>
-                            {<CornerstoneToolIcon name={'Eraser'}/>}
+                            <CornerstoneToolIcon name={'Eraser'}/>
                             <p><IntlMessages id={"testView.tool.erase"}/></p>
                         </div> : null
                 }
                 {
                     tools.indexOf('Marker') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
                         <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
-                            {<CornerstoneToolIcon name={'Marker'}/>}
+                            <CornerstoneToolIcon name={'Marker'}/>
                             <p><IntlMessages id={"testView.tool.mark"}/></p>
                         </div> : null
                 }
+                {
+                    tools.indexOf('MarkerFreehand') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
+                        <div className={"tool option" + (this.state.currentTool === 'MarkerFreehand' ? ' active' : '')} data-tool="MarkerFreehand"
+                             onClick={() => this.onChangeCurrentTool('MarkerFreehand')}>
+                            <CornerstoneToolIcon name={'MarkerFreehand'}/>
+                            <p><IntlMessages id={"testView.tool.freehand"}/></p>
+                        </div> : null
+                }
                 <div className={"tool option"} onClick={() => this.onResetView()}>
-                    {<CornerstoneToolIcon name={'Reset'}/>}
+                    <CornerstoneToolIcon name={'Reset'}/>
                     <p><IntlMessages id={"testView.tool.reset"}/></p>
                 </div>
                 {
