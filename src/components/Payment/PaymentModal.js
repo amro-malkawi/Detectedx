@@ -77,6 +77,14 @@ export default class PaymentModal extends Component {
         });
     }
 
+    onFreeOrder(product_id, price, currency, couponCode, token) {
+        if (this.state.selectedType === 'creditPurchase') {
+            return Apis.orderFree(price, currency, couponCode, token);
+        } else if (this.state.selectedType === 'planSubscribe') {
+            return Apis.subscriptionPlanFree(product_id, price, currency, couponCode, token);
+        }
+    }
+
     onStripeOrder(product_id, price, currency, couponCode, token) {
         if (this.state.selectedType === 'creditPurchase') {
             return Apis.orderCreditStripe(price, currency, couponCode, token);
@@ -161,7 +169,7 @@ export default class PaymentModal extends Component {
         const {selectedType, selectedPlan} = this.state;
         const productPrice = selectedType === 'creditPurchase' ? 0 : selectedPlan.amount;
         const productCurrency = selectedType === 'creditPurchase' ? this.state.ratioInfo.currency : selectedPlan.currency;
-        const productName = selectedType === 'creditPurchase' ? '' : selectedPlan.name + ' Subscription';
+        const productName = selectedType === 'creditPurchase' ? '' : selectedPlan.name + ' Points';
         const productId = selectedType === 'creditPurchase' ? '' : selectedPlan.id;
         return (
             <div className={'payment-slide-container'}>
@@ -188,6 +196,7 @@ export default class PaymentModal extends Component {
                         creditRatio={this.state.ratioInfo.ratio}
                         stripeKey={this.state.stripeKey}
                         paypalKey={this.state.paypalKey}
+                        onFreeOrder={(price, currency, couponCode) => this.onFreeOrder(productId, price, currency, couponCode)}
                         onStripeOrder={(price, currency, couponCode, token) => this.onStripeOrder(productId, price, currency, couponCode, token)}
                         onPaypalOrderCreate={(price, currency, couponCode) => this.onPaypalOrderCreate(productId, price, currency, couponCode)}
                         onPaypalOrderApprove={(price, currency, couponCode, approveData) => this.onPaypalOrderApprove(productId, price, currency, couponCode, approveData)}

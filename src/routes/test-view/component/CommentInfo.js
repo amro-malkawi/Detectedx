@@ -42,7 +42,7 @@ export default class CommentInfo extends Component {
     }
 
     render() {
-        if (this.state.commentText === '') {
+        if (this.state.commentText === undefined || this.state.commentText === '') {
             return null;
         } else {
             return (

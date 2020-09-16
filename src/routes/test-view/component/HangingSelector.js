@@ -54,7 +54,7 @@ class HangingSelector extends Component{
         if(this.props.hasAllTestImages) {
             if(this.props.hasAllPriorImages) {
                 this.options = [
-                    'CC-R_CC-L_MLO-R_MLO-L',
+                    'MLO-R_MLO-L_CC-R_CC-L',
                     'CC-R_CC-L',
                     'MLO-R_MLO-L',
                     'CC-R_MLO-R',
@@ -68,7 +68,7 @@ class HangingSelector extends Component{
                 ];
             } else {
                 this.options = [
-                    'CC-R_CC-L_MLO-R_MLO-L',
+                    'MLO-R_MLO-L_CC-R_CC-L',
                     'CC-R_CC-L',
                     'MLO-R_MLO-L',
                     'CC-R_MLO-R',

@@ -137,13 +137,13 @@ class List extends Component {
         this.setState({isShowModalType: 'couponModal'});
     }
 
-    renderLearningButton(test_set_item, modality_type) {
+    renderLearningButton(test_set_item, modality_info) {
         const {has_post} = test_set_item;
-        if (modality_type === 'image_quality') {
+        if (modality_info.modality_type === 'image_quality' || modality_info.instruction_type === "PCT") {
             return null;
         } else {
             return (
-                <NavLink to='#' className={'learning-objective'} onClick={() => this.onLearningModal(modality_type, has_post)}>
+                <NavLink to='#' className={'learning-objective'} onClick={() => this.onLearningModal(modality_info.modality_type, has_post)}>
                     <IntlMessages id="test.learningObjectives"/>
                 </NavLink>
             )
@@ -285,7 +285,7 @@ class List extends Component {
                                             <div className={'col-sm-12 col-md-9'}>
                                                 <div className={'d-flex flex-row align-items-center mb-5'}>
                                                     <span className="fs-14 fw-bold">{item.name}</span>
-                                                    {this.renderLearningButton(item, modality_info.modality_type)}
+                                                    {this.renderLearningButton(item, modality_info)}
                                                 </div>
                                                 {this.renderExpireDate(item)}
                                             </div>

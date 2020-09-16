@@ -34,6 +34,7 @@ import InstructionModal from '../instructions';
 import CovidQuestions from "Routes/test-view/component/CovidQuestions";
 import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
+import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
 import CornerstoneToolIcon from "./component/CornerstoneToolIcon";
 import ImageBrowser from "./component/ImageBrowser";
@@ -95,7 +96,6 @@ class TestView extends Component {
             'cornerstonetoolsmousewheel cornerstonetoolsmousedrag cornerstonenewimage',
             viewerSynchronizer //  cornerstoneTools.panZoomSynchronizer
         );
-        this.synchronizer.enabled = true;
     }
 
     componentDidMount() {
@@ -157,7 +157,7 @@ class TestView extends Component {
                     complete = attemptsDetail.complete;
                 }
             }
-
+            that.synchronizer.enabled = testCaseViewInfo.images.every((v) => v.stack_count === 1);
             that.setState({
                 test_case: testCaseViewInfo,
                 test_set_cases: testSetsCases,
@@ -304,9 +304,13 @@ class TestView extends Component {
         this.setState({isShowQualityModal: true, imageIdForQuality: imageId});
     }
 
+    onShowDensityModal() {
+        this.setState({isShowDensityModal: true, imageIdForQuality: ''});
+    }
+
     onSetQuality(quality) {
         if (quality === -1) return;
-        this.setState({isShowQualityModal: false});
+        this.setState({isShowQualityModal: false, isShowDensityModal: false});
         this.props.setImageQuality(this.state.imageIdForQuality, quality);
     }
 
@@ -345,16 +349,12 @@ class TestView extends Component {
         });
     }
 
-    onChangeSynchonize(e) {
-        this.synchronizer.enabled = e.target.checked;
-    }
-
     onChangeCurrentTool(tool) {
         this.setState({currentTool: tool, isShowToolModal: false});
     }
 
     onResetView() {
-        this.props.changeHangingLayout('CC-R_CC-L_MLO-R_MLO-L');
+        this.props.changeHangingLayout('MLO-R_MLO-L_CC-R_CC-L');
     }
 
     handleShowPopup(markData, cancelCallback, deleteCallback, saveCallback) {
@@ -490,6 +490,19 @@ class TestView extends Component {
                     </div>
                 )
             }
+        } else if (this.state.test_case.modalities.modality_type === 'volpara') {
+            const imageDensity = Number(this.props.imageQuality);
+            const density = ['a', 'b', 'c', 'd'][imageDensity];
+            return (
+                <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
+                    {
+                        imageDensity === -1 ?
+                            <div className={'quality-icon quality-none-icon'}/> :
+                            <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
+                    }
+                    <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
+                </div>
+            )
         } else {
             return null;
         }
@@ -617,8 +630,8 @@ class TestView extends Component {
                 {this.renderTools()}
                 <div className="tool">
                     <AntSwitch
-                        defaultChecked
-                        onChange={(e) => this.onChangeSynchonize(e)}
+                        defaultChecked={this.synchronizer.enabled}
+                        onChange={(e) => (this.synchronizer.enabled = e.target.checked)}
                         value="checkedB"
                     />
                     <p>&nbsp;<IntlMessages id={"testView.tool.sync"}/></p>
@@ -644,7 +657,7 @@ class TestView extends Component {
                             <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
                                 <ImageBrowser/>
                                 {
-                                    (this.state.complete && this.state.test_case.modalities.modality_type !== 'covid') &&
+                                    this.state.test_case.modalities.modality_type !== 'covid' &&
                                     <CommentInfo
                                         test_case_id={this.state.test_cases_id}
                                         attempts_id={this.state.attempts_id}
@@ -728,6 +741,11 @@ class TestView extends Component {
                         isOpen={this.state.isShowQualityModal}
                         toggle={() => this.setState({isShowQualityModal: false})}
                         confirm={(quality) => this.onSetQuality(quality)}
+                    />
+                    <DensityModal
+                        isOpen={this.state.isShowDensityModal}
+                        toggle={() => this.setState({isShowDensityModal: false})}
+                        confirm={(density) => this.onSetQuality(density)}
                     />
                     <ConfirmQualityModal
                         isOpen={this.state.isShowConfirmQualityModal}

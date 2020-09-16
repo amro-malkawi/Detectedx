@@ -21,7 +21,7 @@ const INIT_STATE = {
     isShowImageBrowser: false,
     hasAllTestImages: false,
     hasAllPriorImages: false,
-    hangingType: 'CC-R_CC-L_MLO-R_MLO-L',
+    hangingType: 'MLO-R_MLO-L_CC-R_CC-L',
     resetId: '',
 };
 
@@ -34,6 +34,7 @@ export default (state = INIT_STATE, action) => {
                 showImageList: action.showImageList,
                 hasAllTestImages: action.hasAllTestImages,
                 hasAllPriorImages: action.hasAllPriorImages,
+                hangingType: action.hangingType,
                 imageQuality: -1
             };
         case TEST_VIEW_CHANGE_IMAGE_LIST:

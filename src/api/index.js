@@ -394,22 +394,10 @@ export function getProductPlans() {
 /**
  * order subscriptions
  */
-
-export function orderChargeCard(planId, token) {
-    const url = 'user_subscriptions/subscription_charge_card?access_token=' + getAccessToken();
-    return instance.post(url, {planId, token}).then((response) => response.data);
+export function subscriptionPlanFree(planId, price, currency, couponCode) {
+    const url = 'user_subscriptions/plan_free?access_token=' + getAccessToken();
+    return instance.post(url, {planId, price, currency, couponCode}).then((response) => response.data);
 }
-
-export function orderPaypalCreateSubscription(planId) {
-    const url = 'user_subscriptions/subscription_paypal_create?access_token=' + getAccessToken();
-    return instance.post(url, {planId}).then((response) => response.data);
-}
-
-export function orderPaypalApprove(paymentInfo, planId) {
-    const url = 'user_subscriptions/subscription_paypal_approve?access_token=' + getAccessToken();
-    return instance.post(url, {paymentInfo, planId}).then((response) => response.data);
-}
-
 
 export function subscriptionPlanStripe(planId, price, currency, couponCode, token) {
     const url = 'user_subscriptions/plan_stripe?access_token=' + getAccessToken();
@@ -429,6 +417,11 @@ export function subscriptionPlanPaypalApprove(planId, price, currency, couponCod
 /**
  * user orders
  */
+export function orderFree(price, currency, couponCode) {
+    const url = 'user_orders/free?access_token=' + getAccessToken();
+    return instance.post(url, {price, currency, couponCode}).then((response) => response.data);
+}
+
 export function orderCreditStripe(price, currency, couponCode, token) {
     const url = 'user_orders/credit_stripe?access_token=' + getAccessToken();
     return instance.post(url, {price, currency, couponCode, token}).then((response) => response.data);

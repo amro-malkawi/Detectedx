@@ -481,6 +481,7 @@ div.viewer {
           .comment-text {
             color: #aaa;
             font-size: 14px;
+            text-align: left;
           }
         }
       }
@@ -684,6 +685,28 @@ div.viewer {
     }
   }
 
+  .density-button {
+    display: inline-block;
+    margin: 0 20px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+
+    &.active {
+      border: 1px solid white;
+    }
+
+    div {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 7px;
+      font-size: 70px;
+      font-weight: bold;
+      color: white;
+    }
+
+  }
+
   .confirm-quality-text {
     color: white;
   }
@@ -738,6 +761,17 @@ div.viewer {
     color: white;
     background-color: #00D014;
     border-radius: 7px;
+  }
+
+  .density-icon {
+    display: inline-block;
+    width: 41px;
+    text-align: center;
+    font-size: 41px;
+    font-weight: bold;
+    font-style: italic;
+    line-height: 36px;
+    color: #aaaaaa;
   }
 }
 
@@ -1021,6 +1055,15 @@ div.viewer {
         & > div {
           width: 70px;
           height: 70px;
+        }
+      }
+
+      .density-button {
+        margin: 0 10px;
+        div {
+          width: 70px;
+          height: 70px;
+          font-size: 50px;
         }
       }
     }

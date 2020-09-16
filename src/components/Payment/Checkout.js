@@ -48,6 +48,7 @@ class _OrderForm extends Component {
         let couponCode = '';
         if (this.state.couponData !== null && this.state.couponData.valid) {
             discountPrice = Number((price * ((100 - this.state.couponData.coupon_discount_value) / 100)).toFixed(2));
+            discountPrice = Number(((price * (100 - this.state.couponData.coupon_discount_value)) / 100).toFixed(2));
             couponCode = this.state.couponData.coupon_code;
         }
         return {
@@ -125,7 +126,11 @@ class _OrderForm extends Component {
                     }
                 }).then((token) => {
                     // return Apis.orderChargeCard(this.props.plan.id, token);
-                    return this.props.onStripeOrder(price, currency, couponCode, token);
+                    if(discountPrice !== 0) {
+                        return this.props.onStripeOrder(price, currency, couponCode, token);
+                    } else {
+                        return this.props.onFreeOrder(price, currency, couponCode, token);
+                    }
                 }).then((result) => {
                     const that = this;
                     this.setState({payFinished: true}, () => {
@@ -155,7 +160,22 @@ class _OrderForm extends Component {
     onPaypalCreateOrder(data, actions) {
         const {price, currency, discountPrice, couponCode} = this.calcTotalPrice();
         this.setState({paying: true});
-        return this.props.onPaypalOrderCreate(price, currency, couponCode);
+        if(discountPrice !== 0) {
+            return this.props.onPaypalOrderCreate(price, currency, couponCode);
+        } else {
+            const that = this;
+            this.props.onFreeOrder(price, currency, couponCode).then((result) => {
+                this.setState({payFinished: true}, () => {
+                    setTimeout(() => {
+                        that.props.onFinish(discountPrice, currency);
+                    }, 500);
+                });
+            }).catch(e => {
+                if (e.response) NotificationManager.error(e.response.data.error.message);
+            }).finally(() => {
+                this.setState({paying: false});
+            });
+        }
     }
 
     onPaypalApprove(data, actions) {

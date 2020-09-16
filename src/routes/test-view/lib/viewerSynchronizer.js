@@ -21,7 +21,7 @@ export default function(synchronizer, sourceElement, targetElement, eventData) {
         return;
     }
     panZoomSync(synchronizer, sourceElement, targetElement, eventData);
-    // stackScrollSync(synchronizer, sourceElement, targetElement, eventData);
+    stackScrollSync(synchronizer, sourceElement, targetElement, eventData);
 }
 
 function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {    // panZoomSynchronizer

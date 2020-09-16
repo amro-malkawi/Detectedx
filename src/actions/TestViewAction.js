@@ -127,7 +127,7 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         if(priorCount !== 1) hasAllPriorImages = false;
     });
     const currentHangingType = getState().testView.hangingType;
-    const showImageList = getHangingImageOrder(newList, hasAllTestImages, currentHangingType);
+    const showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, currentHangingType);
 
     dispatch({
         type: TEST_VIEW_SET_IMAGE_LIST,
@@ -135,6 +135,7 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         showImageList,
         hasAllTestImages,
         hasAllPriorImages,
+        hangingType: 'MLO-R_MLO-L_CC-R_CC-L',
     });
 };
 

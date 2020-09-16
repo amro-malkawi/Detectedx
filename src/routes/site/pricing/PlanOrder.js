@@ -99,7 +99,7 @@ class _OrderForm extends Component {
                         throw new Error('card information invalidate');
                     }
                 }).then((token) => {
-                    return Apis.orderChargeCard(this.props.plan.id, token);
+                    return Apis.subscriptionPlanStripe(this.props.plan.id, this.props.plan.price, this.props.plan.currency, '', token);
                 }).then((result) => {
                     const that = this;
                     this.setState({payFinished: true}, () => {
@@ -119,11 +119,11 @@ class _OrderForm extends Component {
     }
 
     onPaypalCreateSubscription(data, actions) {
-        return Apis.orderPaypalCreateSubscription(this.props.plan.id);
+        return Apis.subscriptionPlanPaypalCreate(this.props.plan.id, this.props.plan.price, this.props.plan.currency, '');
     }
 
     onPaypalApprove(data, actions) {
-        return Apis.orderPaypalApprove(JSON.stringify(data), this.props.plan.id).then((resp) => {
+        return Apis.subscriptionPlanPaypalApprove(this.props.plan.id, this.props.plan.price, this.props.plan.currency, '', JSON.stringify(data)).then((resp) => {
             const that = this;
             setTimeout(() => {
                 // that.props.onClose()
