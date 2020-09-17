@@ -152,6 +152,7 @@ module.exports = {
     "testView.selectLesionType": "Vui lòng chọn loại tổn thương",
     "testView.selectImageQuality": "Vui lòng chọn chất lượng hình ảnh",
     "testView.selectEveryImageQuality": "Vui lòng chọn mọi chất lượng hình ảnh",
+    "testView.selectDensity": "Vui lòng chọn mật độ",
     "testView.testFinishMessage": "Thử nghiệm đã kết thúc. Cảm ơn bạn ở cuối",
     "testView.cantMoveCase": "Không thể di chuyển trường hợp",
     "testView.selectConfidenceNumber": "Vui lòng chọn số nghi ngờ",
