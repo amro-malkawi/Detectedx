@@ -198,7 +198,7 @@ class ImageViewer extends Component {
         });
 
         //add synchronizer
-        this.props.synchronizer.add(this.imageElement);
+        this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
 
         if (this.state.stackCount > 1) {
             //add image stack

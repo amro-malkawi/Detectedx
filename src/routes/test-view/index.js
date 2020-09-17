@@ -182,9 +182,12 @@ class TestView extends Component {
     }
 
     onNext() {
-        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) {
+        if (
+            !this.state.complete &&
+            ((this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) || this.state.test_case.modalities.modality_type === 'volpara')
+        ) {
             // this.setState({isShowQualityModal: true});
-            this.onSendQuality();
+            this.onSendQuality(this.state.test_case.modalities.modality_type);
         } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
         } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'covid') {
@@ -200,8 +203,11 @@ class TestView extends Component {
     }
 
     onFinish() {
-        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) {
-            this.onSendQuality();
+        if (
+            !this.state.complete &&
+            ((this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) || this.state.test_case.modalities.modality_type === 'volpara')
+        ) {
+            this.onSendQuality(this.state.test_case.modalities.modality_type);
         } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 2) {
             this.setState({isShowConfirmQualityModal: true});
         } else {
@@ -305,6 +311,7 @@ class TestView extends Component {
     }
 
     onShowDensityModal() {
+        if(this.state.complete) return;
         this.setState({isShowDensityModal: true, imageIdForQuality: ''});
     }
 
@@ -314,14 +321,18 @@ class TestView extends Component {
         this.props.setImageQuality(this.state.imageIdForQuality, quality);
     }
 
-    onSendQuality() {
+    onSendQuality(modality_type) {
         const quality = {
             full: this.props.imageQuality,
             image: this.props.imageList.map((v) => ({id: v.id, quality: v.imageQuality}))
         };
         if (quality.full === -1) {
-            NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
-        } else if (quality.image.some((v) => v.quality === -1)) {
+            if(modality_type === 'image_quality') {
+                NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
+            } else if(modality_type === 'volpara') {
+                NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
+            }
+        } else if (modality_type === 'image_quality' && quality.image.some((v) => v.quality === -1)) {
             NotificationManager.error(<IntlMessages id={"testView.selectEveryImageQuality"}/>);
         } else {
             const test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
@@ -491,8 +502,7 @@ class TestView extends Component {
                 )
             }
         } else if (this.state.test_case.modalities.modality_type === 'volpara') {
-            const imageDensity = Number(this.props.imageQuality);
-            const density = ['a', 'b', 'c', 'd'][imageDensity];
+            const imageDensity = Number(!this.state.complete ? this.props.imageQuality : this.state.test_case.quality);
             return (
                 <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
                     {

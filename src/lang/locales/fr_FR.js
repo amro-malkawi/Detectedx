@@ -152,6 +152,7 @@ module.exports = {
 	"testView.selectLesionType": "Veuillez sélectionner le type de lésion",
 	"testView.selectImageQuality": "Veuillez sélectionner la qualité d'image",
 	"testView.selectEveryImageQuality": "Veuillez sélectionner chaque qualité d'image",
+	"testView.selectDensity": "Veuillez sélectionner la densité",
 	"testView.testFinishMessage": "Le test a été terminé. Merci à la fin",
 	"testView.cantMoveCase": "Impossible de déplacer la casse",
 	"testView.selectConfidenceNumber": "Veuillez sélectionner le numéro de suspicion",

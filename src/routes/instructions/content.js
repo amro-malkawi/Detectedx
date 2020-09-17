@@ -52,7 +52,7 @@ class Content extends Component {
 
     renderInstructionVideo() {
         const {video} = this.props;
-        if (video === undefined || video.thumbnail === undefined || video.link === undefined) return null;
+        if (video === undefined || video.thumbnail === undefined || video.thumbnail === '' || video.link === undefined || video.link === '') return null;
         return (
             <div className={'instruction-video'} onClick={() => this.setState({isShowVideoModal: true})}>
                 <img src={video.thumbnail} alt=''/>

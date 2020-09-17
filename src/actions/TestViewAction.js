@@ -127,8 +127,17 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         if(priorCount !== 1) hasAllPriorImages = false;
     });
     const currentHangingType = getState().testView.hangingType;
-    const showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, currentHangingType);
-
+    let showImageList;
+    const volparaImage = newList.find((v) => v.type === 'volpara');
+    let volparaImageId;
+    if(volparaImage !== undefined) {
+        volparaImageId = volparaImage.id;
+        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, "CC-R_CC-L")[0];
+        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, "MLO-R_MLO-L")[0];
+        showImageList = [imageLine1, imageLine2];
+    } else {
+        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, currentHangingType);
+    }
     dispatch({
         type: TEST_VIEW_SET_IMAGE_LIST,
         imageList: newList,
@@ -136,6 +145,7 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         hasAllTestImages,
         hasAllPriorImages,
         hangingType: 'MLO-R_MLO-L_CC-R_CC-L',
+        volparaImageId
     });
 };
 
@@ -158,6 +168,7 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
 };
 
 export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
+    if(rowIndex === undefined || colIndex === undefined) return;
     const showImageList = [...getState().testView.showImageList];
     showImageList[rowIndex][colIndex] = id;
     dispatch({

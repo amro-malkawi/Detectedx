@@ -152,6 +152,7 @@ module.exports = {
     "testView.selectLesionType": "请选择病变类型",
     "testView.selectImageQuality": "请选择图像质量",
     "testView.selectEveryImageQuality": "请选择每种图像质量",
+    "testView.selectDensity": "请选择密度",
     "testView.testFinishMessage": "测试已完成。最后谢谢您",
     "testView.cantMoveCase": "无法移动大小写",
     "testView.selectConfidenceNumber": "请选择怀疑号码",

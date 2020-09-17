@@ -22,6 +22,7 @@ const INIT_STATE = {
     hasAllTestImages: false,
     hasAllPriorImages: false,
     hangingType: 'MLO-R_MLO-L_CC-R_CC-L',
+    volparaImageId: undefined,
     resetId: '',
 };
 
@@ -35,6 +36,7 @@ export default (state = INIT_STATE, action) => {
                 hasAllTestImages: action.hasAllTestImages,
                 hasAllPriorImages: action.hasAllPriorImages,
                 hangingType: action.hangingType,
+                volparaImageId: action.volparaImageId,
                 imageQuality: -1
             };
         case TEST_VIEW_CHANGE_IMAGE_LIST:

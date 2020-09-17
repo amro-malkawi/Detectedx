@@ -35,26 +35,42 @@ const ImageViewerDropContainer = ({id, rowIndex, colIndex, imageList, param}) =>
 };
 
 const ImageViewerContainer = (props) => {
+    const noSynchronizerProps = {...props};
+    noSynchronizerProps.synchronizer = undefined;
     return (
-        <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
-            {
-                props.showImageList.map((row, rowIndex) => (
-                    <div className={'image-row'} key={rowIndex}>
-                        {
-                            row.map((id, colIndex) => (
-                                <ImageViewerDropContainer
-                                    id={id}
-                                    rowIndex={rowIndex}
-                                    colIndex={colIndex}
-                                    imageList={props.imageList}
-                                    param={props}
-                                    key={`${rowIndex}_${colIndex}_${props.resetId}_${id}`}
-                                />
-                            ))
-                        }
+        <div className={'image-container'}>
+            {props.volparaImageId &&
+                <div id="images">
+                    <div className={'image-row'}>
+                    <ImageViewerDropContainer
+                        id={props.volparaImageId}
+                        imageList={props.imageList}
+                        param={noSynchronizerProps}
+                        key={`${0}_${0}_${props.resetId}_${props.volparaImageId}`}
+                    />
                     </div>
-                ))
+                </div>
             }
+            <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
+                {
+                    props.showImageList.map((row, rowIndex) => (
+                        <div className={'image-row'} key={rowIndex}>
+                            {
+                                row.map((id, colIndex) => (
+                                    <ImageViewerDropContainer
+                                        id={id}
+                                        rowIndex={rowIndex}
+                                        colIndex={colIndex}
+                                        imageList={props.imageList}
+                                        param={props}
+                                        key={`${rowIndex}_${colIndex}_${props.resetId}_${id}`}
+                                    />
+                                ))
+                            }
+                        </div>
+                    ))
+                }
+            </div>
         </div>
     )
 };
@@ -64,6 +80,7 @@ const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
+        volparaImageId: state.testView.volparaImageId,
         resetId: state.testView.resetId,
     };
 };
