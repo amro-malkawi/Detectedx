@@ -779,6 +779,31 @@ div.viewer {
     line-height: 36px;
     color: #d0d0d0;
   }
+
+  .density-score {
+    position: absolute;
+    top: 5px;
+    //width: 133px;
+    width: auto;
+    height: 34px;
+    margin-left: 5px;
+    border-radius: 10px;
+    padding: 5px 20px;
+
+    span {
+      color: white;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    &.correct {
+      background-color: green;
+    }
+
+    &.wrong {
+      background-color: #f44336;
+    }
+  }
 }
 
 .instruction-container {
@@ -1100,6 +1125,10 @@ div.viewer {
     }
 
     .quality-text {
+      display: none;
+    }
+
+    .density-score {
       display: none;
     }
   }

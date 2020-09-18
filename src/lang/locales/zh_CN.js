@@ -136,6 +136,7 @@ module.exports = {
     "testView.quality.good": "良好",
     "testView.quality.perfect": "完美",
     "testView.density": "密度",
+    "testView.youScored": "你得分了",
     "testView.truth.cancerCase": "癌症病例",
     "testView.truth.normalCase": "正常情况",
     "testView.truth.covidSign": "COVID-19 SIGNS",

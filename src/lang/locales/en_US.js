@@ -136,6 +136,7 @@ module.exports = {
 	"testView.quality.good": "Good",
 	"testView.quality.perfect": "Perfect",
 	"testView.density": "Density",
+	"testView.youScored": "You scored",
 	"testView.truth.cancerCase": "Cancer Case",
 	"testView.truth.normalCase": "Normal Case",
 	"testView.truth.covidSign": "COVID-19 SIGNS",

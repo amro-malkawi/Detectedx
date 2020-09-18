@@ -90,7 +90,7 @@ export default function() {
             <hr />
             <p className={'sub-menu-title'}> Submit your answers: </p>
             <p>
-                When you reach the last case <img src={require('Assets/img/instruction/btn_finish.png')} height={35} alt={''}/>, will appear on the tool bar. Click to submit your answers and receive immediate
+                When you reach the last case <img src={require('Assets/img/instruction/btn_submit.png')} height={35} alt={''}/>, will appear on the tool bar. Click to submit your answers and receive immediate
                 feedback on your performance.
             </p>
         </div>

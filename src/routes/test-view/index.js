@@ -61,6 +61,7 @@ class TestView extends Component {
             complete: false,
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
+            answerDensity: undefined,
             imageAnswers: [],
             currentTool: 'Pan',
             isShowPopup: false,
@@ -166,6 +167,7 @@ class TestView extends Component {
                 possiblePostTestReattempt,
                 isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
                 isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
+                answerDensity: complete ? testCasesAnswers.answerDensity : undefined,
                 currentTool: 'Pan',
                 loading: false
             }, () => {
@@ -311,7 +313,7 @@ class TestView extends Component {
     }
 
     onShowDensityModal() {
-        if(this.state.complete) return;
+        if (this.state.complete) return;
         this.setState({isShowDensityModal: true, imageIdForQuality: ''});
     }
 
@@ -327,9 +329,9 @@ class TestView extends Component {
             image: this.props.imageList.map((v) => ({id: v.id, quality: v.imageQuality}))
         };
         if (quality.full === -1) {
-            if(modality_type === 'image_quality') {
+            if (modality_type === 'image_quality') {
                 NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
-            } else if(modality_type === 'volpara') {
+            } else if (modality_type === 'volpara') {
                 NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
             }
         } else if (modality_type === 'image_quality' && quality.image.some((v) => v.quality === -1)) {
@@ -454,6 +456,8 @@ class TestView extends Component {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
+        } else if (this.state.test_case.modalities.modality_type === 'volpara') {
+            return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
             // let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
@@ -502,17 +506,31 @@ class TestView extends Component {
                 )
             }
         } else if (this.state.test_case.modalities.modality_type === 'volpara') {
-            const imageDensity = Number(!this.state.complete ? this.props.imageQuality : this.state.test_case.quality);
-            return (
-                <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
-                    {
-                        imageDensity === -1 ?
-                            <div className={'quality-icon quality-none-icon'}/> :
-                            <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
-                    }
-                    <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
-                </div>
-            )
+            if (!this.state.complete) {
+                const imageDensity = Number(this.props.imageQuality);
+                return (
+                    <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
+                        {
+                            imageDensity === -1 ?
+                                <div className={'quality-icon quality-none-icon'}/> :
+                                <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
+                        }
+                        <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
+                    </div>
+                )
+            } else {
+                if(this.state.answerDensity === undefined) {
+                    return null;
+                } else {
+                    return (
+                        <div className={'truth-quality'}>
+                            <div className={'density-score ' + (this.state.isTruthCancer ? 'correct' : 'wrong')}>
+                                <span><IntlMessages id={"testView.youScored"}/>: {['a', 'b', 'c', 'd'][this.state.answerDensity]}</span>
+                            </div>
+                        </div>
+                    );
+                }
+            }
         } else {
             return null;
         }
@@ -620,7 +638,7 @@ class TestView extends Component {
                     <p><IntlMessages id={"testView.tool.reset"}/></p>
                 </div>
                 {
-                    tools.indexOf('Grid') !== -1 && <GridToolButton />
+                    tools.indexOf('Grid') !== -1 && <GridToolButton/>
                 }
             </div>
         )
