@@ -92,12 +92,16 @@ class ImageViewer extends Component {
 
     }
 
+
     componentWillUnmount() {
-        console.log('component unmount');
-        if (this.imageElement.pyramid !== undefined && this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined) {
+        if (
+            this.imageElement.pyramid !== undefined &&
+            this.imageElement.pyramid[this.stack.currentImageIdIndex] !== undefined &&
+            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined
+        ) {
             // set width and height to 0 for memory leak
-            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 0;
-            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
+            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 1;
+            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 1;
         }
         if (this.webWorker) this.webWorker.terminate();
     }
