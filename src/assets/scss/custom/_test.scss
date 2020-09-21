@@ -39,6 +39,7 @@
         padding-right: 10px;
         background-color: #d0f1fd;
         border-radius: 7px;
+
         span {
           font-size: 14px;
           font-weight: 600;
@@ -66,6 +67,7 @@
         font-weight: bold;
         color: #1565C0;
       }
+
       &:hover {
         .MuiStepLabel-alternativeLabel {
           font-weight: bold;
@@ -90,6 +92,245 @@
   }
 }
 
+.attempt-container {
+  margin: 30px 0;
+  color: white;
+
+  .attempt-stepper {
+    margin-bottom: 20px;
+    padding-top: 0;
+    background-color: black;
+    border-bottom: 1px solid #343435;
+
+    .MuiStepLabel-label {
+      color: white;
+
+      &.MuiStepLabel-active {
+        font-weight: 600;
+      }
+    }
+
+    .normal-stepper {
+      overflow: auto;
+      background-color: black;
+
+      .right-line {
+        position: absolute;
+        top: 12px;
+        left: calc(50% + 20px);
+        right: -9px
+      }
+
+      .vertical-line {
+        position: absolute;
+        top: 22px;
+        right: 0;
+        bottom: 2rem;
+        width: 1px;
+        background-color: white;
+      }
+    }
+
+    .post-stepper {
+      position: relative;
+      overflow-y: hidden;
+      padding-right: 90px;
+      background-color: black;
+
+      .post-stepper-background {
+        position: absolute;
+        top: 3px;
+        right: 5px;
+        bottom: 3px;
+        left: 5px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-right: 10px;
+        background-color: #333333;
+        border-radius: 7px;
+
+        span {
+          font-size: 14px;
+          font-weight: 600;
+          color: #516dc3;
+        }
+      }
+
+      .left-line {
+        position: absolute;
+        top: 12px;
+        left: 0;
+        right: calc(50% + 20px)
+      }
+
+      .left-line1 {
+        position: absolute;
+        top: 22px;
+        left: 0;
+        width: 30px;
+      }
+    }
+
+    .attempt-stepper-btn {
+      .MuiStepIcon-root:not(.MuiStepIcon-active):not(.MuiStepIcon-completed) {
+        color: #505050;
+      }
+
+      .MuiStepLabel-active {
+        font-weight: bold;
+        color: #1565C0;
+      }
+
+      &:hover {
+        .MuiStepLabel-alternativeLabel {
+          font-weight: bold;
+          color: #1565C0;
+        }
+      }
+    }
+  }
+
+  .questionnaire {
+    margin: 20px 0 0 0;
+    border-bottom: 1px solid #9E9E9E;
+
+    .MuiRadio-root, .MuiCheckbox-root, .MuiFormControlLabel-label {
+      color: rgba(255, 255, 255, 0.9);
+
+      &.Mui-disabled {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    &.error {
+      border-bottom: 1px solid #F44336;
+    }
+
+    input {
+      height: 40px;
+      margin: 10px 0 1px 0;
+    }
+  }
+
+  .normal-score-container {
+    .rct-block {
+      background-color: #343434;
+      table {
+        thead {
+          background-color: #202020;
+          tr {
+            th {
+              color: white;
+              border-color: #515151;
+            }
+          }
+        }
+        tbody {
+          tr {
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.08);
+            }
+            td {
+              border-top-color: #515151;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .volpara-score-container {
+    .score-data-container {
+      margin-top: 10px;
+      .score-data {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 60px;
+        border-radius: 7px;
+        background-color: #343435;
+
+        .score-title {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          p {
+            margin-bottom: 2px;
+            font-size: 15px;
+            font-weight: 600;
+          }
+        }
+
+        .score-value {
+          font-size: 120px;
+          font-weight: bold;
+          span {
+            font-size: 70px;
+            font-weight: 500;
+          }
+        }
+
+        .score-desc {
+          text-align: center;
+          font-size: 12px;
+          color: #d0d0d0;
+        }
+      }
+    }
+
+    .score-chart-container {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+
+      .score-chart {
+        padding: 20px;
+        background-color: #262627;
+        border-radius: 7px;
+
+        &:nth-child(1) {
+          margin-bottom: 5px;
+        }
+
+        &:nth-child(2) {
+          margin-top: 5px;
+        }
+
+        .score-chart-title {
+          font-size: 15px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .score-extra-container {
+      display: flex;
+      flex-direction: row;
+      margin-top: 20px;
+
+      .score-extra {
+        flex: 1;
+        margin: 10px;
+        padding: 20px;
+        background-color: #262627;
+
+        .extra-title {
+          font-size: 15px;
+          font-weight: 600;
+        }
+
+        .extra-desc {
+          font-size: 12px;
+          color: #d0d0d0;
+        }
+      }
+    }
+  }
+}
+
 .dot {
   width: 5px;
   display: inline-block;
@@ -102,7 +343,7 @@
   width: 200px;
   height: 130px;
   margin: 0 auto 20px auto;
-  background: white;
+  background: #343434;
 }
 
 .gauge-color {
@@ -159,6 +400,30 @@
 
     .label-option4 {
       width: 90px;
+    }
+  }
+
+  .MuiRadio-root, .MuiCheckbox-root, .MuiFormControlLabel-label {
+    color: rgba(255, 255, 255, 0.9);
+
+    &.Mui-disabled {
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+  .MuiInput-input {
+    height: 20px;
+    margin-top: 0;
+    padding: 6px 10px;
+    color: white;
+    background-color: #353535;
+
+    &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active {
+      transition: background-color 5000s ease-in-out 0s;
+      -webkit-text-fill-color: #fff !important;
+    }
+    &.Mui-disabled {
+      background-color: #505050;
+      cursor: not-allowed;
     }
   }
 
