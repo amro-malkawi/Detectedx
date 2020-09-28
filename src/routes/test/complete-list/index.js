@@ -75,7 +75,7 @@ export default class CompleteList extends Component {
                                 <td className={'text-center'} data-title={'Finish'}>{moment(item.updated_at).format('MM/DD/YYYY, HH:mm:ss')}</td>
                                 <td className="list-action text-center" data-title={'Action'}>
                                     <Button variant="contained" className={'text-white'} color="primary" size="small"
-                                            onClick={() => this.props.history.push('/app/test/attempt/' + item.id)}><IntlMessages id={"test.view"}/></Button>
+                                            onClick={() => this.props.history.push('/app/test/attempt/' + item.id + '/score')}><IntlMessages id={"test.view"}/></Button>
                                 </td>
                             </tr>
                         ))}

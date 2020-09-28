@@ -6,7 +6,7 @@ export default function() {
         <div>
             <p className={'sub-menu-title'}>The Tools bar</p>
             <p>
-                <img src={require("Assets/img/instruction/toolbar.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
+                <img src={require("Assets/img/instruction/toolbar_lungED.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
                 <img src={require("Assets/img/instruction/btn_next.png")} className={'mr-10'} height={40} alt={''}/>takes you to the next case.
@@ -58,7 +58,7 @@ export default function() {
                     </p>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_series.png')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
+                    <img src={require('Assets/img/instruction/img_series_lungED.png')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr />
@@ -77,69 +77,67 @@ export default function() {
             <hr />
             <p className={'sub-menu-title'}> Slices </p>
             <div className={'row'}>
-                <Col sm={7}>
+                <Col sm={12}>
                     <p> Each breast view has a slide bar to help you navigate through the image slices. Use the mouse or the up/down arrow keys on your keyboard to move through the slices for each view. </p>
-                </Col>
-                <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_brest.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
+                    <img src={require('Assets/img/instruction/img_lungED1.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr/>
 
-            <p className={'sub-menu-title'}> Marking a lesion </p>
+            <p className={'sub-menu-title'}> Marking a nodule </p>
             <div className={'row'}>
                 <Col sm={7}>
                     <div>
                         <p> 1. Place your mouse pointer over the site you want to mark </p>
-                        <p> 2. Double-click to mark a lesion </p>
-                        <p> 3. A pop-up menu will appear asking you to rate the lesion: </p>
+                        <p> 2. Double-click to mark a nodule </p>
+                        <p> 3. A pop-up menu will appear asking you to rate the nodule: </p>
                         <ul>
                             <li>2 = Benign</li>
-                            <li>3 = Equivocal</li>
-                            <li>4 = Suspicious</li>
-                            <li>5 = Malignant</li>
+                            <li>3 = Probably benign</li>
+                            <li>4A = Probably suspicious</li>
+                            <li>4B/X = Suspicious</li>
                         </ul>
                     </div>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_lesion.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
+                    <img src={require('Assets/img/instruction/img_lungED2.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
                 </Col>
             </div>
             <hr/>
             <p>
-                Tip: Rating a case 3, 4, or 5, means you are calling this <span style={{color: '#42A5F5'}}>a positive case, i.e. it requires further investigation / assessment.</span>
+                Tip: Rating a case 3, 4A, or 4B/X, means you are calling this <span style={{color: '#42A5F5'}}>a positive case, i.e. it requires further investigation / assessment.</span>
             </p>
             <hr/>
 
             <div className={'row'}>
                 <Col sm={7}>
                     <div>
-                        <p> 4. For lesions given ratings of 3 or 4 or 5, you will have to select one or more lesion type(s). </p>
-                        <p> To select a lesion type: </p>
+                        <p> 4. For nodules given ratings of 3 or 4A or 4B/X, you will have to select one or more nodule type(s). </p>
+                        <p> To select a nodule type: </p>
                         <ul>
                             <li>click on <img src={require('Assets/img/instruction/img_select_lesion.png')} height={35} alt={''}/></li>
-                            <li>a list of lesion types will appear.</li>
-                            <li>Click on lesion type to select it.</li>
+                            <li>a list of nodule types will appear.</li>
+                            <li>Click on nodule type to select it.</li>
                             <li>Other selection boxes will appear depending on your choice.</li>
                         </ul>
                         <p>
-                            Tip: If you want to add a second lesion, please repeat all the above steps.
+                            Tip: If you want to add a second nodule, please repeat all the above steps.
                         </p>
                         <p className={'mt-10'}>
-                            Tip: If you want to change the lesion type on a selected lesion, you can click in the centre of the yellow circle and choose another lesion type.
+                            Tip: If you want to change the nodule type on a selected nodule, you can click in the centre of the yellow circle and choose another nodule type.
                         </p>
                     </div>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_lesion1.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
-                    <img src={require('Assets/img/instruction/img_lesion2.png')} width={'70%'} alt={''} style={{margin: "auto"}} className={'mt-10'}/>
+                    <img src={require('Assets/img/instruction/img_lungED3.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
+                    <img src={require('Assets/img/instruction/img_lungED4.png')} width={'70%'} alt={''} style={{margin: "auto"}} className={'mt-10'}/>
                 </Col>
             </div>
             <hr/>
             <p>
-                Tip: If you see the same lesion on both MLO and CC, we recommend that you mark the sites on both views.
-                If you correctly locate the lesion on just 1 view, you will get full points for <span style={{color: '#42A5F5'}}>lesion sensitivity.</span>
-                However, if you correctly mark the lesion on two views, you will get full points for <span style={{color: '#42A5F5'}}>location sensitivity</span>, which is calculated for your JAFROC score.
+                Tip: If you see the same nodule on more than one view, we recommend that you mark the sites on both views.
+                If you correctly locate the nodule on just 1 view, you will get full points for <span style={{color: '#42A5F5'}}>nodule sensitivity.</span>
+                However, if you correctly mark the nodule on two views, you will get full points for <span style={{color: '#42A5F5'}}>location sensitivity</span>, which is calculated for your JAFROC score.
             </p>
             <hr/>
             <p className={'sub-menu-title'}> Delete a cancer selection </p>
@@ -150,7 +148,7 @@ export default function() {
                     </p>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_lesion3.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
+                    <img src={require('Assets/img/instruction/img_lungED5.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr/>
@@ -163,8 +161,8 @@ export default function() {
             <hr/>
 
             <p>
-                Tip: A case with lesion rating 2 (benign) is considered a normal case, <span style={{color: '#42A5F5'}}>i.e. it requires no further investigation / assessment in a screening situation.</span>
-                If the case does contain a malignant lesion which you rated as 2 (benign), your lesion sensitivity will be adversely affected.
+                Tip: A case with nodule rating 2 (benign) is considered a normal case, <span style={{color: '#42A5F5'}}>i.e. it requires no further investigation / assessment in a screening situation.</span>
+                If the case does contain a malignant nodule which you rated as 2 (benign), your nodule sensitivity will be adversely affected.
             </p>
             <hr/>
 

@@ -23,7 +23,7 @@ export default class QualityModal extends Component {
             <Dialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md'>
                 <div className={'quality-container'}>
                     <CustomDialogTitle onClose={toggle}>
-                        <span className={'quality-title'}><IntlMessages id={"testView.modal.selectImageDensity"}/></span>
+                        <span className={'quality-title'}><IntlMessages id={"testView.modal.selectBreastDensity"}/></span>
                     </CustomDialogTitle>
                     <DialogContent>
                         <div className={'quality-button-container'}>

@@ -689,7 +689,8 @@ class TestView extends Component {
                                     <CommentInfo
                                         test_case_id={this.state.test_cases_id}
                                         attempts_id={this.state.attempts_id}
-                                        isCovid={false}
+                                        modality_type={this.state.test_case.modalities.modality_type}
+                                        complete={this.state.complete}
                                     />
                                 }
                                 {

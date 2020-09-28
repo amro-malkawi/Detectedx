@@ -71,7 +71,7 @@ export default function() {
                     </p>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/pct_2.png')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
+                    <img src={require('Assets/img/instruction/img_series.png')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr />
@@ -79,12 +79,12 @@ export default function() {
             <div className={'row'}>
                 <Col sm={7} className={'right-border'}>
                     <p>
-                        Clicking the Grid button will allow you to change the screen configuration, choosing the number of screens on the test page.
+                        Clicking the Grid button will allow you to change the screen configuration, choosing the number of screens on the test page.<br/>
                         Once you have chosen the screen configuration, you can then drag images from the Series window into each screen.
                     </p>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/pct_3.jpg')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
+                    <img src={require('Assets/img/instruction/img_grid.jpg')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr />

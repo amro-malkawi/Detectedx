@@ -293,7 +293,8 @@ export default class CovidQuestions extends Component {
                         <CommentInfo
                             test_case_id={this.props.test_case_id}
                             attempts_id={this.props.attempts_id}
-                            isCovid={true}
+                            modality_type={'covid'}
+                            complete={this.props.complete}
                         />
                     }
                     <div className={'covid-questions'}>

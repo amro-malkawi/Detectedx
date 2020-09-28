@@ -7,6 +7,7 @@ import InstructionCovid from "./InstructionCovid";
 import InstructionMammo from "./InstructionMammo";
 import InstructionDBT from "./InstructionDBT";
 import InstructionCT from "./InstructionCT";
+import InstructionLungED from "./InstructionLungED";
 import InstructionPCT from "./InstructionPCT";
 import VideoModal from "Routes/instructions/VideoModal";
 import {withRouter} from "react-router-dom";
@@ -31,6 +32,8 @@ class Content extends Component {
             return <InstructionCT instructionLocale={this.props.locale} />
         } else if (type === 'COVID-19') {
             return <InstructionCovid instructionLocale={this.props.locale} />
+        } else if (type === 'LUNGED') {
+            return <InstructionLungED instructionLocale={this.props.locale} />
         } else if (type === 'PCT') {
             return <InstructionPCT instructionLocale={this.props.locale} />
         } else if (type === 'all') {
