@@ -797,6 +797,8 @@ div.viewer {
   }
 
   .instruction-content {
+    font-family: din-next-w01-light, sans-serif;
+    word-spacing: 3px;
     max-height: 80%;
 
     &::-webkit-scrollbar-track {
