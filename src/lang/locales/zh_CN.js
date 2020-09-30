@@ -162,7 +162,7 @@ module.exports = {
     "testView.confirm.agree": "同意",
     "testView.confirm.disagree": "不同意",
     "testView.modal.selectImageQuality": "选择图像质量",
-    "testView.modal.selectBreastDensity": "选择乳房密度",
+    "testView.modal.selectBreastDensity": "选择乳房密度类别",
     "testView.confirm": "确认",
     "testView.synopticComment": "突触评论",
     "testView.comment": "Comment",

@@ -162,7 +162,7 @@ module.exports = {
     "testView.confirm.agree": "Đồng ý",
     "testView.confirm.disagree": "Không đồng ý",
     "testView.modal.selectImageQuality": "Chọn chất lượng hình ảnh",
-    "testView.modal.selectBreastDensity": "Chọn mật độ vú",
+    "testView.modal.selectBreastDensity": "Chọn danh mục mật độ vú",
     "testView.confirm": "Xác nhận",
     "testView.synopticComment": "Nhận xét khái quát",
     "testView.comment": "Nhận xét",

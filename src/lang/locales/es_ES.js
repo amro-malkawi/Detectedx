@@ -162,7 +162,7 @@ module.exports = {
     "testView.confirm.agree": "De acuerdo",
     "testView.confirm.disagree": "En desacuerdo",
     "testView.modal.selectImageQuality": "Seleccionar calidad de imagen",
-    "testView.modal.selectBreastDensity": "Seleccionar densidad mamaria",
+    "testView.modal.selectBreastDensity": "Seleccione la categoría de densidad mamaria",
     "testView.confirm": "Confirmar",
     "testView.synopticComment": "Comentario sináptico",
     "testView.comment": "Comentario",
