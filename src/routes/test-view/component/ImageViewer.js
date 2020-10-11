@@ -269,7 +269,7 @@ class ImageViewer extends Component {
 
     handleMeasureCompleteEvent(event) {
         if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
-            if(event.detail.measurementData.id === undefined) {
+            if (event.detail.measurementData.id === undefined) {
                 console.log('marker complete', event.detail.toolName)
                 this.handleAddMark(event.detail.toolName, event.detail);
             } else {
@@ -307,13 +307,13 @@ class ImageViewer extends Component {
         };
         if (toolName === 'Marker') {
             markerData.handles = {
-                    end: {
-                        x: eventDetail.measurementData.point.x,
-                        y: eventDetail.measurementData.point.y,
-                        active: true,
-                        highlight: true
-                    }
-                };
+                end: {
+                    x: eventDetail.measurementData.point.x,
+                    y: eventDetail.measurementData.point.y,
+                    active: true,
+                    highlight: true
+                }
+            };
             markerData.radius = this.props.radius;
             cornerstoneTools.addToolState(this.imageElement, 'Marker', markerData);
         } else if (toolName === 'MarkerFreehand') {
@@ -479,10 +479,10 @@ class ImageViewer extends Component {
                         const topLeftPoint = {};
                         const bottomRightPoint = {};
                         markerData.handles.points.forEach((v) => {
-                            if(topLeftPoint.x === undefined || topLeftPoint.x > v.x) topLeftPoint.x = v.x;
-                            if(topLeftPoint.y === undefined || topLeftPoint.y > v.y) topLeftPoint.y = v.y;
-                            if(bottomRightPoint.x === undefined || bottomRightPoint.x < v.x) bottomRightPoint.x = v.x;
-                            if(bottomRightPoint.y === undefined || bottomRightPoint.y < v.y) bottomRightPoint.y = v.y;
+                            if (topLeftPoint.x === undefined || topLeftPoint.x > v.x) topLeftPoint.x = v.x;
+                            if (topLeftPoint.y === undefined || topLeftPoint.y > v.y) topLeftPoint.y = v.y;
+                            if (bottomRightPoint.x === undefined || bottomRightPoint.x < v.x) bottomRightPoint.x = v.x;
+                            if (bottomRightPoint.y === undefined || bottomRightPoint.y < v.y) bottomRightPoint.y = v.y;
                         });
                         markerData.polyBoundingBox = {
                             left: topLeftPoint.x,
@@ -707,7 +707,8 @@ class ImageViewer extends Component {
     }
 
     render() {
-        const {imageInfo, dndRef, isDragOver} = this.props;
+        const {imageInfo, dndRef, isDragOver, tools} = this.props;
+        const canDrawMarker = tools.filter((v) => (v === 'Marker' || v === 'MarkerFreehand')).length > 0;
         return (
             <div ref={dndRef}
                  className={"image " + (isDragOver ? 'drag-hover' : '')}
@@ -720,28 +721,26 @@ class ImageViewer extends Component {
                  style={{width: this.props.width + '%'}}
             >
                 <div className={'control-btn'}>
-                    <a className="eye" onClick={() => this.toggleMarkInfo()}>
-                        <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
-                            <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
-                        </Tooltip>
-                    </a>
-                    {/*<a onClick={() => null}>*/}
-                    {/*    <Tooltip title="Reset" placement="bottom">*/}
-                    {/*        <i className={"zmdi zmdi-refresh fs-23"} style={{paddingLeft: 6, paddingRight: 6}} onClick={() => this.onReset()}/>*/}
-                    {/*    </Tooltip>*/}
-                    {/*</a>*/}
+                    {
+                        canDrawMarker &&
+                        <a className="eye" onClick={() => this.toggleMarkInfo()}>
+                            <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
+                                <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
+                            </Tooltip>
+                        </a>
+                    }
                     <a onClick={() => null}>
                         <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
                             <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
                         </Tooltip>
                     </a>
                     {
-                        this.props.complete ? null :
-                            <a onClick={() => null}>
-                                <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
-                                    <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
-                                </Tooltip>
-                            </a>
+                        (!this.props.complete && canDrawMarker) &&
+                        <a onClick={() => null}>
+                            <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
+                                <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
+                            </Tooltip>
+                        </a>
                     }
                 </div>
                 {this.renderImageQuality()}

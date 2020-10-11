@@ -175,10 +175,12 @@ class TestView extends Component {
                 Marker.modalityRatings = that.state.test_case.ratings;
                 // ImageViewer.adjustSlideSize();
             });
-            // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
             that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, complete);
+
+            if(testCaseViewInfo.modalities.modality_type === 'volpara') {
+                that.props.setImageQuality('', testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
+            }
         }).catch((e) => {
-            console.debug(e);
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
     }
@@ -319,8 +321,15 @@ class TestView extends Component {
 
     onSetQuality(quality) {
         if (quality === -1) return;
-        this.setState({isShowQualityModal: false, isShowDensityModal: false});
+        this.setState({isShowQualityModal: false});
         this.props.setImageQuality(this.state.imageIdForQuality, quality);
+    }
+
+    onSetDensity(density) {
+        if (density === -1) return;
+        this.setState({isShowDensityModal: false});
+        this.props.setImageQuality(this.state.imageIdForQuality, density);
+        setTimeout(() => this.onNext(), 100);
     }
 
     onSendQuality(modality_type) {
@@ -417,7 +426,7 @@ class TestView extends Component {
                 }
                 {
                     test_case_index + 1 < test_case_length ?
-                        <Button className='mr-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext(1)}>
+                        <Button className='mr-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext()}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.next"}/></span>
                             <SkipNextOutlinedIcon size="small"/>
                         </Button> : null
@@ -774,7 +783,7 @@ class TestView extends Component {
                     <DensityModal
                         isOpen={this.state.isShowDensityModal}
                         toggle={() => this.setState({isShowDensityModal: false})}
-                        confirm={(density) => this.onSetQuality(density)}
+                        confirm={(density) => this.onSetDensity(density)}
                     />
                     <ConfirmQualityModal
                         isOpen={this.state.isShowConfirmQualityModal}

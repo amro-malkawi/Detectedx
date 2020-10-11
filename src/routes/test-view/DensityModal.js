@@ -8,13 +8,11 @@ export default class QualityModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            quality: -1, // 0: Inadequate, 1: Moderate, 2: Good, 3: Perfect
         }
     }
 
-    onConfirm() {
-        this.props.confirm(this.state.quality);
-        this.setState({quality: -1});
+    onConfirm(quality) {
+        this.props.confirm(quality);
     }
 
     render() {
@@ -27,25 +25,21 @@ export default class QualityModal extends Component {
                     </CustomDialogTitle>
                     <DialogContent>
                         <div className={'quality-button-container'}>
-                            <div className={'density-button ' + (this.state.quality === 0 ? 'active' : '')} onClick={() => this.setState({quality: 0})}>
+                            <div className={'density-button ' + (this.state.quality === 0 ? 'active' : '')} onClick={() => this.onConfirm(0)}>
                                 <div>a</div>
                             </div>
-                            <div className={'density-button ' + (this.state.quality === 1 ? 'active' : '')} onClick={() => this.setState({quality: 1})}>
+                            <div className={'density-button ' + (this.state.quality === 1 ? 'active' : '')} onClick={() => this.onConfirm(1)}>
                                 <div>b</div>
                             </div>
-                            <div className={'density-button ' + (this.state.quality === 2 ? 'active' : '')} onClick={() => this.setState({quality: 2})}>
+                            <div className={'density-button ' + (this.state.quality === 2 ? 'active' : '')} onClick={() => this.onConfirm(2)}>
                                 <div>c</div>
                             </div>
-                            <div className={'density-button ' + (this.state.quality === 3 ? 'active' : '')} onClick={() => this.setState({quality: 3})}>
+                            <div className={'density-button ' + (this.state.quality === 3 ? 'active' : '')} onClick={() => this.onConfirm(3)}>
                                 <div>d</div>
                             </div>
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <div style={{margin: 'auto'}}>
-                            <Button variant="contained" onClick={() => this.onConfirm()} color="primary" className="text-white" autoFocus>&nbsp;&nbsp;<IntlMessages
-                                id={"testView.confirm"}/>&nbsp;&nbsp;</Button>
-                        </div>
                     </DialogActions>
                 </div>
             </Dialog>

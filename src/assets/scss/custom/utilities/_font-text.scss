@@ -2,94 +2,122 @@
 .font-lg {
   font-size: $font-size-lg;
 }
+
 .font-md {
   font-size: ($font-size-sm + 0.125rem);
 }
+
 .font-sm {
   font-size: $font-size-sm !important;
 }
+
 .font-xs {
   font-size: 0.75rem !important;
-  line-height:1.25rem;
+  line-height: 1.25rem;
 }
+
 .font-2x {
   font-size: 2rem;
 }
+
 .font-3x {
   font-size: 3rem;
 }
+
 .font-4x {
   font-size: 4rem !important;
 }
+
 .font-5x {
   font-size: 5rem;
 }
+
 .font-xl {
   font-size: 2.625rem; //42px;
 }
+
 .fs-12 {
   font-size: 12px;
 }
+
 .fs-13 {
   font-size: 13px;
 }
+
 .fs-14 {
   font-size: 14px;
 }
+
 .fs-17 {
   font-size: 17px;
 }
+
 .fs-23 {
   font-size: 23px;
 }
+
 //Font weight
 .fw-normal {
   font-weight: $fw-normal !important;
 }
+
 .fw-semi-bold {
   font-weight: $fw-semi-bold !important;
 }
+
 .fw-bold {
   font-weight: $fw-bold !important;
 }
+
 // Font Text
 .text-pink {
-	color: $pink !important;
+  color: $pink !important;
 }
+
 .text-indigo {
-	color: $indigo !important;
+  color: $indigo !important;
 }
+
 .text-teal {
-	color: $teal !important;
+  color: $teal !important;
 }
+
 .text-purple {
-	color: $purple !important;
+  color: $purple !important;
 }
+
 .text-yellow {
-	color: $orange !important;
+  color: $orange !important;
 }
+
 .text-gray {
   color: $gray-700;
 }
+
 .text-base {
   color: #A5A7B2;
 }
+
 .text-black {
   color: black;
 }
+
 .text-red {
   color: red;
 }
 
-.facebook{
-  color:$facebook;
+.facebook {
+  color: $facebook;
 }
-.twitter{
-  color:$twitter;
+
+.twitter {
+  color: $twitter;
 }
-.linkedin{
-  color:$linkedin;
+
+.linkedin {
+  color: $linkedin;
 }
-.google{
-  color:$google;
+
+.google {
+  color: $google;
 }

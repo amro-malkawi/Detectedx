@@ -11,10 +11,10 @@ import {makeStyles, withStyles} from '@material-ui/core/styles';
 import SwipeableViews from 'react-swipeable-views';
 import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
-import USStartModal from './USStartModal';
-import USCovidStartModal from './USCovidStartModal';
-import LearningModal from "./LearningModal";
-import LearningCovidModal from "./LearningCovidModal";
+import USStartModal from './Learning/USStartModal';
+import USCovidStartModal from './Learning/USCovidStartModal';
+import LearningModal from "./Learning/LearningModal";
+import LearningCovidModal from "./Learning/LearningCovidModal";
 import SweetAlert from 'react-bootstrap-sweetalert'
 import PaymentModal from "Components/Payment/PaymentModal";
 import {NotificationManager} from "react-notifications";

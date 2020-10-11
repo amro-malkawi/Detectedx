@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Col} from "reactstrap";
 import {Dialog, DialogActions, DialogContent, DialogTitle, AppBar, Tabs, Tab} from "@material-ui/core";
-import {withStyles} from "@material-ui/core/styles";
 import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 import InstructionCovid from "./InstructionCovid";
 import InstructionMammo from "./InstructionMammo";
@@ -9,6 +8,7 @@ import InstructionDBT from "./InstructionDBT";
 import InstructionCT from "./InstructionCT";
 import InstructionLungED from "./InstructionLungED";
 import InstructionPCT from "./InstructionPCT";
+import InstructionVolpara from "./InstructionVolpara";
 import VideoModal from "Routes/instructions/VideoModal";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -36,6 +36,8 @@ class Content extends Component {
             return <InstructionLungED instructionLocale={this.props.locale} />
         } else if (type === 'PCT') {
             return <InstructionPCT instructionLocale={this.props.locale} />
+        } else if (type === 'VOLPARA') {
+            return <InstructionVolpara instructionLocale={this.props.locale} />
         } else if (type === 'all') {
             if (this.state.activeIndex === 1) {
                 return <InstructionMammo instructionLocale={this.props.locale} />

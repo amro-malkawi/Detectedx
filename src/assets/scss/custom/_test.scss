@@ -312,6 +312,9 @@
       margin-top: 20px;
 
       .score-extra {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         flex: 1;
         margin: 10px;
         padding: 20px;
@@ -325,6 +328,22 @@
         .extra-desc {
           font-size: 12px;
           color: #d0d0d0;
+        }
+
+        .extra-button-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          button {
+            min-width: 110px;
+            &.green-btn {
+              background-color: #008a00 !important;
+            }
+
+            &.grey-btn {
+              background-color: #5d5d5d !important;
+            }
+          }
         }
       }
     }
