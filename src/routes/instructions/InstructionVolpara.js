@@ -4,6 +4,19 @@ import {Col} from "reactstrap";
 export default function () {
     return (
         <div>
+            <ul style={{marginTop: -12, marginLeft: -17}}>
+                <li>
+                    In each of the following 60 cases,
+                    you will visually assess breast density and select the breast composition category (a, b, c, or d) according to BI-RADS® Atlas 5th Edition guidelines.
+                </li>
+                <li>
+                    Once you’ve assessed all cases, you’ll be shown your agreement scores.
+                    The three agreement scores compare your assessment with Volpara® Density Grade™, other radiologists in the same region, and radiologists globally.
+                </li>
+                <li>
+                    Each case will then be viewed again alongside a Volpara Scorecard and commentary from our Clinical Team.
+                </li>
+            </ul>
             <p className={'sub-menu-title'}>The Tools bar</p>
             <p>
                 <img src={require("Assets/img/instruction/toolbar_volpara.jpg")} className={"mt-20 white-border"} width="100%" alt={''}/>

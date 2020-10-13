@@ -13,7 +13,7 @@ import {
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
 } from 'Actions/types';
 
-const getHangingImageOrder = (images, hasAllTestImages, type) => {
+const getHangingImageOrder = (images, hasAllTestImages, type, isForce = true) => {
     if(!hasAllTestImages) {
         return [images.map(v => v.id)];
     } else {
@@ -25,7 +25,7 @@ const getHangingImageOrder = (images, hasAllTestImages, type) => {
                 idList.push(imageObj.id);
             }
         });
-        if (idList.length === 0) {
+        if (idList.length === 0 && isForce) {
             images.forEach((v) => {
                 if (idList.length < typeArray.length) idList.push(v.id);
             });
@@ -132,12 +132,13 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
     let volparaImageId;
     if(volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, "CC-R_CC-L")[0];
-        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, "MLO-R_MLO-L")[0];
+        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "CC-R_CC-L", false)[0];
+        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "MLO-R_MLO-L", false)[0];
         showImageList = [imageLine1, imageLine2];
     } else {
-        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, currentHangingType);
+        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), hasAllTestImages, currentHangingType, true);
     }
+    showImageList = showImageList.filter((v) => v.length !== 0);
     dispatch({
         type: TEST_VIEW_SET_IMAGE_LIST,
         imageList: newList,
@@ -150,7 +151,7 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
-    const list = getHangingImageOrder(getState().testView.imageList, getState().testView.hasAllTestImages, type);
+    const list = getHangingImageOrder(getState().testView.imageList, getState().testView.hasAllTestImages, type, true);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
