@@ -250,6 +250,7 @@ module.exports = {
 	"test.attempt.volparaScoreForRegion": "Compared to others in your region",
 	"test.attempt.volparaCertTitle": "Certificate of Completion",
 	"test.attempt.volparaCertDesc": "Click below to download a certificate of completion",
+	"test.attempt.volparaCertDisabled": "You must review your answers before receiving your certificate of completion",
 	"test.attempt.volparaPostBeforeTitle": "AMA PRA Category 1 Credit(s)™",
 	"test.attempt.volparaPostBeforeDesc": "Complete 8 more cases to receive AMA PRA Category 1 Credits and certificate. Click to Start",
 	"test.attempt.volparaPostBeforeButton": "Start",

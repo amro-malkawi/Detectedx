@@ -1,11 +1,11 @@
 import React from 'react';
-import {Dialog, DialogContent} from "@material-ui/core";
+import { Dialog, DialogContent } from "@material-ui/core";
 import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 
-export default function ({open, onClose, onNext}) {
+export default function ({ open, onClose, onNext }) {
     return (
         <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
-            <div style={{padding: 30}}>
+            <div style={{ padding: 30 }}>
                 <CustomDialogTitle id="alert-dialog-title" onClose={onClose}>
                     <span className={'fs-23'}>LEARNING OBJECTIVES FOR:</span>
                 </CustomDialogTitle>

@@ -250,6 +250,7 @@ module.exports = {
     "test.attempt.volparaScoreForRegion": "Comparado con otros en su región",
     "test.attempt.volparaCertTitle": "Certificado de finalización",
     "test.attempt.volparaCertDesc": "Haga clic a continuación para descargar un certificado de finalización",
+    "test.attempt.volparaCertDisabled": "Debe revisar sus respuestas antes de recibir su certificado de finalización",
     "test.attempt.volparaPostBeforeTitle": "Crédito (s) de categoría 1 de AMA PRA ™",
     "test.attempt.volparaPostBeforeDesc": "Complete 8 casos más para recibir créditos y certificado AMA PRA Categoría 1. Haga clic para comenzar",
     "test.attempt.volparaPostBeforeButton": "Inicio",

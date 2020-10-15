@@ -230,7 +230,11 @@ class Attempt extends Component {
                     return;
                 }
                 Apis.attemptsSavePostAnswer(this.state.attempts_id, JSON.stringify(postAnswer)).then((resp) => {
-                    this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
+                    if(this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
+                        this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
+                    } else {
+                        this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
+                    }
                 }).catch((e) => {
                     console.warn(e);
                     NotificationManager.error(e.message);
@@ -1059,11 +1063,11 @@ class Attempt extends Component {
                     <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostCompleteTitle"/></p>
                     <p className={'extra-desc'}><IntlMessages id={"test.attempt.volparaPostCompleteDesc"} values={{score: <span className={'text-primary'}>{postScore}%</span>}}/></p>
                     <div className={'extra-button-container'}>
-                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('normal')}>
+                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('post_physicians')}>
                             <SchoolIcon className={'mr-10'}/>
                             <IntlMessages id="test.attempt.volparaPostCompleteButton1"/>
                         </Button>
-                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('normal')}>
+                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('post_other')}>
                             <SchoolIcon className={'mr-10'}/>
                             <IntlMessages id="test.attempt.volparaPostCompleteButton2"/>
                         </Button>
@@ -1111,9 +1115,19 @@ class Attempt extends Component {
                 <div className={'row score-extra-container'}>
                     <div className={'score-extra'}>
                         <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                        {
+                            this.state.attemptInfo.view_answer_time === null ?
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                        }
                         <div className={'extra-button-container'}>
-                            <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('normal')}>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
+                                onClick={() => this.onGetCertPdf('normal')}
+                                disabled={this.state.attemptInfo.view_answer_time === null}
+                            >
                                 <SchoolIcon className={'mr-10'}/>
                                 <IntlMessages id="test.attempt.volparaCertTitle"/>
                             </Button>
@@ -1231,13 +1245,14 @@ class Attempt extends Component {
                                 complete={this.state.attemptInfo.complete && this.state.post_stage > 1}
                                 isCovid={this.state.attemptInfo.test_sets.modalities.modality_type === 'covid'}
                             />
-                            {/*{this.renderQuestionnaire()}*/}
                             <div className={'text-center mt-70'}>
                                 {
                                     this.state.stepIndex > 0 ?
                                         <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id={"test.back"}/></Button> : null
                                 }
-                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id={"test.next"}/></Button>
+                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}>
+                                    <IntlMessages id={"test.next"}/>
+                                </Button>
                             </div>
                         </div>
                     );

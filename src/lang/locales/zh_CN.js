@@ -250,6 +250,7 @@ module.exports = {
     "test.attempt.volparaScoreForRegion": "与您所在地区的其他人相比",
     "test.attempt.volparaCertTitle": "完成证书",
     "test.attempt.volparaCertDesc": "点击下面下载完成证书",
+    "test.attempt.volparaCertDisabled": "您必须先查看答案，然后才能获得结业证书",
     "test.attempt.volparaPostBeforeTitle": " AMA PRA 1类信用™",
     "test.attempt.volparaPostBeforeDesc": "再完成8个案例以获得AMA PRA类别1积分和证书。单击以开始",
     "test.attempt.volparaPostBeforeButton": "开始",

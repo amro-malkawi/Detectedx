@@ -11,10 +11,7 @@ import {makeStyles, withStyles} from '@material-ui/core/styles';
 import SwipeableViews from 'react-swipeable-views';
 import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
-import USStartModal from './Learning/USStartModal';
-import USCovidStartModal from './Learning/USCovidStartModal';
-import LearningModal from "./Learning/LearningModal";
-import LearningCovidModal from "./Learning/LearningCovidModal";
+import LearningModal from './LearningModal';
 import SweetAlert from 'react-bootstrap-sweetalert'
 import PaymentModal from "Components/Payment/PaymentModal";
 import {NotificationManager} from "react-notifications";
@@ -37,7 +34,7 @@ class List extends Component {
             selectedItem: {},
             selectedId: null,
             isShowModalType: '',
-            instructionModalInfo: {},
+            modalInfo: {},
         }
     }
 
@@ -51,16 +48,19 @@ class List extends Component {
         });
     }
 
-    onLearningModal(modality_type, has_post) {
+    onLearningModal(modality_type, test_set) {
+        let type;
         if (modality_type === 'covid') {
-            this.setState({
-                isShowModalType: has_post ? 'has_post_covid' : 'covid',
-            });
+            type = test_set.has_post ? 'has_post_covid' : 'covid';
+        } else if (modality_type === 'volpara') {
+            type = test_set.has_post ? 'has_post_volpara' : 'volpara';
         } else {
-            this.setState({
-                isShowModalType: has_post ? 'has_post' : 'normal',
-            });
+            type = test_set.has_post ? 'has_post' : 'normal';
         }
+        this.setState({
+            isShowModalType: 'learningModal',
+            modalInfo: {learningType: type, name: test_set.name, postTestCount: test_set.post_test_count, credit: test_set.test_set_credit}
+        });
     }
 
     onGoAttempt() {
@@ -130,7 +130,10 @@ class List extends Component {
     }
 
     onInstruction(modality_info) {
-        this.setState({instructionModalInfo: {type: modality_info.instruction_type, video: {thumbnail: modality_info.instruction_video_thumbnail, link: modality_info.instruction_video}}});
+        this.setState({
+            isShowModalType: 'instructionModal',
+            modalInfo: {type: modality_info.instruction_type, video: {thumbnail: modality_info.instruction_video_thumbnail, link: modality_info.instruction_video}}
+        });
     }
 
     onShowTestSetCouponModal() {
@@ -138,12 +141,11 @@ class List extends Component {
     }
 
     renderLearningButton(test_set_item, modality_info) {
-        const {has_post} = test_set_item;
         if (modality_info.modality_type === 'image_quality' || modality_info.instruction_type === "PCT") {
             return null;
         } else {
             return (
-                <NavLink to='#' className={'learning-objective'} onClick={() => this.onLearningModal(modality_info.modality_type, has_post)}>
+                <NavLink to='#' className={'learning-objective'} onClick={() => this.onLearningModal(modality_info.modality_type, test_set_item)}>
                     <IntlMessages id="test.learningObjectives"/>
                 </NavLink>
             )
@@ -343,26 +345,13 @@ class List extends Component {
                         this.state.testSetsList.map(v => this.renderTestSets(v))
                     }
                 </SwipeableViews>
-                <USStartModal
-                    open={this.state.isShowModalType === 'has_post'}
-                    onClose={() => this.setState({isShowModalType: ''})}
-                    // onNext={() => this.onGoAttempt()}
-                />
-                <USCovidStartModal
-                    open={this.state.isShowModalType === 'has_post_covid'}
-                    onClose={() => this.setState({isShowModalType: ''})}
-                    // onNext={() => this.onGoAttempt()}
-                />
                 <LearningModal
-                    open={this.state.isShowModalType === 'normal'}
-                    locale={this.props.locale}
-                    onClose={() => this.setState({isShowModalType: ''})}
-                    // onNext={this.onGoAttempt.bind(this)}
-                />
-                <LearningCovidModal
-                    open={this.state.isShowModalType === 'covid'}
-                    onClose={() => this.setState({isShowModalType: ''})}
-                    // onNext={this.onGoAttempt.bind(this)}
+                    open={this.state.isShowModalType === 'learningModal'}
+                    type={this.state.modalInfo.learningType}
+                    name={this.state.modalInfo.name}
+                    postTestCount={this.state.modalInfo.postTestCount}
+                    credit={this.state.modalInfo.credit}
+                    onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
                 />
                 {
                     (this.state.isShowModalType === 'creditPurchase' || this.state.isShowModalType === 'planSubscribe') &&
@@ -373,11 +362,11 @@ class List extends Component {
                     />
                 }
                 <InstructionModal
-                    isOpen={this.state.instructionModalInfo.type !== undefined}
-                    onClose={() => this.setState({instructionModalInfo: {}})}
+                    isOpen={this.state.isShowModalType === 'instructionModal'}
+                    onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
                     theme={'white'}
-                    type={this.state.instructionModalInfo.type}
-                    video={this.state.instructionModalInfo.video}
+                    type={this.state.modalInfo.type}
+                    video={this.state.modalInfo.video}
                 />
                 <TestSetCouponModal
                     isOpen={this.state.isShowModalType === 'couponModal'}
