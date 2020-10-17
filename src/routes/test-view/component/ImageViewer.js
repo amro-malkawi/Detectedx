@@ -64,10 +64,27 @@ class ImageViewer extends Component {
         const {imageInfo} = this.props;
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
-            return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
+            // return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
+            return `https://static.detectedx.com/images/${imageInfo.id}/${v}/0/0_0.png`;
         });
         cornerstone.enable(this.imageElement);
-        cornerstone.loadImage(this.stack.imageIds[0]).then((image) => {
+
+        /////////
+        let a = 0;
+        const tempImageIds = [...this.stack.imageIds];
+        const imageIdGroups = [];
+        while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
+        imageIdGroups.reduce((accumulatorPromise, idGroup) => {
+            return accumulatorPromise.then(() => {
+                return Promise.all(idGroup.map((id) => cornerstone.loadAndCacheImage(id).then(() => {
+                    a++;
+                    console.info(a);
+                })));
+            });
+        }, Promise.resolve());
+
+        /////////
+        cornerstone.loadAndCacheImage(this.stack.imageIds[0]).then((image) => {
             cornerstone.displayImage(this.imageElement, image);
             this.initTools();
         });
@@ -211,7 +228,7 @@ class ImageViewer extends Component {
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }
         // render the first appropriate level of the pyramid
-        this._renderPyramid(this.originalViewport);
+        // this._renderPyramid(this.originalViewport);
         // render shapes
         this.renderShapes();
         this.renderMarks();
@@ -249,12 +266,12 @@ class ImageViewer extends Component {
 
     handleChangeStack(e, data) {
         // this.imageElement.pyramid[this.stack.currentImageIdIndex].reset();
-        e.detail.image.pyramid.showPyramid(this.imageElement);
-        for (let i = 0; i < this.stack.imageIds.length; i++) {
-            if (i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
-                this.imageElement.pyramid[i].pyramidShow = false
-            }
-        }
+        // e.detail.image.pyramid.showPyramid(this.imageElement);
+        // for (let i = 0; i < this.stack.imageIds.length; i++) {
+        //     if (i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
+        //         this.imageElement.pyramid[i].pyramidShow = false
+        //     }
+        // }
         this.setState({currentStack: this.stack.currentImageIdIndex + 1}, () => {
             this.renderShapes();
             this.renderMarks();
@@ -532,7 +549,7 @@ class ImageViewer extends Component {
 
     wasDrawn(event) {
         this._updateImageInfo(event);
-        this._renderPyramid(event.detail.viewport);
+        // this._renderPyramid(event.detail.viewport);
     }
 
     resetTool(previousName, nextName) {
@@ -573,11 +590,11 @@ class ImageViewer extends Component {
         }
     }
 
-    _renderPyramid(viewport) {
-        if (this.imageElement.pyramid[this.stack.currentImageIdIndex]) {
-            this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
-        }
-    }
+    // _renderPyramid(viewport) {
+    //     if (this.imageElement.pyramid[this.stack.currentImageIdIndex]) {
+    //         this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
+    //     }
+    // }
 
     _updateImageInfo(event) {
         const eventData = event.detail;

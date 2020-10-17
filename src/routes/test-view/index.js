@@ -21,10 +21,9 @@ import {isMobile} from 'react-device-detect';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
-import dicomParser from 'dicom-parser';
-import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
+import cornerstoneWebImageLoader from 'cornerstone-web-image-loader';
 import Hammer from 'hammerjs';
-import Loader from './lib/loader';
+// import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 
 import ImageViewerContainer from './component/ImageViewerContainer'
@@ -86,13 +85,12 @@ class TestView extends Component {
     }
 
     initConerstone() {
-        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+        cornerstoneWebImageLoader.external.cornerstone = cornerstone;
         cornerstoneTools.external.cornerstone = cornerstone;
         cornerstoneTools.external.Hammer = Hammer;
         cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
         cornerstoneTools.init();
-        cornerstone.registerImageLoader('dtx', Loader);
+        // cornerstone.registerImageLoader('dtx', Loader);
         this.synchronizer = new cornerstoneTools.Synchronizer(
             'cornerstonetoolsmousewheel cornerstonetoolsmousedrag cornerstonenewimage',
             viewerSynchronizer //  cornerstoneTools.panZoomSynchronizer
