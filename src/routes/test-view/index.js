@@ -21,8 +21,6 @@ import {isMobile} from 'react-device-detect';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
-import dicomParser from 'dicom-parser';
-import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
@@ -86,8 +84,6 @@ class TestView extends Component {
     }
 
     initConerstone() {
-        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
         cornerstoneTools.external.cornerstone = cornerstone;
         cornerstoneTools.external.Hammer = Hammer;
         cornerstoneTools.external.cornerstoneMath = cornerstoneMath;

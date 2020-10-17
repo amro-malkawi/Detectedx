@@ -113,6 +113,7 @@ module.exports = {
     "testView.ok": "确定",
     "testView.delete": "删除",
     "testView.save": "保存",
+    "testView.age": "年龄",
     "testView.tool.series": "系列",
     "testView.tool.moreTools": "工具",
     "testView.tool.pan": "潘",

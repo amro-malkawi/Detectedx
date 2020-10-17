@@ -45,6 +45,7 @@ class ImageViewer extends Component {
             stackCount: this.props.imageInfo.stack_count,
             currentStack: 1,
             isShowFloatingMenu: false,
+            age: 0,
         };
         this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
         // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
@@ -62,6 +63,7 @@ class ImageViewer extends Component {
 
     componentDidMount() {
         const {imageInfo} = this.props;
+        this.getMetaInfo();
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
             return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
@@ -100,6 +102,12 @@ class ImageViewer extends Component {
             this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
         }
         if (this.webWorker) this.webWorker.terminate();
+    }
+
+    getMetaInfo() {
+        Apis.getJsonData(this.props.imageInfo.image_url_path + 'meta.json').then((result) => {
+            this.setState({age: Number(result['00101010']['Value'][0].match(/\d+/)[0])});
+        });
     }
 
     runWorker() {
@@ -756,6 +764,9 @@ class ImageViewer extends Component {
                 >
                     <div className="dicom" ref={this.imageElementRef}/>
                 </ResizeDetector>
+                {
+                    this.state.age !==0 &&  <div className="age-info status"><IntlMessages id="testView.age"/>: {this.state.age}</div>
+                }
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>

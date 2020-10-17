@@ -231,11 +231,15 @@ div.viewer {
             }
           }
 
-          .window, .zoom, .location {
+          .age-info, .window, .zoom, .location {
             position: absolute;
             left: 10px;
             color: white;
             font-size: 14px;
+          }
+
+          .age-info {
+            top: 40px;
           }
 
           .window {

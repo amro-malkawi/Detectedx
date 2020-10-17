@@ -113,6 +113,7 @@ module.exports = {
 	"testView.ok": "Ok",
 	"testView.delete": "Supprimer",
 	"testView.save": "Enregistrer",
+	"testView.age": "Âge",
 	"testView.tool.series": "Série",
 	"testView.tool.moreTools": "Outils",
 	"testView.tool.pan": "Pan",
