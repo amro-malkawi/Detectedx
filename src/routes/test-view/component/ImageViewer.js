@@ -61,11 +61,10 @@ class ImageViewer extends Component {
     }
 
     componentDidMount() {
-        const {imageInfo} = this.props;
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
             // return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
-            return `https://static.detectedx.com/images/${imageInfo.id}/${v}/0/0_0.png`;
+            return `${this.props.imageInfo.image_url_path}${v}/0/0_0.png`;
         });
         cornerstone.enable(this.imageElement);
 
