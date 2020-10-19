@@ -6,14 +6,28 @@ import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
 import $ from 'jquery';
+import PropTypes from "prop-types";
+import 'Assets/css/quill.snow.css'
 
 export default class CommentInfo extends Component {
+
+    static propTypes = {
+        test_case_id: PropTypes.string.isRequired,
+        attempts_id: PropTypes.string.isRequired,
+        modality_type: PropTypes.string.isRequired,
+        complete: PropTypes.bool.isRequired
+    };
+
+    static defaultProps = {
+        modality_type: '',
+        complete: false,
+    };
 
     constructor(props) {
         super(props);
         this.state = {
             commentText: '',
-            panelOpen: false,
+            panelOpen: (props.modality_type === 'volpara' && props.complete),
             loading: true,
         }
     }
@@ -45,12 +59,21 @@ export default class CommentInfo extends Component {
         if (this.state.commentText === undefined || this.state.commentText === '') {
             return null;
         } else {
+            const {modality_type, complete} = this.props;
+            let containerClass;
+            if (modality_type === 'covid') {
+                containerClass = 'comment-info covid-comment';
+            } else if (modality_type === 'volpara' && complete) {
+                containerClass = 'comment-info right-comment';
+            } else {
+                containerClass = 'comment-info';
+            }
             return (
-                <div className={this.props.isCovid ? 'comment-info covid-comment' : 'comment-info'}>
+                <div className={containerClass}>
                     <Dropdown isOpen={this.state.panelOpen} toggle={() => this.togglePanel()}>
                         <DropdownToggle className="bg-primary">
                             {
-                                this.props.isCovid ?
+                                modality_type === 'covid' ?
                                     <Button size={'small'} color="primary" onClick={() => null}><IntlMessages id={"testView.synopticComment"}/></Button> :
                                     <Tooltip title="Comment" placement="right">
                                         <i className="zmdi zmdi-comment-text"/>
@@ -64,7 +87,7 @@ export default class CommentInfo extends Component {
                                         <IntlMessages id={"testView.comment"}/>
                                     </li>
                                     <li className={'comment-text'}>
-                                        <div dangerouslySetInnerHTML={{ __html: this.state.commentText}} />
+                                        <div className={'ql-editor'} dangerouslySetInnerHTML={{__html: this.state.commentText}}/>
                                     </li>
                                 </ul>
                             </Scrollbars>

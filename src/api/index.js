@@ -41,6 +41,10 @@ export function getAccessToken() {
     return cookie.get("access_token");
 }
 
+export function getJsonData(url) {
+    return instance.get(url).then((response) => response.data);
+}
+
 export function login(email, password) {
     const url = '/users/login';
     const req = {

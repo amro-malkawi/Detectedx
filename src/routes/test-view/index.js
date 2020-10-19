@@ -21,8 +21,6 @@ import {isMobile} from 'react-device-detect';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
-import dicomParser from 'dicom-parser';
-import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import Hammer from 'hammerjs';
 import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
@@ -61,6 +59,7 @@ class TestView extends Component {
             complete: false,
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
+            answerDensity: undefined,
             imageAnswers: [],
             currentTool: 'Pan',
             isShowPopup: false,
@@ -85,8 +84,6 @@ class TestView extends Component {
     }
 
     initConerstone() {
-        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
         cornerstoneTools.external.cornerstone = cornerstone;
         cornerstoneTools.external.Hammer = Hammer;
         cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
@@ -166,6 +163,7 @@ class TestView extends Component {
                 possiblePostTestReattempt,
                 isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
                 isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
+                answerDensity: complete ? testCasesAnswers.answerDensity : undefined,
                 currentTool: 'Pan',
                 loading: false
             }, () => {
@@ -173,10 +171,12 @@ class TestView extends Component {
                 Marker.modalityRatings = that.state.test_case.ratings;
                 // ImageViewer.adjustSlideSize();
             });
-            // that.props.setImageListAction(testCaseViewInfo.images.map((v, i) => ({...v, answers: testCasesAnswers.images[i]})));
             that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, complete);
+
+            if(testCaseViewInfo.modalities.modality_type === 'volpara') {
+                that.props.setImageQuality('', testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
+            }
         }).catch((e) => {
-            console.debug(e);
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
     }
@@ -311,14 +311,21 @@ class TestView extends Component {
     }
 
     onShowDensityModal() {
-        if(this.state.complete) return;
+        if (this.state.complete) return;
         this.setState({isShowDensityModal: true, imageIdForQuality: ''});
     }
 
     onSetQuality(quality) {
         if (quality === -1) return;
-        this.setState({isShowQualityModal: false, isShowDensityModal: false});
+        this.setState({isShowQualityModal: false});
         this.props.setImageQuality(this.state.imageIdForQuality, quality);
+    }
+
+    onSetDensity(density) {
+        if (density === -1) return;
+        this.setState({isShowDensityModal: false});
+        this.props.setImageQuality(this.state.imageIdForQuality, density);
+        setTimeout(() => this.onNext(), 100);
     }
 
     onSendQuality(modality_type) {
@@ -327,9 +334,9 @@ class TestView extends Component {
             image: this.props.imageList.map((v) => ({id: v.id, quality: v.imageQuality}))
         };
         if (quality.full === -1) {
-            if(modality_type === 'image_quality') {
+            if (modality_type === 'image_quality') {
                 NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
-            } else if(modality_type === 'volpara') {
+            } else if (modality_type === 'volpara') {
                 NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
             }
         } else if (modality_type === 'image_quality' && quality.image.some((v) => v.quality === -1)) {
@@ -415,7 +422,7 @@ class TestView extends Component {
                 }
                 {
                     test_case_index + 1 < test_case_length ?
-                        <Button className='mr-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext(1)}>
+                        <Button className='mr-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext()}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.next"}/></span>
                             <SkipNextOutlinedIcon size="small"/>
                         </Button> : null
@@ -453,6 +460,8 @@ class TestView extends Component {
     renderTestResult() {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
+            return null;
+        } else if (this.state.test_case.modalities.modality_type === 'volpara') {
             return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
@@ -502,17 +511,31 @@ class TestView extends Component {
                 )
             }
         } else if (this.state.test_case.modalities.modality_type === 'volpara') {
-            const imageDensity = Number(!this.state.complete ? this.props.imageQuality : this.state.test_case.quality);
-            return (
-                <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
-                    {
-                        imageDensity === -1 ?
-                            <div className={'quality-icon quality-none-icon'}/> :
-                            <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
-                    }
-                    <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
-                </div>
-            )
+            if (!this.state.complete) {
+                const imageDensity = Number(this.props.imageQuality);
+                return (
+                    <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
+                        {
+                            imageDensity === -1 ?
+                                <div className={'quality-icon quality-none-icon'}/> :
+                                <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
+                        }
+                        <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
+                    </div>
+                )
+            } else {
+                if(this.state.answerDensity === undefined) {
+                    return null;
+                } else {
+                    return (
+                        <div className={'truth-quality'}>
+                            <div className={'density-score ' + (this.state.isTruthCancer ? 'correct' : 'wrong')}>
+                                <span><IntlMessages id={"testView.youScored"}/>: {['a', 'b', 'c', 'd'][this.state.answerDensity]}</span>
+                            </div>
+                        </div>
+                    );
+                }
+            }
         } else {
             return null;
         }
@@ -620,7 +643,7 @@ class TestView extends Component {
                     <p><IntlMessages id={"testView.tool.reset"}/></p>
                 </div>
                 {
-                    tools.indexOf('Grid') !== -1 && <GridToolButton />
+                    tools.indexOf('Grid') !== -1 && <GridToolButton/>
                 }
             </div>
         )
@@ -671,7 +694,8 @@ class TestView extends Component {
                                     <CommentInfo
                                         test_case_id={this.state.test_cases_id}
                                         attempts_id={this.state.attempts_id}
-                                        isCovid={false}
+                                        modality_type={this.state.test_case.modalities.modality_type}
+                                        complete={this.state.complete}
                                     />
                                 }
                                 {
@@ -755,7 +779,7 @@ class TestView extends Component {
                     <DensityModal
                         isOpen={this.state.isShowDensityModal}
                         toggle={() => this.setState({isShowDensityModal: false})}
-                        confirm={(density) => this.onSetQuality(density)}
+                        confirm={(density) => this.onSetDensity(density)}
                     />
                     <ConfirmQualityModal
                         isOpen={this.state.isShowConfirmQualityModal}

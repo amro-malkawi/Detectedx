@@ -2,7 +2,7 @@
  * Redux App Settings Actions
  */
 import {
-    COLLAPSED_SIDEBAR,
+    COLLAPSED_SIDEBAR, DARK_MODE,
     SET_LANGUAGE,
 } from './types';
 
@@ -21,4 +21,12 @@ export const collapsedSidebarAction = (isCollapsed) => ({
 export const setLanguage = (language) => ({
     type: SET_LANGUAGE,
     payload: language
+});
+
+/**
+ * Change dark mode
+ */
+export const setDarkMode = (value) => ({
+    type: DARK_MODE,
+    payload: value
 });

@@ -240,9 +240,6 @@ export default class PostQuestionForm extends Component {
                     disabled={complete}
                     value={this.state[field]}
                     style={{flex: 1}}
-                    inputProps={{
-                        style: {height: 20, marginTop: 0}
-                    }}
                     onChange={(e) => this.setState({[field]: e.target.value, ['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))]: false})}
                 />
             </FormGroup>
