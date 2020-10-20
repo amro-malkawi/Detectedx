@@ -167,7 +167,7 @@ export default class Profile extends Component {
 
     onDownloadInvoice(id) {
         Apis.paymentHistoryReceipt(id).then((result) => {
-            window.open(result.url, "_blank");
+            if(result.url !== '') window.open(result.url, "_blank");
         }).catch(e => {
             NotificationManager.error(e.response.data.error.message);
         });

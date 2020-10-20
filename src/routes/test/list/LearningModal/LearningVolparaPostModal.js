@@ -232,7 +232,6 @@ export default function ({ open, name, postTestCount, credit, onClose }) {
                     <br />
                     <br />
                     <b>Learning Objectives</b><br />
-                  Upon completion of the educational activity, participants should be able to:<br/>
                     Upon completion of this activity, participants should be able to
                 </span>
                 </span>

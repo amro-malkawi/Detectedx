@@ -169,7 +169,7 @@ class List extends Component {
         }
     }
 
-    renderScoresButton(test_set_item) {
+    renderScoresButton(test_set_item, instruction_type) {
         const {id, attempts, has_post, test_set_paid, test_set_credit} = test_set_item;
         if (
             (test_set_credit === 0 || (this.state.userInfo.user_subscription_id !== null && !this.state.userInfo.is_subscription_expired)) &&
@@ -293,7 +293,7 @@ class List extends Component {
                                                 {this.renderExpireDate(item)}
                                             </div>
                                             <div className={'col-sm-12 col-md-3 test-list-action-buttons'}>
-                                                {this.renderScoresButton(item)}
+                                                {this.renderScoresButton(item, modality_info.instruction_type)}
                                                 {this.renderStartButton(item, modality_info.modality_type)}
                                             </div>
                                         </div>

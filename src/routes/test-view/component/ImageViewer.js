@@ -63,7 +63,7 @@ class ImageViewer extends Component {
 
     componentDidMount() {
         const {imageInfo} = this.props;
-        this.getMetaInfo();
+        // this.getMetaInfo();
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
             return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
