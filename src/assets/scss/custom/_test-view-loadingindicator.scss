@@ -1,0 +1,24 @@
+.imageViewerLoadingIndicator {
+  color: #91b9cd;
+}
+
+.loadingIndicator {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.75);
+  font-size: 18px;
+}
+
+.loadingIndicator .indicatorContents {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  font-weight: 300;
+  text-align: center;
+  transform: translateY(-50%);
+}
