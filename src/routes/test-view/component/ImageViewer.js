@@ -63,7 +63,7 @@ class ImageViewer extends Component {
 
     componentDidMount() {
         const {imageInfo} = this.props;
-        // this.getMetaInfo();
+        this.getMetaInfo();
         this.imageElement = this.imageElementRef.current;
         this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
             return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
@@ -593,9 +593,13 @@ class ImageViewer extends Component {
 
     _updateImageInfo(event) {
         const eventData = event.detail;
-        const windowWidth = Math.round(eventData.viewport.voi.windowWidth);
-        const windowLength = Math.round(eventData.viewport.voi.windowCenter);
+        let windowWidth = Math.round(eventData.viewport.voi.windowWidth);
+        let windowLength = Math.round(eventData.viewport.voi.windowCenter);
         const zoom = eventData.viewport.scale.toFixed(2);
+        if(this.props.imageInfo.ww !== 0 && this.props.imageInfo.wc !== 0) {
+            windowWidth = Math.round(this.props.imageInfo.ww * 255 / windowWidth);
+            windowLength = Math.round(this.props.imageInfo.wc * 255 / windowLength);
+        }
         this.imageElement.parentNode.querySelector('.window').textContent = `WW/WL: ${windowWidth} / ${windowLength}`;
         this.imageElement.parentNode.querySelector('.zoom').textContent = `Zoom: ${zoom}`;
     }
