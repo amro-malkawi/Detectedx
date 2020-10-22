@@ -14,6 +14,8 @@ import IntlMessages from "Util/IntlMessages";
 import {v4 as uuidv4} from 'uuid';
 import {isMobile} from 'react-device-detect';
 import DownloadProgress from "./DownloadProgress";
+import LoadingIndicator from "./LoadingIndicator";
+import _ from 'lodash';
 import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
 
@@ -36,55 +38,55 @@ const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
 const EraserTool = cornerstoneTools.EraserTool;
 
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
+const stackToIndex = cornerstoneTools.import('util/scrollToIndex');
+const {loadHandlerManager} = cornerstoneTools;
 
 class ImageViewer extends Component {
 
     constructor(props) {
         super(props);
+        const imageIds = Array.from(Array(props.imageInfo.stack_count).keys()).map(v => {
+            return `${props.imageInfo.image_url_path}${v}.png`;
+        });
         this.state = {
+            imageIds,
+            currentStackIndex: 0,
+            downStatus: Array(props.imageInfo.stack_count).fill(false),
+            loadingPercent: 0,
+            isLoading: false,
             isShowMarkInfo: !isMobile,
-            stackCount: this.props.imageInfo.stack_count,
-            currentStack: 1,
-            downImageCount: 0,
             isShowFloatingMenu: false,
         };
         this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
         // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.originalViewport = undefined;
-        this.stack = {
-            currentImageIdIndex: 0,
-            imageIds: []
-        };
-        this.markList = this.props.imageInfo.answers.markList;
-        this.shapeList = this.props.imageInfo.answers.shapeList;
+        this.markList = props.imageInfo.answers.markList;
+        this.shapeList = props.imageInfo.answers.shapeList;
         this.tempMeasureToolData = null;
         this.imageElementRef = React.createRef();
     }
 
     componentDidMount() {
         this.imageElement = this.imageElementRef.current;
-        this.stack.imageIds = Array.from(Array(this.state.stackCount).keys()).map(v => {
-            // return `dtx://${imageInfo.id}/${v}/${this.props.index}`;
-            return `${this.props.imageInfo.image_url_path}${v}.png`;
-        });
         cornerstone.enable(this.imageElement);
-
+        this.setupLoadHandlers();
         /////////
         const that = this;
-        const tempImageIds = [...this.stack.imageIds];
+        const tempImageIds = [...this.state.imageIds];
         const imageIdGroups = [];
         while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
         imageIdGroups.reduce((accumulatorPromise, idGroup) => {
             return accumulatorPromise.then(() => {
                 return Promise.all(idGroup.map((id) => cornerstone.loadAndCacheImage(id).then(() => {
-                    that.setState({downImageCount: that.state.downImageCount + 1});
+                    // that.setState({downImageCount: that.state.downImageCount + 1});
                 })));
             });
         }, Promise.resolve());
 
         /////////
-        cornerstone.loadAndCacheImage(this.stack.imageIds[0]).then((image) => {
+
+        cornerstone.loadAndCacheImage(this.state.imageIds[0]).then((image) => {
             cornerstone.displayImage(this.imageElement, image);
             this.initTools();
         });
@@ -111,16 +113,15 @@ class ImageViewer extends Component {
 
     componentWillUnmount() {
         console.log('component unmount');
-        if (this.imageElement.pyramid !== undefined && this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas !== undefined) {
-            // set width and height to 0 for memory leak
-            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.width = 0;
-            this.imageElement.pyramid[this.stack.currentImageIdIndex].canvas.height = 0;
-        }
+        this.setupLoadHandlers(true);
+        // if (this.state.imageIds.length > 1) {
+        //     cornerstoneTools.stackPrefetch.disable(this.imageElement);
+        // }
         if (this.webWorker) this.webWorker.terminate();
     }
 
     runWorker() {
-        // this.webWorker = new WebWorker(new WorkerProc({imageElement: this.imageElement, imageIds: this.stack.imageIds}));
+        // this.webWorker = new WebWorker(new WorkerProc({imageElement: this.imageElement, imageIds: this.state.imageIds}));
     }
 
     initEvents() {
@@ -140,7 +141,7 @@ class ImageViewer extends Component {
             this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
         }
 
-        this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack.bind(this));
+        this.imageElement.addEventListener('cornerstonenewimage', _.debounce((e) => this.handleChangeStack(e), 0));
 
         this.imageElement.querySelector('canvas').oncontextmenu = function () {
             return false;
@@ -151,6 +152,7 @@ class ImageViewer extends Component {
         this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent.bind(this));
         this.imageElement.addEventListener('cornerstonetoolsmarkerselected', (event) => this.handleEditMark(event.detail.toolName, event.detail));
         this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
+        cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
     }
 
     initTools() {
@@ -217,18 +219,20 @@ class ImageViewer extends Component {
         //add synchronizer
         this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
 
-        if (this.state.stackCount > 1) {
+        if (this.state.imageIds.length > 1) {
             //add image stack
             cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
-            cornerstoneTools.addToolState(this.imageElement, 'stack', this.stack);
+            cornerstoneTools.addToolState(this.imageElement, 'stack', {
+                imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex
+            });
+            // cornerstoneTools.stackPrefetch.enable(this.imageElement);
+
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
         } else {
             // images are loaded with the zoom mousewheel enabled by default
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }
-        // render the first appropriate level of the pyramid
-        // this._renderPyramid(this.originalViewport);
         // render shapes
         this.renderShapes();
         this.renderMarks();
@@ -264,18 +268,40 @@ class ImageViewer extends Component {
         cornerstone.setViewport(this.imageElement, viewport);
     }
 
+    setupLoadHandlers(clear = false) {
+        if (clear) {
+            loadHandlerManager.removeHandlers(this.imageElement);
+            return;
+        }
+        const loadIndicatorDelay = 45;
+        // We use this to "flip" `isLoading` to true, if our startLoading request
+        // takes longer than our "loadIndicatorDelay"
+        const startLoadHandler = element => {
+            clearTimeout(this.loadHandlerTimeout);
+
+            // We're taking too long. Indicate that we're "Loading".
+            this.loadHandlerTimeout = setTimeout(() => {
+                this.setState({isLoading: true});
+            }, loadIndicatorDelay);
+        };
+
+        const endLoadHandler = (element, image) => {
+            clearTimeout(this.loadHandlerTimeout);
+
+            if (this.state.isLoading) {
+                this.setState({isLoading: false});
+            }
+        };
+
+        loadHandlerManager.setStartLoadHandler(startLoadHandler, this.imageElement);
+        loadHandlerManager.setEndLoadHandler(endLoadHandler, this.imageElement);
+    }
+
     handleChangeStack(e, data) {
-        // this.imageElement.pyramid[this.stack.currentImageIdIndex].reset();
-        // e.detail.image.pyramid.showPyramid(this.imageElement);
-        // for (let i = 0; i < this.stack.imageIds.length; i++) {
-        //     if (i !== this.stack.currentImageIdIndex && this.imageElement.pyramid[i] !== undefined) {
-        //         this.imageElement.pyramid[i].pyramidShow = false
-        //     }
-        // }
-        this.setState({currentStack: this.stack.currentImageIdIndex + 1}, () => {
-            this.renderShapes();
-            this.renderMarks();
-        });
+        const currentStackIndex = this.state.imageIds.indexOf(e.detail.image.imageId);
+        this.setState({currentStackIndex: currentStackIndex});
+        this.renderShapes();
+        this.renderMarks();
     }
 
     handleDoubleClickEvent(event) {
@@ -368,7 +394,7 @@ class ImageViewer extends Component {
     handleMarkSave(data) {
         let act;
         data.image_id = this.props.imageInfo.id;
-        data.stack = Number(this.state.currentStack) - 1;
+        data.stack = Number(this.state.currentStackIndex);
         if (data.isNew) {
             act = 'answersAdd';
         } else {
@@ -405,7 +431,7 @@ class ImageViewer extends Component {
                 data: JSON.stringify(event.detail.measurementData).replace(/-?\d+\.\d+/g, function (x) {
                     return parseFloat(x).toFixed(2)
                 }),
-                stack: Number(this.state.currentStack) - 1,
+                stack: Number(this.state.currentStackIndex),
             };
             Apis.shapeAdd(data).then(resp => {
                 if (this.shapeList[data.type] === undefined) this.shapeList[data.type] = [];
@@ -448,7 +474,7 @@ class ImageViewer extends Component {
                         data: JSON.stringify(that.tempMeasureToolData.measurementData).replace(/-?\d+\.\d+/g, function (x) {
                             return parseFloat(x).toFixed(2)
                         }),
-                        stack: Number(that.state.currentStack) - 1,
+                        stack: Number(that.state.currentStackIndex),
                     };
                     Apis.shapeUpdate(data).then(resp => {
                         console.log('modified shape');
@@ -461,11 +487,20 @@ class ImageViewer extends Component {
         }
     }
 
+    handleImageLoadProgress(event) {
+        const downStatus = [...this.state.downStatus];
+        if(event.detail.loaded === event.detail.total) {
+            const index = this.state.imageIds.indexOf(event.detail.imageId);
+            if (index !== -1) downStatus[index] = true;
+        }
+        this.setState({downStatus, loadingPercent: event.detail.percentComplete});
+    }
+
     renderMarks() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');
         cornerstoneTools.clearToolState(this.imageElement, 'MarkerFreehand');
         this.markList.forEach((mark) => {
-            if (mark.stack === Number(this.state.currentStack) - 1) {
+            if (mark.stack === Number(this.state.currentStackIndex)) {
                 try {
                     const markHandlesData = JSON.parse(mark.marker_data);
                     const active = true;
@@ -523,7 +558,7 @@ class ImageViewer extends Component {
         });
         for (let type in this.shapeList) {
             this.shapeList[type].forEach((v) => {
-                if (v.stack === Number(this.state.currentStack) - 1) {
+                if (v.stack === Number(this.state.currentStackIndex)) {
                     cornerstoneTools.addToolState(this.imageElement, type, v.measurementData);
                 }
             });
@@ -549,7 +584,6 @@ class ImageViewer extends Component {
 
     wasDrawn(event) {
         this._updateImageInfo(event);
-        // this._renderPyramid(event.detail.viewport);
     }
 
     resetTool(previousName, nextName) {
@@ -590,12 +624,6 @@ class ImageViewer extends Component {
         }
     }
 
-    // _renderPyramid(viewport) {
-    //     if (this.imageElement.pyramid[this.stack.currentImageIdIndex]) {
-    //         this.imageElement.pyramid[this.stack.currentImageIdIndex].loadTilesForViewport(viewport);
-    //     }
-    // }
-
     _updateImageInfo(event) {
         const eventData = event.detail;
         const windowWidth = Math.round(eventData.viewport.voi.windowWidth);
@@ -606,8 +634,8 @@ class ImageViewer extends Component {
     }
 
     onStepSlide(seek) {
-        let value = Number(this.state.currentStack) + seek;
-        if (value > this.state.stackCount || value < 1) return;
+        let value = Number(this.state.currentStackIndex) + 1 + seek;
+        if (value > this.state.imageIds.length || value < 1) return;
         this.setStack(value);
     }
 
@@ -623,15 +651,16 @@ class ImageViewer extends Component {
         }
         let stackData = stackToolDataSource.data[0];
         // Switch images, if necessary
-        const that = this;
         if (newIndex !== stackData.currentImageIdIndex && stackData.imageIds[newIndex] !== undefined) {
-            cornerstone.loadAndCacheImage(stackData.imageIds[newIndex]).then(function (image) {
-                let viewport = cornerstone.getViewport(that.imageElement);
-                stackData.currentImageIdIndex = newIndex;
-                cornerstone.displayImage(that.imageElement, image, viewport);
-            });
+            stackToIndex(this.imageElement, newIndex);
+            stackData.currentImageIdIndex = newIndex;
+            // cornerstone.loadAndCacheImage(stackData.imageIds[newIndex]).then(function (image) {
+            //     let viewport = cornerstone.getViewport(that.imageElement);
+            //     stackData.currentImageIdIndex = newIndex;
+            //     cornerstone.displayImage(that.imageElement, image, viewport);
+            // });
         }
-        // this.setState({currentStack: value});
+        // this.setState({currentStackIndex: newIndex});
     }
 
     renderImageQuality() {
@@ -652,7 +681,7 @@ class ImageViewer extends Component {
     }
 
     renderStackComponent() {
-        if (this.state.stackCount <= 1) {
+        if (this.state.imageIds.length <= 1) {
             return null;
         } else {
             let countPerStack = {};
@@ -682,13 +711,13 @@ class ImageViewer extends Component {
                             <i className="zmdi zmdi-minus"/>
                         </IconButton>
                         <div className="stack-scrollbar">
-                            <input type="range" min={1} max={this.state.stackCount} value={this.state.currentStack} onChange={this.onStackSlide.bind(this)}/>
+                            <input type="range" min={1} max={this.state.imageIds.length} value={this.state.currentStackIndex + 1} onChange={this.onStackSlide.bind(this)}/>
                         </div>
                         <IconButton className={'change-btn'} onClick={() => this.onStepSlide(1)}>
                             <i className="zmdi zmdi-plus"/>
                         </IconButton>
                     </div>
-                    <div className="slice status"><IntlMessages id={"testView.viewer.slice"}/>: [{this.state.currentStack}/{this.state.stackCount}]</div>
+                    <div className="slice status"><IntlMessages id={"testView.viewer.slice"}/>: [{this.state.currentStackIndex + 1}/{this.state.imageIds.length}]</div>
                     {
                         floatingButton.length > 0 ?
                             <div className={'floating-menu'}>
@@ -709,7 +738,7 @@ class ImageViewer extends Component {
                                                 truthCount={v.truthCount}
                                                 label={'Slice ' + (Number(v.stack) + 1)}
                                                 buttonTooltip={''}
-                                                active={this.state.currentStack === Number(v.stack) + 1}
+                                                active={Number(this.state.currentStackIndex) === Number(v.stack)}
                                                 size={40}
                                                 onClick={() => this.setStack(Number(v.stack) + 1)}
                                             />
@@ -773,11 +802,15 @@ class ImageViewer extends Component {
                 >
                     <div className="dicom" ref={this.imageElementRef}/>
                 </ResizeDetector>
-                <DownloadProgress totalCount={this.state.stackCount} downCount={this.state.downImageCount} />
+                <DownloadProgress
+                    totalCount={this.state.downStatus.length}
+                    downCount={this.state.downStatus.filter((v) => v).length}
+                />
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>
                 {this.renderStackComponent()}
+                { this.state.isLoading && <LoadingIndicator percentComplete={this.state.loadingPercent}/> }
             </div>
         )
     }
