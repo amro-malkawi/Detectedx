@@ -21,6 +21,7 @@ import WorkerProc from "../worker/WorkerProc";
 
 import MarkerTool from "../lib/tools/MarkerTool";
 import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
+import stackPrefetch from '../lib/stackTools/stackPrefetch';
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -52,7 +53,6 @@ class ImageViewer extends Component {
             imageIds,
             currentStackIndex: 0,
             downStatus: Array(props.imageInfo.stack_count).fill(false),
-            loadingPercent: 0,
             isLoading: false,
             isShowMarkInfo: !isMobile,
             isShowFloatingMenu: false,
@@ -72,17 +72,17 @@ class ImageViewer extends Component {
         cornerstone.enable(this.imageElement);
         this.setupLoadHandlers();
         /////////
-        const that = this;
-        const tempImageIds = [...this.state.imageIds];
-        const imageIdGroups = [];
-        while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
-        imageIdGroups.reduce((accumulatorPromise, idGroup) => {
-            return accumulatorPromise.then(() => {
-                return Promise.all(idGroup.map((id) => cornerstone.loadAndCacheImage(id).then(() => {
-                    // that.setState({downImageCount: that.state.downImageCount + 1});
-                })));
-            });
-        }, Promise.resolve());
+        // const that = this;
+        // const tempImageIds = [...this.state.imageIds];
+        // const imageIdGroups = [];
+        // while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
+        // imageIdGroups.reduce((accumulatorPromise, idGroup) => {
+        //     return accumulatorPromise.then(() => {
+        //         return Promise.all(idGroup.map((id) => cornerstone.loadAndCacheImage(id).then(() => {
+        //             // that.setState({downImageCount: that.state.downImageCount + 1});
+        //         })));
+        //     });
+        // }, Promise.resolve());
 
         /////////
 
@@ -114,9 +114,14 @@ class ImageViewer extends Component {
     componentWillUnmount() {
         console.log('component unmount');
         this.setupLoadHandlers(true);
-        // if (this.state.imageIds.length > 1) {
-        //     cornerstoneTools.stackPrefetch.disable(this.imageElement);
-        // }
+        if (this.state.imageIds.length > 1) {
+            stackPrefetch.disable(this.imageElement);
+        }
+
+        cornerstoneTools.clearToolState(this.imageElement, 'stackPrefetch');
+        cornerstoneTools.stopClip(this.imageElement);
+        cornerstone.disable(this.imageElement);
+
         if (this.webWorker) this.webWorker.terminate();
     }
 
@@ -225,7 +230,7 @@ class ImageViewer extends Component {
             cornerstoneTools.addToolState(this.imageElement, 'stack', {
                 imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex
             });
-            // cornerstoneTools.stackPrefetch.enable(this.imageElement);
+            stackPrefetch.enable(this.imageElement);
 
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
@@ -278,7 +283,6 @@ class ImageViewer extends Component {
         // takes longer than our "loadIndicatorDelay"
         const startLoadHandler = element => {
             clearTimeout(this.loadHandlerTimeout);
-
             // We're taking too long. Indicate that we're "Loading".
             this.loadHandlerTimeout = setTimeout(() => {
                 this.setState({isLoading: true});
@@ -287,7 +291,6 @@ class ImageViewer extends Component {
 
         const endLoadHandler = (element, image) => {
             clearTimeout(this.loadHandlerTimeout);
-
             if (this.state.isLoading) {
                 this.setState({isLoading: false});
             }
@@ -488,12 +491,12 @@ class ImageViewer extends Component {
     }
 
     handleImageLoadProgress(event) {
-        const downStatus = [...this.state.downStatus];
         if(event.detail.loaded === event.detail.total) {
+            const downStatus = [...this.state.downStatus];
             const index = this.state.imageIds.indexOf(event.detail.imageId);
             if (index !== -1) downStatus[index] = true;
+            this.setState({downStatus});
         }
-        this.setState({downStatus, loadingPercent: event.detail.percentComplete});
     }
 
     renderMarks() {
@@ -810,7 +813,7 @@ class ImageViewer extends Component {
                 <div className="zoom status"/>
                 <div className="window status"/>
                 {this.renderStackComponent()}
-                { this.state.isLoading && <LoadingIndicator percentComplete={this.state.loadingPercent}/> }
+                { this.state.isLoading && <LoadingIndicator/> }
             </div>
         )
     }
