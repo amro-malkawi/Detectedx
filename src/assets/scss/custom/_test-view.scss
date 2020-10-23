@@ -570,6 +570,14 @@ div.viewer {
 
   .tool-container {
     display: inline-block;
+    &.mobile-tool-container {
+     .tool {
+       display: none;
+       &.more-icon {
+         display: inline-block;
+       }
+     }
+    }
   }
 
   .tool {
@@ -667,6 +675,15 @@ div.viewer {
     border: 1px solid #9ccef9;
     border-radius: 8px;
     background-color: black;
+  }
+
+  & > .test-view-toolbar > .tool-container {
+    .tool {
+      display: inline-block;
+      &.more-icon {
+        display: none;
+      }
+    }
   }
 }
 
@@ -1053,9 +1070,6 @@ div.viewer {
 
 @media (max-width: 992px) {
   #toolbar {
-    .test-view-toolbar > .tool-container > .tool {
-      display: none;
-    }
 
     .test-view-header-number {
       select {
@@ -1155,20 +1169,6 @@ div.viewer {
     }
   }
 
-  .test-view-toolbar {
-    .tool {
-      &.more-icon {
-        display: inline-block !important;
-      }
-    }
-  }
-  .test-view-toolbar-modal {
-    .tool {
-      &.more-icon {
-        display: none !important;
-      }
-    }
-  }
   div.viewer {
     .test-content {
       .covid-question-container {

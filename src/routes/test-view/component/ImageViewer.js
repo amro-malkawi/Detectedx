@@ -597,8 +597,8 @@ class ImageViewer extends Component {
         let windowLength = Math.round(eventData.viewport.voi.windowCenter);
         const zoom = eventData.viewport.scale.toFixed(2);
         if(this.props.imageInfo.ww !== 0 && this.props.imageInfo.wc !== 0) {
-            windowWidth = Math.round(this.props.imageInfo.ww * 255 / windowWidth);
-            windowLength = Math.round(this.props.imageInfo.wc * 255 / windowLength);
+            windowWidth = Math.round(this.props.imageInfo.ww * windowWidth / 255);
+            windowLength = Math.round(this.props.imageInfo.wc * windowLength / 128);
         }
         this.imageElement.parentNode.querySelector('.window').textContent = `WW/WL: ${windowWidth} / ${windowLength}`;
         this.imageElement.parentNode.querySelector('.zoom').textContent = `Zoom: ${zoom}`;
