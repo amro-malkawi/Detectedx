@@ -21,7 +21,7 @@ import {isMobile} from 'react-device-detect';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
-import cornerstoneWebImageLoader from 'cornerstone-web-image-loader';
+import cornerstoneWebImageLoader from './lib/CornerstoneWebImageLoader';
 import Hammer from 'hammerjs';
 // import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";

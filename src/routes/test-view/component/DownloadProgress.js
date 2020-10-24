@@ -6,7 +6,7 @@ const useStyles = makeStyles({
     root: {
         position: 'absolute',
         top: 0,
-        width: '100%',
+        width: '100%'
     },
 });
 
@@ -17,7 +17,7 @@ export default ({totalCount, downCount}) => {
     } else {
         return (
             <div className={classes.root}>
-                <LinearProgress variant="determinate" value={Math.round((downCount * 100) / totalCount)} />
+                <LinearProgress variant="determinate" value={Math.round((downCount * 100) / totalCount)} style={{height: 2}}/>
             </div>
         )
     }

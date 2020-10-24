@@ -1,5 +1,6 @@
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from "cornerstone-tools";
+
 const getMaxSimultaneousRequests = cornerstoneTools.import('util/getMaxSimultaneousRequests');
 const requestPool = {
     interaction: [],
@@ -57,10 +58,10 @@ function addRequest(
 
     if (imageLoadObject) {
         imageLoadObject.promise.then(
-            function(image) {
+            function (image) {
                 doneCallback(image);
             },
-            function(error) {
+            function (error) {
                 failCallback(error);
             }
         );
@@ -106,10 +107,10 @@ function addArrayRequest(
         if (imageLoadObject) {
             // If this imageId is in the cache, resolve it immediately
             imageLoadObject.promise.then(
-                function(image) {
+                function (image) {
                     doneCallback(image);
                 },
-                function(error) {
+                function (error) {
                     failCallback(error);
                 }
             );
@@ -125,10 +126,25 @@ function addArrayRequest(
     });
 
     // merge new and previous pool
-    const nowPoolList = requestPool[type];
-
-
-
+    const nowPoolList = [...requestPool[type]];
+    const newPoolList = [];
+    const numReg = new RegExp(/\/([\d]+)\.png$/);
+    while (nowPoolList.length > 0 || requestDetailList.length > 0) {
+        if(nowPoolList.length === 0) {
+            newPoolList.push(requestDetailList.splice(0, 1)[0])
+        } else if(requestDetailList.length === 0) {
+            newPoolList.push(nowPoolList.splice(0, 1)[0])
+        } else {
+            const matchResult1 = nowPoolList[0].imageId.match(numReg);
+            const matchResult2 = requestDetailList[0].imageId.match(numReg);
+            if (matchResult1 !== null && matchResult2 !== null && matchResult1[1] !== undefined &&
+                matchResult2[1] !== undefined && Number(matchResult1[1]) > Number(matchResult2[1])) {
+                newPoolList.push(requestDetailList.splice(0, 1)[0])
+            }
+            newPoolList.push(nowPoolList.splice(0, 1)[0])
+        }
+    }
+    requestPool[type] = newPoolList;
 
     // Wake up
     awake = true;
@@ -150,7 +166,7 @@ function startAgain() {
         return;
     }
 
-    setTimeout(function() {
+    setTimeout(function () {
         startGrabbing();
     }, grabDelay);
 }
@@ -173,14 +189,14 @@ function sendRequest(requestDetails) {
         // If we do, remove from list (when resolved, as we could have
         // Pending prefetch requests) and stop processing this iteration
         imageLoadObject.promise.then(
-            function(image) {
+            function (image) {
                 numRequests[type]--;
                 // Console.log(numRequests);
 
                 doneCallback(image);
                 startAgain();
             },
-            function(error) {
+            function (error) {
                 numRequests[type]--;
                 // Console.log(numRequests);
                 failCallback(error);
@@ -219,13 +235,13 @@ function sendRequest(requestDetails) {
 
     // Load and cache the image
     loader.then(
-        function(image) {
+        function (image) {
             numRequests[type]--;
             // Console.log(numRequests);
             doneCallback(image);
             startAgain();
         },
-        function(error) {
+        function (error) {
             numRequests[type]--;
             // Console.log(numRequests);
             failCallback(error);
@@ -236,7 +252,8 @@ function sendRequest(requestDetails) {
 
 function startGrabbing() {
     // Begin by grabbing X images
-    const maxSimultaneousRequests = getMaxSimultaneousRequests();
+    // const maxSimultaneousRequests = getMaxSimultaneousRequests();
+    const maxSimultaneousRequests = 17;
 
     maxNumRequests = {
         interaction: Math.max(maxSimultaneousRequests, 1),

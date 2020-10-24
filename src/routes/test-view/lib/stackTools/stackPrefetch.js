@@ -187,6 +187,15 @@ function prefetch(element) {
     let lowerIndex = nearest.low;
     let higherIndex = nearest.high;
 
+    requestPoolManager.addArrayRequest(
+        element,
+        stack.imageIds,
+        requestType,
+        preventCache,
+        doneCallback,
+        failCallback
+    );
+
     while (
         lowerIndex >= 0 ||
         higherIndex < stackPrefetch.indicesToRequest.length
