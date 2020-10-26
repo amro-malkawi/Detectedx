@@ -10,7 +10,7 @@ let lastImageIdDrawn;
  * @param imageId - the imageId for this image
  * @returns Cornerstone Image Object
  */
-export default function (image, imageId) {
+export default function (imageId, image) {
   // extract the attributes we need
   const rows = image.naturalHeight;
   const columns = image.naturalWidth;
