@@ -71,20 +71,6 @@ class ImageViewer extends Component {
         this.imageElement = this.imageElementRef.current;
         cornerstone.enable(this.imageElement);
         this.setupLoadHandlers();
-        /////////
-        // const that = this;
-        // const tempImageIds = [...this.state.imageIds];
-        // const imageIdGroups = [];
-        // while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
-        // imageIdGroups.reduce((accumulatorPromise, idGroup) => {
-        //     return accumulatorPromise.then(() => {
-        //         return Promise.all(idGroup.map((id) => cornerstone.loadAndCacheImage(id).then(() => {
-        //             // that.setState({downImageCount: that.state.downImageCount + 1});
-        //         })));
-        //     });
-        // }, Promise.resolve());
-
-        /////////
 
         cornerstone.loadAndCacheImage(this.state.imageIds[0]).then((image) => {
             cornerstone.displayImage(this.imageElement, image);
@@ -119,6 +105,7 @@ class ImageViewer extends Component {
         }
 
         cornerstoneTools.clearToolState(this.imageElement, 'stackPrefetch');
+        cornerstone.imageCache.purgeCache();
         cornerstoneTools.stopClip(this.imageElement);
         cornerstone.disable(this.imageElement);
 
@@ -157,7 +144,7 @@ class ImageViewer extends Component {
         this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent.bind(this));
         this.imageElement.addEventListener('cornerstonetoolsmarkerselected', (event) => this.handleEditMark(event.detail.toolName, event.detail));
         this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
-        cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
+        // cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
     }
 
     initTools() {
@@ -227,10 +214,36 @@ class ImageViewer extends Component {
         if (this.state.imageIds.length > 1) {
             //add image stack
             cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
+
+
+            /*======== cache image data ========*/
+            // cornerstoneTools.addToolState(this.imageElement, 'stack', {
+            //     imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: false
+            // });
+            // stackPrefetch.enable(this.imageElement);
+            /*=======================================*/
+
+            /*======== don't cache image data ========*/
             cornerstoneTools.addToolState(this.imageElement, 'stack', {
-                imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex
+                imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: true
             });
-            stackPrefetch.enable(this.imageElement);
+            const tempImageIds = [...this.state.imageIds];
+            const imageIdGroups = [];
+            while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
+            imageIdGroups.reduce((accumulatorPromise, idGroup) => {
+                return accumulatorPromise.then(() => {
+                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id).then(() => {
+                                const downStatus = [...this.state.downStatus];
+                                const index = this.state.imageIds.indexOf(id);
+                                if (index !== -1) downStatus[index] = true;
+                                this.setState({downStatus});
+                        // that.setState({downImageCount: that.state.downImageCount + 1});
+                    })));
+                });
+            }, Promise.resolve());
+            /*=======================================*/
+
+
 
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
@@ -490,14 +503,14 @@ class ImageViewer extends Component {
         }
     }
 
-    handleImageLoadProgress(event) {
-        if(event.detail.loaded === event.detail.total) {
-            const downStatus = [...this.state.downStatus];
-            const index = this.state.imageIds.indexOf(event.detail.imageId);
-            if (index !== -1) downStatus[index] = true;
-            this.setState({downStatus});
-        }
-    }
+    // handleImageLoadProgress(event) {
+    //     if(event.detail.loaded === event.detail.total) {
+    //         const downStatus = [...this.state.downStatus];
+    //         const index = this.state.imageIds.indexOf(event.detail.imageId);
+    //         if (index !== -1) downStatus[index] = true;
+    //         this.setState({downStatus});
+    //     }
+    // }
 
     renderMarks() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');

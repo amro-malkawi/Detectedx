@@ -109,6 +109,7 @@ class TestView extends Component {
 
     componentWillUnmount() {
         this.props.setImageListAction([], []);
+        cornerstoneWebImageLoader.dataSetCacheManager.purge();
     }
 
     getData() {
