@@ -109,8 +109,12 @@ export function getInfo() {
 
 // removes all cached datasets from memory
 function purge() {
-    loadedDataSets = {};
-    promises = {};
+    if(cacheSizeInBytes > 200 * 1024 * 1024) {
+        // max cache size = 200M
+        cacheSizeInBytes = 0;
+        loadedDataSets = {};
+        promises = {};
+    }
 }
 
 export default {
