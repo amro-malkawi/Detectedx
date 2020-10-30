@@ -147,13 +147,8 @@ export function countryList() {
  * test sets operation
  */
 
-export function testSetsCases(id) {
-    const url = '/test_sets/' + id + '/test_set_cases?access_token=' + getAccessToken() + '&filter=' + encodeURI('{"order": "position ASC"}');
-    return instance.get(url).then((response) => response.data);
-}
-
-export function postTestSetsCases(id) {
-    const url = '/test_sets/' + id + '/post_test_set_cases?access_token=' + getAccessToken();
+export function testSetsCaseList(id, isPost) {
+    const url = '/test_sets/' + id + '/test_case_list?is_post=' + isPost + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

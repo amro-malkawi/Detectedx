@@ -52,7 +52,7 @@ class ImageViewer extends Component {
         this.state = {
             imageIds,
             currentStackIndex: 0,
-            downStatus: Array(props.imageInfo.stack_count).fill(false),
+            downStatus: Array(props.imageInfo.stack_count).fill(props.imageInfo.stack_count === 1),
             isLoading: false,
             isShowMarkInfo: !isMobile,
             isShowFloatingMenu: false,
@@ -240,14 +240,22 @@ class ImageViewer extends Component {
                         // that.setState({downImageCount: that.state.downImageCount + 1});
                     })));
                 });
-            }, Promise.resolve());
+            }, Promise.resolve()).then(() => {
+                cornerstone.triggerEvent(
+                    cornerstone.events,
+                    'cornerstoneimageviewimageloaded',
+                    {imageViewImageId: this.props.imageInfo.id}
+                );
+            });
             /*=======================================*/
-
-
-
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
         } else {
+            cornerstone.triggerEvent(
+                cornerstone.events,
+                'cornerstoneimageviewimageloaded',
+                {imageViewImageId: this.props.imageInfo.id}
+            );
             // images are loaded with the zoom mousewheel enabled by default
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }

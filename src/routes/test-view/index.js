@@ -95,6 +95,8 @@ class TestView extends Component {
             'cornerstonetoolsmousewheel cornerstonetoolsmousedrag cornerstonenewimage',
             viewerSynchronizer //  cornerstoneTools.panZoomSynchronizer
         );
+
+        cornerstone.events.addEventListener('cornerstoneimageviewimageloaded', this.handleImageViewImageLoaded.bind(this));
     }
 
     componentDidMount() {
@@ -113,29 +115,15 @@ class TestView extends Component {
     }
 
     getData() {
+        // reset for next case image preloader
+        this.nextCaseImagePreloaded = false;
+        this.imageViewLoadedStatus = [];
+
         this.props.setImageListAction([], []);
         const that = this;
-        let promise1 = new Promise(function (resolve, reject) {
-            if (!that.state.isPostTest) {
-                Apis.testSetsCases(that.state.test_sets_id).then((data) => {
-                    data = data.map((v) => v.test_case_id);
-                    resolve(data);
-                }).catch(e => {
-                    reject(e);
-                });
-            } else {
-                Apis.postTestSetsCases(that.state.test_sets_id).then((data) => {
-                    data = data.map((v) => v.test_case_id);
-                    resolve(data);
-                }).catch(e => {
-                    reject(e);
-                });
-            }
-        });
-
         Promise.all([
             Apis.testCasesViewInfo(that.state.test_cases_id),
-            promise1,
+            Apis.testSetsCaseList(that.state.test_sets_id, that.state.isPostTest),
             Apis.attemptsDetail(that.state.attempts_id, that.state.test_cases_id),
             Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest)
         ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers]) {
@@ -184,6 +172,40 @@ class TestView extends Component {
         });
     }
 
+    handleImageViewImageLoaded(e) {
+        // check already preloaded
+        if(this.nextCaseImagePreloaded !== undefined && this.nextCaseImagePreloaded) return;
+        if(this.imageViewLoadedStatus === undefined) this.imageViewLoadedStatus = [];
+        this.imageViewLoadedStatus.push(e.detail.imageViewImageId);
+        let showImageLength = 0;
+        this.props.showImageList.forEach((v) => showImageLength += v.length);
+        if(this.imageViewLoadedStatus.length === showImageLength) {
+            //load finished all current test case images
+            console.log('all image loaded')
+            this.nextCaseImagePreloaded = true;
+            let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
+            // check last test case
+            if(test_case_index + 1 > this.state.test_set_cases.length) return;
+            const url_base = this.state.test_case.image_url_base;
+            const tempImageIds = [];
+            this.state.test_set_cases[test_case_index + 1].images.forEach((v) => {
+                 for(let i = 0; i < v.stack_count; i++) {
+                     tempImageIds.push(url_base + v.id + '/' + i + '.png');
+                 }
+            });
+            const imageIdGroups = [];
+            while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 17));
+            imageIdGroups.reduce((accumulatorPromise, idGroup) => {
+                return accumulatorPromise.then(() => {
+                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id).then(() => {
+                    })));
+                });
+            }, Promise.resolve()).then(() => {
+                //all finished
+            });
+        }
+    }
+
     onNext() {
         if (
             !this.state.complete &&
@@ -219,12 +241,12 @@ class TestView extends Component {
     }
 
     onMove(step) { // previous -1, next 1
-        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         this.onSeek(test_case_index + step);
     }
 
     onSeek(number) {
-        let next_test_case_id = this.state.test_set_cases[number];
+        let next_test_case_id = this.state.test_set_cases[number].test_case_id;
         this.setState({loading: true}, () => {
             let url = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + next_test_case_id;
             if (this.state.isPostTest) {
@@ -249,8 +271,8 @@ class TestView extends Component {
             if (!this.state.isPostTest) {
                 Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
                     if (resp.stage === 2) {
-                        let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0];
-                        this.setState({test_cases_id: this.state.test_set_cases[0]}, () => {
+                        let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0].test_case_id;
+                        this.setState({test_cases_id: this.state.test_set_cases[0].test_case_id}, () => {
                             this.getData();
                             this.props.history.replace(nextPath);
                         });
@@ -345,7 +367,7 @@ class TestView extends Component {
         } else if (modality_type === 'image_quality' && quality.image.some((v) => v.quality === -1)) {
             NotificationManager.error(<IntlMessages id={"testView.selectEveryImageQuality"}/>);
         } else {
-            const test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+            const test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
             const test_case_length = this.state.test_set_cases.length;
             Apis.attemptsQuality(this.state.attempts_id, this.state.test_cases_id, quality).then((resp) => {
                 if (test_case_index + 1 === test_case_length) {
@@ -358,7 +380,7 @@ class TestView extends Component {
     }
 
     onConfirmImageQuality(isAgree, msg) {
-        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         let test_case_length = this.state.test_set_cases.length;
         this.setState({isShowConfirmQualityModal: false});
         Apis.attemptsConfirmQuality(this.state.attempts_id, this.state.test_cases_id, this.state.test_case.quality, isAgree, msg).then((resp) => {
@@ -387,7 +409,7 @@ class TestView extends Component {
     }
 
     renderHeaderNumber() {
-        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         return (
             <h1 className={'test-view-header-number'}>
                 {this.state.attemptDetail.stage !== 1 ? <span className={'stage'}><IntlMessages id={"testView.stage"}/>{this.state.attemptDetail.stage}</span> : null}
@@ -405,7 +427,7 @@ class TestView extends Component {
     }
 
     renderNav() {
-        let test_case_index = this.state.test_set_cases.indexOf(this.state.test_cases_id);
+        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         let test_case_length = this.state.test_set_cases.length;
         return (
             <nav className={'test-view-action-buttons'}>
@@ -814,6 +836,7 @@ class TestView extends Component {
 const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
+        showImageList: state.testView.showImageList,
         isShowImageBrowser: state.testView.isShowImageBrowser,
         imageQuality: state.testView.imageQuality,
     };
