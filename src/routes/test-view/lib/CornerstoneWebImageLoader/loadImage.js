@@ -48,7 +48,7 @@ function loadImageFromPromise(
             addDecache(imageLoadObject, imageId);
             return imagePromise;
         }).then((image) => {
-            image.data = dataSet;
+            // image.data = dataSet;
             image.sharedCacheKey = sharedCacheKey;
             const end = new Date().getTime();
             image.loadTimeInMS = loadEnd - start;

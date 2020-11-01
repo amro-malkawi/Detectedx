@@ -1,24 +1,35 @@
-.imageViewerLoadingIndicator {
-  color: #91b9cd;
-}
-
-.loadingIndicator {
+.loading-indicator {
   position: absolute;
   top: 0;
   height: 100%;
   width: 100%;
   overflow: hidden;
   z-index: 1;
-  pointer-events: none;
-  background-color: rgba(0, 0, 0, 0.75);
   font-size: 18px;
+  color: #91b9cd;
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
-.loadingIndicator .indicatorContents {
+.image-loading-indicator {
+  pointer-events: none;
+}
+
+.test-view-loading-indicator {
+
+}
+
+.loading-indicator .indicator-contents {
   position: absolute;
-  top: 50%;
+  top: 45%;
   width: 100%;
   font-weight: 300;
   text-align: center;
   transform: translateY(-50%);
 }
+
+@media only screen and (orientation: portrait) and (max-width: 768px) {
+  .loading-indicator {
+    display: none;
+  }
+}
+

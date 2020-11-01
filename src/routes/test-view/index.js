@@ -25,6 +25,7 @@ import cornerstoneWebImageLoader from './lib/CornerstoneWebImageLoader';
 import Hammer from 'hammerjs';
 // import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
+import LoadingIndicator from "./component/LoadingIndicator";
 
 import ImageViewerContainer from './component/ImageViewerContainer'
 import Marker from './lib/tools/MarkerTool';
@@ -70,6 +71,7 @@ class TestView extends Component {
             isShowQualityModal: false,
             imageIdForQuality: '',
             isShowConfirmQualityModal: false,
+            isShowLoadingIndicator: true,
 
             possiblePostTestReattempt: false,
             isShowPostTestReattemptModal: false,
@@ -101,6 +103,9 @@ class TestView extends Component {
 
     componentDidMount() {
         this.getData();
+        setTimeout(() => {
+            this.setState({isShowLoadingIndicator: false});
+        }, 10000);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -181,7 +186,11 @@ class TestView extends Component {
         this.props.showImageList.forEach((v) => showImageLength += v.length);
         if(this.imageViewLoadedStatus.length === showImageLength) {
             //load finished all current test case images
-            console.log('all image loaded')
+            console.log('all image loaded');
+            if(this.state.isShowLoadingIndicator) {
+                // close loading indicator
+                this.setState({isShowLoadingIndicator: false});
+            }
             this.nextCaseImagePreloaded = true;
             let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
             // check last test case
@@ -764,6 +773,7 @@ class TestView extends Component {
                             </DndProvider>
                         </div>
                     </div>
+                    {this.state.isShowLoadingIndicator && <LoadingIndicator type={"test-view"} />}
                     <div className={'rotate-error'}>
                         <img src={require('Assets/img/rotate.png')} alt=''/>
                     </div>

@@ -144,7 +144,7 @@ class ImageViewer extends Component {
         this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent.bind(this));
         this.imageElement.addEventListener('cornerstonetoolsmarkerselected', (event) => this.handleEditMark(event.detail.toolName, event.detail));
         this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
-        // cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
+        cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
     }
 
     initTools() {
@@ -229,14 +229,14 @@ class ImageViewer extends Component {
             });
             const tempImageIds = [...this.state.imageIds];
             const imageIdGroups = [];
-            while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 5));
+            while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 10));
             imageIdGroups.reduce((accumulatorPromise, idGroup) => {
                 return accumulatorPromise.then(() => {
                     return Promise.all(idGroup.map((id) => cornerstone.loadImage(id).then(() => {
-                                const downStatus = [...this.state.downStatus];
-                                const index = this.state.imageIds.indexOf(id);
-                                if (index !== -1) downStatus[index] = true;
-                                this.setState({downStatus});
+                        const downStatus = [...this.state.downStatus];
+                        const index = this.state.imageIds.indexOf(id);
+                        if (index !== -1) downStatus[index] = true;
+                        this.setState({downStatus});
                         // that.setState({downImageCount: that.state.downImageCount + 1});
                     })));
                 });
@@ -511,14 +511,14 @@ class ImageViewer extends Component {
         }
     }
 
-    // handleImageLoadProgress(event) {
-    //     if(event.detail.loaded === event.detail.total) {
-    //         const downStatus = [...this.state.downStatus];
-    //         const index = this.state.imageIds.indexOf(event.detail.imageId);
-    //         if (index !== -1) downStatus[index] = true;
-    //         this.setState({downStatus});
-    //     }
-    // }
+    handleImageLoadProgress(event) {
+        // if(event.detail.loaded === event.detail.total) {
+        //         //     const downStatus = [...this.state.downStatus];
+        //         //     const index = this.state.imageIds.indexOf(event.detail.imageId);
+        //         //     if (index !== -1) downStatus[index] = true;
+        //         //     this.setState({downStatus});
+        //         // }
+    }
 
     renderMarks() {
         cornerstoneTools.clearToolState(this.imageElement, 'Marker');
@@ -834,7 +834,7 @@ class ImageViewer extends Component {
                 <div className="zoom status"/>
                 <div className="window status"/>
                 {this.renderStackComponent()}
-                { this.state.isLoading && <LoadingIndicator/> }
+                {/*{this.state.isLoading && <LoadingIndicator type="image"/>}*/}
             </div>
         )
     }
