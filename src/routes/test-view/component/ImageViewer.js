@@ -14,7 +14,6 @@ import IntlMessages from "Util/IntlMessages";
 import {v4 as uuidv4} from 'uuid';
 import {isMobile} from 'react-device-detect';
 import DownloadProgress from "./DownloadProgress";
-import LoadingIndicator from "./LoadingIndicator";
 import _ from 'lodash';
 import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
@@ -222,15 +221,6 @@ class ImageViewer extends Component {
             //add image stack
             cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
 
-
-            /*======== cache image data ========*/
-            // cornerstoneTools.addToolState(this.imageElement, 'stack', {
-            //     imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: true
-            // });
-            // stackPrefetch.enable(this.imageElement);
-            /*=======================================*/
-
-            /*======== don't cache image data ========*/
             cornerstoneTools.addToolState(this.imageElement, 'stack', {
                 imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: true
             });
@@ -256,7 +246,7 @@ class ImageViewer extends Component {
                 this.handlePrefecthDone(true);
                 stackPrefetch.enable(this.imageElement);
             });
-            /*=======================================*/
+
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
         } else {

@@ -23,7 +23,6 @@ import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
 import cornerstoneWebImageLoader from './lib/CornerstoneWebImageLoader';
 import Hammer from 'hammerjs';
-// import Loader from './lib/loader';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import LoadingIndicator from "./component/LoadingIndicator";
 
@@ -92,7 +91,6 @@ class TestView extends Component {
         cornerstoneTools.external.Hammer = Hammer;
         cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
         cornerstoneTools.init();
-        // cornerstone.registerImageLoader('dtx', Loader);
         this.synchronizer = new cornerstoneTools.Synchronizer(
             'cornerstonetoolsmousewheel cornerstonetoolsmousedrag cornerstonenewimage',
             viewerSynchronizer //  cornerstoneTools.panZoomSynchronizer
