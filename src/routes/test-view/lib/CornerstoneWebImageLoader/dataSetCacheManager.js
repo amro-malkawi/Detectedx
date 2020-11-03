@@ -23,13 +23,111 @@ function get(uri) {
         return;
     }
 
-    return loadedDataSets[uri].dataSet;
+    return {dataSet: loadedDataSets[uri].dataSet};
+}
+
+function httpRequest(uri, imageId, url, thumbnail, element, originalWidth, originalHeight) {
+    if (promises[uri]) {
+        // console.log('returning existing load promise for ' + uri);
+        promises[uri].cacheCount++;
+        return promises[uri];
+    }
+
+    // This uri is not loaded or being loaded, load thumbnail via an xhrRequest
+    const loadDICOMPromise = xhrRequest(url, imageId);
+
+    // handle success and failure of the XHR request load
+    const promise = new Promise((resolve, reject) => {
+        loadDICOMPromise.then((dataSet) => {
+            loadedDataSets[uri] = {
+                thumbnail: thumbnail,
+                dataSet,
+                cacheCount: promise.cacheCount,
+            };
+            if(thumbnail) {
+                loadedDataSets[uri].element = element;
+                loadedDataSets[uri].originalWidth = originalWidth;
+                loadedDataSets[uri].originalHeight = originalHeight;
+            }
+            cacheSizeInBytes += dataSet.byteLength;
+            resolve({dataSet: loadedDataSets[uri].dataSet});
+        }).catch((error) => {
+            reject(error);
+        }).finally(() => {
+            delete promises[uri];
+        });
+    });
+    promise.cacheCount = 1;
+    promises[uri] = promise;
+    return promise;
 }
 
 // loads the dicom dataset from the wadouri sp
-function load(uri, imageId) {
+function load(uri, imageId, option = {}) {
     const {cornerstone} = external;
+    const {type, element, originalWidth, originalHeight} = option;
+    if(type === 'thumbnail') {
+        if (loadedDataSets[uri]) {
+            // console.log('using loaded dataset ' + uri);
+            return new Promise(resolve => {
+                loadedDataSets[uri].cacheCount++;
+                resolve({
+                    dataSet: loadedDataSets[uri].dataSet
+                });
+            });
+        }
+        const url = (uri.split('.').pop() === 'png') ? uri : uri + '/0/0_0.png';
+        return httpRequest(uri, imageId, url, true, element, originalWidth, originalHeight);
+    } else if (type === 'prefetch') {
+        const url = (uri.split('.').pop() === 'png') ? uri : uri + '.png';
+        if(loadedDataSets[uri] === undefined || loadedDataSets[uri].thumbnail) {
+            return httpRequest(uri, imageId, url, false);
+        } else {
+            return new Promise(resolve => {
+                resolve({
+                    dataSet: loadedDataSets[uri].dataSet
+                });
+            });
+        }
+    }  else {
+        const url = (uri.split('.').pop() === 'png') ? uri : uri + '.png';
+        if(loadedDataSets[uri] === undefined) {
+            return httpRequest(uri, imageId, url, false);
+        }
+        if(loadedDataSets[uri].thumbnail) {
+            xhrRequest(url, imageId).then((dataSet) => {
+                const element = loadedDataSets[uri].element;
+                loadedDataSets[uri] = {
+                    thumbnail: false,
+                    dataSet,
+                    cacheCount: 0,
+                };
+                cacheSizeInBytes += dataSet.byteLength;
+                if(element !== undefined) {
+                    cornerstone.triggerEvent(element, 'cornerstonedatasetscachechanged', {
+                        uri,
+                        action: 'loaded'
+                    });
+                }
+                cornerstone.triggerEvent(cornerstone.events, 'cornerstonedatasetscachechanged', {
+                    uri,
+                    action: 'loaded',
+                    cacheInfo: getInfo(),
+                });
 
+            });
+        }
+        return new Promise(resolve => {
+            loadedDataSets[uri].cacheCount++;
+            resolve({
+                dataSet: loadedDataSets[uri].dataSet,
+                originalWidth: loadedDataSets[uri].originalWidth,
+                originalHeight: loadedDataSets[uri].originalHeight
+            });
+        });
+
+    }
+/*
     // if already loaded return it right away
     if (loadedDataSets[uri]) {
         // console.log('using loaded dataset ' + uri);
@@ -54,13 +152,14 @@ function load(uri, imageId) {
     const promise = new Promise((resolve, reject) => {
         loadDICOMPromise.then((dataSet) => {
             loadedDataSets[uri] = {
+                thumbnail: loadedDataSets[uri] === undefined,
                 dataSet,
                 cacheCount: promise.cacheCount,
             };
             cacheSizeInBytes += dataSet.byteLength;
             resolve(dataSet);
 
-            cornerstone.triggerEvent(cornerstone.events, 'datasetscachechanged', {
+            cornerstone.triggerEvent(cornerstone.events, 'cornerstonedatasetscachechanged', {
                 uri,
                 action: 'loaded',
                 cacheInfo: getInfo(),
@@ -77,6 +176,7 @@ function load(uri, imageId) {
     promises[uri] = promise;
 
     return promise;
+ */
 }
 
 // remove the cached/loaded dicom dataset for the specified wadouri to free up memory
@@ -91,7 +191,7 @@ function unload(uri) {
             cacheSizeInBytes -= loadedDataSets[uri].dataSet.byteLength;
             delete loadedDataSets[uri];
 
-            cornerstone.triggerEvent(cornerstone.events, 'datasetscachechanged', {
+            cornerstone.triggerEvent(cornerstone.events, 'cornerstonedatasetscachechanged', {
                 uri,
                 action: 'unloaded',
                 cacheInfo: getInfo(),

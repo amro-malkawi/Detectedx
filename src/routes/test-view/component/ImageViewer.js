@@ -47,7 +47,8 @@ class ImageViewer extends Component {
     constructor(props) {
         super(props);
         const imageIds = Array.from(Array(props.imageInfo.stack_count).keys()).map(v => {
-            return `${props.imageInfo.image_url_path}${v}.png`;
+            // return `${props.imageInfo.image_url_path}${v}.png`;
+            return `${props.imageInfo.image_url_path}${v}`;
         });
         this.state = {
             imageIds,
@@ -60,6 +61,8 @@ class ImageViewer extends Component {
         this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
         // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
+        this.imageWidth = 0;
+        this.imageHeight = 0;
         this.originalViewport = undefined;
         this.markList = props.imageInfo.answers.markList;
         this.shapeList = props.imageInfo.answers.shapeList;
@@ -72,7 +75,9 @@ class ImageViewer extends Component {
         cornerstone.enable(this.imageElement);
         this.setupLoadHandlers();
 
-        cornerstone.loadAndCacheImage(this.state.imageIds[0]).then((image) => {
+        cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
+            this.imageWidth = image.width;
+            this.imageHeight = image.height;
             cornerstone.displayImage(this.imageElement, image);
             this.initTools();
         });
@@ -144,6 +149,8 @@ class ImageViewer extends Component {
         this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent.bind(this));
         this.imageElement.addEventListener('cornerstonetoolsmarkerselected', (event) => this.handleEditMark(event.detail.toolName, event.detail));
         this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
+        this.imageElement.addEventListener(cornerstoneTools.EVENTS.STACK_PREFETCH_DONE, () => this.handlePrefecthDone(false));
+        this.imageElement.addEventListener('cornerstonedatasetscachechanged', this.handleDatasetsCacheChanged.bind(this));
         cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
     }
 
@@ -218,7 +225,7 @@ class ImageViewer extends Component {
 
             /*======== cache image data ========*/
             // cornerstoneTools.addToolState(this.imageElement, 'stack', {
-            //     imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: false
+            //     imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: true
             // });
             // stackPrefetch.enable(this.imageElement);
             /*=======================================*/
@@ -232,7 +239,12 @@ class ImageViewer extends Component {
             while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 10));
             imageIdGroups.reduce((accumulatorPromise, idGroup) => {
                 return accumulatorPromise.then(() => {
-                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id).then(() => {
+                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {
+                        type: 'thumbnail',
+                        element: this.imageElement,
+                        originalWidth: this.imageWidth,
+                        originalHeight: this.imageHeight
+                    }).then(() => {
                         const downStatus = [...this.state.downStatus];
                         const index = this.state.imageIds.indexOf(id);
                         if (index !== -1) downStatus[index] = true;
@@ -241,21 +253,14 @@ class ImageViewer extends Component {
                     })));
                 });
             }, Promise.resolve()).then(() => {
-                cornerstone.triggerEvent(
-                    cornerstone.events,
-                    'cornerstoneimageviewimageloaded',
-                    {imageViewImageId: this.props.imageInfo.id}
-                );
+                this.handlePrefecthDone(true);
+                stackPrefetch.enable(this.imageElement);
             });
             /*=======================================*/
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
         } else {
-            cornerstone.triggerEvent(
-                cornerstone.events,
-                'cornerstoneimageviewimageloaded',
-                {imageViewImageId: this.props.imageInfo.id}
-            );
+            this.handlePrefecthDone(false);
             // images are loaded with the zoom mousewheel enabled by default
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }
@@ -513,11 +518,29 @@ class ImageViewer extends Component {
 
     handleImageLoadProgress(event) {
         // if(event.detail.loaded === event.detail.total) {
-        //         //     const downStatus = [...this.state.downStatus];
-        //         //     const index = this.state.imageIds.indexOf(event.detail.imageId);
-        //         //     if (index !== -1) downStatus[index] = true;
-        //         //     this.setState({downStatus});
-        //         // }
+        //     const downStatus = [...this.state.downStatus];
+        //     const index = this.state.imageIds.indexOf(event.detail.imageId);
+        //     if (index !== -1) downStatus[index] = true;
+        //     this.setState({downStatus});
+        // }
+    }
+
+    handleDatasetsCacheChanged(event) {
+        if(this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
+            cornerstone.loadImage(event.detail.uri).then((image) => {
+                if(this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
+                    cornerstone.displayImage(this.imageElement, image);
+                }
+            });
+        }
+    }
+
+    handlePrefecthDone(doneThumbnail = true) {
+        cornerstone.triggerEvent(
+            cornerstone.events,
+            doneThumbnail ? 'cornerstoneimageviewthumbnaildone' : 'cornerstoneimageviewprefetchdone',
+            {imageViewImageId: this.props.imageInfo.id}
+        );
     }
 
     renderMarks() {

@@ -1,4 +1,3 @@
-import {external} from './externalModules.js';
 import arrayBufferToImage from './arrayBufferToImage.js';
 import createImage from './createImage.js';
 import dataSetCacheManager from './dataSetCacheManager.js';
@@ -6,8 +5,6 @@ import dataSetCacheManager from './dataSetCacheManager.js';
 function parseImageId(imageId) {
     // build a url by parsing out the url scheme from the imageId
     const firstColonIndex = imageId.indexOf(':');
-
-    let url = imageId.substring(firstColonIndex + 1);
     return {
         scheme: imageId.substr(0, firstColonIndex),
         url: imageId,
@@ -37,9 +34,8 @@ function loadImageFromPromise(
     imageLoadObject.promise = new Promise((resolve, reject) => {
         const loadEnd = new Date().getTime();
         let dataSet;
-        dataSetPromise.then((result) => {
-            dataSet = result;
-            return arrayBufferToImage(dataSet);
+        dataSetPromise.then(({dataSet, originalWidth, originalHeight}) => {
+            return arrayBufferToImage(dataSet, originalWidth, originalHeight);
         }).then((pixelData) => {
             const imagePromise = createImage(
                 imageId,
@@ -78,7 +74,7 @@ function loadImageFromDataSet(
         arrayBufferToImage(dataSet).then((pixelData) => {
             return createImage(imageId, pixelData);
         }).then((image) => {
-            image.data = dataSet;
+            // image.data = dataSet;
             image.sharedCacheKey = sharedCacheKey;
             const end = new Date().getTime();
 
@@ -99,29 +95,30 @@ function loadImageFromDataSet(
     };
 }
 
-export function loadImage(imageId) {
+export function loadImage(imageId, option) {
     const parsedImageId = parseImageId(imageId);
     // if the dataset for this url is already loaded, use it
-    if (dataSetCacheManager.isLoaded(parsedImageId.url)) {
-        const dataSet = dataSetCacheManager.get(parsedImageId.url);
-
-        return loadImageFromDataSet(
-            dataSet,
-            imageId,
-            parsedImageId.url,
-        );
-    }
+    // if (dataSetCacheManager.isLoaded(parsedImageId.url)) {
+    //     const dataSet = dataSetCacheManager.get(parsedImageId.url).dataSet;
+    //
+    //     return loadImageFromDataSet(
+    //         dataSet,
+    //         imageId,
+    //         parsedImageId.url,
+    //     );
+    // }
 
     // load the dataSet via the dataSetCacheManager
     const dataSetPromise = dataSetCacheManager.load(
         parsedImageId.url,
-        imageId
+        imageId,
+        option
     );
 
     return loadImageFromPromise(
         dataSetPromise,
         imageId,
-        parsedImageId.url,
+        parsedImageId.url
     );
 }
 

@@ -98,7 +98,9 @@ class TestView extends Component {
             viewerSynchronizer //  cornerstoneTools.panZoomSynchronizer
         );
 
-        cornerstone.events.addEventListener('cornerstoneimageviewimageloaded', this.handleImageViewImageLoaded.bind(this));
+        cornerstone.events.addEventListener('cornerstoneimageviewthumbnaildone', this.handleImageViewThumbnailDone.bind(this));
+        cornerstone.events.addEventListener('cornerstoneimageviewprefetchdone', this.handleImageViewPrefetchDone.bind(this));
+
     }
 
     componentDidMount() {
@@ -177,7 +179,21 @@ class TestView extends Component {
         });
     }
 
-    handleImageViewImageLoaded(e) {
+    handleImageViewThumbnailDone(e) {
+        if(this.imageViewThumbnailDoneStatus === undefined) this.imageViewThumbnailDoneStatus = [];
+        this.imageViewThumbnailDoneStatus.push(e.detail.imageViewImageId);
+        let showImageLength = 0;
+        this.props.showImageList.forEach((v) => showImageLength += v.length);
+        if(this.imageViewThumbnailDoneStatus.length === showImageLength) {
+            //load finished all current image thumbnails
+            console.log('all image thumbnail loaded');
+            if (this.state.isShowLoadingIndicator) {
+                this.setState({isShowLoadingIndicator: false});
+            }
+        }
+    }
+
+    handleImageViewPrefetchDone(e) {
         // check already preloaded
         if(this.nextCaseImagePreloaded !== undefined && this.nextCaseImagePreloaded) return;
         if(this.imageViewLoadedStatus === undefined) this.imageViewLoadedStatus = [];
@@ -186,11 +202,7 @@ class TestView extends Component {
         this.props.showImageList.forEach((v) => showImageLength += v.length);
         if(this.imageViewLoadedStatus.length === showImageLength) {
             //load finished all current test case images
-            console.log('all image loaded');
-            if(this.state.isShowLoadingIndicator) {
-                // close loading indicator
-                this.setState({isShowLoadingIndicator: false});
-            }
+            console.log('all image prefetch loaded');
             this.nextCaseImagePreloaded = true;
             let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
             // check last test case
@@ -199,14 +211,14 @@ class TestView extends Component {
             const tempImageIds = [];
             this.state.test_set_cases[test_case_index + 1].images.forEach((v) => {
                  for(let i = 0; i < v.stack_count; i++) {
-                     tempImageIds.push(url_base + v.id + '/' + i + '.png');
+                     tempImageIds.push(url_base + v.id + '/' + i);
                  }
             });
             const imageIdGroups = [];
             while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 17));
             imageIdGroups.reduce((accumulatorPromise, idGroup) => {
                 return accumulatorPromise.then(() => {
-                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id).then(() => {
+                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
                     })));
                 });
             }, Promise.resolve()).then(() => {

@@ -128,7 +128,8 @@ function addArrayRequest(
     // merge new and previous pool
     const nowPoolList = [...requestPool[type]];
     const newPoolList = [];
-    const numReg = new RegExp(/\/([\d]+)\.png$/);
+    // const numReg = new RegExp(/\/([\d]+)\.png$/);
+    const numReg = new RegExp(/\/([\d]+)$/);
     while (nowPoolList.length > 0 || requestDetailList.length > 0) {
         if(nowPoolList.length === 0) {
             newPoolList.push(requestDetailList.splice(0, 1)[0])

@@ -142,7 +142,7 @@ function prefetch(element) {
 
     let imageId;
     let nextImageIdIndex;
-    const preventCache = false;
+    const preventCache = stack.preventCache;
 
     function doneCallback(image) {
         const imageIdIndex = stack.imageIds.indexOf(image.imageId);
@@ -164,6 +164,7 @@ function prefetch(element) {
                 stackPrefetch.indicesToRequest.length > 0
             )
         ) {
+            console.log('all prefetch finish');
             triggerEvent(element, EVENTS.STACK_PREFETCH_DONE, {
                 element,
                 stackPrefetch,
@@ -196,53 +197,53 @@ function prefetch(element) {
         failCallback
     );
 
-    while (
-        lowerIndex >= 0 ||
-        higherIndex < stackPrefetch.indicesToRequest.length
-        ) {
-        const currentIndex = stack.currentImageIdIndex;
-        const shouldSkipLower =
-            currentIndex - stackPrefetch.indicesToRequest[lowerIndex] >
-            configuration.maxImagesToPrefetch;
-        const shouldSkipHigher =
-            stackPrefetch.indicesToRequest[higherIndex] - currentIndex >
-            configuration.maxImagesToPrefetch;
-
-        const shouldLoadLower = !shouldSkipLower && lowerIndex >= 0;
-        const shouldLoadHigher =
-            !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
-
-        if (!shouldLoadHigher && !shouldLoadLower) {
-            break;
-        }
-
-
-        if (shouldLoadLower) {
-            nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
-            imageId = stack.imageIds[nextImageIdIndex];
-            requestPoolManager.addRequest(
-                element,
-                imageId,
-                requestType,
-                preventCache,
-                doneCallback,
-                failCallback
-            );
-        }
-
-        if (shouldLoadHigher) {
-            nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
-            imageId = stack.imageIds[nextImageIdIndex];
-            requestPoolManager.addRequest(
-                element,
-                imageId,
-                requestType,
-                preventCache,
-                doneCallback,
-                failCallback
-            );
-        }
-    }
+    // while (
+    //     lowerIndex >= 0 ||
+    //     higherIndex < stackPrefetch.indicesToRequest.length
+    //     ) {
+    //     const currentIndex = stack.currentImageIdIndex;
+    //     const shouldSkipLower =
+    //         currentIndex - stackPrefetch.indicesToRequest[lowerIndex] >
+    //         configuration.maxImagesToPrefetch;
+    //     const shouldSkipHigher =
+    //         stackPrefetch.indicesToRequest[higherIndex] - currentIndex >
+    //         configuration.maxImagesToPrefetch;
+    //
+    //     const shouldLoadLower = !shouldSkipLower && lowerIndex >= 0;
+    //     const shouldLoadHigher =
+    //         !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
+    //
+    //     if (!shouldLoadHigher && !shouldLoadLower) {
+    //         break;
+    //     }
+    //
+    //
+    //     if (shouldLoadLower) {
+    //         nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
+    //         imageId = stack.imageIds[nextImageIdIndex];
+    //         requestPoolManager.addRequest(
+    //             element,
+    //             imageId,
+    //             requestType,
+    //             preventCache,
+    //             doneCallback,
+    //             failCallback
+    //         );
+    //     }
+    //
+    //     if (shouldLoadHigher) {
+    //         nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
+    //         imageId = stack.imageIds[nextImageIdIndex];
+    //         requestPoolManager.addRequest(
+    //             element,
+    //             imageId,
+    //             requestType,
+    //             preventCache,
+    //             doneCallback,
+    //             failCallback
+    //         );
+    //     }
+    // }
 
     // Try to start the requestPool's grabbing procedure
     // In case it isn't already running
@@ -327,8 +328,7 @@ function enable(element) {
     // Check if we are allowed to cache images in this stack
     if (stack.preventCache === true) {
             // 'A stack that should not be cached was given the stackPrefetch'
-
-        return;
+        // return;
     }
 
     // Use the currentImageIdIndex from the stack as the initalImageIdIndex
