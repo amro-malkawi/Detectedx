@@ -185,15 +185,6 @@ export function buyTestSet(test_set_id) {
 }
 
 /**
- * images operation
- */
-
-export function imagesUrlTemplate(id) {
-    const url = '/images/' + id + '/urlTemplate?access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
-
-/**
  * attempt operation
  */
 

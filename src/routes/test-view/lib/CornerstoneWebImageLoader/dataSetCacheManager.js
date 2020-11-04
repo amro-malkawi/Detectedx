@@ -11,6 +11,8 @@ let cacheSizeInBytes = 0;
 
 let loadedDataSets = {};
 
+let loadedMetaDataSets = {};
+
 let promises = {};
 
 // returns true if the wadouri for the specified index has been loaded
@@ -26,6 +28,50 @@ function get(uri) {
     return {dataSet: loadedDataSets[uri].dataSet};
 }
 
+function getMetaDataSetUrl(uri) {
+    const basePathMatch = uri.match(/(.*[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}).*/);
+    if (basePathMatch === null) return '';
+    return basePathMatch[1] + '/meta.json';
+}
+
+function getMetaDataSet(uri) {
+    return loadedMetaDataSets[getMetaDataSetUrl(uri)];
+}
+
+function setMetaDataSet(uri, metaDataSet) {
+    if(metaDataSet === undefined) return;
+    loadedMetaDataSets[getMetaDataSetUrl(uri)] = metaDataSet;
+}
+
+function metaDataRequest(uri) {
+    if(getMetaDataSet(uri) !== undefined) return Promise.resolve();
+    // download metadata
+    const metaDataSetUrl = getMetaDataSetUrl(uri);
+    if (metaDataSetUrl === null) return Promise.resolve();
+    const metaRequestProgress =  new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('get', metaDataSetUrl);
+        xhr.onload = function () {
+            try {
+                const metaData = JSON.parse(xhr.response);
+                resolve(metaData);
+            } catch (e) {
+                console.error(e);
+                resolve({})
+            }
+            resolve(null, xhr.response);
+        };
+        xhr.onerror = function (e) {
+            console.error(e);
+            resolve({});
+        };
+        xhr.send();
+    });
+    // prevent duplicate request
+    setMetaDataSet(uri, metaRequestProgress);
+    return metaRequestProgress;
+}
+
 function httpRequest(uri, imageId, url, thumbnail, element, originalWidth, originalHeight) {
     if (promises[uri]) {
         // console.log('returning existing load promise for ' + uri);
@@ -35,16 +81,20 @@ function httpRequest(uri, imageId, url, thumbnail, element, originalWidth, origi
 
     // This uri is not loaded or being loaded, load thumbnail via an xhrRequest
     const loadDICOMPromise = xhrRequest(url, imageId);
+    const loadDICOMMetadataPromise = metaDataRequest(uri);
+
 
     // handle success and failure of the XHR request load
     const promise = new Promise((resolve, reject) => {
-        loadDICOMPromise.then((dataSet) => {
+        Promise.all([loadDICOMPromise, loadDICOMMetadataPromise]).then(([dataSet, metaData]) => {
             loadedDataSets[uri] = {
                 thumbnail: thumbnail,
                 dataSet,
                 cacheCount: promise.cacheCount,
             };
-            if(thumbnail) {
+            setMetaDataSet(uri, metaData);
+            if(metaData !== undefined) loadedDataSets[uri].metaDataJson = metaData;
+            if (thumbnail) {
                 loadedDataSets[uri].element = element;
                 loadedDataSets[uri].originalWidth = originalWidth;
                 loadedDataSets[uri].originalHeight = originalHeight;
@@ -66,7 +116,7 @@ function httpRequest(uri, imageId, url, thumbnail, element, originalWidth, origi
 function load(uri, imageId, option = {}) {
     const {cornerstone} = external;
     const {type, element, originalWidth, originalHeight} = option;
-    if(type === 'thumbnail') {
+    if (type === 'thumbnail') {
         if (loadedDataSets[uri]) {
             // console.log('using loaded dataset ' + uri);
             return new Promise(resolve => {
@@ -80,7 +130,7 @@ function load(uri, imageId, option = {}) {
         return httpRequest(uri, imageId, url, true, element, originalWidth, originalHeight);
     } else if (type === 'prefetch') {
         const url = (uri.split('.').pop() === 'png') ? uri : uri + '.png';
-        if(loadedDataSets[uri] === undefined || loadedDataSets[uri].thumbnail) {
+        if (loadedDataSets[uri] === undefined || loadedDataSets[uri].thumbnail) {
             return httpRequest(uri, imageId, url, false);
         } else {
             return new Promise(resolve => {
@@ -89,21 +139,22 @@ function load(uri, imageId, option = {}) {
                 });
             });
         }
-    }  else {
+    } else {
         const url = (uri.split('.').pop() === 'png') ? uri : uri + '.png';
-        if(loadedDataSets[uri] === undefined) {
+        if (loadedDataSets[uri] === undefined) {
             return httpRequest(uri, imageId, url, false);
         }
-        if(loadedDataSets[uri].thumbnail) {
-            xhrRequest(url, imageId).then((dataSet) => {
+        if (loadedDataSets[uri].thumbnail) {
+            Promise.all([xhrRequest(url, imageId), metaDataRequest(uri)]).then(([dataSet, metaData]) => {
                 const element = loadedDataSets[uri].element;
                 loadedDataSets[uri] = {
                     thumbnail: false,
                     dataSet,
                     cacheCount: 0,
                 };
+                setMetaDataSet(uri, metaData);
                 cacheSizeInBytes += dataSet.byteLength;
-                if(element !== undefined) {
+                if (element !== undefined) {
                     cornerstone.triggerEvent(element, 'cornerstonedatasetscachechanged', {
                         uri,
                         action: 'loaded'
@@ -127,56 +178,6 @@ function load(uri, imageId, option = {}) {
         });
 
     }
-/*
-    // if already loaded return it right away
-    if (loadedDataSets[uri]) {
-        // console.log('using loaded dataset ' + uri);
-        return new Promise(resolve => {
-            loadedDataSets[uri].cacheCount++;
-            resolve(loadedDataSets[uri].dataSet);
-        });
-    }
-
-    // if we are currently loading this uri, increment the cacheCount and return its promise
-    if (promises[uri]) {
-        // console.log('returning existing load promise for ' + uri);
-        promises[uri].cacheCount++;
-
-        return promises[uri];
-    }
-
-    // This uri is not loaded or being loaded, load it via an xhrRequest
-    const loadDICOMPromise = xhrRequest(uri, imageId);
-
-    // handle success and failure of the XHR request load
-    const promise = new Promise((resolve, reject) => {
-        loadDICOMPromise.then((dataSet) => {
-            loadedDataSets[uri] = {
-                thumbnail: loadedDataSets[uri] === undefined,
-                dataSet,
-                cacheCount: promise.cacheCount,
-            };
-            cacheSizeInBytes += dataSet.byteLength;
-            resolve(dataSet);
-
-            cornerstone.triggerEvent(cornerstone.events, 'cornerstonedatasetscachechanged', {
-                uri,
-                action: 'loaded',
-                cacheInfo: getInfo(),
-            });
-        }).catch((error) => {
-            reject(error);
-        }).finally(() => {
-            delete promises[uri];
-        });
-    });
-
-    promise.cacheCount = 1;
-
-    promises[uri] = promise;
-
-    return promise;
- */
 }
 
 // remove the cached/loaded dicom dataset for the specified wadouri to free up memory
@@ -209,8 +210,8 @@ export function getInfo() {
 
 // removes all cached datasets from memory
 function purge() {
-    if(cacheSizeInBytes > 200 * 1024 * 1024) {
-        // max cache size = 200M
+    if (cacheSizeInBytes > 500 * 1024 * 1024) {
+        // max cache size = 500M
         cacheSizeInBytes = 0;
         loadedDataSets = {};
         promises = {};
@@ -224,4 +225,5 @@ export default {
     getInfo,
     purge,
     get,
+    getMetaDataSet,
 };

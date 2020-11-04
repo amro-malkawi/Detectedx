@@ -13,29 +13,30 @@ import * as Apis from "Api/index";
 import IntlMessages from "Util/IntlMessages";
 import {v4 as uuidv4} from 'uuid';
 import {isMobile} from 'react-device-detect';
-import DownloadProgress from "./DownloadProgress";
+import DownloadTopBarProgress from "./DownloadTopBarProgress";
 import _ from 'lodash';
 import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
 
+import stackPrefetch from '../lib/stackTools/stackPrefetch';
 import MarkerTool from "../lib/tools/MarkerTool";
 import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
-import stackPrefetch from '../lib/stackTools/stackPrefetch';
+import LengthTool from "../lib/tools/LengthTool";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;
 const ZoomTouchPinch = cornerstoneTools.ZoomTouchPinchTool;
-// import LengthTool from "../lib/tools/LengthTool";
-const MagnifyTool = cornerstoneTools.MagnifyTool;
-const LengthTool = cornerstoneTools.LengthTool;
-const AngleTool = cornerstoneTools.AngleTool;
-const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
-const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
-const ArrowAnnotateTool = cornerstoneTools.ArrowAnnotateTool;
-const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
-const EraserTool = cornerstoneTools.EraserTool;
+
+// const MagnifyTool = cornerstoneTools.MagnifyTool;
+// const LengthTool = cornerstoneTools.LengthTool;
+// const AngleTool = cornerstoneTools.AngleTool;
+// const EllipticalRoiTool = cornerstoneTools.EllipticalRoiTool;
+// const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
+// const ArrowAnnotateTool = cornerstoneTools.ArrowAnnotateTool;
+// const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
+// const EraserTool = cornerstoneTools.EraserTool;
 
 const StackScrollMouseWheelTool = cornerstoneTools.StackScrollMouseWheelTool;
 const stackToIndex = cornerstoneTools.import('util/scrollToIndex');
@@ -62,7 +63,6 @@ class ImageViewer extends Component {
         this.imageElement = undefined;
         this.imageWidth = 0;
         this.imageHeight = 0;
-        this.originalViewport = undefined;
         this.markList = props.imageInfo.answers.markList;
         this.shapeList = props.imageInfo.answers.shapeList;
         this.tempMeasureToolData = null;
@@ -150,14 +150,13 @@ class ImageViewer extends Component {
         this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
         this.imageElement.addEventListener(cornerstoneTools.EVENTS.STACK_PREFETCH_DONE, () => this.handlePrefecthDone(false));
         this.imageElement.addEventListener('cornerstonedatasetscachechanged', this.handleDatasetsCacheChanged.bind(this));
-        cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
+        // cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
     }
 
     initTools() {
         // now the image has been displayed, deep copy the original viewport
         // so we can reset zoom and position
         let viewport = cornerstone.getViewport(this.imageElement);
-        this.originalViewport = this.duplicateViewport(viewport);
         // add all tools to the image
         const setToolElementFunc = this.props.complete || this.props.stage >= 2 ? 'setToolEnabledForElement' : 'setToolPassiveForElement';
         // cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
@@ -166,7 +165,12 @@ class ImageViewer extends Component {
         cornerstoneTools.addToolForElement(this.imageElement, PanTool);
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
         this.toolList.forEach(toolName => {
-            cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
+            // customized tool
+            if(toolName === 'Length') {
+                cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+            } else {
+                cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
+            }
             cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
         });
 
@@ -250,7 +254,7 @@ class ImageViewer extends Component {
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
         } else {
-            this.handlePrefecthDone(false);
+            this.handlePrefecthDone(true);
             // images are loaded with the zoom mousewheel enabled by default
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }
@@ -318,9 +322,10 @@ class ImageViewer extends Component {
 
     handleChangeStack(e, data) {
         const currentStackIndex = this.state.imageIds.indexOf(e.detail.image.imageId);
-        this.setState({currentStackIndex: currentStackIndex});
-        this.renderShapes();
-        this.renderMarks();
+        this.setState({currentStackIndex: currentStackIndex}, () => {
+            this.renderShapes();
+            this.renderMarks();
+        });
     }
 
     handleDoubleClickEvent(event) {
@@ -471,7 +476,7 @@ class ImageViewer extends Component {
                 Apis.shapeDelete(shapeId).then(resp => {
                     const index = that.shapeList[type].map((v) => v.measurementData.id).indexOf(shapeId);
                     that.shapeList[type].splice(index, 1);
-                    this.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', that.shapeList);
+                    that.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', that.shapeList);
                 });
             }
         }, 500);
@@ -499,7 +504,7 @@ class ImageViewer extends Component {
                         console.log('modified shape');
                         const index = that.shapeList[data.type].map((v) => v.measurementData.id).indexOf(data.id);
                         that.shapeList[data.type][index] = {stack: data.stack, measurementData: JSON.parse(data.data)};
-                        this.props.setImageAnswer(this.props.imageInfo.id, 'shapeList', this.shapeList);
+                        that.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', this.shapeList);
                     });
                 }, 500);
             }
@@ -602,23 +607,6 @@ class ImageViewer extends Component {
         }
     }
 
-    duplicateViewport(viewport) {
-        let copy = {}
-        Object.assign(copy, viewport);
-
-        // deep copy
-        copy.displayedArea = {};
-        Object.assign(copy.displayedArea, viewport.displayedArea);
-
-        copy.translation = {};
-        Object.assign(copy.translation, viewport.translation);
-
-        copy.voi = {};
-        Object.assign(copy.voi, viewport.voi);
-
-        return copy;
-    }
-
     wasDrawn(event) {
         this._updateImageInfo(event);
     }
@@ -697,7 +685,6 @@ class ImageViewer extends Component {
             //     cornerstone.displayImage(that.imageElement, image, viewport);
             // });
         }
-        // this.setState({currentStackIndex: newIndex});
     }
 
     renderImageQuality() {
@@ -839,7 +826,7 @@ class ImageViewer extends Component {
                 >
                     <div className="dicom" ref={this.imageElementRef}/>
                 </ResizeDetector>
-                <DownloadProgress
+                <DownloadTopBarProgress
                     totalCount={this.state.downStatus.length}
                     downCount={this.state.downStatus.filter((v) => v).length}
                 />

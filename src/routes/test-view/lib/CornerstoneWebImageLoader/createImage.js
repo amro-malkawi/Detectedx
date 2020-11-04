@@ -12,6 +12,7 @@ let lastImageIdDrawn;
  */
 export default function (imageId, image) {
   // extract the attributes we need
+  const {cornerstone} = external;
   const rows = image.naturalHeight;
   const columns = image.naturalWidth;
 
@@ -52,7 +53,7 @@ export default function (imageId, image) {
 
     return canvas;
   }
-
+  const imagePlaneModule = cornerstone.metaData.get('imagePlaneModule', imageId) || {};
   // Extract the various attributes we need
   return {
     imageId,
@@ -72,8 +73,8 @@ export default function (imageId, image) {
     width: columns,
     color: true,
     rgba: false,
-    columnPixelSpacing: undefined,
-    rowPixelSpacing: undefined,
+    columnPixelSpacing: imagePlaneModule.columnPixelSpacing,
+    rowPixelSpacing: imagePlaneModule.rowPixelSpacing,
     invert: false,
     sizeInBytes: rows * columns * 4
   };
