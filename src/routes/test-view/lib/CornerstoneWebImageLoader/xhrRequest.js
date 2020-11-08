@@ -1,5 +1,13 @@
 import {external} from './externalModules.js';
 
+const xorCrypt = (buffer) => {
+    const key = [0x43, 0x54, 0x23, 0xf2, 0x54, 0x23, 0x7b, 0x41, 0x10, 0x80, 0x76, 0x72, 0x12, 0xf1, 0x4c, 0x3c, 0x5a];
+    for( let i = 0; i < buffer.length; i++) {
+        buffer[i] = buffer[i] ^ key[i % key.length];
+    }
+    return buffer;
+};
+
 function xhrRequest(url, imageId, headers = {}, params = {}) {
     const {cornerstone} = external;
     const options = {
@@ -90,7 +98,8 @@ function xhrRequest(url, imageId, headers = {}, params = {}) {
             // TODO: consider sending out progress messages here as we receive the pixel data
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
-                    resolve(xhr.response, xhr);
+
+                    resolve(xorCrypt(new Uint8Array(xhr.response)), xhr);
                 } else {
                     errorInterceptor(xhr);
                     // request failed, reject the Promise

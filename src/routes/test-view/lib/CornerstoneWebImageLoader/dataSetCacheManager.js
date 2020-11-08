@@ -7,6 +7,8 @@ import xhrRequest from './xhrRequest';
  * image loader mechanism.  One reason a caller may need to do this is to determine the number of frames
  * in a multiframe sop instance so it can create the imageId's correctly.
  */
+const imageExt = 'dat';
+
 let cacheSizeInBytes = 0;
 
 let loadedDataSets = {};
@@ -126,10 +128,10 @@ function load(uri, imageId, option = {}) {
                 });
             });
         }
-        const url = (uri.split('.').pop() === 'png') ? uri : uri + '/0/0_0.png';
+        const url = (uri.split('.').pop() === imageExt) ? uri : uri + '/0/0_0.' + imageExt;
         return httpRequest(uri, imageId, url, true, element, originalWidth, originalHeight);
     } else if (type === 'prefetch') {
-        const url = (uri.split('.').pop() === 'png') ? uri : uri + '.png';
+        const url = (uri.split('.').pop() === imageExt) ? uri : uri + '.' + imageExt;
         if (loadedDataSets[uri] === undefined || loadedDataSets[uri].thumbnail) {
             return httpRequest(uri, imageId, url, false);
         } else {
@@ -140,7 +142,8 @@ function load(uri, imageId, option = {}) {
             });
         }
     } else {
-        const url = (uri.split('.').pop() === 'png') ? uri : uri + '.png';
+        // called loadimage to display
+        const url = (uri.split('.').pop() === imageExt) ? uri : uri + '.' + imageExt;
         if (loadedDataSets[uri] === undefined) {
             return httpRequest(uri, imageId, url, false);
         }
