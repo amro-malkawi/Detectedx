@@ -137,7 +137,8 @@ class ImageViewer extends Component {
             this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
         }
 
-        this.imageElement.addEventListener('cornerstonenewimage', _.debounce((e) => this.handleChangeStack(e), 0));
+        // this.imageElement.addEventListener('cornerstonenewimage', _.debounce((e) => this.handleChangeStack(e), 0));
+        this.imageElement.addEventListener('cornerstonenewimage', (e) => this.handleChangeStack(e));
 
         this.imageElement.querySelector('canvas').oncontextmenu = function () {
             return false;
