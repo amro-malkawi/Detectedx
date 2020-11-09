@@ -232,25 +232,41 @@ class ImageViewer extends Component {
             const tempImageIds = [...this.state.imageIds];
             const imageIdGroups = [];
             while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 10));
+            // --------------------------------
+            // imageIdGroups.reduce((accumulatorPromise, idGroup) => {
+            //     return accumulatorPromise.then(() => {
+            //         return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {
+            //             type: 'thumbnail',
+            //             element: this.imageElement,
+            //             originalWidth: this.imageWidth,
+            //             originalHeight: this.imageHeight
+            //         }).then(() => {
+            //             const downStatus = [...this.state.downStatus];
+            //             const index = this.state.imageIds.indexOf(id);
+            //             if (index !== -1) downStatus[index] = true;
+            //             this.setState({downStatus});
+            //             // that.setState({downImageCount: that.state.downImageCount + 1});
+            //         })));
+            //     });
+            // }, Promise.resolve()).then(() => {
+            //     this.handlePrefecthDone(true);
+            //     stackPrefetch.enable(this.imageElement);
+            // });
+            // ----------------------
+            this.handlePrefecthDone(true);
             imageIdGroups.reduce((accumulatorPromise, idGroup) => {
                 return accumulatorPromise.then(() => {
-                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {
-                        type: 'thumbnail',
-                        element: this.imageElement,
-                        originalWidth: this.imageWidth,
-                        originalHeight: this.imageHeight
-                    }).then(() => {
+                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
                         const downStatus = [...this.state.downStatus];
                         const index = this.state.imageIds.indexOf(id);
                         if (index !== -1) downStatus[index] = true;
                         this.setState({downStatus});
-                        // that.setState({downImageCount: that.state.downImageCount + 1});
                     })));
                 });
             }, Promise.resolve()).then(() => {
-                this.handlePrefecthDone(true);
-                stackPrefetch.enable(this.imageElement);
+                this.handlePrefecthDone(false);
             });
+            // ------------------------
 
             cornerstoneTools.addToolForElement(this.imageElement, StackScrollMouseWheelTool);
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
