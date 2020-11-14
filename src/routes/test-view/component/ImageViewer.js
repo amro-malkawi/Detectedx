@@ -649,7 +649,7 @@ class ImageViewer extends Component {
     }
 
     onClearSymbols() {
-        if (this.props.currentTool !== 'Marker') {
+        if (this.props.currentTool.indexOf('Marker') !== 0) {
             Apis.shapeDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id, this.props.currentTool).then((resp) => {
                 cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
                 cornerstone.invalidate(this.imageElement);
