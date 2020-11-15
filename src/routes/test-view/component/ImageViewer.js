@@ -281,6 +281,7 @@ class ImageViewer extends Component {
 
     handleMeasureCompleteEvent(event) {
         if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
+            this.tempMeasureToolData = null;
             if (event.detail.measurementData.id === undefined) {
                 console.log('marker complete', event.detail.toolName)
                 this.handleAddMark(event.detail.toolName, event.detail);
@@ -568,7 +569,10 @@ class ImageViewer extends Component {
     }
 
     onClearSymbols() {
-        if (this.props.currentTool !== 'Marker') {
+        if(this.tempMeasureToolData !== null) {
+            return;
+        }
+        if (this.props.currentTool.indexOf('Marker') !== 0) {
             Apis.shapeDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id, this.props.currentTool).then((resp) => {
                 cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
                 cornerstone.invalidate(this.imageElement);
