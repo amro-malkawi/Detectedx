@@ -70,13 +70,8 @@ export default function ({ open, name, onClose }) {
                     <div className={'fs-17 mt-15 font-weight-bold'}>Learning Objectives</div>
                     <div>
                         <span className={'fs-17'}>
-                            Upon completion of the educational activity, participants should be able to:
-                            </span>
-                    </div>
-                    <div>
-                        <span className={'fs-17'}>
                             Upon completion of this activity, participants should be able to
-                            </span>
+                        </span>
                     </div>
                     <ol className={"ml-40"}>
                         <li>

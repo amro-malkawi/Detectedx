@@ -588,8 +588,11 @@ class TestView extends Component {
     renderTools() {
         let tools = this.state.test_case.modalities.tools;
         tools = tools === null ? [] : tools.split(',');
+        //mobile-tool-container
+        const toolsWidth = 61 * (tools.length + 1);
+        const toolContainerClass = (((window.innerWidth / 2 ) - 240) > toolsWidth) ? 'tool-container' : 'tool-container mobile-tool-container';
         return (
-            <div className={'tool-container'}>
+            <div className={toolContainerClass}>
                 <div className={"tool option more-icon"} onClick={() => this.setState({isShowToolModal: true})}>
                     <CornerstoneToolIcon name={this.state.currentTool}/>
                     <p><IntlMessages id={"testView.tool.moreTools"}/>{this.state.isShowToolModal ? '▲' : '▼'}</p>

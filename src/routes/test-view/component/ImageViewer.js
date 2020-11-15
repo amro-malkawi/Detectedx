@@ -57,6 +57,7 @@ class ImageViewer extends Component {
             isLoading: false,
             isShowMarkInfo: !isMobile,
             isShowFloatingMenu: false,
+            age: 0,
         };
         this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
         // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
@@ -70,6 +71,8 @@ class ImageViewer extends Component {
     }
 
     componentDidMount() {
+        const {imageInfo} = this.props;
+        this.getMetaInfo();
         this.imageElement = this.imageElementRef.current;
         cornerstone.enable(this.imageElement);
         this.setupLoadHandlers();
@@ -101,6 +104,7 @@ class ImageViewer extends Component {
 
     }
 
+
     componentWillUnmount() {
         console.log('component unmount');
         this.setupLoadHandlers(true);
@@ -114,6 +118,12 @@ class ImageViewer extends Component {
         cornerstone.disable(this.imageElement);
 
         if (this.webWorker) this.webWorker.terminate();
+    }
+
+    getMetaInfo() {
+        Apis.getJsonData(this.props.imageInfo.image_url_path + 'meta.json').then((result) => {
+            this.setState({age: Number(result['00101010']['Value'][0].match(/\d+/)[0])});
+        });
     }
 
     runWorker() {
@@ -353,6 +363,7 @@ class ImageViewer extends Component {
 
     handleMeasureCompleteEvent(event) {
         if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
+            this.tempMeasureToolData = null;
             if (event.detail.measurementData.id === undefined) {
                 console.log('marker complete', event.detail.toolName)
                 this.handleAddMark(event.detail.toolName, event.detail);
@@ -649,6 +660,9 @@ class ImageViewer extends Component {
     }
 
     onClearSymbols() {
+        if(this.tempMeasureToolData !== null) {
+            return;
+        }
         if (this.props.currentTool.indexOf('Marker') !== 0) {
             Apis.shapeDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id, this.props.currentTool).then((resp) => {
                 cornerstoneTools.clearToolState(this.imageElement, this.props.currentTool);
@@ -668,9 +682,13 @@ class ImageViewer extends Component {
 
     _updateImageInfo(event) {
         const eventData = event.detail;
-        const windowWidth = Math.round(eventData.viewport.voi.windowWidth);
-        const windowLength = Math.round(eventData.viewport.voi.windowCenter);
+        let windowWidth = Math.round(eventData.viewport.voi.windowWidth);
+        let windowLength = Math.round(eventData.viewport.voi.windowCenter);
         const zoom = eventData.viewport.scale.toFixed(2);
+        if(this.props.imageInfo.ww !== 0 && this.props.imageInfo.wc !== 0) {
+            windowWidth = Math.round(this.props.imageInfo.ww * windowWidth / 255);
+            windowLength = Math.round(this.props.imageInfo.wc * windowLength / 128);
+        }
         this.imageElement.parentNode.querySelector('.window').textContent = `WW/WL: ${windowWidth} / ${windowLength}`;
         this.imageElement.parentNode.querySelector('.zoom').textContent = `Zoom: ${zoom}`;
     }
@@ -847,6 +865,9 @@ class ImageViewer extends Component {
                     totalCount={this.state.downStatus.length}
                     downCount={this.state.downStatus.filter((v) => v).length}
                 />
+                {
+                    this.state.age !==0 &&  <div className="age-info status"><IntlMessages id="testView.age"/>: {this.state.age}</div>
+                }
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>
