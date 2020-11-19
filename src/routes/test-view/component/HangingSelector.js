@@ -41,46 +41,21 @@ class HangingSelector extends Component{
             type: null,
             selectedIndex: 0,
         };
-        this.options = [];
     }
 
     onChangeHanging(index) {
-        console.log(this.options[index]);
         this.setState({ selectedIndex: index, type: null });
-        this.props.changeHangingLayout(this.options[index]);
+        this.props.changeHangingLayout(this.props.testSetHangingIdList[index]);
     }
 
     render() {
-        if(this.props.hasAllTestImages) {
-            if(this.props.hasAllPriorImages) {
-                this.options = [
-                    'MLO-R_MLO-L_CC-R_CC-L',
-                    'CC-R_CC-L',
-                    'MLO-R_MLO-L',
-                    'CC-R_MLO-R',
-                    'CC-L_MLO-L',
-                    'CC-R_CC-R-P',
-                    'MLO-R_MLO-R-P',
-                    'CC-L_CC-L-P',
-                    'MLO-L_MLO-L-P',
-                    'CC-R_CC-R-P_MLO-R_MLO-R-P',
-                    'MLO-L-P_MLO-L_CC-L-P_CC-L'
-                ];
-            } else {
-                this.options = [
-                    'MLO-R_MLO-L_CC-R_CC-L',
-                    'CC-R_CC-L',
-                    'MLO-R_MLO-L',
-                    'CC-R_MLO-R',
-                    'CC-L_MLO-L',
-                ];
-            }
+        if(this.props.testSetHangingIdList.length > 0) {
             const {type} = this.state;
-            const selectedIndex = this.options.findIndex((v) => v === this.props.hangingType);
+            const selectedIndex = this.props.testSetHangingIdList.findIndex((v) => v === this.props.selectedHangingType);
             return (
                 <div className={'hanging-type-container'}>
                     <Button variant="contained" color="default" className={'hanging-button'} onClick={(event) => this.setState({type: event.currentTarget})}>
-                        <img src={require('Assets/img/hangings/' + this.props.hangingType + '.png')} width={70}/>
+                        <img src={require('Assets/img/hangings/' + this.props.selectedHangingType + '.png')} width={70} alt=''/>
                     </Button>
                     <StyledMenu
                         id="lock-menu"
@@ -88,13 +63,13 @@ class HangingSelector extends Component{
                         open={Boolean(type)}
                         onClose={() => this.setState({type: null})}
                     >
-                        {this.options.map((option, index) => (
+                        {this.props.testSetHangingIdList.map((option, index) => (
                             <StyledMenuItem
                                 key={option}
                                 selected={index === selectedIndex}
                                 onClick={(event) => this.onChangeHanging(index)}
                             >
-                                <img src={require('Assets/img/hangings/' + option + '.png')} width={70}/>
+                                <img src={require('Assets/img/hangings/' + option + '.png')} width={70} alt=''/>
                             </StyledMenuItem>
                         ))}
                     </StyledMenu>
@@ -111,9 +86,8 @@ const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
-        hasAllTestImages: state.testView.hasAllTestImages,
-        hasAllPriorImages: state.testView.hasAllPriorImages,
-        hangingType: state.testView.hangingType,
+        testSetHangingIdList: state.testView.testSetHangingIdList,
+        selectedHangingType: state.testView.selectedHangingType,
     };
 };
 

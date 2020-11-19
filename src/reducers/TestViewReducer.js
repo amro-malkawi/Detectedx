@@ -19,9 +19,8 @@ const INIT_STATE = {
     imageQuality: -1,
     showImageList: [[]],
     isShowImageBrowser: false,
-    hasAllTestImages: false,
-    hasAllPriorImages: false,
-    hangingType: 'MLO-R_MLO-L_CC-R_CC-L',
+    testSetHangingIdList: [],
+    selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
     volparaImageId: undefined,
     resetId: '',
 };
@@ -33,9 +32,8 @@ export default (state = INIT_STATE, action) => {
                 ...state,
                 imageList: action.imageList,
                 showImageList: action.showImageList,
-                hasAllTestImages: action.hasAllTestImages,
-                hasAllPriorImages: action.hasAllPriorImages,
-                hangingType: action.hangingType,
+                testSetHangingIdList: action.testSetHangingIdList,
+                selectedHangingType: action.selectedHangingType,
                 volparaImageId: action.volparaImageId,
                 imageQuality: -1
             };
@@ -46,7 +44,7 @@ export default (state = INIT_STATE, action) => {
         case TEST_VIEW_SET_SHOW_IMAGE_BROWSER:
             return { ...state, isShowImageBrowser: action.payload };
         case TEST_VIEW_SET_HANGING_TYPE:
-            return { ...state, hangingType: action.payload };
+            return { ...state, selectedHangingType: action.payload };
         case TEST_VIEW_SET_RESET_ID:
             return {...state, resetId: action.payload};
         case TEST_VIEW_SET_FULL_IMAGE_QUALITY:
