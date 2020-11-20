@@ -124,7 +124,7 @@ const getImageHangingIdList = (images) => {
 }
 
 
-const getHangingImageOrder = (images, type, isForce = true) => {
+const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true) => {
     // if(!hasAllTestImages) {
     //     return [images.filter(image => image.type === 'test').map(v => v.id)];
     // } else {
@@ -145,7 +145,7 @@ const getHangingImageOrder = (images, type, isForce = true) => {
     // }
 
     const typeArray = type.split('_');
-    const idList = [];
+    let idList = [];
     typeArray.forEach((v) => {
         const imageObj = images.find((vv) => vv.hangingId === v);
         if (imageObj !== undefined) {
@@ -156,12 +156,13 @@ const getHangingImageOrder = (images, type, isForce = true) => {
         images.forEach((v) => {
             if (idList.length < typeArray.length) idList.push(v.id);
         });
+        idList = idList.slice(0, defaultImagesNumber);
     }
     return [idList]  // 1 row x 0 column
 
 };
 
-export const setImageListAction = (list, answer, complete) => (dispatch, getState) => {
+export const setImageListAction = (list, answer, defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
     let newList = list.map((v, i) => {
         let imageAnswers = answer[i];
         const markList = [];
@@ -252,11 +253,11 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
     let volparaImageId;
     if (volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "CC-R_CC-L", false)[0];
-        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "MLO-R_MLO-L", false)[0];
+        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "CC-R_CC-L", defaultImagesNumber, false)[0];
+        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "MLO-R_MLO-L", defaultImagesNumber, false)[0];
         showImageList = [imageLine1, imageLine2];
     } else {
-        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, true);
+        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, true);
     }
     showImageList = showImageList.filter((v) => v.length !== 0);
     dispatch({
@@ -265,12 +266,14 @@ export const setImageListAction = (list, answer, complete) => (dispatch, getStat
         showImageList,
         testSetHangingIdList,
         selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
+        defaultImagesNumber,
         volparaImageId
     });
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
-    const list = getHangingImageOrder(getState().testView.imageList, type, true);
+    const {imageList, defaultImagesNumber} = getState().testView;
+    const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,

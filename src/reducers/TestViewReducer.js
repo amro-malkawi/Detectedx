@@ -21,6 +21,7 @@ const INIT_STATE = {
     isShowImageBrowser: false,
     testSetHangingIdList: [],
     selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
+    defaultImagesNumber: 1,
     volparaImageId: undefined,
     resetId: '',
 };
@@ -34,6 +35,7 @@ export default (state = INIT_STATE, action) => {
                 showImageList: action.showImageList,
                 testSetHangingIdList: action.testSetHangingIdList,
                 selectedHangingType: action.selectedHangingType,
+                defaultImagesNumber: action.defaultImagesNumber,
                 volparaImageId: action.volparaImageId,
                 imageQuality: -1
             };

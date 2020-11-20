@@ -167,7 +167,7 @@ class TestView extends Component {
                 Marker.modalityRatings = that.state.test_case.ratings;
                 // ImageViewer.adjustSlideSize();
             });
-            that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, complete);
+            that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, testCaseViewInfo.modalities.number_of_slides, complete);
 
             if(testCaseViewInfo.modalities.modality_type === 'volpara') {
                 that.props.setImageQuality('', testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
