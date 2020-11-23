@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {dropImage} from "Actions";
 import IntlMessages from "Util/IntlMessages";
+import ImageThumbnail from "./ImageThumbnail";
 
 const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
     const [{ isDragging }, drag] = useDrag({
@@ -24,15 +25,16 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
             <div ref={drag} className="ThumbnailEntry">
                 <div className="p-x-1">
                     <div className="ImageThumbnail" style={{boxShadow: 'inset 0 0 0 1px ' + (item.type === 'test' ? '#72787d' : (item.type === 'prior' ? '#73730a' : '#672525'))}}>
-                        <div className="image-thumbnail-canvas">
-                            <img
-                                className="static-image"
-                                src={item.image_thumbnail}
-                                height={123}
-                                crossOrigin={'anonymous'}
-                                alt={''}
-                            />
-                        </div>
+                        {/*<div className="image-thumbnail-canvas">*/}
+                        {/*    <img*/}
+                        {/*        className="static-image"*/}
+                        {/*        src={item.image_thumbnail}*/}
+                        {/*        height={123}*/}
+                        {/*        crossOrigin={'anonymous'}*/}
+                        {/*        alt={''}*/}
+                        {/*    />*/}
+                        {/*</div>*/}
+                        <ImageThumbnail image_url_path={item.image_url_path} />
                         <div className="image-thumbnail-progress-bar">
                             <div className="image-thumbnail-progress-bar-inner" style={{width: 0}}/>
                         </div>

@@ -68,10 +68,11 @@ class ImageViewer extends Component {
         this.shapeList = props.imageInfo.answers.shapeList;
         this.tempMeasureToolData = null;
         this.imageElementRef = React.createRef();
+        this.isComponentMount = false;
     }
 
     componentDidMount() {
-        const {imageInfo} = this.props;
+        this.isComponentMount = true;
         this.getMetaInfo();
         this.imageElement = this.imageElementRef.current;
         cornerstone.enable(this.imageElement);
@@ -107,6 +108,7 @@ class ImageViewer extends Component {
 
     componentWillUnmount() {
         console.log('component unmount');
+        this.isComponentMount = false;
         this.setupLoadHandlers(true);
         if (this.state.imageIds.length > 1) {
             stackPrefetch.disable(this.imageElement);
@@ -121,9 +123,11 @@ class ImageViewer extends Component {
     }
 
     getMetaInfo() {
-        Apis.getJsonData(this.props.imageInfo.image_url_path + 'meta.json').then((result) => {
-            this.setState({age: Number(result['00101010']['Value'][0].match(/\d+/)[0])});
-        });
+        const age = cornerstone.metaData.get(
+            'age',
+            this.props.imageInfo.image_url_path
+        );
+        this.setState({age});
     }
 
     runWorker() {
@@ -266,12 +270,16 @@ class ImageViewer extends Component {
             this.handlePrefecthDone(true);
             imageIdGroups.reduce((accumulatorPromise, idGroup) => {
                 return accumulatorPromise.then(() => {
-                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
-                        const downStatus = [...this.state.downStatus];
-                        const index = this.state.imageIds.indexOf(id);
-                        if (index !== -1) downStatus[index] = true;
-                        this.setState({downStatus});
-                    })));
+                    if(!this.isComponentMount) {
+                        return Promise.resolve();
+                    } else {
+                        return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
+                            const downStatus = [...this.state.downStatus];
+                            const index = this.state.imageIds.indexOf(id);
+                            if (index !== -1) downStatus[index] = true;
+                            this.setState({downStatus});
+                        })));
+                    }
                 });
             }, Promise.resolve()).then(() => {
                 this.handlePrefecthDone(false);
@@ -549,6 +557,7 @@ class ImageViewer extends Component {
     }
 
     handleDatasetsCacheChanged(event) {
+        console.log('cache changed')
         if(this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
             cornerstone.loadImage(event.detail.uri).then((image) => {
                 if(this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
@@ -559,7 +568,7 @@ class ImageViewer extends Component {
     }
 
     handlePrefecthDone(doneThumbnail = true) {
-        cornerstone.triggerEvent(
+        this.isComponentMount && cornerstone.triggerEvent(
             cornerstone.events,
             doneThumbnail ? 'cornerstoneimageviewthumbnaildone' : 'cornerstoneimageviewprefetchdone',
             {imageViewImageId: this.props.imageInfo.id}

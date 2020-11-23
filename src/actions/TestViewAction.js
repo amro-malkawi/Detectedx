@@ -22,7 +22,8 @@ const getImageHangingIdList = (images) => {
     breastPositions.forEach((position) => {
         const testCount = images.filter((image) => {
             try {
-                const metaData = JSON.parse(image.metadata);
+                // const metaData = JSON.parse(image.metadata);
+                const metaData = image.metaData;
                 return (image.type === 'test' &&
                     metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1])
@@ -33,7 +34,8 @@ const getImageHangingIdList = (images) => {
         if (testCount < 1) hasAllTestImages = false;
         const priorCount = images.filter((image) => {
             try {
-                const metaData = JSON.parse(image.metadata);
+                // const metaData = JSON.parse(image.metadata);
+                const metaData = image.metaData;
                 return (image.type === 'prior' &&
                     metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1])
@@ -47,7 +49,8 @@ const getImageHangingIdList = (images) => {
     breastPositions.forEach((position) => {
         const positionImages = images.filter((image) => {
             try {
-                const metaData = JSON.parse(image.metadata);
+                // const metaData = JSON.parse(image.metadata);
+                const metaData = image.metaData;
                 return (image.type === 'test' &&
                     metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]
@@ -125,33 +128,31 @@ const getImageHangingIdList = (images) => {
 
 
 const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true) => {
-    // if(!hasAllTestImages) {
-    //     return [images.filter(image => image.type === 'test').map(v => v.id)];
-    // } else {
-    //     const typeArray = type.split('_');
-    //     const idList = [];
-    //     typeArray.forEach((v) => {
-    //         const imageObj = images.find((vv) => vv.hangingId === v);
-    //         if (imageObj !== undefined) {
-    //             idList.push(imageObj.id);
-    //         }
-    //     });
-    //     if (idList.length === 0 && isForce) {
-    //         images.forEach((v) => {
-    //             if (idList.length < typeArray.length) idList.push(v.id);
-    //         });
-    //     }
-    //     return [idList]  // 1 row x 0 column
-    // }
-
     const typeArray = type.split('_');
     let idList = [];
-    typeArray.forEach((v) => {
-        const imageObj = images.find((vv) => vv.hangingId === v);
-        if (imageObj !== undefined) {
-            idList.push(imageObj.id);
-        }
-    });
+
+    // input image ids
+    if (type === 'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D') {
+        // GE modality 3D hanging
+        typeArray.forEach((v) => {
+            const vPreviewImage = images.find((vv) => vv.hangingId === (v + '-VPREVIEW'));
+            if (vPreviewImage !== undefined) {
+                idList.push(vPreviewImage.id);
+            } else {
+                const matchImage = images.find((vv) => vv.hangingId === v);
+                if (matchImage !== undefined) idList.push(matchImage.id);
+            }
+        });
+    } else {
+        typeArray.forEach((v) => {
+            const imageObj = images.find((vv) => vv.hangingId === v);
+            if (imageObj !== undefined) {
+                idList.push(imageObj.id);
+            }
+        });
+    }
+
+    // check for existing all images
     if (idList.length < typeArray.length && isForce) {
         images.forEach((v) => {
             if (idList.length < typeArray.length) idList.push(v.id);
@@ -164,7 +165,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true)
 
 export const setImageListAction = (list, answer, defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
     let newList = list.map((v, i) => {
-        let imageAnswers = answer[i];
+        let imageAnswers = answer.find((vv) => v.id === vv.id);
         const markList = [];
         imageAnswers.answers && imageAnswers.answers.forEach((mark) => {
             mark.isTruth = false;
@@ -218,11 +219,12 @@ export const setImageListAction = (list, answer, defaultImagesNumber = 1, comple
     // set image's hangingId
     newList.forEach((image) => {
         try {
-            const metaData = JSON.parse(image.metadata);
+            // const metaData = JSON.parse(image.metadata);
+            const metaData = image.metaData;
             breastPositions.forEach((position) => {
                 if (metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]) {
-                    if(testSetHangingType === 'breast' || testSetHangingType === 'breastWithPrior') {
+                    if (testSetHangingType === 'breast' || testSetHangingType === 'breastWithPrior') {
                         if (image.type === 'test') {
                             image.hangingId = position[0] + '-' + position[1];
                         } else if (image.type === 'prior') {
@@ -230,11 +232,14 @@ export const setImageListAction = (list, answer, defaultImagesNumber = 1, comple
                         } else {
                             image.hangingId = '';
                         }
-                    } else if(testSetHangingType === 'breastWith3D') {
-                        if(image.stack_count === 1) {
+                    } else if (testSetHangingType === 'breastWith3D') {
+                        if (image.stack_count === 1) {
                             image.hangingId = position[0] + '-' + position[1];
                         } else {
                             image.hangingId = position[0] + '-' + position[1] + '-3D';
+                        }
+                        if (metaData.vPreview) {
+                            image.hangingId += '-VPREVIEW'
                         }
                     } else {
                         image.hangingId = '';

@@ -74,6 +74,17 @@ function metaDataRequest(uri) {
     return metaRequestProgress;
 }
 
+function loadMetaData(uri) {
+    return new Promise((resolve, reject) => {
+        metaDataRequest(uri).then((metaData) => {
+            setMetaDataSet(uri, metaData);
+            resolve();
+        }).catch((e) => {
+            reject(e);
+        })
+    });
+}
+
 function httpRequest(uri, imageId, url, thumbnail, element, originalWidth, originalHeight) {
     if (promises[uri]) {
         // console.log('returning existing load promise for ' + uri);
@@ -95,7 +106,6 @@ function httpRequest(uri, imageId, url, thumbnail, element, originalWidth, origi
                 cacheCount: promise.cacheCount,
             };
             setMetaDataSet(uri, metaData);
-            if(metaData !== undefined) loadedDataSets[uri].metaDataJson = metaData;
             if (thumbnail) {
                 loadedDataSets[uri].element = element;
                 loadedDataSets[uri].originalWidth = originalWidth;
@@ -229,4 +239,5 @@ export default {
     purge,
     get,
     getMetaDataSet,
+    loadMetaData,
 };

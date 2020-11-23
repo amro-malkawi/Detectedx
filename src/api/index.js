@@ -30,6 +30,7 @@ instance.interceptors.response.use(response => {
     return response;
 }, error => {
     if (error.response.status === 401 && error.request.responseURL.indexOf('api/users/login') === -1) {
+        // logout status
         cookie.remove('user_id', {path: '/'});
         cookie.remove('access_token', {path: '/'});
         window.location.reload();
