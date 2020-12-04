@@ -11,6 +11,7 @@ import {
     TEST_VIEW_SET_RESET_ID,
     TEST_VIEW_SET_FULL_IMAGE_QUALITY,
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
+    TEST_VIEW_SET_CURRENT_TOOL,
 } from 'Actions/types';
 
 const INIT_STATE = {
@@ -24,6 +25,7 @@ const INIT_STATE = {
     defaultImagesNumber: 1,
     volparaImageId: undefined,
     resetId: '',
+    currentTool: 'Pan',
 };
 
 export default (state = INIT_STATE, action) => {
@@ -37,7 +39,8 @@ export default (state = INIT_STATE, action) => {
                 selectedHangingType: action.selectedHangingType,
                 defaultImagesNumber: action.defaultImagesNumber,
                 volparaImageId: action.volparaImageId,
-                imageQuality: -1
+                imageQuality: -1,
+                currentTool: action.currentTool
             };
         case TEST_VIEW_CHANGE_IMAGE_LIST:
             return { ...state, imageList: action.payload};
@@ -61,6 +64,8 @@ export default (state = INIT_STATE, action) => {
                     }
                 }
             });
+        case TEST_VIEW_SET_CURRENT_TOOL:
+            return {...state, currentTool: action.payload}
         default:
             return {...state}
     }

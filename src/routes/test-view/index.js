@@ -23,9 +23,9 @@ import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
 import cornerstoneWebImageLoader from './lib/CornerstoneWebImageLoader';
 import Hammer from 'hammerjs';
+
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import LoadingIndicator from "./component/LoadingIndicator";
-
 import ImageViewerContainer from './component/ImageViewerContainer'
 import Marker from './lib/tools/MarkerTool';
 import viewerSynchronizer from "./lib/viewerSynchronizer";
@@ -35,12 +35,11 @@ import QualityModal from './QualityModal';
 import ConfirmQualityModal from './ConfirmQualityModal';
 import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
-import CornerstoneToolIcon from "./component/CornerstoneToolIcon";
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
-import GridToolButton from './lib/GridToolButton';
 import MarkerPopup from "./lib/markerPopup";
+import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
 
@@ -62,7 +61,6 @@ class TestView extends Component {
             isTruthCancer: undefined,
             answerDensity: undefined,
             imageAnswers: [],
-            currentTool: 'Pan',
             isShowPopup: false,
             selectedMarkData: {},
             isShowToolModal: false,
@@ -160,7 +158,6 @@ class TestView extends Component {
                 isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
                 isTruthCancer: complete ? testCasesAnswers.isTruthCancer : undefined,
                 answerDensity: complete ? testCasesAnswers.answerDensity : undefined,
-                currentTool: 'Pan',
                 loading: false
             }, () => {
                 Marker.lesions = that.state.test_case.modalities.lesion_types;
@@ -421,14 +418,6 @@ class TestView extends Component {
         });
     }
 
-    onChangeCurrentTool(tool) {
-        this.setState({currentTool: tool, isShowToolModal: false});
-    }
-
-    onResetView() {
-        this.props.changeHangingLayout('MLO-R_MLO-L_CC-R_CC-L');
-    }
-
     handleShowPopup(markData, cancelCallback, deleteCallback, saveCallback) {
         this.popupCancelHandler = cancelCallback;
         this.popupDeleteHandler = deleteCallback;
@@ -595,117 +584,6 @@ class TestView extends Component {
         }
     }
 
-    renderTools() {
-        let tools = this.state.test_case.modalities.tools;
-        tools = tools === null ? [] : tools.split(',');
-        //mobile-tool-container
-        const toolsWidth = 61 * (tools.length + 1);
-        const toolContainerClass = (((window.innerWidth / 2 ) - 240) > toolsWidth) ? 'tool-container' : 'tool-container mobile-tool-container';
-        return (
-            <div className={toolContainerClass}>
-                <div className={"tool option more-icon"} onClick={() => this.setState({isShowToolModal: true})}>
-                    <CornerstoneToolIcon name={this.state.currentTool}/>
-                    <p><IntlMessages id={"testView.tool.moreTools"}/>{this.state.isShowToolModal ? '▲' : '▼'}</p>
-                </div>
-                {
-                    tools.indexOf('Pan') !== -1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => this.onChangeCurrentTool('Pan')}>
-                            <CornerstoneToolIcon name={'Pan'}/>
-                            <p><IntlMessages id={"testView.tool.pan"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Zoom') !== -1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"
-                             onClick={() => this.onChangeCurrentTool('Zoom')}>
-                            <CornerstoneToolIcon name={'Zoom'}/>
-                            <p><IntlMessages id={"testView.tool.zoom"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Magnify') !== -1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Magnify' ? ' active' : '')} data-tool="Magnify" onClick={() => this.onChangeCurrentTool('Magnify')}>
-                            <CornerstoneToolIcon name={'Magnify'}/>
-                            <p><IntlMessages id={"testView.tool.magnify"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Wwwc') !== -1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => this.onChangeCurrentTool('Wwwc')}>
-                            <CornerstoneToolIcon name={'Wwwc'}/>
-                            <p><IntlMessages id={"testView.tool.window"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Length') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => this.onChangeCurrentTool('Length')}>
-                            <CornerstoneToolIcon name={'Length'}/>
-                            <p><IntlMessages id={"testView.tool.length"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Angle') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Angle' ? ' active' : '')} data-tool="Angle" onClick={() => this.onChangeCurrentTool('Angle')}>
-                            <CornerstoneToolIcon name={'Angle'}/>
-                            <p><IntlMessages id={"testView.tool.angle"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('EllipticalRoi') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi"
-                             onClick={() => this.onChangeCurrentTool('EllipticalRoi')}>
-                            <CornerstoneToolIcon name={'EllipticalRoi'}/>
-                            <p><IntlMessages id={"testView.tool.ellipse"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('RectangleRoi') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'RectangleRoi' ? ' active' : '')} data-tool="RectangleRoi" onClick={() => this.onChangeCurrentTool('RectangleRoi')}>
-                            <CornerstoneToolIcon name={'RectangleRoi'}/>
-                            <p><IntlMessages id={"testView.tool.rectangle"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('ArrowAnnotate') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'ArrowAnnotate' ? ' active' : '')} data-tool="ArrowAnnotate"
-                             onClick={() => this.onChangeCurrentTool('ArrowAnnotate')}>
-                            <CornerstoneToolIcon name={'ArrowAnnotate'}/>
-                            <p><IntlMessages id={"testView.tool.arrow"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Eraser') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Eraser' ? ' active' : '')} data-tool="Eraser" onClick={() => this.onChangeCurrentTool('Eraser')}>
-                            <CornerstoneToolIcon name={'Eraser'}/>
-                            <p><IntlMessages id={"testView.tool.erase"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('Marker') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => this.onChangeCurrentTool('Marker')}>
-                            <CornerstoneToolIcon name={'Marker'}/>
-                            <p><IntlMessages id={"testView.tool.mark"}/></p>
-                        </div> : null
-                }
-                {
-                    tools.indexOf('MarkerFreehand') !== -1 && !this.state.complete && this.state.attemptDetail.stage === 1 ?
-                        <div className={"tool option" + (this.state.currentTool === 'MarkerFreehand' ? ' active' : '')} data-tool="MarkerFreehand"
-                             onClick={() => this.onChangeCurrentTool('MarkerFreehand')}>
-                            <CornerstoneToolIcon name={'MarkerFreehand'}/>
-                            <p><IntlMessages id={"testView.tool.freehand"}/></p>
-                        </div> : null
-                }
-                <div className={"tool option"} onClick={() => this.onResetView()}>
-                    <CornerstoneToolIcon name={'Reset'}/>
-                    <p><IntlMessages id={"testView.tool.reset"}/></p>
-                </div>
-                {
-                    tools.indexOf('Grid') !== -1 && <GridToolButton/>
-                }
-            </div>
-        )
-    }
-
     renderToolBar() {
         return (
             <div className="test-view-toolbar">
@@ -717,7 +595,14 @@ class TestView extends Component {
                     </div>
                     <p><IntlMessages id={"testView.tool.series"}/></p>
                 </div>
-                {this.renderTools()}
+                <TestViewToolList
+                    tools={this.state.test_case.modalities.tools}
+                    complete={this.state.complete}
+                    stage={this.state.attemptDetail.stage}
+                    isShowToolModal={this.state.isShowToolModal}
+                    onClickShowToolModal={() => this.setState({isShowToolModal: true})}
+                    onClose={() => this.setState({isShowToolModal: false})}
+                />
                 <div className="tool">
                     <AntSwitch
                         defaultChecked={this.synchronizer.enabled}
@@ -768,7 +653,6 @@ class TestView extends Component {
                                 }
                                 <ImageViewerContainer
                                     attemptId={this.state.attempts_id}
-                                    currentTool={this.state.currentTool}
                                     synchronizer={this.synchronizer}
                                     radius={this.state.test_case.modalities.circle_size}
                                     complete={this.state.complete}
@@ -802,7 +686,14 @@ class TestView extends Component {
                     </div>
                     <Dialog open={this.state.isShowToolModal} onClose={() => this.setState({isShowToolModal: false})} classes={{paper: 'test-view-toolbar-modal'}}>
                         <div className={'test-view-toolbar tooltip-toolbar-overlay'}>
-                            {this.renderTools()}
+                            <TestViewToolList
+                                tools={this.state.test_case.modalities.tools}
+                                complete={this.state.complete}
+                                stage={this.state.attemptDetail.stage}
+                                isShowToolModal={this.state.isShowToolModal}
+                                onClickShowToolModal={() => this.setState({isShowToolModal: true})}
+                                onClose={() => this.setState({isShowToolModal: false})}
+                            />
                         </div>
                     </Dialog>
                     {

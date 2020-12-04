@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {Menu, withStyles} from '@material-ui/core';
-import CornerstoneToolIcon from "../component/CornerstoneToolIcon";
+import CornerstoneToolIcon from "./CornerstoneToolIcon";
 import IntlMessages from "Util/IntlMessages";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";

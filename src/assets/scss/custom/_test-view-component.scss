@@ -1,0 +1,43 @@
+/*======== Test View Components style =======*/
+.test-view-context-menu {
+  padding: 10px 0;
+  border: 1px solid #34383b;
+  background-color: #292a2d;
+
+  .react-contextmenu-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    color: white;
+    cursor: context-menu;
+
+    &:hover {
+      background-color: #4b4c4f;
+    }
+
+    svg {
+      width: 17px;
+      height: 17px;
+      stroke: $normal-colour;
+      fill: $normal-colour;
+    }
+
+    span {
+      color: $normal-colour;
+      font-size: 13px;
+      text-align: center;
+      margin-left: 15px;
+    }
+
+    &.tool-selected {
+      svg {
+        stroke: $active-colour;
+        fill: $active-colour
+      }
+
+      span {
+        color: $active-colour;
+      }
+    }
+  }
+}

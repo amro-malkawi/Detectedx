@@ -1,10 +1,11 @@
 import React from 'react';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {dropImage, setImageListAction, setShowImageBrowser} from 'Actions';
 import {v4 as uuidv4} from 'uuid';
 import {useDrop} from 'react-dnd'
+import { ContextMenuTrigger } from "react-contextmenu";
 import ImageViewer from "./ImageViewer";
+import TestViewContextMenu from "./TestViewToolList/TestViewContextMenu";
 
 
 const ImageViewerDropContainer = ({id, rowIndex, colIndex, imageList, param}) => {
@@ -51,7 +52,8 @@ const ImageViewerContainer = (props) => {
                     </div>
                 </div>
             }
-            <div id="images"> {/*className={'cursor-' + this.state.currentTool}>*/}
+            {/*<div id="images"> /!*className={'cursor-' + this.state.currentTool}>*!/*/}
+            <ContextMenuTrigger id={'images'} renderTag='div' attributes={{id: 'images'}}>
                 {
                     props.showImageList.map((row, rowIndex) => (
                         <div className={'image-row'} key={rowIndex}>
@@ -70,7 +72,13 @@ const ImageViewerContainer = (props) => {
                         </div>
                     ))
                 }
-            </div>
+            </ContextMenuTrigger>
+            {/*</div>*/}
+            <TestViewContextMenu
+                toolList={props.tools}
+                complete={props.complete}
+                stage={props.stage}
+            />
         </div>
     )
 };
@@ -82,6 +90,7 @@ const mapStateToProps = (state) => {
         showImageList: state.testView.showImageList,
         volparaImageId: state.testView.volparaImageId,
         resetId: state.testView.resetId,
+        currentTool: state.testView.currentTool
     };
 };
 

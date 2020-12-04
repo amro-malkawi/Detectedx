@@ -11,6 +11,7 @@ import {
     TEST_VIEW_SET_RESET_ID,
     TEST_VIEW_SET_FULL_IMAGE_QUALITY,
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
+    TEST_VIEW_SET_CURRENT_TOOL,
 } from 'Actions/types';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
@@ -258,8 +259,8 @@ export const setImageListAction = (list, answer, defaultImagesNumber = 1, comple
     let volparaImageId;
     if (volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "CC-R_CC-L", defaultImagesNumber, false)[0];
-        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), true, "MLO-R_MLO-L", defaultImagesNumber, false)[0];
+        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "CC-R_CC-L", defaultImagesNumber, false)[0];
+        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "MLO-R_MLO-L", defaultImagesNumber, false)[0];
         showImageList = [imageLine1, imageLine2];
     } else {
         showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, true);
@@ -272,7 +273,8 @@ export const setImageListAction = (list, answer, defaultImagesNumber = 1, comple
         testSetHangingIdList,
         selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
         defaultImagesNumber,
-        volparaImageId
+        volparaImageId,
+        currentTool: 'Pan'
     });
 };
 
@@ -340,6 +342,13 @@ export const setImageQuality = (imageId, value) => (dispatch, getState) => {
             }
         });
     }
+};
+
+export const changeCurrentTool = (tool) => (dispatch) => {
+    dispatch({
+        type: TEST_VIEW_SET_CURRENT_TOOL,
+        payload: tool
+    });
 };
 
 export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) => {

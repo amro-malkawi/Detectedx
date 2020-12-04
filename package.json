@@ -71,6 +71,7 @@
       "react-async-script-loader": "^0.3.0",
       "react-bootstrap-sweetalert": "^5.1.11",
       "react-content-loader": "^3.4.2",
+      "react-contextmenu": "^2.14.0",
       "react-cookie": "^4.0.3",
       "react-countup": "^4.0.0",
       "react-custom-scrollbars": "^4.2.1",
