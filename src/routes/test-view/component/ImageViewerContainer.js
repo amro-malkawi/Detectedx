@@ -75,7 +75,7 @@ const ImageViewerContainer = (props) => {
             </ContextMenuTrigger>
             {/*</div>*/}
             <TestViewContextMenu
-                toolList={props.tools}
+                toolList={props.toolList}
                 complete={props.complete}
                 stage={props.stage}
             />
@@ -90,6 +90,7 @@ const mapStateToProps = (state) => {
         showImageList: state.testView.showImageList,
         volparaImageId: state.testView.volparaImageId,
         resetId: state.testView.resetId,
+        toolList:state.testView.toolList,
         currentTool: state.testView.currentTool
     };
 };

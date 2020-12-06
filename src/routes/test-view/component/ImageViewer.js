@@ -146,7 +146,7 @@ class ImageViewer extends Component {
             this.imageElement.parentNode.querySelector('.location').textContent = `(x: ${x}, y: ${y})`;
         });
 
-        if (!this.props.complete && this.props.tools.indexOf('Marker') !== -1) {
+        if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1) {
             this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleDoubleClickEvent(event));
             this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
         }
@@ -821,8 +821,8 @@ class ImageViewer extends Component {
     }
 
     render() {
-        const {imageInfo, dndRef, isDragOver, tools} = this.props;
-        const canDrawMarker = tools.filter((v) => (v === 'Marker' || v === 'MarkerFreehand')).length > 0;
+        const {imageInfo, dndRef, isDragOver, toolList} = this.props;
+        const canDrawMarker = toolList.filter((v) => (v === 'Marker' || v === 'MarkerFreehand')).length > 0;
         return (
             <div ref={dndRef}
                  className={"image " + (isDragOver ? 'drag-hover' : '')}
@@ -892,7 +892,7 @@ class ImageViewer extends Component {
 const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
-        showImageList: state.testView.showImageList
+        showImageList: state.testView.showImageList,
     };
 };
 

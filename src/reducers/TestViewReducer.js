@@ -25,6 +25,7 @@ const INIT_STATE = {
     defaultImagesNumber: 1,
     volparaImageId: undefined,
     resetId: '',
+    toolList: [],
     currentTool: 'Pan',
 };
 
@@ -40,6 +41,7 @@ export default (state = INIT_STATE, action) => {
                 defaultImagesNumber: action.defaultImagesNumber,
                 volparaImageId: action.volparaImageId,
                 imageQuality: -1,
+                toolList: action.toolList,
                 currentTool: action.currentTool
             };
         case TEST_VIEW_CHANGE_IMAGE_LIST:

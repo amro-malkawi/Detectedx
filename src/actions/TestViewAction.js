@@ -164,7 +164,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true)
 
 };
 
-export const setImageListAction = (list, answer, defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
+export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
     let newList = list.map((v, i) => {
         let imageAnswers = answer.find((vv) => v.id === vv.id);
         const markList = [];
@@ -274,6 +274,7 @@ export const setImageListAction = (list, answer, defaultImagesNumber = 1, comple
         selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
         defaultImagesNumber,
         volparaImageId,
+        toolList: toolList,
         currentTool: 'Pan'
     });
 };

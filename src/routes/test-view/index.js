@@ -39,6 +39,7 @@ import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
 import MarkerPopup from "./lib/markerPopup";
+import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
@@ -177,7 +178,13 @@ class TestView extends Component {
                         v.image_url_path
                     );
                 })
-                that.props.setImageListAction(testCaseViewInfo.images, testCasesAnswers.images, testCaseViewInfo.modalities.number_of_slides, complete);
+                that.props.setImageListAction(
+                    testCaseViewInfo.images,
+                    testCasesAnswers.images,
+                    testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
+                    testCaseViewInfo.modalities.number_of_slides,
+                    complete
+                );
             });
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
@@ -596,7 +603,6 @@ class TestView extends Component {
                     <p><IntlMessages id={"testView.tool.series"}/></p>
                 </div>
                 <TestViewToolList
-                    tools={this.state.test_case.modalities.tools}
                     complete={this.state.complete}
                     stage={this.state.attemptDetail.stage}
                     isShowToolModal={this.state.isShowToolModal}
@@ -621,7 +627,7 @@ class TestView extends Component {
         if (!this.state.loading) {
             return (
                 <div className="viewer">
-                    <div className={'viewer-content'}>
+                    <ShortcutContainer className={'viewer-content'}>
                         <div id="toolbar">
                             {this.renderToolBar()}
                             {this.renderTruthImageQuality()}
@@ -658,7 +664,6 @@ class TestView extends Component {
                                     complete={this.state.complete}
                                     stage={this.state.attemptDetail.stage}
                                     width={100 / this.state.test_case.images.length}
-                                    tools={this.state.test_case.modalities.tools === null ? [] : this.state.test_case.modalities.tools.split(',')}
                                     brightness={this.state.test_case.modalities.brightness}
                                     contrast={this.state.test_case.modalities.contrast}
                                     zoom={this.state.test_case.modalities.zoom}
@@ -679,7 +684,7 @@ class TestView extends Component {
                                 }
                             </DndProvider>
                         </div>
-                    </div>
+                    </ShortcutContainer>
                     {this.state.isShowLoadingIndicator && <LoadingIndicator type={"test-view"} />}
                     <div className={'rotate-error'}>
                         <img src={require('Assets/img/rotate.png')} alt=''/>
@@ -687,7 +692,6 @@ class TestView extends Component {
                     <Dialog open={this.state.isShowToolModal} onClose={() => this.setState({isShowToolModal: false})} classes={{paper: 'test-view-toolbar-modal'}}>
                         <div className={'test-view-toolbar tooltip-toolbar-overlay'}>
                             <TestViewToolList
-                                tools={this.state.test_case.modalities.tools}
                                 complete={this.state.complete}
                                 stage={this.state.attemptDetail.stage}
                                 isShowToolModal={this.state.isShowToolModal}

@@ -81,6 +81,7 @@
       "react-dnd-touch-backend": "^9.5.1",
       "react-ga": "^2.7.0",
       "react-hot-loader": "^4.6.5",
+      "react-hotkeys": "^2.0.0",
       "react-image-gallery": "^1.0.6",
       "react-intl": "^4.3.1",
       "react-joyride": "^1.11.4",

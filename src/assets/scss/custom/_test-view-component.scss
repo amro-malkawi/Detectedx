@@ -6,10 +6,22 @@
 
   .react-contextmenu-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    min-width: 130px;
     padding: 6px 10px;
     color: white;
     cursor: context-menu;
+
+    & > div {
+      display: flex;
+    }
+
+    .shortcut-key {
+      font-family: Monaco, Courier New, monospace;
+      font-size: 11px;
+      margin-left: 10px;
+    }
 
     &:hover {
       background-color: #4b4c4f;

@@ -7,10 +7,9 @@ import GridToolButton from "./GridToolButton";
 
 const Toolbar = (props) => {
     const {
-        tools, complete, stage, isShowToolModal, onClickShowToolModal, onClose,
-        currentTool, changeCurrentTool, changeHangingLayout
+        complete, stage, isShowToolModal, onClickShowToolModal, onClose,
+        toolList, currentTool, changeCurrentTool, changeHangingLayout
     } = props;
-    const toolList = tools === null ? [] : tools.split(',');
     //mobile-tool-container
     const toolsWidth = 61 * (toolList.length + 1);
     const toolContainerClass = (((window.innerWidth / 2 ) - 240) > toolsWidth) ? 'tool-container' : 'tool-container mobile-tool-container';
@@ -129,6 +128,7 @@ const Toolbar = (props) => {
 // map state to props
 const mapStateToProps = (state) => {
     return {
+        toolList: state.testView.toolList,
         currentTool: state.testView.currentTool
     };
 };
