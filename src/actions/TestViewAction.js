@@ -11,7 +11,7 @@ import {
     TEST_VIEW_SET_RESET_ID,
     TEST_VIEW_SET_FULL_IMAGE_QUALITY,
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
-    TEST_VIEW_SET_CURRENT_TOOL,
+    TEST_VIEW_SET_CURRENT_TOOL, TEST_VIEW_SET_THICKNESS_TYPE,
 } from 'Actions/types';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
@@ -128,21 +128,29 @@ const getImageHangingIdList = (images) => {
 }
 
 
-const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, getState) => {
+const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, currentThicknessType) => {
     const typeArray = type.split('_');
     let idList = [];
 
     // input image ids
-    if (type === 'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D') {
+    if (type === 'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D' || type === 'MLO-R-3D_MLO-L-3D') {
         // GE modality 3D hanging
         typeArray.forEach((v) => {
-            const vPreviewImage = images.find((vv) => vv.hangingId === (v + '-VPREVIEW'));
-            if (vPreviewImage !== undefined) {
-                idList.push(vPreviewImage.id);
+            let typeImage;
+            if(v.indexOf('3D') === -1) {
+                typeImage = images.find((vv) => vv.hangingId === (v + '-VPREVIEW'));
+            } else {
+                // select planes or slabs
+                typeImage = images.filter((vv) => vv.hangingId === v).find((vv) => vv.metaData.positionDesc === 'GE-' + currentThicknessType);
+            }
+
+            if (typeImage !== undefined) {
+                idList.push(typeImage.id);
             } else {
                 const matchImage = images.find((vv) => vv.hangingId === v);
                 if (matchImage !== undefined) idList.push(matchImage.id);
             }
+
         });
     } else {
         typeArray.forEach((v) => {
@@ -259,13 +267,23 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     let volparaImageId;
     if (volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "CC-R_CC-L", defaultImagesNumber, false, getState)[0];
-        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "MLO-R_MLO-L", defaultImagesNumber, false, getState)[0];
+        const imageLine1 = getHangingImageOrder(
+            newList.filter(image => (image.type === 'test' || image.type === 'prior')),
+            "CC-R_CC-L", defaultImagesNumber,
+            false, getState().testView.currentThicknessType)[0];
+        const imageLine2 = getHangingImageOrder(
+            newList.filter(image => (image.type === 'test' || image.type === 'prior')),
+            "MLO-R_MLO-L", defaultImagesNumber,
+            false, getState().testView.currentThicknessType)[0];
         showImageList = [imageLine1, imageLine2];
     } else {
-        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, true);
+        showImageList = getHangingImageOrder(
+            newList.filter(image => (image.type === 'test' || image.type === 'prior')),
+            selectedHangingType, defaultImagesNumber,
+            true, getState().testView.currentThicknessType);
     }
     showImageList = showImageList.filter((v) => v.length !== 0);
+    const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
     dispatch({
         type: TEST_VIEW_SET_IMAGE_LIST,
         imageList: newList,
@@ -275,13 +293,14 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         defaultImagesNumber,
         volparaImageId,
         toolList: toolList,
-        currentTool: 'Pan'
+        currentTool: 'Pan',
+        currentThicknessType: thicknessImageCount >= 4 ? 'SLABS' : 'NOTHICKNESS'
     });
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber} = getState().testView;
-    const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState);
+    const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -378,5 +397,24 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
             type: TEST_VIEW_SET_RESET_ID,
             payload: Math.random().toString(36).substring(7),
         });
+    });
+};
+
+export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
+    const {imageList, defaultImagesNumber, selectedHangingType} = getState().testView;
+    const list = getHangingImageOrder(imageList, selectedHangingType, defaultImagesNumber, true, thicknessType);
+    batch(() => {
+        dispatch({
+            type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
+            payload: list,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_RESET_ID,
+            payload: Math.random().toString(36).substring(7),
+        });
+        dispatch({
+            type: TEST_VIEW_SET_THICKNESS_TYPE,
+            payload: thicknessType
+        })
     });
 };

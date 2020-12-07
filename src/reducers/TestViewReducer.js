@@ -12,6 +12,7 @@ import {
     TEST_VIEW_SET_FULL_IMAGE_QUALITY,
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
     TEST_VIEW_SET_CURRENT_TOOL,
+    TEST_VIEW_SET_THICKNESS_TYPE,
 } from 'Actions/types';
 
 const INIT_STATE = {
@@ -27,6 +28,7 @@ const INIT_STATE = {
     resetId: '',
     toolList: [],
     currentTool: 'Pan',
+    currentThicknessType: 'NOTHICKNESS'
 };
 
 export default (state = INIT_STATE, action) => {
@@ -42,7 +44,8 @@ export default (state = INIT_STATE, action) => {
                 volparaImageId: action.volparaImageId,
                 imageQuality: -1,
                 toolList: action.toolList,
-                currentTool: action.currentTool
+                currentTool: action.currentTool,
+                currentThicknessType: action.currentThicknessType,
             };
         case TEST_VIEW_CHANGE_IMAGE_LIST:
             return { ...state, imageList: action.payload};
@@ -68,6 +71,8 @@ export default (state = INIT_STATE, action) => {
             });
         case TEST_VIEW_SET_CURRENT_TOOL:
             return {...state, currentTool: action.payload}
+        case TEST_VIEW_SET_THICKNESS_TYPE:
+            return {...state, currentThicknessType: action.payload}
         default:
             return {...state}
     }

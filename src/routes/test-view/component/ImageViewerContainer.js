@@ -53,7 +53,7 @@ const ImageViewerContainer = (props) => {
                 </div>
             }
             {/*<div id="images"> /!*className={'cursor-' + this.state.currentTool}>*!/*/}
-            <ContextMenuTrigger id={'images'} renderTag='div' attributes={{id: 'images'}}>
+            <ContextMenuTrigger id={'images'} renderTag='div' attributes={{id: 'images'}} holdToDisplay={-1}>
                 {
                     props.showImageList.map((row, rowIndex) => (
                         <div className={'image-row'} key={rowIndex}>

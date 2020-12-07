@@ -2,7 +2,6 @@ import React from 'react';
 import {ContextMenu, MenuItem, ContextMenuTrigger} from "react-contextmenu";
 import CornerstoneToolIcon from "./CornerstoneToolIcon";
 import IntlMessages from "Util/IntlMessages";
-import GridToolButton from "Routes/test-view/component/TestViewToolList/GridToolButton";
 import {connect} from "react-redux";
 import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
 

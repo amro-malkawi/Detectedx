@@ -218,7 +218,7 @@ class TestView extends Component {
             this.nextCaseImagePreloaded = true;
             let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
             // check last test case
-            if(test_case_index + 1 > this.state.test_set_cases.length) return;
+            if(test_case_index + 1 >= this.state.test_set_cases.length) return;
             const url_base = this.state.test_case.image_url_base;
             const tempImageIds = [];
             this.state.test_set_cases[test_case_index + 1].images.forEach((v) => {
