@@ -174,7 +174,7 @@ class TestView extends Component {
             Promise.all(testCaseViewInfo.images.map((v) => cornerstoneWebImageLoader.dataSetCacheManager.loadMetaData(v.image_url_path))).then(() => {
                 testCaseViewInfo.images.forEach((v) => {
                     v.metaData = cornerstone.metaData.get(
-                        'breastPosition',
+                        'imagePosition',
                         v.image_url_path
                     );
                 })
@@ -627,7 +627,7 @@ class TestView extends Component {
         if (!this.state.loading) {
             return (
                 <div className="viewer">
-                    <ShortcutContainer className={'viewer-content'}>
+                    <ShortcutContainer className={'viewer-content'} complete={this.state.complete} stage={this.state.attemptDetail.stage}>
                         <div id="toolbar">
                             {this.renderToolBar()}
                             {this.renderTruthImageQuality()}

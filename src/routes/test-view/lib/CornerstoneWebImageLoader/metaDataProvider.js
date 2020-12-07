@@ -144,34 +144,40 @@ function metaDataProvider(type, imageId) {
         return Number(ageStr.match(/\d+/)[0]);
     }
 
-    if (type === 'breastPosition') {
+    if (type === 'imagePosition') {
         let viewPosition = getValue(metaData['00185101']);
 
         // for GE modality
-        let vPreview = false;
+        let positionDesc = '';
         let seriesDescription = getValue(getInsensitiveElement(metaData, '0008103e'));
         if (seriesDescription !== undefined) {
             if (viewPosition === undefined) {
-                if (seriesDescription.indexOf('ROUTINE3D_') === 0 && seriesDescription.lastIndexOf('MLO') === seriesDescription.length - 3) {
+                if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0 && seriesDescription.lastIndexOf('MLO') === seriesDescription.length - 3) {
                     viewPosition = 'MLO';
-                } else if (seriesDescription.indexOf('ROUTINE3D_') === 0 && seriesDescription.lastIndexOf('CC') === seriesDescription.length - 2) {
+                    positionDesc = 'GE-PLANES';
+                } else if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0 && seriesDescription.lastIndexOf('CC') === seriesDescription.length - 2) {
                     viewPosition = 'CC';
+                    positionDesc = 'GE-PLANES';
+                } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0 && seriesDescription.lastIndexOf('MLO') === seriesDescription.length - 3) {
+                    viewPosition = 'MLO';
+                    positionDesc = 'GE-SLABS';
+                } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0 && seriesDescription.lastIndexOf('CC') === seriesDescription.length - 2) {
+                    viewPosition = 'CC';
+                    positionDesc = 'GE-SLABS';
                 }
             } else {
                 if (seriesDescription.indexOf('V-Preview') !== -1) {
-                    vPreview = true;
+                    positionDesc = 'V-PREVIEW';
                 }
             }
         }
 
-        const breastPosition = {
+        const imagePosition = {
             viewPosition: viewPosition ? viewPosition : '',
             imageLaterality: getValue(metaData['00200062']) ? getValue(metaData['00200062']) : '',
+            positionDesc: positionDesc,
         }
-        if(vPreview) {
-            breastPosition.vPreview = true;
-        }
-        return breastPosition;
+        return imagePosition;
     }
 
 }

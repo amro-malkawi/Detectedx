@@ -19,7 +19,8 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
             isDragging: monitor.isDragging()
         })
     });
-    const metaData = JSON.parse(item.metadata);
+    // const metaData = JSON.parse(item.metadata);
+    const metaData = item.metaData;
     return (
         <div className="ThumbnailEntryContainer">
             <div ref={drag} className="ThumbnailEntry">
@@ -41,7 +42,10 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                     </div>
                 </div>
                 <div className="series-details">
-                    <div className="series-description">{metaData.viewPosition ? metaData.viewPosition : ''}</div>
+                    <div className="series-description">
+                        {metaData.viewPosition ? metaData.viewPosition : ''}
+                        <span className={'ml-20 fs-12'}>{metaData.positionDesc}</span>
+                    </div>
                     <div className="series-information">
                         <div className="item item-series">
                             <div className="icon"><IntlMessages id={"testView.browser.laterality"}/></div>

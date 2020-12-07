@@ -3,17 +3,19 @@ import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {setImageAnswer} from "Actions";
 import ResizeDetector from 'react-resize-detector';
-import {Button, IconButton} from "@material-ui/core";
+import {IconButton, Switch} from "@material-ui/core";
 import cornerstone from 'cornerstone-core';
 import Tooltip from "@material-ui/core/Tooltip";
 import cornerstoneTools from 'cornerstone-tools';
 import {NotificationManager} from "react-notifications";
-import {FloatingMenu, MainButton, ChildButton} from 'Components/FloatingMenu';
+import {FloatingMenu, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
 import IntlMessages from "Util/IntlMessages";
 import {v4 as uuidv4} from 'uuid';
 import {isMobile} from 'react-device-detect';
+
 import DownloadTopBarProgress from "./DownloadTopBarProgress";
+import GEThicknessSwitch from './ImageOverlap/GEThicknessSwitch';
 import _ from 'lodash';
 import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
@@ -857,6 +859,7 @@ class ImageViewer extends Component {
                         </a>
                     }
                 </div>
+                <GEThicknessSwitch metaData={this.props.imageInfo.metaData}/>
                 {this.renderImageQuality()}
                 <ResizeDetector
                     handleWidth
@@ -899,3 +902,4 @@ const mapStateToProps = (state) => {
 export default withRouter(connect(mapStateToProps, {
     setImageAnswer
 })(ImageViewer));
+

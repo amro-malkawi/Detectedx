@@ -128,7 +128,7 @@ const getImageHangingIdList = (images) => {
 }
 
 
-const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true) => {
+const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, getState) => {
     const typeArray = type.split('_');
     let idList = [];
 
@@ -239,7 +239,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                         } else {
                             image.hangingId = position[0] + '-' + position[1] + '-3D';
                         }
-                        if (metaData.vPreview) {
+                        if (metaData.positionDesc === 'V-PREVIEW') {
                             image.hangingId += '-VPREVIEW'
                         }
                     } else {
@@ -259,8 +259,8 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     let volparaImageId;
     if (volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "CC-R_CC-L", defaultImagesNumber, false)[0];
-        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "MLO-R_MLO-L", defaultImagesNumber, false)[0];
+        const imageLine1 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "CC-R_CC-L", defaultImagesNumber, false, getState)[0];
+        const imageLine2 = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), "MLO-R_MLO-L", defaultImagesNumber, false, getState)[0];
         showImageList = [imageLine1, imageLine2];
     } else {
         showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, true);
@@ -281,7 +281,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber} = getState().testView;
-    const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true);
+    const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
