@@ -943,7 +943,7 @@ class Attempt extends Component {
         )
     }
 
-    renderNormalScore1() {
+    renderNormalScore() {
         return (
             <div className={'normal-score-container'}>
                 {
@@ -1008,96 +1008,6 @@ class Attempt extends Component {
                 </div>
             </div>
         );
-    }
-
-    renderNormalScore() {
-        let specitifity, sensitivity, roc;
-        this.state.attemptInfo.scores.map((v) => {
-            if (v.metrics.name.indexOf('Specificity(%)') > -1) {
-                specitifity = Number(v.score);
-            }
-            if (v.metrics.name.indexOf('Sensitivity(%)') > -1) {
-                sensitivity = Number(v.score);
-            }
-            if (v.metrics.name.indexOf('ROC') > -1) {
-                roc = Number(v.score);
-            }
-        });
-        return (
-            <div className={'volpara-score-container'}>
-                <div className={'row'}>
-                    <div className={'col-md-6 score-data-container'}>
-                        <div className={'normal-score-data'}>
-
-                        </div>
-                    </div>
-                    <div className={'col-md-6 score-chart-container'}>
-                        <BoxplotChart
-                            title={'Specificity'}
-                            quartile_25={this.state.percentile.specificity[25]}
-                            quartile_50={this.state.percentile.specificity[50]}
-                            quartile_75={this.state.percentile.specificity[75]}
-                            value={specitifity}
-                        />
-                        <BoxplotChart
-                            title={'Sensitivity'}
-                            quartile_25={this.state.percentile.sensitivity[25]}
-                            quartile_50={this.state.percentile.sensitivity[50]}
-                            quartile_75={this.state.percentile.sensitivity[75]}
-                            value={sensitivity}
-                        />
-                        <BoxplotChart
-                            title={'ROC'}
-                            quartile_25={this.state.percentile.roc[25]}
-                            quartile_50={this.state.percentile.roc[50]}
-                            quartile_75={this.state.percentile.roc[75]}
-                            value={roc}
-                        />
-                    </div>
-                </div>
-                <div className={'row score-extra-container'}>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                        {
-                            this.state.attemptInfo.view_answer_time === null ?
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
-                        }
-                        <div className={'extra-button-container'}>
-                            <Button
-                                variant="contained"
-                                size="small"
-                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
-                                onClick={() => this.onGetCertPdf('normal')}
-                                disabled={this.state.attemptInfo.view_answer_time === null}
-                            >
-                                <SchoolIcon className={'mr-10'}/>
-                                <IntlMessages id="test.attempt.volparaCertTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    {this.renderVolparaScorePostBlock()}
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
-                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>
-                                <IntlMessages id="test.attempt.volparaNext"/>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
     }
 
     renderVolparaScorePostBlock() {
@@ -1174,7 +1084,7 @@ class Attempt extends Component {
             <div className={'volpara-score-container'}>
                 <div className={'row'}>
                     <div className={'col-md-6 score-data-container'}>
-                        <div className={'volpara-score-data'}>
+                        <div className={'score-data'}>
                             <div className={'score-title'}>
                                 <p><IntlMessages id="test.attempt.volparaScoreTitle1"/></p>
                                 <p><IntlMessages id="test.attempt.volparaScoreTitle2"/></p>
@@ -1394,10 +1304,10 @@ class Attempt extends Component {
         if (!this.state.loading) {
             return (
                 <div className={'attempt-container'}>
-                    {/*{*/}
-                    {/*    this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara' ? null :*/}
-                    {/*        ((this.state.attemptInfo.complete && this.state.attemptInfo.test_sets.has_post) ? this.renderStepperWithPost() : this.renderStepperNormal())*/}
-                    {/*}*/}
+                    {
+                        this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara' ? null :
+                            ((this.state.attemptInfo.complete && this.state.attemptInfo.test_sets.has_post) ? this.renderStepperWithPost() : this.renderStepperNormal())
+                    }
                     <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
                     {this.renderStepContent()}
                     <ExtraInfoModal

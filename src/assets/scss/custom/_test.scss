@@ -93,7 +93,7 @@
 }
 
 .attempt-container {
-  margin: 30px 0;
+  margin-bottom: 10px;
   color: white;
 
   .attempt-stepper {
@@ -216,9 +216,11 @@
   .normal-score-container {
     .rct-block {
       background-color: #343434;
+
       table {
         thead {
           background-color: #202020;
+
           tr {
             th {
               color: white;
@@ -226,11 +228,13 @@
             }
           }
         }
+
         tbody {
           tr {
             &:hover {
               background-color: rgba(255, 255, 255, 0.08);
             }
+
             td {
               border-top-color: #515151;
             }
@@ -243,7 +247,12 @@
   .volpara-score-container {
     .score-data-container {
       margin-top: 10px;
-      .score-data {
+
+      .normal-score-data {
+
+      }
+
+      .volpara-score-data {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -267,6 +276,7 @@
         .score-value {
           font-size: 120px;
           font-weight: bold;
+
           span {
             font-size: 70px;
             font-weight: 500;
@@ -334,8 +344,10 @@
           display: flex;
           flex-direction: row;
           justify-content: space-between;
+
           button {
             min-width: 110px;
+
             &.green-btn {
               background-color: #008a00 !important;
             }
@@ -429,6 +441,7 @@
       color: rgba(255, 255, 255, 0.4);
     }
   }
+
   .MuiInput-input {
     height: 20px;
     margin-top: 0;
@@ -440,6 +453,7 @@
       transition: background-color 5000s ease-in-out 0s;
       -webkit-text-fill-color: #fff !important;
     }
+
     &.Mui-disabled {
       background-color: #505050;
       cursor: not-allowed;
