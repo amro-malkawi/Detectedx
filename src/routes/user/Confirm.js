@@ -1,5 +1,5 @@
 /**
- * Sign Up With Firebase
+ * Sign Up
  */
 import React, {Component} from 'react';
 import * as Apis from 'Api';
