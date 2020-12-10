@@ -13,7 +13,7 @@ const GEThicknessSwitch = ({metaData, currentThicknessType, changeThicknessType}
     }
     return (
         <div className={'ge-thickness-switch'}>
-            <StyledToggleButtonGroup size="small" value={currentThicknessType} exclusive onChange={(e, type) => onChange(type)}>
+            <StyledToggleButtonGroup size="small" value={currentThicknessType} exclusive orientation="vertical" onChange={(e, type) => onChange(type)}>
                 <StyledToggleButton value="SLABS">
                     SLABS
                 </StyledToggleButton>

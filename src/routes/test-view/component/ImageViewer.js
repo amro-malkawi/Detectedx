@@ -83,6 +83,7 @@ class ImageViewer extends Component {
         cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
             this.imageWidth = image.width;
             this.imageHeight = image.height;
+            this.getValidImageRegion(image);
             cornerstone.displayImage(this.imageElement, image);
             this.initTools();
         });
@@ -107,7 +108,6 @@ class ImageViewer extends Component {
 
     }
 
-
     componentWillUnmount() {
         console.log('component unmount');
         this.isComponentMount = false;
@@ -122,6 +122,78 @@ class ImageViewer extends Component {
         cornerstone.disable(this.imageElement);
 
         if (this.webWorker) this.webWorker.terminate();
+    }
+
+    getValidImageRegion(image) {
+        const width = image.width;
+        const height = image.height;
+        const pixelData = image.getPixelData();
+        if(pixelData.length !== width * height * 4) return;
+        let left = 0, top = 0, right = 0, bottom = 0;
+        let noBlackFound = false;
+        // left of valid image
+        for(let i = 0; i < width; i++) {
+            noBlackFound = false;
+            for (let j = 0; j < height; j++) {
+                const seek = (j * width + i) * 4;
+                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
+                    noBlackFound = true;
+                    break;
+                }
+            }
+            if(noBlackFound) {
+                left = i + 1;
+                break;
+            }
+        }
+        // right of valid image
+        for(let i = width - 1; i >= 0; i--) {
+            noBlackFound = false;
+            for (let j = 0; j < height; j++) {
+                const seek = (j * width + i) * 4;
+                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
+                    noBlackFound = true;
+                    break;
+                }
+            }
+            if(noBlackFound) {
+                right = i + 1;
+                break;
+            }
+        }
+
+        // top of valid image
+        for (let j = 0; j < height; j++) {
+            noBlackFound = false;
+            for(let i = 0; i < width; i++) {
+                const seek = (j * width + i) * 4;
+                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
+                    noBlackFound = true;
+                    break;
+                }
+            }
+            if(noBlackFound) {
+                top = j + 1;
+                break;
+            }
+        }
+
+        // bottom of valid image
+        for (let j = height - 1; j >= 0; j--) {
+            noBlackFound = false;
+            for(let i = 0; i < width; i++) {
+                const seek = (j * width + i) * 4;
+                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
+                    noBlackFound = true;
+                    break;
+                }
+            }
+            if(noBlackFound) {
+                bottom = j + 1;
+                break;
+            }
+        }
+        console.log(left, top, right, bottom);
     }
 
     getMetaInfo() {
