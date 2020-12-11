@@ -246,10 +246,55 @@
 
   .volpara-score-container {
     .score-data-container {
-      margin-top: 10px;
+      margin: 5px 0;
 
       .normal-score-data {
+        display: flex;
+        flex-direction: column;
+        margin-right: 30px;
 
+        .score-circle-container {
+          display: flex;
+          justify-content: space-around;
+
+          .score-circle {
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-direction: column;
+            width: 200px;
+            height: 200px;
+            border-radius: 100px;
+            border: 3px solid #0D47A1;
+            padding: 20px;
+
+            div {
+              display: flex;
+              justify-content: space-around;
+              font-size: 18px;
+
+              &.score-circle-title {
+                justify-content: center;
+                font-weight: bold;
+                margin-bottom: 5px;
+              }
+            }
+          }
+        }
+
+        .score-table {
+          flex: 1;
+          margin-top: 30px;
+          background-color: #262627;
+          border-radius: 7px;
+
+          .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 20px;
+
+          }
+        }
       }
 
       .volpara-score-data {
@@ -294,20 +339,12 @@
     .score-chart-container {
       display: flex;
       flex-direction: column;
-      margin-top: 10px;
 
       .score-chart {
         padding: 20px;
         background-color: #262627;
         border-radius: 7px;
-
-        &:nth-child(1) {
-          margin-bottom: 5px;
-        }
-
-        &:nth-child(2) {
-          margin-top: 5px;
-        }
+        margin: 5px 0;
 
         .score-chart-title {
           font-size: 15px;

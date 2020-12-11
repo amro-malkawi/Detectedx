@@ -1028,7 +1028,24 @@ class Attempt extends Component {
                 <div className={'row'}>
                     <div className={'col-md-6 score-data-container'}>
                         <div className={'normal-score-data'}>
-
+                            <div className={'score-circle-container'}>
+                                <div className={'score-circle'}>
+                                    <div className={'score-circle-title'}>POSITIVES</div>
+                                    <div><span className={'text-green'}>True</span><span>{9}</span></div>
+                                    <div><span className={'text-red'}>False</span><span>{3}</span></div>
+                                </div>
+                                <div className={'score-circle'}>
+                                    <div className={'score-circle-title'}>NEGATIVES</div>
+                                    <div><span className={'text-green'}>True</span><span>{9}</span></div>
+                                    <div><span className={'text-red'}>False</span><span>{3}</span></div>
+                                </div>
+                            </div>
+                            <div className={'score-table'}>
+                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
+                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
+                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
+                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
+                            </div>
                         </div>
                     </div>
                     <div className={'col-md-6 score-chart-container'}>
