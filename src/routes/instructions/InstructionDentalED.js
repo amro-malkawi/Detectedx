@@ -52,7 +52,7 @@ export default function() {
                 <Col sm={12}>
                     <div>
                         <p> 1.	If an abnormality is detected, place your mouse pointer over the site you want to mark. </p>
-                        <p> 2.	Hold the control tab on your keyboard and simultaneously left click using the mouse. </p>
+                        <p> 2.	Double click on your mouse. </p>
                         <p> 3.	A pop-up menu will appear asking you to rate your level of confidence that the marked area contains an abnormality: </p>
                         <div className={'row'}>
                             <Col sm={6}>
