@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import PropTypes from "prop-types";
+import {Input} from 'reactstrap';
 import {
     select as d3Select,
     quantile as d3Quantile,
@@ -9,7 +11,6 @@ import {
     axisBottom as d3AxisBottom,
     axisTop as d3AxisTop,
 } from "d3"
-import PropTypes from "prop-types";
 
 class BoxplotChart extends Component {
 
@@ -134,10 +135,25 @@ class BoxplotChart extends Component {
 
     }
 
+    renderUserType() {
+        return (
+            <Input type="select" name="select" id="exampleSelect">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </Input>
+        )
+    }
+
     render() {
         return (
             <div className={'score-chart'}>
-                <p className={'score-chart-title'}>{this.props.title}</p>
+                <div>
+                    <span className={'score-chart-title'}>{this.props.title}</span>
+                    {this.renderUserType()}
+                </div>
                 <div ref={(ref) => (this.gaugeDiv = ref)}/>
             </div>
         )

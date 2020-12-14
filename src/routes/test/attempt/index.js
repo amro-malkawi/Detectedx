@@ -230,7 +230,7 @@ class Attempt extends Component {
                     return;
                 }
                 Apis.attemptsSavePostAnswer(this.state.attempts_id, JSON.stringify(postAnswer)).then((resp) => {
-                    if(this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
+                    if (this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
                         this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
                     } else {
                         this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
@@ -1011,8 +1011,20 @@ class Attempt extends Component {
     }
 
     renderNormalScore() {
-        let specitifity, sensitivity, roc;
+        let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
         this.state.attemptInfo.scores.map((v) => {
+            if(v.metrics.name.indexOf('True Positive') > -1) {
+                truePositives = Number(v.score);
+            }
+            if(v.metrics.name.indexOf('False Positive') > -1) {
+                falsePositives = Number(v.score);
+            }
+            if(v.metrics.name.indexOf('True Negative') > -1) {
+                trueNegatives = Number(v.score);
+            }
+            if(v.metrics.name.indexOf('False Negative') > -1) {
+                falseNegatives = Number(v.score);
+            }
             if (v.metrics.name.indexOf('Specificity(%)') > -1) {
                 specitifity = Number(v.score);
             }
@@ -1023,6 +1035,7 @@ class Attempt extends Component {
                 roc = Number(v.score);
             }
         });
+
         return (
             <div className={'volpara-score-container'}>
                 <div className={'row'}>
@@ -1031,40 +1044,41 @@ class Attempt extends Component {
                             <div className={'score-circle-container'}>
                                 <div className={'score-circle'}>
                                     <div className={'score-circle-title'}>POSITIVES</div>
-                                    <div><span className={'text-green'}>True</span><span>{9}</span></div>
-                                    <div><span className={'text-red'}>False</span><span>{3}</span></div>
+                                    <div><span className={'text-green'}>True</span><span>{truePositives}</span></div>
+                                    <div><span className={'text-red'}>False</span><span>{falsePositives}</span></div>
                                 </div>
                                 <div className={'score-circle'}>
                                     <div className={'score-circle-title'}>NEGATIVES</div>
-                                    <div><span className={'text-green'}>True</span><span>{9}</span></div>
-                                    <div><span className={'text-red'}>False</span><span>{3}</span></div>
+                                    <div><span className={'text-green'}>True</span><span>{trueNegatives}</span></div>
+                                    <div><span className={'text-red'}>False</span><span>{falseNegatives}</span></div>
                                 </div>
                             </div>
                             <div className={'score-table'}>
-                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
-                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
-                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
-                                <div className={'score-row'}><span>Sensitivity</span><span>100%</span></div>
+                                {
+                                    this.state.attemptInfo.scores.map((v, i) => (
+                                        <div className={'score-row'} key={i}><span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                    ))
+                                }
                             </div>
                         </div>
                     </div>
                     <div className={'col-md-6 score-chart-container'}>
                         <BoxplotChart
-                            title={'Specificity'}
-                            quartile_25={this.state.percentile.specificity[25]}
-                            quartile_50={this.state.percentile.specificity[50]}
-                            quartile_75={this.state.percentile.specificity[75]}
-                            value={specitifity}
-                        />
-                        <BoxplotChart
-                            title={'Sensitivity'}
+                            title={'Sensitivity compared to'}
                             quartile_25={this.state.percentile.sensitivity[25]}
                             quartile_50={this.state.percentile.sensitivity[50]}
                             quartile_75={this.state.percentile.sensitivity[75]}
                             value={sensitivity}
                         />
                         <BoxplotChart
-                            title={'ROC'}
+                            title={'Specificity compared to'}
+                            quartile_25={this.state.percentile.specificity[25]}
+                            quartile_50={this.state.percentile.specificity[50]}
+                            quartile_75={this.state.percentile.specificity[75]}
+                            value={specitifity}
+                        />
+                        <BoxplotChart
+                            title={'ROC compared to'}
                             quartile_25={this.state.percentile.roc[25]}
                             quartile_50={this.state.percentile.roc[50]}
                             quartile_75={this.state.percentile.roc[75]}
