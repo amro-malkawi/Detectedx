@@ -150,8 +150,8 @@ class BoxplotChart extends Component {
     render() {
         return (
             <div className={'score-chart'}>
-                <div>
-                    <span className={'score-chart-title'}>{this.props.title}</span>
+                <div className={'score-chart-title'}>
+                    <span>{this.props.title}</span>
                     {this.renderUserType()}
                 </div>
                 <div ref={(ref) => (this.gaugeDiv = ref)}/>
