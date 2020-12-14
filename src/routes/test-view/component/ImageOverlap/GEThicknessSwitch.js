@@ -5,14 +5,25 @@ import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {changeThicknessType} from "Actions/TestViewAction";
+import IntlMessages from "Util/IntlMessages";
 
-const GEThicknessSwitch = ({metaData, currentThicknessType, changeThicknessType}) => {
-    if(currentThicknessType === 'NOTHICKNESS' || (metaData.positionDesc !== 'GE-PLANES' && metaData.positionDesc !== 'GE-SLABS')) return null;
+const GEThicknessSwitch = ({metaData, age, currentThicknessType, changeThicknessType}) => {
+    // if(currentThicknessType === 'NOTHICKNESS' || (metaData.positionDesc !== 'GE-PLANES' && metaData.positionDesc !== 'GE-SLABS')) return null;
     const onChange = (type) => {
         if(type !== null) changeThicknessType(type);
     }
-    return (
-        <div className={'ge-thickness-switch'}>
+
+    const renderAge = () => {
+        if(age !== 0) {
+            return <div className="age-info status fs-14 text-white"><IntlMessages id="testView.age"/>: {age}</div>
+        } else {
+            return null;
+        }
+    }
+
+    const renderToggleButtonGroup = () => {
+        if(currentThicknessType === 'NOTHICKNESS' || (metaData.positionDesc !== 'GE-PLANES' && metaData.positionDesc !== 'GE-SLABS')) return null;
+        return (
             <StyledToggleButtonGroup size="small" value={currentThicknessType} exclusive orientation="vertical" onChange={(e, type) => onChange(type)}>
                 <StyledToggleButton value="SLABS">
                     SLABS
@@ -21,6 +32,13 @@ const GEThicknessSwitch = ({metaData, currentThicknessType, changeThicknessType}
                     PLANES
                 </StyledToggleButton>
             </StyledToggleButtonGroup>
+        )
+    }
+
+    return (
+        <div className={'ge-thickness-switch'}>
+            {renderAge()}
+            {renderToggleButtonGroup()}
         </div>
     )
 }
@@ -39,6 +57,7 @@ export default withRouter(connect(mapStateToProps, {
 
 const StyledToggleButtonGroup = withStyles((theme) => ({
     root: {
+        marginTop: 7,
         backgroundColor: 'grey'
     }
 }))(ToggleButtonGroup);

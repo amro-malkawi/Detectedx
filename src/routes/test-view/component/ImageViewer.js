@@ -931,7 +931,10 @@ class ImageViewer extends Component {
                         </a>
                     }
                 </div>
-                <GEThicknessSwitch metaData={this.props.imageInfo.metaData}/>
+                <GEThicknessSwitch
+                    age={this.state.age}
+                    metaData={this.props.imageInfo.metaData}
+                />
                 {this.renderImageQuality()}
                 <ResizeDetector
                     handleWidth
@@ -949,9 +952,6 @@ class ImageViewer extends Component {
                     totalCount={this.state.downStatus.length}
                     downCount={this.state.downStatus.filter((v) => v).length}
                 />
-                {
-                    this.state.age !==0 &&  <div className="age-info status"><IntlMessages id="testView.age"/>: {this.state.age}</div>
-                }
                 <div className="location status"/>
                 <div className="zoom status"/>
                 <div className="window status"/>

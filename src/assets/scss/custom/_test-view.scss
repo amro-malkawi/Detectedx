@@ -221,8 +221,8 @@ div.viewer {
 
           .ge-thickness-switch {
             position: absolute;
-            top: 50px;
-            left: 22px;
+            top: 40px;
+            left: 13px;
           }
 
           .individual-quality-btn {
@@ -237,15 +237,11 @@ div.viewer {
             }
           }
 
-          .age-info, .window, .zoom, .location {
+          .window, .zoom, .location {
             position: absolute;
             left: 10px;
             color: white;
             font-size: 14px;
-          }
-
-          .age-info {
-            top: 40px;
           }
 
           .window {
