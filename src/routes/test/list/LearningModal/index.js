@@ -6,6 +6,7 @@ import USCovidStartModal from "./USCovidStartModal";
 import LearningVolparaModal from "./LearningVolparaModal";
 import LearningVolparaPostModal from "./LearningVolparaPostModal";
 import LearningDeltalEDModal from "./LearningDeltalEDModal";
+import LearningLungEDModal from "./LearningLungEDModal";
 
 export default ({open, type, name, postTestCount, credit, onClose}) => {
     if(!open) return null;
@@ -24,6 +25,8 @@ export default ({open, type, name, postTestCount, credit, onClose}) => {
         return <LearningVolparaPostModal name={name} postTestCount={postTestCount} credit={credit} open={open} onClose={onClose} />
     } else if (type === 'dentalED') {
         return <LearningDeltalEDModal open={open} onClose={onClose} />
+    } else if( type === 'LUNGED') {
+        return <LearningLungEDModal open={open} onClose={onClose} />
     } else {
         return null;
     }

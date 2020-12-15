@@ -9,22 +9,22 @@ export default function() {
                 <img src={require("Assets/img/instruction/toolbar_lungED.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_next.png")} className={'mr-10'} height={40} alt={''}/>takes you to the next case.
+                <img src={require("Assets/img/instruction/btn_next.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the next case.
             </p>
             <p>
                 <img src={require("Assets/img/instruction/btn_instruction.png")} className={'mr-10'} height={40} alt={''}/>Opens this document.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>will take you to the Tests main page.
+                <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the Tests main page.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'mr-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
+                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'mr-10'} height={40} alt={''}/>Allows you to zoom in and out of an image, use mouse scroll to zoom.
             </p>
             <p>
                 <img src={require("Assets/img/instruction/icon_window.png")} className={'mr-10'} height={40} alt={''}/>Changes contrast and brightness for an image, click and drag left/right for contrast or up/down for brightness.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold then move the mouse to move an image
+                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold, then move the mouse to move an image
             </p>
             <p>
                 <img src={require("Assets/img/instruction/icon_length.png")} className={'mr-10'} height={40} alt={''}/>To measure the distance between two points, select the length tool, then click on the two points in the image to measure the distance.
@@ -33,7 +33,7 @@ export default function() {
                 <img src={require("Assets/img/instruction/icon_grid.png")} className={'mr-10'} height={40} alt={''}/>Click on the Grid button to change the screen configeration, please see below for more information.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_reset.png")} className={'mr-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, images)
+                <img src={require("Assets/img/instruction/icon_reset.png")} className={'mr-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, Images)
             </p>
             <p>
                 <img src={require("Assets/img/instruction/icon_hanging.png")} className={'mr-10'} height={40} alt={''}/>Change the hanging protocol for the case (different views and show priors if available)
@@ -45,7 +45,7 @@ export default function() {
                 <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'mr-10'} height={40} alt={''}/>Delete cancer selection
+                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'mr-10'} height={40} alt={''}/>Delete all cancer selections
             </p>
             <hr/>
 
@@ -78,7 +78,7 @@ export default function() {
             <p className={'sub-menu-title'}> Slices </p>
             <div className={'row'}>
                 <Col sm={12}>
-                    <p> Each breast view has a slide bar to help you navigate through the image slices. Use the mouse or the up/down arrow keys on your keyboard to move through the slices for each view. </p>
+                    <p> Each lung view has a slide bar to help you navigate through the image slices. Use the mouse or the up/down arrow keys on your keyboard to move through the slices for each view. </p>
                     <img src={require('Assets/img/instruction/img_lungED1.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
@@ -92,10 +92,26 @@ export default function() {
                         <p> 2. Double-click to mark a nodule </p>
                         <p> 3. A pop-up menu will appear asking you to rate the nodule: </p>
                         <ul>
-                            <li>2 = Benign</li>
-                            <li>3 = Probably benign</li>
-                            <li>4A = Probably suspicious</li>
-                            <li>4B/X = Suspicious</li>
+                            <li>
+                                1 = Negative
+                                <span style={{display: 'block', fontSize: 12}}>No nodules and definitely benign nodules</span>
+                            </li>
+                            <li>
+                                2 = Benign
+                                <span style={{display: 'block', fontSize: 12}}>Nodules with a very low likelihood of becoming a clinically active cancer due to size or lack of growth</span>
+                            </li>
+                            <li>
+                                3 = Probably benign
+                                <span style={{display: 'block', fontSize: 12}}>Probably benign finding(s) ‐ _short term follow up suggested; includes nodules with a low likelihood of becoming a clinically active cancer</span>
+                            </li>
+                            <li>
+                                4A = Probably suspicious
+                                <span style={{display: 'block', fontSize: 12}}>Findings for which additional diagnostic testing is recommended</span>
+                            </li>
+                            <li>
+                                4B/X = Suspicious
+                                <span style={{display: 'block', fontSize: 12}}>Findings for which additional diagnostic testing and/or tissue sampling is recommended</span>
+                            </li>
                         </ul>
                     </div>
                 </Col>
@@ -104,9 +120,13 @@ export default function() {
                 </Col>
             </div>
             <hr/>
-            <p>
-                Tip: Rating a case 3, 4A, or 4B/X, means you are calling this <span style={{color: '#42A5F5'}}>a positive case, i.e. it requires further investigation / assessment.</span>
-            </p>
+            <p> Tips </p>
+            <div>
+                <ul>
+                    <li>Clicking “Next” without marking on the case will rate it as <span style={{color: '#42A5F5'}}>1 (Negative)</span>.</li>
+                    <li>Rating a case 3, 4A, or 4B/X, means you are calling this <span style={{color: '#42A5F5'}}>a positive case,. i.e. it requires further investigation / assessment</span>.</li>
+                </ul>
+            </div>
             <hr/>
 
             <div className={'row'}>
@@ -118,7 +138,6 @@ export default function() {
                             <li>click on <img src={require('Assets/img/instruction/img_select_lesion.png')} height={35} alt={''}/></li>
                             <li>a list of nodule types will appear.</li>
                             <li>Click on nodule type to select it.</li>
-                            <li>Other selection boxes will appear depending on your choice.</li>
                         </ul>
                         <p>
                             Tip: If you want to add a second nodule, please repeat all the above steps.

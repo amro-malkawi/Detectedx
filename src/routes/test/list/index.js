@@ -56,6 +56,8 @@ class List extends Component {
             type = test_set.has_post ? 'has_post_covid' : 'covid';
         } else if (instruction_type === 'VOLPARA') {
             type = test_set.has_post ? 'has_post_volpara' : 'volpara';
+        } else if (instruction_type === 'LUNGED') {
+            type = 'LUNGED';
         } else {
             type = test_set.has_post ? 'has_post' : 'normal';
         }
