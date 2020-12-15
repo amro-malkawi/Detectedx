@@ -1,11 +1,13 @@
 /**
  * Test View Actions
  */
+import $ from 'jquery';
 import {batch} from 'react-redux'
 import {
     TEST_VIEW_SET_IMAGE_LIST,
     TEST_VIEW_CHANGE_IMAGE_LIST,
     TEST_VIEW_SET_SHOW_IMAGE_LIST,
+    TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
     TEST_VIEW_SET_SHOW_IMAGE_BROWSER,
     TEST_VIEW_SET_HANGING_TYPE,
     TEST_VIEW_SET_RESET_ID,
@@ -127,6 +129,40 @@ const getImageHangingIdList = (images) => {
     }
 }
 
+const calcInitialZoomLevel = (showImageIds, totalImageObjList) => {
+    if(showImageIds.length === 0 || showImageIds[0].length === 0) return 0;
+    const imageObjList = showImageIds[0].map((v) => totalImageObjList.find((vv) => vv.id === v));
+    // calculate for initial position
+    try {
+        // get canvas width, height
+        let canvasWidth, canvasHeight;
+        const canvasInstance = $('div.image-row');
+        if (canvasInstance.length === 0) {
+            //did not load
+            canvasWidth = $(window).width();
+            canvasHeight = $(window).height() - 80;
+        } else {
+            canvasWidth = canvasInstance.width();
+            canvasHeight = canvasInstance.height();
+        }
+        let imgMaxRealWidth = 0;
+        let imgMaxRealHeight = 0;
+        imageObjList.forEach((img) => {
+            try {
+                const region = img.real_content_region.split(',');  //left,top,right,bottom
+                if((Number(region[2]) - Number(region[0])) > imgMaxRealWidth) imgMaxRealWidth = (Number(region[2]) - Number(region[0]));
+                if((Number(region[3]) - Number(region[1])) > imgMaxRealHeight) imgMaxRealHeight = (Number(region[3]) - Number(region[1]));
+            } catch (e) {}
+        });
+        if(imgMaxRealWidth === 0 || imgMaxRealHeight === 0) return 0;
+        const widthZoom = Number(((Math.floor(canvasWidth /  imageObjList.length)) / imgMaxRealWidth).toFixed(2));
+        const heightZoom = Number((canvasHeight / imgMaxRealHeight).toFixed(2));
+        if(widthZoom > heightZoom) return heightZoom;
+        return widthZoom;
+    } catch (e) {
+    }
+    return 0;
+}
 
 const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, currentThicknessType) => {
     const typeArray = type.split('_');
@@ -262,7 +298,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
 
     const selectedHangingType = getState().testView.selectedHangingType;
-    let showImageList;
+    let showImageList, initialZoomLevel;
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
     if (volparaImage !== undefined) {
@@ -276,11 +312,13 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             "MLO-R_MLO-L", defaultImagesNumber,
             false, getState().testView.currentThicknessType)[0];
         showImageList = [imageLine1, imageLine2];
+        initialZoomLevel = 0;
     } else {
         showImageList = getHangingImageOrder(
             newList.filter(image => (image.type === 'test' || image.type === 'prior')),
             selectedHangingType, defaultImagesNumber,
             true, getState().testView.currentThicknessType);
+        initialZoomLevel = calcInitialZoomLevel(showImageList, newList);
     }
     showImageList = showImageList.filter((v) => v.length !== 0);
     const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
@@ -288,6 +326,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         type: TEST_VIEW_SET_IMAGE_LIST,
         imageList: newList,
         showImageList,
+        initialZoomLevel,
         testSetHangingIdList,
         selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
         defaultImagesNumber,
@@ -301,10 +340,15 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 export const changeHangingLayout = (type) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber} = getState().testView;
     const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
+    const initialZoomLevel = calcInitialZoomLevel(list, imageList);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
             payload: list,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
+            payload: initialZoomLevel,
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -321,9 +365,15 @@ export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
     if (rowIndex === undefined || colIndex === undefined) return;
     const showImageList = [...getState().testView.showImageList];
     showImageList[rowIndex][colIndex] = id;
-    dispatch({
-        type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
-        payload: showImageList
+    batch(() => {
+        dispatch({
+            type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
+            payload: showImageList,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
+            payload: 0,
+        });
     });
 };
 
@@ -387,11 +437,15 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         }
         list.push(row);
     }
-
+    const initialZoomLevel = calcInitialZoomLevel(list, getState().testView.imageList);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
             payload: list,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
+            payload: initialZoomLevel,
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -403,10 +457,15 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
 export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber, selectedHangingType} = getState().testView;
     const list = getHangingImageOrder(imageList, selectedHangingType, defaultImagesNumber, true, thicknessType);
+    const initialZoomLevel = calcInitialZoomLevel(list, imageList);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
             payload: list,
+        });
+        dispatch({
+            type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
+            payload: initialZoomLevel,
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,

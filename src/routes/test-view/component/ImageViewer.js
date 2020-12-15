@@ -83,8 +83,8 @@ class ImageViewer extends Component {
         cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
             this.imageWidth = image.width;
             this.imageHeight = image.height;
-            this.getValidImageRegion(image);
-            cornerstone.displayImage(this.imageElement, image);
+            const initialViewport = this.getInitialViewport();
+            cornerstone.displayImage(this.imageElement, image, initialViewport);
             this.initTools();
         });
         this.initEvents();
@@ -124,76 +124,37 @@ class ImageViewer extends Component {
         if (this.webWorker) this.webWorker.terminate();
     }
 
-    getValidImageRegion(image) {
-        const width = image.width;
-        const height = image.height;
-        const pixelData = image.getPixelData();
-        if(pixelData.length !== width * height * 4) return;
-        let left = 0, top = 0, right = 0, bottom = 0;
-        let noBlackFound = false;
-        // left of valid image
-        for(let i = 0; i < width; i++) {
-            noBlackFound = false;
-            for (let j = 0; j < height; j++) {
-                const seek = (j * width + i) * 4;
-                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
-                    noBlackFound = true;
-                    break;
-                }
-            }
-            if(noBlackFound) {
-                left = i + 1;
-                break;
-            }
-        }
-        // right of valid image
-        for(let i = width - 1; i >= 0; i--) {
-            noBlackFound = false;
-            for (let j = 0; j < height; j++) {
-                const seek = (j * width + i) * 4;
-                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
-                    noBlackFound = true;
-                    break;
-                }
-            }
-            if(noBlackFound) {
-                right = i + 1;
-                break;
-            }
-        }
+    getInitialViewport() {
+        let initialViewport = {};
+        if (!isNaN(this.props.initialZoomLevel) && this.props.initialZoomLevel !== Infinity && this.props.initialZoomLevel !== 0) {
+            initialViewport.scale = this.props.initialZoomLevel;
 
-        // top of valid image
-        for (let j = 0; j < height; j++) {
-            noBlackFound = false;
-            for(let i = 0; i < width; i++) {
-                const seek = (j * width + i) * 4;
-                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
-                    noBlackFound = true;
-                    break;
+            try {
+                const imagePosition = cornerstone.metaData.get(
+                    'imagePosition',
+                    this.props.imageInfo.image_url_path
+                );
+                const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
+                const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
+                const realContentRegion = this.props.imageInfo.real_content_region.split(',');
+                const realContentLeft = Number(realContentRegion[0]);
+                const realContentTop = Number(realContentRegion[1]);
+                const realContentRight = Number(realContentRegion[2]);
+                const realContentBottom = Number(realContentRegion[3]);
+                let offsetX = 0, offsetY = 0;
+                if (imagePosition.imageLaterality === 'L') {
+                    offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
+                } else if (imagePosition.imageLaterality === 'R') {
+                    offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
                 }
-            }
-            if(noBlackFound) {
-                top = j + 1;
-                break;
+                if(imagePosition.positionDesc === 'V-PREVIEW') {
+                    offsetY = 385;
+                }
+                initialViewport.translation = {x: offsetX, y: offsetY};
+            } catch (e) {
             }
         }
-
-        // bottom of valid image
-        for (let j = height - 1; j >= 0; j--) {
-            noBlackFound = false;
-            for(let i = 0; i < width; i++) {
-                const seek = (j * width + i) * 4;
-                if(pixelData[seek] !== 0 || pixelData[seek + 1] !== 0 || pixelData[seek + 2] !== 0 || pixelData[seek + 3] !== 255) {
-                    noBlackFound = true;
-                    break;
-                }
-            }
-            if(noBlackFound) {
-                bottom = j + 1;
-                break;
-            }
-        }
-        console.log(left, top, right, bottom);
+        return initialViewport;
     }
 
     getMetaInfo() {
@@ -255,7 +216,7 @@ class ImageViewer extends Component {
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
         this.toolList.forEach(toolName => {
             // customized tool
-            if(toolName === 'Length') {
+            if (toolName === 'Length') {
                 cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
             } else {
                 cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
@@ -280,13 +241,13 @@ class ImageViewer extends Component {
 
         cornerstoneTools.addToolForElement(this.imageElement, ZoomTool, {
             configuration: {
-                minScale: viewport.scale
+                minScale: viewport.scale / 2
             }
         });
 
         cornerstoneTools.addToolForElement(this.imageElement, ZoomMouseWheelTool, {
             configuration: {
-                minScale: viewport.scale
+                minScale: viewport.scale / 2
             }
         });
         cornerstoneTools.addTool(ZoomTouchPinch, {configuration: {minScale: viewport.scale}});
@@ -344,7 +305,7 @@ class ImageViewer extends Component {
             this.handlePrefecthDone(true);
             imageIdGroups.reduce((accumulatorPromise, idGroup) => {
                 return accumulatorPromise.then(() => {
-                    if(!this.isComponentMount) {
+                    if (!this.isComponentMount) {
                         return Promise.resolve();
                     } else {
                         return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
@@ -632,9 +593,9 @@ class ImageViewer extends Component {
 
     handleDatasetsCacheChanged(event) {
         console.log('cache changed')
-        if(this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
+        if (this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
             cornerstone.loadImage(event.detail.uri).then((image) => {
-                if(this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
+                if (this.state.imageIds[cornerstoneTools.getToolState(this.imageElement, 'stack').data[0].currentImageIdIndex] === event.detail.uri) {
                     cornerstone.displayImage(this.imageElement, image);
                 }
             });
@@ -743,7 +704,7 @@ class ImageViewer extends Component {
     }
 
     onClearSymbols() {
-        if(this.tempMeasureToolData !== null) {
+        if (this.tempMeasureToolData !== null) {
             return;
         }
         if (this.props.currentTool.indexOf('Marker') !== 0) {
@@ -768,7 +729,7 @@ class ImageViewer extends Component {
         let windowWidth = Math.round(eventData.viewport.voi.windowWidth);
         let windowLength = Math.round(eventData.viewport.voi.windowCenter);
         const zoom = eventData.viewport.scale.toFixed(2);
-        if(this.props.imageInfo.ww !== 0 && this.props.imageInfo.wc !== 0) {
+        if (this.props.imageInfo.ww !== 0 && this.props.imageInfo.wc !== 0) {
             windowWidth = Math.round(this.props.imageInfo.ww * windowWidth / 255);
             windowLength = Math.round(this.props.imageInfo.wc * windowLength / 128);
         }
@@ -968,6 +929,7 @@ const mapStateToProps = (state) => {
     return {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
+        initialZoomLevel: state.testView.initialZoomLevel,
     };
 };
 

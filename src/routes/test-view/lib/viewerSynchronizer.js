@@ -28,7 +28,6 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
     // Get the source and target viewports
     const sourceViewport = cornerstone.getViewport(sourceElement);
     const targetViewport = cornerstone.getViewport(targetElement);
-
     // Do nothing if the scale and translation are the same
     if (
         targetViewport.scale === sourceViewport.scale &&

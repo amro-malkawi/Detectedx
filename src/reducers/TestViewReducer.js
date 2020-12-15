@@ -12,7 +12,7 @@ import {
     TEST_VIEW_SET_FULL_IMAGE_QUALITY,
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
     TEST_VIEW_SET_CURRENT_TOOL,
-    TEST_VIEW_SET_THICKNESS_TYPE,
+    TEST_VIEW_SET_THICKNESS_TYPE, TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
 } from 'Actions/types';
 
 const INIT_STATE = {
@@ -20,6 +20,7 @@ const INIT_STATE = {
     imageList: [],
     imageQuality: -1,
     showImageList: [[]],
+    initialZoomLevel: 0,
     isShowImageBrowser: false,
     testSetHangingIdList: [],
     selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
@@ -38,6 +39,7 @@ export default (state = INIT_STATE, action) => {
                 ...state,
                 imageList: action.imageList,
                 showImageList: action.showImageList,
+                initialZoomLevel: action.initialZoomLevel,
                 testSetHangingIdList: action.testSetHangingIdList,
                 selectedHangingType: action.selectedHangingType,
                 defaultImagesNumber: action.defaultImagesNumber,
@@ -51,6 +53,8 @@ export default (state = INIT_STATE, action) => {
             return { ...state, imageList: action.payload};
         case TEST_VIEW_SET_SHOW_IMAGE_LIST:
             return { ...state, showImageList: action.payload };
+        case TEST_VIEW_SET_INITIAL_ZOOM_LEVEL:
+            return { ...state, initialZoomLevel: action.payload };
         case TEST_VIEW_SET_SHOW_IMAGE_BROWSER:
             return { ...state, isShowImageBrowser: action.payload };
         case TEST_VIEW_SET_HANGING_TYPE:
