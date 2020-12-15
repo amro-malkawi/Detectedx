@@ -85,7 +85,6 @@ class Attempt extends Component {
             Apis.attemptsDetail(that.state.attempts_id),
             Apis.attemptsQuestionnaire(that.state.attempts_id),
             Apis.attemptsPercentile(that.state.attempts_id),
-
         ]).then(function ([detail, questionnaires, percentile]) {
             const hiddenTabs = JSONParseDefault(detail.test_sets.test_set_hidden_tabs, null, []);
             let steps;

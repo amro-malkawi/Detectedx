@@ -259,11 +259,6 @@ export function attemptsCertificatePdf(id, type) {
     });
 }
 
-export function attemptsPercentile(id) {
-    const url = '/attempts/' + id + '/percentile?access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
-
 export function attemptsQuality(id, test_case_id, quality) {
     const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
     return instance.post(url, quality).then((response) => response.data);
@@ -313,6 +308,14 @@ export function attemptGetTestCaseComment(id, test_case_id) {
 
 export function attemptsSetProgress(id, progress) {
     let url = '/attempts/' + id + '/set_progress?progress=' + progress + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+/**
+ * score operation
+ */
+export function attemptsPercentile(attempt_id, type) {
+    const url = '/scores/attempt_percentile?attempt_id=' + attempt_id + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
