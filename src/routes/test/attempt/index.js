@@ -84,7 +84,7 @@ class Attempt extends Component {
         Promise.all([
             Apis.attemptsDetail(that.state.attempts_id),
             Apis.attemptsQuestionnaire(that.state.attempts_id),
-            Apis.attemptsPercentile(that.state.attempts_id),
+            Apis.attemptsPercentile1(that.state.attempts_id),
         ]).then(function ([detail, questionnaires, percentile]) {
             const hiddenTabs = JSONParseDefault(detail.test_sets.test_set_hidden_tabs, null, []);
             let steps;
@@ -1065,23 +1065,20 @@ class Attempt extends Component {
                     <div className={'col-md-6 score-chart-container'}>
                         <BoxplotChart
                             title={'Sensitivity compared to'}
-                            quartile_25={this.state.percentile.sensitivity[25]}
-                            quartile_50={this.state.percentile.sensitivity[50]}
-                            quartile_75={this.state.percentile.sensitivity[75]}
+                            score_type={'Sensitivity'}
+                            attempt_id={this.state.attempts_id}
                             value={sensitivity}
                         />
                         <BoxplotChart
                             title={'Specificity compared to'}
-                            quartile_25={this.state.percentile.specificity[25]}
-                            quartile_50={this.state.percentile.specificity[50]}
-                            quartile_75={this.state.percentile.specificity[75]}
+                            score_type={'Specificity'}
+                            attempt_id={this.state.attempts_id}
                             value={specitifity}
                         />
                         <BoxplotChart
                             title={'ROC compared to'}
-                            quartile_25={this.state.percentile.roc[25]}
-                            quartile_50={this.state.percentile.roc[50]}
-                            quartile_75={this.state.percentile.roc[75]}
+                            score_type={'ROC'}
+                            attempt_id={this.state.attempts_id}
                             value={roc}
                         />
                     </div>
@@ -1219,16 +1216,14 @@ class Attempt extends Component {
                     <div className={'col-md-6 score-chart-container'}>
                         <BoxplotChart
                             title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
-                            quartile_25={this.state.percentile.volpara.all[25]}
-                            quartile_50={this.state.percentile.volpara.all[50]}
-                            quartile_75={this.state.percentile.volpara.all[75]}
+                            score_type={'volpara_all'}
+                            attempt_id={this.state.attempts_id}
                             value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                         />
                         <BoxplotChart
                             title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
-                            quartile_25={this.state.percentile.volpara.region[25]}
-                            quartile_50={this.state.percentile.volpara.region[50]}
-                            quartile_75={this.state.percentile.volpara.region[75]}
+                            score_type={'volpara_region'}
+                            attempt_id={this.state.attempts_id}
                             value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                         />
                     </div>
