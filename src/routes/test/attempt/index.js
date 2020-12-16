@@ -52,7 +52,6 @@ class Attempt extends Component {
             isChangeAdditionalQuestions: false,
             postQuestions: [],
             isChangePostQuestions: false,
-            percentile: {},
             steps: [],
             stepIndex: 0,
             showModalType: '',
@@ -84,8 +83,7 @@ class Attempt extends Component {
         Promise.all([
             Apis.attemptsDetail(that.state.attempts_id),
             Apis.attemptsQuestionnaire(that.state.attempts_id),
-            Apis.attemptsPercentile1(that.state.attempts_id),
-        ]).then(function ([detail, questionnaires, percentile]) {
+        ]).then(function ([detail, questionnaires]) {
             const hiddenTabs = JSONParseDefault(detail.test_sets.test_set_hidden_tabs, null, []);
             let steps;
             const isFinishMainQuestions = questionnaires.main.length === 0 || questionnaires.main.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('mainQuestions') !== -1);
@@ -116,7 +114,6 @@ class Attempt extends Component {
                 postQuestions: questionnaires.post,
                 attemptInfo: detail,
                 post_stage: detail.post_stage,
-                percentile: percentile,
                 steps: steps,
                 stepIndex,
                 loading: false,
@@ -847,168 +844,6 @@ class Attempt extends Component {
         );
     }
 
-    renderGaugeChart() {
-        let specitifity, sensitivity, roc;
-        this.state.attemptInfo.scores.map((v) => {
-            if (v.metrics.name.indexOf('Specificity(%)') > -1) {
-                specitifity = Number(v.score);
-            }
-            if (v.metrics.name.indexOf('Sensitivity(%)') > -1) {
-                sensitivity = Number(v.score);
-            }
-            if (v.metrics.name.indexOf('ROC') > -1) {
-                roc = Number(v.score);
-            }
-        });
-        return (
-            <div>
-                <div className={'gauge-color mb-20'}>
-                    <div>
-                        <span>&#60;25th</span>
-                    </div>
-                    <div>
-                        <span>25th</span>
-                    </div>
-                    <div>
-                        <span>Median</span>
-                    </div>
-                    <div>
-                        <span>75th</span>
-                    </div>
-                </div>
-                {
-                    specitifity !== undefined ?
-                        <div className={'gauge-chart'}>
-                            <ReactSpeedometer
-                                fluidWidth
-                                maxValue={100}
-                                value={specitifity}
-                                labelValues={{
-                                    0: 0,
-                                    25: this.state.percentile.specificity[25],
-                                    50: this.state.percentile.specificity[50],
-                                    75: this.state.percentile.specificity[75],
-                                    100: 100
-                                }}
-                                segments={4}
-                                ringWidth={30}
-                                textColor={'#e0e0e0'}
-                                currentValueText="Specificity: ${value}%"
-                            />
-                        </div> : null
-                }
-                {
-                    sensitivity !== undefined ?
-                        <div className={'gauge-chart'}>
-                            <ReactSpeedometer
-                                fluidWidth
-                                maxValue={100}
-                                value={sensitivity}
-                                labelValues={{
-                                    0: 0,
-                                    25: this.state.percentile.sensitivity[25],
-                                    50: this.state.percentile.sensitivity[50],
-                                    75: this.state.percentile.sensitivity[75],
-                                    100: 100
-                                }}
-                                segments={4}
-                                ringWidth={30}
-                                textColor={'#e0e0e0'}
-                                currentValueText="Sensitivity: ${value}%"
-                            />
-                        </div> : null
-                }
-                {
-                    roc !== undefined && this.state.percentile.roc ?
-                        <div className={'gauge-chart mb-1'}>
-                            <ReactSpeedometer
-                                fluidWidth
-                                maxValue={1}
-                                labelValues={{
-                                    0: 0,
-                                    1: 1,
-                                    0.25: this.state.percentile.roc[25],
-                                    0.5: this.state.percentile.roc[50],
-                                    0.75: this.state.percentile.roc[75]
-                                }}
-                                value={roc}
-                                segments={4}
-                                ringWidth={30}
-                                textColor={'#e0e0e0'}
-                                currentValueText="ROC: ${value}"
-                            />
-                        </div> : null
-                }
-            </div>
-        )
-    }
-
-    renderNormalScore1() {
-        return (
-            <div className={'normal-score-container'}>
-                {
-                    !this.state.attemptInfo.test_sets.has_post ?
-                        <div className={'text-center p-10'}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                disabled={this.state.isDownCert}
-                                onClick={() => this.onGetCertPdf('normal')}
-                            >
-                                <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificate'/>
-                            </Button>
-                            {
-                                this.state.isDownCert &&
-                                <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>
-                            }
-                        </div> :
-                        <div className={'row m-10'}>
-                            <div className={'col-6'}>
-                                <IntlMessages id="test.attempt.scoreDesc1"/>
-                            </div>
-                            <div className={'col-6'}>
-                                <IntlMessages id="test.attempt.scoreDesc2"/>
-                            </div>
-                        </div>
-                }
-                <div className="row">
-                    <RctCollapsibleCard
-                        customClasses="p-20"
-                        colClasses="col-sm-12 col-md-6 col-lg-9"
-                        fullBlock
-                    >
-                        <table className="table table-middle table-hover mb-0">
-                            <thead>
-                            <tr>
-                                <th><IntlMessages id={"test.name"}/></th>
-                                <th><IntlMessages id={"test.value"}/></th>
-                                <th><IntlMessages id={"test.description"}/></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                this.state.attemptInfo.scores.map((v, i) => (
-                                    <tr key={i}>
-                                        <td>{v.metrics.name}</td>
-                                        <td>{v.score}</td>
-                                        <td className={'fs-13'}>
-                                            {v.metrics['description_' + this.props.locale] === undefined ? v.metrics.description : v.metrics['description_' + this.props.locale]}
-                                        </td>
-                                    </tr>
-                                ))
-                            }
-                            </tbody>
-                        </table>
-                    </RctCollapsibleCard>
-                    <RctCollapsibleCard
-                        colClasses="col-sm-12 col-md-6 col-lg-3"
-                    >
-                        {this.renderGaugeChart()}
-                    </RctCollapsibleCard>
-                </div>
-            </div>
-        );
-    }
 
     renderNormalScore() {
         let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;

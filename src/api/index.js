@@ -314,11 +314,6 @@ export function attemptsSetProgress(id, progress) {
 /**
  * score operation
  */
-export function attemptsPercentile1(attempt_id, type) {
-    const url = '/scores/attempt_percentile1?attempt_id=' + attempt_id + '&access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
-
 export function attemptsPercentile(attempt_id, score_type, user_position) {
     const url = `/scores/attempt_percentile?attempt_id=${attempt_id}&score_type=${score_type}&position=${user_position}` + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
