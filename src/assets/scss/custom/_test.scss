@@ -366,6 +366,7 @@
       flex-direction: column;
 
       .score-chart {
+        position: relative;
         padding: 20px;
         background-color: #262627;
         border-radius: 7px;
@@ -385,6 +386,18 @@
             background-color: #212121;
             border: 1px solid rgba(255, 255, 255, 0.23);
           }
+        }
+
+        .score-loading {
+          position: absolute;
+          left: 20px;
+          bottom: 27px;
+          right: 20px;
+          height: 100px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #000000cc;
         }
       }
     }

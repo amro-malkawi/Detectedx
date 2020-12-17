@@ -847,19 +847,25 @@ class Attempt extends Component {
 
     renderNormalScore() {
         let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
-        this.state.attemptInfo.scores.map((v) => {
+        const scoresForShow = [];
+        this.state.attemptInfo.scores.forEach((v) => {
             if(v.metrics.name.indexOf('True Positive') > -1) {
                 truePositives = Number(v.score);
+                return;
             }
             if(v.metrics.name.indexOf('False Positive') > -1) {
                 falsePositives = Number(v.score);
+                return;
             }
             if(v.metrics.name.indexOf('True Negative') > -1) {
                 trueNegatives = Number(v.score);
+                return;
             }
             if(v.metrics.name.indexOf('False Negative') > -1) {
                 falseNegatives = Number(v.score);
+                return;
             }
+            scoresForShow.push(v);
             if (v.metrics.name.indexOf('Specificity(%)') > -1) {
                 specitifity = Number(v.score);
             }
@@ -890,7 +896,7 @@ class Attempt extends Component {
                             </div>
                             <div className={'score-table'}>
                                 {
-                                    this.state.attemptInfo.scores.map((v, i) => (
+                                    scoresForShow.map((v, i) => (
                                         <div className={'score-row'} key={i}><span>{v.metrics.name}</span><span>{v.score}</span></div>
                                     ))
                                 }

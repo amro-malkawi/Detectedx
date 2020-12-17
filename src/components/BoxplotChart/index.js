@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from "prop-types";
 import {Input} from 'reactstrap';
+import CircularProgress from '@material-ui/core/CircularProgress'
 import {
     select as d3Select,
     quantile as d3Quantile,
@@ -25,6 +26,7 @@ class BoxplotChart extends Component {
             quartile_50: 0,
             quartile_75: 0,
             scoreTimes: 1,  // range 0~100: times = 1, range 0~1: times = 100
+            loading: true
         }
     }
 
@@ -48,7 +50,8 @@ class BoxplotChart extends Component {
                 quartile_25,
                 quartile_50,
                 quartile_75,
-                scoreTimes
+                scoreTimes,
+                loading: false
             }, () => {
                 this.renderBoxplot();
             });
@@ -56,7 +59,7 @@ class BoxplotChart extends Component {
     }
 
     onChangeUserPosition(userPosition) {
-        this.setState({userPosition}, () => {
+        this.setState({userPosition, loading: true}, () => {
             this.getData();
         });
     }
@@ -122,6 +125,7 @@ class BoxplotChart extends Component {
             .attr("stroke", "#8f8f8f");
 
         // boxes
+        // 25%
         svg
             .append("rect")
             .attr("x", x(q1))
@@ -130,7 +134,17 @@ class BoxplotChart extends Component {
             .attr("height", width)
             .attr("stroke", "transparent")
             .style("fill", "#69b4f3");
+        // svg
+        //     .append("text")
+        //     .attr("x", x(q1) - 11)
+        //     .attr("y", (center - width / 2) - 15)
+        //     .text("25%")
+        //     .style("font-size", "11px")
+        //     .style("font-family", "din-next-w01-light, sans-serif")
+        //     .attr("stroke", "#8f8f8f")
+        //     .attr("alignment-baseline","middle");
 
+        // 75%
         svg
             .append("rect")
             .attr("x", x(median))
@@ -139,6 +153,16 @@ class BoxplotChart extends Component {
             .attr("height", width)
             .attr("stroke", "transparent")
             .style("fill", "#1a5ea1");
+
+        // svg
+        //     .append("text")
+        //     .attr("x", x(q3) - 11)
+        //     .attr("y", (center - width / 2) - 15)
+        //     .text("75%")
+        //     .style("font-size", "11px")
+        //     .style("font-family", "din-next-w01-light, sans-serif")
+        //     .attr("stroke", "#8f8f8f")
+        //     .attr("alignment-baseline","middle");
 
         // median line
         svg
@@ -197,6 +221,9 @@ class BoxplotChart extends Component {
                     {this.renderUserType()}
                 </div>
                 <div ref={(ref) => (this.gaugeDiv = ref)}/>
+                {
+                    this.state.loading && <div className={'score-loading'}><CircularProgress /></div>
+                }
             </div>
         )
     }
