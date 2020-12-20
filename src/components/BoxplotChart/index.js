@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import PropTypes from "prop-types";
+import {Input} from 'reactstrap';
+import CircularProgress from '@material-ui/core/CircularProgress'
 import {
     select as d3Select,
     quantile as d3Quantile,
@@ -9,19 +12,61 @@ import {
     axisBottom as d3AxisBottom,
     axisTop as d3AxisTop,
 } from "d3"
-import PropTypes from "prop-types";
+import * as Apis from 'Api';
 
 class BoxplotChart extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            userPosition: 'all',
+            userPositionList: [],
+            score: 0,
+            quartile_25: 0,
+            quartile_50: 0,
+            quartile_75: 0,
+            scoreTimes: 1,  // range 0~100: times = 1, range 0~1: times = 100
+            loading: true
+        }
     }
 
     componentDidMount() {
-        this.renderBoxplot()
+        this.renderBoxplot();
+        this.getData();
+        Apis.userPositions().then((resp) => {
+            this.setState({userPositionList: resp})
+        });
+    }
+
+    getData() {
+        Apis.attemptsPercentile(this.props.attempt_id, this.props.score_type, this.state.userPosition).then((resp) => {
+            let quartile_25 = resp[25], quartile_50 = resp[50], quartile_75 = resp[75];
+            let scoreTimes = 1;
+            if(quartile_25 <= 1 && quartile_50 <=1 && quartile_75 <= 1 && resp['max'] <=1 ) {
+                scoreTimes = 100;
+            }
+
+            this.setState({
+                quartile_25,
+                quartile_50,
+                quartile_75,
+                scoreTimes,
+                loading: false
+            }, () => {
+                this.renderBoxplot();
+            });
+        });
+    }
+
+    onChangeUserPosition(userPosition) {
+        this.setState({userPosition, loading: true}, () => {
+            this.getData();
+        });
     }
 
     renderBoxplot() {
+        // empty all content
+        this.gaugeDiv.innerHTML = '';
         // set the dimensions and margins of the graph
         let margin = {top: 10, right: 30, bottom: 10, left: 30};
         let width = this.gaugeDiv.offsetWidth - margin.left - margin.right;
@@ -41,10 +86,10 @@ class BoxplotChart extends Component {
         // let q1 = d3Quantile(data_sorted, .25);
         // let median = d3Quantile(data_sorted, .5);
         // let q3 = d3Quantile(data_sorted, .75);
-        const q1 = this.props.quartile_25;
-        const median = this.props.quartile_50;
-        const q3 = this.props.quartile_75;
-        const value = this.props.value;
+        const q1 = this.state.quartile_25 * this.state.scoreTimes;
+        const median = this.state.quartile_50 * this.state.scoreTimes;
+        const q3 = this.state.quartile_75 * this.state.scoreTimes;
+        const value = this.props.value * this.state.scoreTimes;
 
         let min = q1 - (q3 - q1);
         min = min < 0 ? 0 : min;
@@ -63,7 +108,8 @@ class BoxplotChart extends Component {
             .attr("stroke", "#8f8f8f")
             .style("font-family", "din-next-w01-light, sans-serif")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3AxisBottom(x).tickValues([q1, median, q3, value]));
+            // .call(d3AxisBottom(x).tickValues([q1, median, q3, value]));
+            .call(d3AxisBottom(x).tickValues([q1, median, q3, value]).tickFormat(d => d / this.state.scoreTimes));
 
         // a few features for the box
         let center = 40;
@@ -79,6 +125,7 @@ class BoxplotChart extends Component {
             .attr("stroke", "#8f8f8f");
 
         // boxes
+        // 25%
         svg
             .append("rect")
             .attr("x", x(q1))
@@ -87,7 +134,17 @@ class BoxplotChart extends Component {
             .attr("height", width)
             .attr("stroke", "transparent")
             .style("fill", "#69b4f3");
+        // svg
+        //     .append("text")
+        //     .attr("x", x(q1) - 11)
+        //     .attr("y", (center - width / 2) - 15)
+        //     .text("25%")
+        //     .style("font-size", "11px")
+        //     .style("font-family", "din-next-w01-light, sans-serif")
+        //     .attr("stroke", "#8f8f8f")
+        //     .attr("alignment-baseline","middle");
 
+        // 75%
         svg
             .append("rect")
             .attr("x", x(median))
@@ -96,6 +153,16 @@ class BoxplotChart extends Component {
             .attr("height", width)
             .attr("stroke", "transparent")
             .style("fill", "#1a5ea1");
+
+        // svg
+        //     .append("text")
+        //     .attr("x", x(q3) - 11)
+        //     .attr("y", (center - width / 2) - 15)
+        //     .text("75%")
+        //     .style("font-size", "11px")
+        //     .style("font-family", "din-next-w01-light, sans-serif")
+        //     .attr("stroke", "#8f8f8f")
+        //     .attr("alignment-baseline","middle");
 
         // median line
         svg
@@ -134,11 +201,29 @@ class BoxplotChart extends Component {
 
     }
 
+    renderUserType() {
+        if(this.props.score_type.indexOf('volpara') !== -1) return null;
+        return (
+            <Input type="select" name="select" onChange={(e) => this.onChangeUserPosition(e.target.value)}>
+                <option value={'all'}>All</option>
+                {
+                    this.state.userPositionList.map((v) => <option value={v.id} key={v.id}>{v.name}</option>)
+                }
+            </Input>
+        )
+    }
+
     render() {
         return (
             <div className={'score-chart'}>
-                <p className={'score-chart-title'}>{this.props.title}</p>
+                <div className={'score-chart-title'}>
+                    <span>{this.props.title}</span>
+                    {this.renderUserType()}
+                </div>
                 <div ref={(ref) => (this.gaugeDiv = ref)}/>
+                {
+                    this.state.loading && <div className={'score-loading'}><CircularProgress /></div>
+                }
             </div>
         )
     }

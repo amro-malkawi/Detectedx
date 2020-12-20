@@ -12,15 +12,18 @@ import {
     Stepper,
     Step,
     StepButton,
-    CircularProgress,
+    CircularProgress, withStyles,
 } from '@material-ui/core';
 import SchoolIcon from '@material-ui/icons/School';
 import {NotificationManager} from 'react-notifications';
 import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
 import ReactSpeedometer from "Components/GaugeChart";
 import PostQuestionForm from "./PostQuestionForm";
+import BoxplotChart from "Components/BoxplotChart";
 import IntlMessages from "Util/IntlMessages";
 import JSONParseDefault from 'json-parse-default';
+import ExtraInfoModal from "./ExtraInfoModal";
+import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
@@ -52,17 +55,25 @@ class Attempt extends Component {
             percentile: {},
             steps: [],
             stepIndex: 0,
+            showModalType: '',
             loading: true,
             isDownCert: false,
         }
     }
 
     componentDidMount() {
+        document.getElementsByClassName('rct-page')[0].style.backgroundColor = "black";
+        // this.props.setDarkMode(true);
         this.getData(true);
+    }
+
+    componentWillUnmount() {
+        document.getElementsByClassName('rct-page')[0].style.backgroundColor = "#F4F7FA";
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.state.stepIndex !== nextState.stepIndex) {
+            console.log(nextState.steps[nextState.stepIndex])
             Apis.attemptsSetProgress(nextState.attempts_id, nextState.steps[nextState.stepIndex]);
         }
         return true;
@@ -219,7 +230,11 @@ class Attempt extends Component {
                     return;
                 }
                 Apis.attemptsSavePostAnswer(this.state.attempts_id, JSON.stringify(postAnswer)).then((resp) => {
-                    this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
+                    if(this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
+                        this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
+                    } else {
+                        this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
+                    }
                 }).catch((e) => {
                     console.warn(e);
                     NotificationManager.error(e.message);
@@ -797,40 +812,38 @@ class Attempt extends Component {
 
     renderStepperNormal() {
         return (
-            <div className={'d-flex'}>
-                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'attempt-stepper col'}>
-                    {this.state.steps.map((label, index) => {
-                        label = stepName[label];
-                        const props = {};
-                        const buttonProps = {};
-                        let stepCompleted = false;
-                        if (!this.state.attemptInfo.complete) {
-                            stepCompleted = index < this.state.stepIndex;
-                        } else {
-                            if (this.state.attemptInfo.test_sets.has_post) {
-                                if (this.state.post_stage === 0) {          // post test
-                                    stepCompleted = index < this.state.steps.indexOf('postTest');
-                                } else if (this.state.post_stage === 1) {   //post question
-                                    stepCompleted = index < this.state.steps.indexOf('postQuestions');
-                                } else if (this.state.post_stage >= 2) {   //post score
-                                    stepCompleted = true;
-                                }
-                            } else {
+            <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'attempt-stepper col'}>
+                {this.state.steps.map((label, index) => {
+                    label = stepName[label];
+                    const props = {};
+                    const buttonProps = {};
+                    let stepCompleted = false;
+                    if (!this.state.attemptInfo.complete) {
+                        stepCompleted = index < this.state.stepIndex;
+                    } else {
+                        if (this.state.attemptInfo.test_sets.has_post) {
+                            if (this.state.post_stage === 0) {          // post test
+                                stepCompleted = index < this.state.steps.indexOf('postTest');
+                            } else if (this.state.post_stage === 1) {   //post question
+                                stepCompleted = index < this.state.steps.indexOf('postQuestions');
+                            } else if (this.state.post_stage >= 2) {   //post score
                                 stepCompleted = true;
                             }
+                        } else {
+                            stepCompleted = true;
                         }
-                        stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
-                        return (
-                            <Step key={label} {...props}>
-                                <StepButton onClick={this.onClickStep(index)}
-                                            completed={stepCompleted} {...buttonProps}>
-                                    {label}
-                                </StepButton>
-                            </Step>
-                        );
-                    })}
-                </Stepper>
-            </div>
+                    }
+                    stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
+                    return (
+                        <Step key={label} {...props}>
+                            <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)}
+                                        completed={stepCompleted} {...buttonProps}>
+                                {label}
+                            </StepButton>
+                        </Step>
+                    );
+                })}
+            </Stepper>
         );
     }
 
@@ -879,6 +892,7 @@ class Attempt extends Component {
                                 }}
                                 segments={4}
                                 ringWidth={30}
+                                textColor={'#e0e0e0'}
                                 currentValueText="Specificity: ${value}%"
                             />
                         </div> : null
@@ -899,6 +913,7 @@ class Attempt extends Component {
                                 }}
                                 segments={4}
                                 ringWidth={30}
+                                textColor={'#e0e0e0'}
                                 currentValueText="Sensitivity: ${value}%"
                             />
                         </div> : null
@@ -919,10 +934,225 @@ class Attempt extends Component {
                                 value={roc}
                                 segments={4}
                                 ringWidth={30}
+                                textColor={'#e0e0e0'}
                                 currentValueText="ROC: ${value}"
                             />
                         </div> : null
                 }
+            </div>
+        )
+    }
+
+    renderNormalScore() {
+        return (
+            <div className={'normal-score-container'}>
+                {
+                    !this.state.attemptInfo.test_sets.has_post ?
+                        <div className={'text-center p-10'}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                disabled={this.state.isDownCert}
+                                onClick={() => this.onGetCertPdf('normal')}
+                            >
+                                <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificate'/>
+                            </Button>
+                            {
+                                this.state.isDownCert &&
+                                <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>
+                            }
+                        </div> :
+                        <div className={'row m-10'}>
+                            <div className={'col-6'}>
+                                <IntlMessages id="test.attempt.scoreDesc1"/>
+                            </div>
+                            <div className={'col-6'}>
+                                <IntlMessages id="test.attempt.scoreDesc2"/>
+                            </div>
+                        </div>
+                }
+                <div className="row">
+                    <RctCollapsibleCard
+                        customClasses="p-20"
+                        colClasses="col-sm-12 col-md-6 col-lg-9"
+                        fullBlock
+                    >
+                        <table className="table table-middle table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th><IntlMessages id={"test.name"}/></th>
+                                <th><IntlMessages id={"test.value"}/></th>
+                                <th><IntlMessages id={"test.description"}/></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                this.state.attemptInfo.scores.map((v, i) => (
+                                    <tr key={i}>
+                                        <td>{v.metrics.name}</td>
+                                        <td>{v.score}</td>
+                                        <td className={'fs-13'}>
+                                            {v.metrics['description_' + this.props.locale] === undefined ? v.metrics.description : v.metrics['description_' + this.props.locale]}
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                            </tbody>
+                        </table>
+                    </RctCollapsibleCard>
+                    <RctCollapsibleCard
+                        colClasses="col-sm-12 col-md-6 col-lg-3"
+                    >
+                        {this.renderGaugeChart()}
+                    </RctCollapsibleCard>
+                </div>
+            </div>
+        );
+    }
+
+    renderVolparaScorePostBlock() {
+        if (!this.state.attemptInfo.test_sets.has_post) return null;
+        if (this.state.post_stage === 0) {
+            // go to post test
+            if ((this.state.attemptInfo.post_test_remain_count < 0) || (this.state.attemptInfo.post_test_remain_count === 0 && this.state.attemptInfo.post_test_complete)) {
+                // faild post test
+                return (
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostFailedTitle"/></p>
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostFailedDesc"/></p>
+                        <div className={'extra-button-container'}>
+                            <DisableButton variant="contained" size="small" className="text-white grey-btn" disabled>
+                                <IntlMessages id="test.attempt.volparaPostFailedButton"/>
+                            </DisableButton>
+                        </div>
+                    </div>
+                )
+            } else {
+                return (
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostBeforeTitle"/></p>
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostBeforeDesc"/></p>
+                        <div className={'extra-button-container'}>
+                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onPostTest()}>
+                                <IntlMessages id="test.attempt.volparaPostBeforeButton"/>
+                            </Button>
+                        </div>
+                    </div>
+                )
+            }
+        } else if (this.state.post_stage === 1) {
+            // go to post answer
+            return (
+                <div className={'score-extra'}>
+                    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostProgressTitle"/></p>
+                    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostProgressDesc"/></p>
+                    <div className={'extra-button-container'}>
+                        <Button variant="contained" color="primary" size="small" className="text-white"
+                                onClick={() => this.setState({stepIndex: this.state.steps.findIndex((v) => v === 'postQuestions')})}
+                        >
+                            <IntlMessages id="test.attempt.volparaPostProgressButton"/>
+                        </Button>
+                    </div>
+                </div>
+            )
+        } else if (this.state.post_stage === 2) {
+            // download certification
+            const postScore = this.state.attemptInfo.scores_post === undefined || this.state.attemptInfo.scores_post.length === 0 ? 0 : this.state.attemptInfo.scores_post[0].score;
+            return (
+                <div className={'score-extra'}>
+                    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostCompleteTitle"/></p>
+                    <p className={'extra-desc'}><IntlMessages id={"test.attempt.volparaPostCompleteDesc"} values={{score: <span className={'text-primary'}>{postScore}%</span>}}/></p>
+                    <div className={'extra-button-container'}>
+                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('post_physicians')}>
+                            <SchoolIcon className={'mr-10'}/>
+                            <IntlMessages id="test.attempt.volparaPostCompleteButton1"/>
+                        </Button>
+                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('post_other')}>
+                            <SchoolIcon className={'mr-10'}/>
+                            <IntlMessages id="test.attempt.volparaPostCompleteButton2"/>
+                        </Button>
+                    </div>
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
+    renderVolparaScore() {
+        return (
+            <div className={'volpara-score-container'}>
+                <div className={'row'}>
+                    <div className={'col-md-6 score-data-container'}>
+                        <div className={'score-data'}>
+                            <div className={'score-title'}>
+                                <p><IntlMessages id="test.attempt.volparaScoreTitle1"/></p>
+                                <p><IntlMessages id="test.attempt.volparaScoreTitle2"/></p>
+                            </div>
+                            <p className={'score-value'}>
+                                {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                                <span>%</span></p>
+                            <p className={'score-desc'}><IntlMessages id="test.attempt.volparaScoreDesc"/></p>
+                        </div>
+                    </div>
+                    <div className={'col-md-6 score-chart-container'}>
+                        <BoxplotChart
+                            title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
+                            quartile_25={this.state.percentile.volpara.all[25]}
+                            quartile_50={this.state.percentile.volpara.all[50]}
+                            quartile_75={this.state.percentile.volpara.all[75]}
+                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                        />
+                        <BoxplotChart
+                            title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
+                            quartile_25={this.state.percentile.volpara.region[25]}
+                            quartile_50={this.state.percentile.volpara.region[50]}
+                            quartile_75={this.state.percentile.volpara.region[75]}
+                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                        />
+                    </div>
+                </div>
+                <div className={'row score-extra-container'}>
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
+                        {
+                            this.state.attemptInfo.view_answer_time === null ?
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                        }
+                        <div className={'extra-button-container'}>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
+                                onClick={() => this.onGetCertPdf('normal')}
+                                disabled={this.state.attemptInfo.view_answer_time === null}
+                            >
+                                <SchoolIcon className={'mr-10'}/>
+                                <IntlMessages id="test.attempt.volparaCertTitle"/>
+                            </Button>
+                        </div>
+                    </div>
+                    {this.renderVolparaScorePostBlock()}
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
+                        <div className={'extra-button-container'}>
+                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
+                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
+                            </Button>
+                        </div>
+                    </div>
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>
+                        <div className={'extra-button-container'}>
+                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>
+                                <IntlMessages id="test.attempt.volparaNext"/>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -956,111 +1186,44 @@ class Attempt extends Component {
                     </div>
                 );
             case 'score':
-                return (
-                    <div>
-                        {
-                            !this.state.attemptInfo.test_sets.has_post ?
-                                <div className={'text-center p-10'}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={this.state.isDownCert}
-                                        onClick={() => this.onGetCertPdf('normal')}
-                                    >
-                                        <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificate'/>
-                                    </Button>
-                                    {
-                                        this.state.isDownCert &&
-                                        <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>
-                                    }
-                                </div> :
-                                <div className={'row m-10'}>
-                                    <div className={'col-6'}>
-                                        <IntlMessages id="test.attempt.scoreDesc1"/>
-                                    </div>
-                                    <div className={'col-6'}>
-                                        <IntlMessages id="test.attempt.scoreDesc2"/>
-                                    </div>
-                                </div>
-                        }
-                        <div className="row">
-                            <RctCollapsibleCard
-                                customClasses="p-20"
-                                colClasses="col-sm-12 col-md-6 col-lg-9"
-                                fullBlock
-                            >
-                                <table className="table table-middle table-hover mb-0">
-                                    <thead>
-                                    <tr>
-                                        <th><IntlMessages id={"test.name"}/></th>
-                                        <th><IntlMessages id={"test.value"}/></th>
-                                        <th><IntlMessages id={"test.description"}/></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {
-                                        this.state.attemptInfo.scores.map((v, i) => (
-                                            <tr key={i}>
-                                                <td>{v.metrics.name}</td>
-                                                <td>{v.score}</td>
-                                                <td className={'fs-13'}>
-                                                    {v.metrics['description_' + this.props.locale] === undefined ? v.metrics.description : v.metrics['description_' + this.props.locale]}
-                                                </td>
-                                            </tr>
-                                        ))
-                                    }
-                                    </tbody>
-                                </table>
-                            </RctCollapsibleCard>
-                            <RctCollapsibleCard
-                                colClasses="col-sm-12 col-md-6 col-lg-3"
-                            >
-                                {this.renderGaugeChart()}
-                            </RctCollapsibleCard>
-                        </div>
-                    </div>
-                );
+                if (this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
+                    return this.renderNormalScore();
+                } else {
+                    return this.renderVolparaScore();
+                }
             case 'answer':
                 return (
-                    <div>
-                        <RctCollapsibleCard
-                            customClasses="p-20 text-center"
+                    <div className="p-20 mt-50 text-center">
+                        <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.answerViewText"}/>
+                        </div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className="text-white"
+                            onClick={() => this.onTest()}
                         >
-                            <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.answerViewText"}/>
-                            </div>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                className="text-white"
-                                onClick={() => this.onTest()}
-                            >
-                                <IntlMessages id={"test.viewAnswer"}/>
-                            </Button>
-                        </RctCollapsibleCard>
+                            <IntlMessages id={"test.viewAnswer"}/>
+                        </Button>
                     </div>
                 );
             case 'postTest':
                 if (this.state.attemptInfo.complete) {
                     return (
-                        <div>
-                            <RctCollapsibleCard
-                                customClasses="p-20 text-center"
+                        <div className={"p-20 mt-50 text-center"}>
+                            <p className="mb-5 fs-17"><IntlMessages id={"test.attempt.postTestText"}/></p>
+                            <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.testText3"}/></div>
+                            <DisableButton
+                                variant="contained"
+                                color="primary"
+                                className="text-white"
+                                onClick={() => this.onPostTest()}
+                                disabled={(this.state.attemptInfo.post_test_remain_count < 0) || (this.state.attemptInfo.post_test_remain_count === 0 && this.state.attemptInfo.post_test_complete)}
                             >
-                                <p className="mb-5 fs-17"><IntlMessages id={"test.attempt.postTestText"}/></p>
-                                <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.testText3"}/></div>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() => this.onPostTest()}
-                                    disabled={(this.state.attemptInfo.post_test_remain_count < 0) || (this.state.attemptInfo.post_test_remain_count === 0 && this.state.attemptInfo.post_test_complete)}
-                                >
-                                    {
-                                        this.state.post_stage === 0 ?
-                                            <IntlMessages id={"test.proceedPostTest"}/> : <IntlMessages id={"test.viewPostTest"}/>
-                                    }
-                                </Button>
-                            </RctCollapsibleCard>
+                                {
+                                    this.state.post_stage === 0 ?
+                                        <IntlMessages id={"test.proceedPostTest"}/> : <IntlMessages id={"test.viewPostTest"}/>
+                                }
+                            </DisableButton>
                         </div>
                     );
                 } else {
@@ -1082,13 +1245,14 @@ class Attempt extends Component {
                                 complete={this.state.attemptInfo.complete && this.state.post_stage > 1}
                                 isCovid={this.state.attemptInfo.test_sets.modalities.modality_type === 'covid'}
                             />
-                            {/*{this.renderQuestionnaire()}*/}
                             <div className={'text-center mt-70'}>
                                 {
                                     this.state.stepIndex > 0 ?
                                         <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id={"test.back"}/></Button> : null
                                 }
-                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id={"test.next"}/></Button>
+                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}>
+                                    <IntlMessages id={"test.next"}/>
+                                </Button>
                             </div>
                         </div>
                     );
@@ -1099,8 +1263,8 @@ class Attempt extends Component {
                 if (this.state.attemptInfo.complete && this.state.post_stage >= 2) {
                     const postScore = this.state.attemptInfo.scores_post === undefined || this.state.attemptInfo.scores_post.length === 0 ? 0 : this.state.attemptInfo.scores_post[0].score;
                     return (
-                        <RctCollapsibleCard
-                            customClasses="p-20 text-center"
+                        <div
+                            className="p-20 mt-50 text-center"
                         >
                             <p className="mb-50 fs-17"><IntlMessages id={"test.yourScore"}/> {postScore}%</p>
                             {
@@ -1126,7 +1290,7 @@ class Attempt extends Component {
                                         }
                                     </div> : null
                             }
-                        </RctCollapsibleCard>
+                        </div>
                     );
                 } else {
                     return null;
@@ -1139,10 +1303,17 @@ class Attempt extends Component {
     render() {
         if (!this.state.loading) {
             return (
-                <div className={'questionnaire-wrapper'}>
-                    <h1>{stepName[this.state.steps[this.state.stepIndex]]}</h1>
-                    {(this.state.attemptInfo.complete && this.state.attemptInfo.test_sets.has_post) ? this.renderStepperWithPost() : this.renderStepperNormal()}
+                <div className={'attempt-container'}>
+                    {
+                        this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara' ? null :
+                            ((this.state.attemptInfo.complete && this.state.attemptInfo.test_sets.has_post) ? this.renderStepperWithPost() : this.renderStepperNormal())
+                    }
+                    <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
                     {this.renderStepContent()}
+                    <ExtraInfoModal
+                        open={this.state.showModalType === 'extraInfo'}
+                        onClose={() => this.setState({showModalType: ''})}
+                    />
                 </div>
             )
         } else {
@@ -1151,6 +1322,11 @@ class Attempt extends Component {
     }
 }
 
+const DisableButton = withStyles((theme) => ({
+    disabled: {
+        backgroundColor: '#3c3c3c !important'
+    }
+}))(Button);
 
 // map state to props
 const mapStateToProps = (state) => {
@@ -1159,4 +1335,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default withRouter(connect(mapStateToProps)(Attempt));
+export default withRouter(connect(mapStateToProps, {setDarkMode})(Attempt));
