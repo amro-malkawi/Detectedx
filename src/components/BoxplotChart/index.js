@@ -42,7 +42,7 @@ class BoxplotChart extends Component {
         Apis.attemptsPercentile(this.props.attempt_id, this.props.score_type, this.state.userPosition).then((resp) => {
             let quartile_25 = resp[25], quartile_50 = resp[50], quartile_75 = resp[75];
             let scoreTimes = 1;
-            if(quartile_25 <= 1 && quartile_50 <=1 && quartile_75 <= 1 && resp['max'] <=1 ) {
+            if(quartile_25 <= 1 && quartile_50 <=1 && quartile_75 <= 1 && resp['max'] <=1 && this.props.value <= 1) {
                 scoreTimes = 100;
             }
 
@@ -99,6 +99,12 @@ class BoxplotChart extends Component {
         max = max > 100 ? 100 : max;
         max = max < value +2 ? value + 2 : max;
 
+        if(q1 === median && median === q3) {
+            min = -2;
+            max = 102;
+            console.log(min, max, value)
+        }
+
         // Show the x scale
         let x = d3ScaleLinear()
             .domain([min, max])
@@ -134,15 +140,17 @@ class BoxplotChart extends Component {
             .attr("height", width)
             .attr("stroke", "transparent")
             .style("fill", "#69b4f3");
-        // svg
-        //     .append("text")
-        //     .attr("x", x(q1) - 11)
-        //     .attr("y", (center - width / 2) - 15)
-        //     .text("25%")
-        //     .style("font-size", "11px")
-        //     .style("font-family", "din-next-w01-light, sans-serif")
-        //     .attr("stroke", "#8f8f8f")
-        //     .attr("alignment-baseline","middle");
+        if(x(median) - x(q1) > 25) {
+            svg
+                .append("text")
+                .attr("x", x(q1) - 11)
+                .attr("y", (center - width / 2) - 15)
+                .text("25%")
+                .style("font-size", "11px")
+                .style("font-family", "din-next-w01-light, sans-serif")
+                .attr("stroke", "#8f8f8f")
+                .attr("alignment-baseline", "middle");
+        }
 
         // 75%
         svg
@@ -153,24 +161,24 @@ class BoxplotChart extends Component {
             .attr("height", width)
             .attr("stroke", "transparent")
             .style("fill", "#1a5ea1");
-
-        // svg
-        //     .append("text")
-        //     .attr("x", x(q3) - 11)
-        //     .attr("y", (center - width / 2) - 15)
-        //     .text("75%")
-        //     .style("font-size", "11px")
-        //     .style("font-family", "din-next-w01-light, sans-serif")
-        //     .attr("stroke", "#8f8f8f")
-        //     .attr("alignment-baseline","middle");
-
+        if(x(q3) - x(median) > 25) {
+            svg
+                .append("text")
+                .attr("x", x(q3) - 11)
+                .attr("y", (center - width / 2) - 15)
+                .text("75%")
+                .style("font-size", "11px")
+                .style("font-family", "din-next-w01-light, sans-serif")
+                .attr("stroke", "#8f8f8f")
+                .attr("alignment-baseline", "middle");
+        }
         // median line
         svg
             .append("line")
             .attr("x1", x(median))
             .attr("y1", (center - width / 2) - 5)
             .attr("x2", x(median))
-            .attr("y2", center - width / 2)
+            .attr("y2", center + width / 2)
             .attr("stroke", "#8f8f8f");
 
         // median line text

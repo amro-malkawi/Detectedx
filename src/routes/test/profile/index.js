@@ -14,6 +14,7 @@ import {
     ExpansionPanelSummary
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import { red } from '@material-ui/core/colors';
 import {withStyles} from '@material-ui/core/styles';
@@ -28,6 +29,7 @@ import {NotificationManager} from "react-notifications";
 import moment from 'moment';
 import IntlMessages from "Util/IntlMessages";
 import PaymentModal from "Components/Payment/PaymentModal";
+import DeleteProfileModal from './DeleteProfileModal';
 
 export default class Profile extends Component {
 
@@ -66,8 +68,7 @@ export default class Profile extends Component {
             currentPassword: '',
             newPassword: '',
             confirmNewPassword: '',
-            showChangePasswordModal: false,
-            isShowSubscriptionModal: false,
+            showModalType: '',
             loading: true,
         }
     }
@@ -121,7 +122,7 @@ export default class Profile extends Component {
         }
     }
 
-    onSaveData() {
+    onSaveProfile() {
         if(this.state.userInfo.first_name === '' || this.state.userInfo.last_name === '') {
             NotificationManager.error("Please input username");
             return;
@@ -136,9 +137,13 @@ export default class Profile extends Component {
         })
     }
 
+    onClickDeleteProfile() {
+        this.setState({showModalType: 'deleteProfile'});
+    }
+
     onShowPasswordChangeModal() {
         this.setState({
-            showChangePasswordModal: true,
+            showModalType: 'changePassword',
             currentPassword: '',
             newPassword: '',
             confirmNewPassword: '',
@@ -154,7 +159,7 @@ export default class Profile extends Component {
             NotificationManager.error('Please confirm new password');
             return;
         }
-        this.setState({showChangePasswordModal: false});
+        this.setState({showModalType: ''});
         Apis.changePassword(this.state.currentPassword, this.state.newPassword).then((resp) => {
             NotificationManager.success("Password changed");
         }).catch(e => {
@@ -174,7 +179,7 @@ export default class Profile extends Component {
     }
 
     onFinishSubscribe() {
-        this.setState({isShowSubscriptionModal: false, loading: true}, () => {
+        this.setState({showModalType: '', loading: true}, () => {
             this.getData();
         })
     }
@@ -446,7 +451,7 @@ export default class Profile extends Component {
                                         size="small"
                                         color="primary"
                                         disabled={!this.state.userInfo.need_user_subscribe}
-                                        onClick={(e) => this.setState({isShowSubscriptionModal: true})}
+                                        onClick={(e) => this.setState({showModalType: 'subscription'})}
                                     >
                                         <IntlMessages id={"profile.subscribe"}/>
                                     </SubscriptionButton>
@@ -543,17 +548,21 @@ export default class Profile extends Component {
                             </table>
                         </RctCollapsibleCard>
                     </div>
-                    <div className={'d-flex justify-content-center'}>
-                        <Fab variant="extended" color="primary" aria-label="add" className={'m-1'} onClick={() => this.onSaveData()}>
+                    <div className={'d-flex justify-content-end mr-50'}>
+                        <Fab variant="extended" color="primary" aria-label="add" className={'m-1 mr-70'} onClick={() => this.onSaveProfile()}>
                             <SaveIcon className={'mr-1'} />
                             <IntlMessages id={"profile.update"} />
                         </Fab>
+                        <Fab variant="extended" aria-label="add" className={'m-1 btn-danger text-white'} onClick={() => this.onClickDeleteProfile()}>
+                            <DeleteForeverIcon className={'mr-1'} />
+                            <IntlMessages id={"profile.delete"} />
+                        </Fab>
                     </div>
                     <Modal
-                        isOpen={this.state.showChangePasswordModal}
-                        toggle={() => this.setState({showChangePasswordModal: false})}
+                        isOpen={this.state.showModalType === 'changePassword'}
+                        toggle={() => this.setState({showModalType: ''})}
                     >
-                        <ModalHeader toggle={() => this.setState({showChangePasswordModal: false})}>
+                        <ModalHeader toggle={() => this.setState({showModalType: ''})}>
                             <IntlMessages id={"profile.changePassword"}/>
                         </ModalHeader>
                         <ModalBody>
@@ -603,18 +612,19 @@ export default class Profile extends Component {
                             <Button
                                 variant="contained"
                                 className="btn-danger text-white bg-danger"
-                                onClick={() => this.setState({showChangePasswordModal: false})}
+                                onClick={() => this.setState({showModalType: 'changePassword'})}
                             >
                                 <IntlMessages id={"profile.cancel"}/>
                             </Button>
                         </ModalFooter>
                     </Modal>
+                    <DeleteProfileModal open={this.state.showModalType === 'deleteProfile'} onClose={() => this.setState({showModalType: ''})} />
                     {
-                        this.state.isShowSubscriptionModal &&
+                        this.state.showModalType === 'subscription' &&
                         <PaymentModal
                             type={'planSubscribe'}
                             onFinish={() => this.onFinishSubscribe()}
-                            onClose={() => this.setState({isShowSubscriptionModal: false})}
+                            onClose={() => this.setState({showModalType: ''})}
                         />
                     }
                 </div>

@@ -22,6 +22,7 @@ import * as Apis from 'Api';
 import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
 import JSONParseDefault from 'json-parse-default';
 import {connect} from "react-redux";
+import VideoModal from "Routes/instructions/VideoModal";
 
 class List extends Component {
 
@@ -35,6 +36,7 @@ class List extends Component {
             selectedId: null,
             isShowModalType: '',
             modalInfo: {},
+            showInstructionVideoModal: false,
         }
     }
 
@@ -50,7 +52,7 @@ class List extends Component {
 
     onLearningModal(modality_name, instruction_type, test_set) {
         let type;
-        if(modality_name === 'DentalED') {
+        if (modality_name === 'DentalED') {
             type = 'dentalED';
         } else if (instruction_type === 'COVID-19') {
             type = test_set.has_post ? 'has_post_covid' : 'covid';
@@ -136,7 +138,7 @@ class List extends Component {
     onInstruction(modality_info) {
         this.setState({
             isShowModalType: 'instructionModal',
-            modalInfo: {type: modality_info.instruction_type, video: {thumbnail: modality_info.instruction_video_thumbnail, link: modality_info.instruction_video}}
+            modalInfo: {type: modality_info.instruction_type}
         });
     }
 
@@ -256,23 +258,46 @@ class List extends Component {
         )
     }
 
-    renderModalityDesc(modality_desc) {
-        if(modality_desc === undefined || modality_desc === null) return <div className={'mt-50'}/>
+    renderModalityDesc(modality_info) {
+        const {modality_desc, instruction_video_thumbnail, instruction_video} = modality_info;
+        if (modality_desc === undefined || modality_desc === null) return <div className={'mt-50'}/>
         const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
         let descText = '';
-        if(typeof modalityDesc !== 'object') {
+        if (typeof modalityDesc !== 'object') {
             // if desc is not JSON type, will be shown this text
             descText = modality_desc;
-        } else if(modalityDesc[this.props.locale] !== undefined) {
+        } else if (modalityDesc[this.props.locale] !== undefined) {
             descText = modalityDesc[this.props.locale];
-        } else if(modalityDesc['en'] !== undefined) {
+        } else if (modalityDesc['en'] !== undefined) {
             descText = modalityDesc['en'];
         }
+        const unavailableDescText = (descText === null || descText === '');
+        const unavailableVideo = (instruction_video_thumbnail === undefined || instruction_video_thumbnail === '' || instruction_video === undefined || instruction_video === '');
 
-        if(descText === '') {
+        if (unavailableDescText && unavailableVideo) {
             return <div className={'mt-50'}/>
         } else {
-            return <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20 modality-desc-text" dangerouslySetInnerHTML={{__html: descText}} />
+            return (
+                <div className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
+                    {
+                        !unavailableDescText &&
+                        <div className={unavailableVideo ? 'col-sm-12' : 'col-sm-12 col-md-7'} dangerouslySetInnerHTML={{__html: descText}}/>
+                    }
+                    {
+                        !unavailableVideo &&
+                        <div className={(unavailableDescText ? 'col-sm-12' : 'col-md-5 col-sm-12') + ' instruction-video'}
+                             onClick={() => this.setState({
+                                 isShowModalType: 'instructionVideoModal',
+                                 modalInfo: {type: modality_info.instruction_type, video: instruction_video}
+                             })}
+                        >
+                            <img src={instruction_video_thumbnail} alt=''/>
+                            <p/>
+                            <i className="zmdi zmdi-play-circle-outline"/>
+                        </div>
+                    }
+                </div>
+            )
         }
     }
 
@@ -280,7 +305,7 @@ class List extends Component {
         return (
             <div className={'m-0'} key={modality_info.id}>
                 {
-                    this.renderModalityDesc(modality_info.modality_desc)
+                    this.renderModalityDesc(modality_info)
                 }
                 {
                     test_sets.map((item, index) => {
@@ -371,12 +396,16 @@ class List extends Component {
                     onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
                     theme={'white'}
                     type={this.state.modalInfo.type}
-                    video={this.state.modalInfo.video}
                 />
                 <TestSetCouponModal
                     isOpen={this.state.isShowModalType === 'couponModal'}
                     onFinish={() => this.getData()}
                     onClose={() => this.setState({isShowModalType: ''})}
+                />
+                <VideoModal
+                    open={this.state.isShowModalType === 'instructionVideoModal'}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                    link={this.state.modalInfo.video}
                 />
                 <SweetAlert
                     type={'default'}

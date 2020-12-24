@@ -109,6 +109,30 @@ function getOverlayPlaneModule(metaData) {
     };
 }
 
+function findValuesHelper(obj, key, list) {
+    if (!obj) return list;
+    if (obj instanceof Array) {
+        for (let i in obj) {
+            list = list.concat(findValuesHelper(obj[i], key, []));
+        }
+        return list;
+    }
+    if (obj[key]) list.push(obj[key]);
+
+    if ((typeof obj == "object") && (obj !== null) ){
+        let children = Object.keys(obj);
+        if (children.length > 0){
+            for (let i = 0; i < children.length; i++ ){
+                list = list.concat(findValuesHelper(obj[children[i]], key, []));
+            }
+        }
+    }
+    return list;
+}
+
+function recursiveFindTags(tag, metaDataSet) {
+    return findValuesHelper(metaDataSet, tag, []);
+}
 
 function metaDataProvider(type, imageId) {
     const metaData = dataSetCacheManager.getMetaDataSet(imageId);
@@ -174,7 +198,7 @@ function metaDataProvider(type, imageId) {
 
         const imagePosition = {
             viewPosition: viewPosition ? viewPosition : '',
-            imageLaterality: getValue(metaData['00200062']) ? getValue(metaData['00200062']) : '',
+            imageLaterality: getValue(recursiveFindTags('00200062', metaData)[0], 0, ''),
             positionDesc: positionDesc,
         }
         return imagePosition;

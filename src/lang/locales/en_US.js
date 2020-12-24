@@ -97,12 +97,15 @@ module.exports = {
 	"profile.description": "Description",
 	"profile.total": "Total",
 	"profile.update": "Update Profile",
+	"profile.delete": "Delete Profile",
 	"profile.currentPassword": "Current Password",
 	"profile.newPassword": "New Password",
 	"profile.confirmPassword": "Confirm Password",
 	"profile.change": "Change",
 	"profile.cancel": "Cancel",
 	"profile.subscribe": "SUBSCRIBE",
+	"profile.yes": "Yes",
+	"profile.no": "No",
 
 	"testView.rating": "Rating:",
 	"testView.Lesions": "Lesions",
@@ -270,6 +273,9 @@ module.exports = {
 	"test.attempt.volparaExtraTitle": "Extra information",
 	"test.attempt.volparaExtraDesc": "Learn more about volumetric reading with these educational videos.",
 	"test.attempt.volparaNext": "Next",
+	"test.attempt.scoreDefinitions": "Score Definitions",
+	"test.attempt.scoreDefinitionsDesc": "Click here to find out more about what each of your scores mean.",
+	"test.attempt.definition": "Definitions",
 
 
 	"test.attempt.testText1": "Statements of credit will be awarded based on participation in the posttest and submission of the activity evaluation form. A passing score of 75% on the posttest is required to receive a statement of credit",

@@ -22,7 +22,7 @@ import PostQuestionForm from "./PostQuestionForm";
 import BoxplotChart from "Components/BoxplotChart";
 import IntlMessages from "Util/IntlMessages";
 import JSONParseDefault from 'json-parse-default';
-import ExtraInfoModal from "./ExtraInfoModal";
+import ExtraInfoModal from "./ExtraInfo";
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";

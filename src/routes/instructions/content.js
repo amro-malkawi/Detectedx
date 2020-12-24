@@ -10,7 +10,6 @@ import InstructionLungED from "./InstructionLungED";
 import InstructionPCT from "./InstructionPCT";
 import InstructionVolpara from "./InstructionVolpara";
 import InstructionDentalED from "./InstructionDentalED";
-import VideoModal from "Routes/instructions/VideoModal";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
@@ -58,20 +57,8 @@ class Content extends Component {
         }
     }
 
-    renderInstructionVideo() {
-        const {video} = this.props;
-        if (video === undefined || video.thumbnail === undefined || video.thumbnail === '' || video.link === undefined || video.link === '') return null;
-        return (
-            <div className={'instruction-video'} onClick={() => this.setState({isShowVideoModal: true})}>
-                <img src={video.thumbnail} alt=''/>
-                <p/>
-                <i className="zmdi zmdi-play-circle-outline"/>
-            </div>
-        )
-    }
-
     render() {
-        const {theme, onClose, type, video} = this.props;
+        const {theme, onClose, type} = this.props;
         return (
             <div className={theme === 'black' ? 'instruction-theme-black' : 'instruction-theme-white'}>
                 <div className={'instruction-container'}>
@@ -91,7 +78,6 @@ class Content extends Component {
                     </CustomDialogTitle>
                     <DialogContent className={'instruction-content'}>
                         {this.renderContent()}
-                        {this.renderInstructionVideo()}
                     </DialogContent>
                     <DialogActions className={'mt-10'}>
                         <div style={{margin: 'auto'}}>
@@ -101,11 +87,6 @@ class Content extends Component {
                         </div>
                     </DialogActions>
                 </div>
-                <VideoModal
-                    open={this.state.isShowVideoModal}
-                    onClose={() => this.setState({isShowVideoModal: false})}
-                    link={video && video.link}
-                />
             </div>
         )
     }

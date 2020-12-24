@@ -134,6 +134,10 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList) => {
     const imageObjList = showImageIds[0].map((v) => totalImageObjList.find((vv) => vv.id === v));
     // calculate for initial position
     try {
+        // check all breast image
+        if (imageObjList.some((v) => (v.metaData.imageLaterality === undefined || v.metaData.imageLaterality === ''))) {
+            return 0;
+        }
         // get canvas width, height
         let canvasWidth, canvasHeight;
         const canvasInstance = $('div.image-row');
@@ -200,7 +204,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
     // check for existing all images
     if (idList.length < typeArray.length && isForce) {
         images.forEach((v) => {
-            if (idList.length < typeArray.length) idList.push(v.id);
+            if (idList.length < typeArray.length && idList.indexOf(v.id) === -1) idList.push(v.id);
         });
         idList = idList.slice(0, defaultImagesNumber);
     }
@@ -269,7 +273,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             breastPositions.forEach((position) => {
                 if (metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]) {
-                    if (testSetHangingType === 'breast' || testSetHangingType === 'breastWithPrior') {
+                    if (testSetHangingType !== 'breastWith3D') {
                         if (image.type === 'test') {
                             image.hangingId = position[0] + '-' + position[1];
                         } else if (image.type === 'prior') {
@@ -277,7 +281,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                         } else {
                             image.hangingId = '';
                         }
-                    } else if (testSetHangingType === 'breastWith3D') {
+                    } else {
                         if (image.stack_count === 1) {
                             image.hangingId = position[0] + '-' + position[1];
                         } else {
@@ -286,8 +290,6 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                         if (metaData.positionDesc === 'V-PREVIEW') {
                             image.hangingId += '-VPREVIEW'
                         }
-                    } else {
-                        image.hangingId = '';
                     }
                 }
 

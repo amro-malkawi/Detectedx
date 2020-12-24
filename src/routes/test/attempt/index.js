@@ -16,13 +16,11 @@ import {
 } from '@material-ui/core';
 import SchoolIcon from '@material-ui/icons/School';
 import {NotificationManager} from 'react-notifications';
-import RctCollapsibleCard from 'Components/RctCollapsibleCard/RctCollapsibleCard';
-import ReactSpeedometer from "Components/GaugeChart";
 import PostQuestionForm from "./PostQuestionForm";
 import BoxplotChart from "Components/BoxplotChart";
 import IntlMessages from "Util/IntlMessages";
 import JSONParseDefault from 'json-parse-default';
-import ExtraInfoModal from "./ExtraInfoModal";
+import ExtraInfo from "./ExtraInfo";
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -227,11 +225,12 @@ class Attempt extends Component {
                     return;
                 }
                 Apis.attemptsSavePostAnswer(this.state.attempts_id, JSON.stringify(postAnswer)).then((resp) => {
-                    if (this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
-                        this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
-                    } else {
-                        this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
-                    }
+                    // if (this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
+                    //     this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1, postQuestions: postAnswer});
+                    // } else {
+                    //     this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
+                    // }
+                    this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
                 }).catch((e) => {
                     console.warn(e);
                     NotificationManager.error(e.message);
@@ -955,15 +954,16 @@ class Attempt extends Component {
                             </Button>
                         </div>
                     </div>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>
-                                <IntlMessages id="test.attempt.volparaNext"/>
-                            </Button>
-                        </div>
-                    </div>
+                    {/*<div className={'score-extra'}>*/}
+                    {/*    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>*/}
+                    {/*    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>*/}
+                    {/*    <div className={'extra-button-container'}>*/}
+                    {/*        <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>*/}
+                    {/*            <IntlMessages id="test.attempt.volparaNext"/>*/}
+                    {/*        </Button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
                 </div>
             </div>
         )
@@ -1100,15 +1100,16 @@ class Attempt extends Component {
                             </Button>
                         </div>
                     </div>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>
-                                <IntlMessages id="test.attempt.volparaNext"/>
-                            </Button>
-                        </div>
-                    </div>
+                    {/*<div className={'score-extra'}>*/}
+                    {/*    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>*/}
+                    {/*    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>*/}
+                    {/*    <div className={'extra-button-container'}>*/}
+                    {/*        <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>*/}
+                    {/*            <IntlMessages id="test.attempt.volparaNext"/>*/}
+                    {/*        </Button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type} />
                 </div>
             </div>
         )
@@ -1261,16 +1262,8 @@ class Attempt extends Component {
         if (!this.state.loading) {
             return (
                 <div className={'attempt-container'}>
-                    {/*{*/}
-                    {/*    this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara' ? null :*/}
-                    {/*        ((this.state.attemptInfo.complete && this.state.attemptInfo.test_sets.has_post) ? this.renderStepperWithPost() : this.renderStepperNormal())*/}
-                    {/*}*/}
                     <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
                     {this.renderStepContent()}
-                    <ExtraInfoModal
-                        open={this.state.showModalType === 'extraInfo'}
-                        onClose={() => this.setState({showModalType: ''})}
-                    />
                 </div>
             )
         } else {

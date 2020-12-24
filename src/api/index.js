@@ -99,6 +99,16 @@ export function resetPassword(newPassword, accessToken) {
     return instance.post(url, {newPassword}).then((response) => response.data);
 }
 
+export function userConfirmPassword(password) {
+    const url = '/users/confirm_password?access_token=' + getAccessToken();
+    return instance.post(url, {password}).then((response) => response.data);
+}
+
+export function userDeleteProfile() {
+    const url = '/users/delete_profile?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * user operation
  */
