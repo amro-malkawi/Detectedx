@@ -1,6 +1,7 @@
-# Reactify
+# DetectED-X backend
 
-> A material design reactjs admin template
+## Development Environment
+- node 14.0
 
 ## Build Setup
 
@@ -14,5 +15,6 @@ npm start
 # build for production with minification
 npm run build
 ```
+## Publish to server
+ Upload `Dist` folder to server
 
-For a detailed explanation on how things work, check out the [guide](https://github.com/facebook/create-react-app).
