@@ -15,6 +15,7 @@ import {v4 as uuidv4} from 'uuid';
 import {isMobile} from 'react-device-detect';
 
 import DownloadTopBarProgress from "./DownloadTopBarProgress";
+import ImageOverlap from "./ImageOverlap";
 import GEThicknessSwitch from './ImageOverlap/GEThicknessSwitch';
 import _ from 'lodash';
 import WebWorker from "../worker/WebWorker";
@@ -60,6 +61,7 @@ class ImageViewer extends Component {
             isShowMarkInfo: !isMobile,
             isShowFloatingMenu: false,
             age: 0,
+            loadedImage: false,
         };
         this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
         // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
@@ -85,6 +87,7 @@ class ImageViewer extends Component {
             this.imageHeight = image.height;
             const initialViewport = this.getInitialViewport();
             cornerstone.displayImage(this.imageElement, image, initialViewport);
+            this.setState({loadedImage: true});
             this.initTools();
         });
         this.initEvents();
@@ -147,7 +150,7 @@ class ImageViewer extends Component {
                 } else if (imagePosition.imageLaterality === 'R') {
                     offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
                 }
-                if(imagePosition.positionDesc === 'V-PREVIEW') {
+                if (imagePosition.positionDesc === 'V-PREVIEW') {
                     offsetY = 385;
                 }
                 initialViewport.translation = {x: offsetX, y: offsetY};
@@ -170,17 +173,6 @@ class ImageViewer extends Component {
     }
 
     initEvents() {
-        this.imageElement.addEventListener('cornerstoneimagerendered', (event) => {
-            this.wasDrawn(event);
-        });
-
-        this.imageElement.addEventListener('cornerstonetoolsmousemove', (event) => {
-            let point = event.detail.currentPoints.image;
-            const x = point.x.toFixed(0);
-            const y = point.y.toFixed(0);
-            this.imageElement.parentNode.querySelector('.location').textContent = `(x: ${x}, y: ${y})`;
-        });
-
         if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1) {
             this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleDoubleClickEvent(event));
             this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
@@ -679,10 +671,6 @@ class ImageViewer extends Component {
         }
     }
 
-    wasDrawn(event) {
-        this._updateImageInfo(event);
-    }
-
     resetTool(previousName, nextName) {
         cornerstoneTools.setToolPassive(previousName);
         //active
@@ -722,19 +710,6 @@ class ImageViewer extends Component {
                 NotificationManager.error(error.response ? error.response.data.error.message : error.message);
             });
         }
-    }
-
-    _updateImageInfo(event) {
-        const eventData = event.detail;
-        let windowWidth = Math.round(eventData.viewport.voi.windowWidth);
-        let windowLength = Math.round(eventData.viewport.voi.windowCenter);
-        const zoom = eventData.viewport.scale.toFixed(2);
-        if (this.props.imageInfo.ww !== 0 && this.props.imageInfo.wc !== 0) {
-            windowWidth = Math.round(this.props.imageInfo.ww * windowWidth / 255);
-            windowLength = Math.round(this.props.imageInfo.wc * windowLength / 128);
-        }
-        this.imageElement.parentNode.querySelector('.window').textContent = `WW/WL: ${windowWidth} / ${windowLength}`;
-        this.imageElement.parentNode.querySelector('.zoom').textContent = `Zoom: ${zoom}`;
     }
 
     onStepSlide(seek) {
@@ -913,10 +888,14 @@ class ImageViewer extends Component {
                     totalCount={this.state.downStatus.length}
                     downCount={this.state.downStatus.filter((v) => v).length}
                 />
-                <div className="location status"/>
-                <div className="zoom status"/>
-                <div className="window status"/>
                 {this.renderStackComponent()}
+                {
+                    this.state.loadedImage &&
+                    <ImageOverlap
+                        imageId={this.props.imageInfo.id}
+                        imageElement={this.imageElement}
+                    />
+                }
                 {/*{this.state.isLoading && <LoadingIndicator type="image"/>}*/}
             </div>
         )

@@ -36,13 +36,19 @@ function getMetaDataSetUrl(uri) {
     return basePathMatch[1] + '/meta.json';
 }
 
+function getImageIdFromUrl(uri) {
+    const basePathMatch = uri.match(/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
+    if (basePathMatch === null) return '';
+    return basePathMatch[1];
+}
+
 function getMetaDataSet(uri) {
-    return loadedMetaDataSets[getMetaDataSetUrl(uri)];
+    return loadedMetaDataSets[getImageIdFromUrl(uri)];
 }
 
 function setMetaDataSet(uri, metaDataSet) {
     if(metaDataSet === undefined) return;
-    loadedMetaDataSets[getMetaDataSetUrl(uri)] = metaDataSet;
+    loadedMetaDataSets[getImageIdFromUrl(uri)] = metaDataSet;
 }
 
 function metaDataRequest(uri) {

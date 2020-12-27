@@ -157,8 +157,8 @@ function metaDataProvider(type, imageId) {
     if (type === 'voiLutModule') {
         return {
             // TODO VOT LUT Sequence
-            windowCenter: getNumberValues(metaData['00281050']),
-            windowWidth: getNumberValues(metaData['00281051']),
+            windowCenter: getNumberString(recursiveFindTags('00281050', metaData)[0], 0, 128),
+            windowWidth: getNumberString(recursiveFindTags('00281051', metaData)[0], 0, 255),
         };
     }
 
