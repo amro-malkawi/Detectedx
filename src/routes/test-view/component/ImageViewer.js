@@ -157,6 +157,20 @@ class ImageViewer extends Component {
             } catch (e) {
             }
         }
+        if(this.props.imageInfo.ww && this.props.imageInfo.wc) {
+            const voiLutModuleInfo = cornerstone.metaData.get(
+                'voiLutModule',
+                this.props.imageInfo.image_url_path
+            );
+            if (voiLutModuleInfo) {
+                const imageWW = voiLutModuleInfo.windowWidth[0];
+                const imageWL = voiLutModuleInfo.windowCenter[0];
+                initialViewport.voi = {
+                    windowWidth: Math.round(this.props.imageInfo.ww * 255 / imageWW),
+                    windowCenter: Math.round(this.props.imageInfo.wc * 128 / imageWL)
+                };
+            }
+        }
         return initialViewport;
     }
 
@@ -323,7 +337,6 @@ class ImageViewer extends Component {
         // render shapes
         this.renderShapes();
         this.renderMarks();
-        this.setInitialSetParam();
     }
 
     static adjustSlideSize() {
@@ -338,21 +351,6 @@ class ImageViewer extends Component {
                 sliders[i].style.width = sliders[i].parentNode.clientHeight + 'px';
             }
         });
-    }
-
-    setInitialSetParam() {
-        let viewport = cornerstone.getViewport(this.imageElement);
-        // viewport.invert = !viewport.invert;
-        if (this.props.brightness !== undefined && this.props.brightness !== null && !isNaN(this.props.brightness) && Number(this.props.brightness) !== 0) {
-            viewport.voi.windowWidth = Number(this.props.brightness);
-        }
-        if (this.props.contrast !== undefined && this.props.contrast !== null && !isNaN(this.props.contrast) && Number(this.props.contrast) !== 0) {
-            viewport.voi.windowCenter = Number(this.props.contrast);
-        }
-        if (this.props.zoom !== undefined && this.props.zoom !== null && !isNaN(this.props.zoom)) {
-            viewport.scale = viewport.scale * Number(this.props.zoom);
-        }
-        cornerstone.setViewport(this.imageElement, viewport);
     }
 
     setupLoadHandlers(clear = false) {
@@ -893,6 +891,8 @@ class ImageViewer extends Component {
                     this.state.loadedImage &&
                     <ImageOverlap
                         imageId={this.props.imageInfo.id}
+                        ww={this.props.imageInfo.ww}
+                        wc={this.props.imageInfo.wc}
                         imageElement={this.imageElement}
                     />
                 }

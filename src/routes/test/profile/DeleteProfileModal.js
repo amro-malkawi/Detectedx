@@ -67,7 +67,7 @@ class DeleteProfileModal extends Component {
                     </CustomDialogTitle>
                     <DialogContent>
                         <div>
-                            You are trying to delete you account, This action will remove all of your personal information permanently, you will not be able to login.
+                            You are trying to delete your account, This action will remove all of your personal information permanently, you will not be able to login.
                         </div>
                         <TextField
                             autoFocus margin="dense" label="User Password" type="password" fullWidth

@@ -7,7 +7,7 @@ import xhrRequest from './xhrRequest';
  * image loader mechanism.  One reason a caller may need to do this is to determine the number of frames
  * in a multiframe sop instance so it can create the imageId's correctly.
  */
-const imageExt = 'png';
+const imageExt = 'dat';
 
 let cacheSizeInBytes = 0;
 

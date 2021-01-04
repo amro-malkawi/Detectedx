@@ -257,54 +257,50 @@ div.viewer {
 
               .ww-wl-input-container {
                 display: flex;
+
                 input {
                   color: white;
                   padding: 0;
-                  border-width: 0;
                   background-color: transparent;
                   pointer-events: initial;
+                  border: 1px solid transparent;
+                  border-radius: 3px;
+
                   &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
                     -webkit-appearance: none;
                     margin: 0;
+                  }
+
+                  &:hover, &:focus {
+                    border: 1px solid #d6de1d75;
                   }
                 }
 
-                .tttt-aaa {
-                  color: white;
+                select {
+                  width: 19px;
+                  height: 18px;
                   padding: 0;
-                  border-width: 0;
+                  margin: 0;
+                  border: 1px solid transparent;
+                  border-radius: 3px;
+                  color: white;
                   background-color: transparent;
                   pointer-events: initial;
-                  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
-                    margin: 0;
+
+                  &:hover {
+                    border: 1px solid #d6de1d75;
+                  }
+
+                  option {
+                    background-color: black;
                   }
                 }
+
               }
             }
           }
 
-          .window, .zoom, .location {
-            position: absolute;
-            left: 10px;
-            color: white;
-            font-size: 14px;
-          }
-
-          .window {
-            bottom: 10px;
-          }
-
-          .zoom {
-            bottom: 27px;
-          }
-
-          .location {
-            bottom: 44px;
-          }
-
           .slice {
-
             position: absolute;
             right: 35px;
             bottom: 10px;

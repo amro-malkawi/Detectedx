@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import cornerstone from "cornerstone-core";
 import AutosizeInput from 'react-input-autosize';
+import {Input} from 'reactstrap';
 import _ from 'lodash';
 
 export default class ImageOverlap extends Component {
@@ -9,8 +10,9 @@ export default class ImageOverlap extends Component {
         this.state = {
             cursorPosition: {x: 0, y: 0},
             imageZoomLevel: 0,
-            imageWW: 0,
-            imageWL: 0,
+            imageWW: props.ww ? props.ww : 255,
+            imageWL: props.wc ? props.wc : 128,
+            voiList: [],
         }
         this.windowWidth = 255;
         this.windowLength = 128;
@@ -24,8 +26,26 @@ export default class ImageOverlap extends Component {
                 this.props.imageId
             );
             if (voiLutModuleInfo) {
-                this.windowWidth = voiLutModuleInfo.windowWidth;
-                this.windowLength = voiLutModuleInfo.windowCenter;
+                const imageWW = voiLutModuleInfo.windowWidth[0];
+                const imageWL = voiLutModuleInfo.windowCenter[0];
+                const voiList = [];
+                voiLutModuleInfo.windowWidth.forEach((v, i) => {
+                    if(voiLutModuleInfo.windowCenter[i]) {
+                        if(!voiList.some((vv) => (vv.ww === v && vv.wl === voiLutModuleInfo.windowCenter[i]))) {
+                            voiList.push({ww: v, wl: voiLutModuleInfo.windowCenter[i]});
+                        }
+                    }
+                });
+                if(voiList.length === 0) {
+                    voiList.push({ww: 255, wl: 128});
+                }
+                this.windowWidth = imageWW;
+                this.windowLength = imageWL;
+                this.setState({
+                    // imageWW,
+                    // imageWL,
+                    voiList
+                })
             }
             this.initEvent();
         }
@@ -51,7 +71,6 @@ export default class ImageOverlap extends Component {
             windowWidth = Math.round(this.windowWidth * windowWidth / 255);
             windowLength = Math.round(this.windowLength * windowLength / 128);
         }
-        console.log(this.windowWidth, windowWidth)
         this.setState({
             imageZoomLevel: zoom,
             imageWW: windowWidth,
@@ -59,20 +78,29 @@ export default class ImageOverlap extends Component {
         });
     }
 
-    onChangeVoi(type, value) {
+    handleSetImageVoi() {
         const that = this;
-        this.setState({[type]: value}, _.debounce(() => {
-            this.props.imageElement.removeEventListener('cornerstoneimagerendered', this.handleImageRenderEvent);
-            let viewport = cornerstone.getViewport(this.props.imageElement);
-            viewport.voi.windowWidth = Math.round(this.state.imageWW * 255 / this.windowWidth);
-            viewport.voi.windowCenter = Math.round(this.state.imageWL * 128 / this.windowLength);
-            cornerstone.setViewport(this.props.imageElement, viewport);
-            setTimeout(() => {
-                that.props.imageElement.addEventListener('cornerstoneimagerendered', this.handleImageRenderEvent);
-            }, 500);
-        }, 10));
+        this.props.imageElement.removeEventListener('cornerstoneimagerendered', this.handleImageRenderEvent);
+        let viewport = cornerstone.getViewport(this.props.imageElement);
+        viewport.voi.windowWidth = Math.round(this.state.imageWW * 255 / this.windowWidth);
+        viewport.voi.windowCenter = Math.round(this.state.imageWL * 128 / this.windowLength);
+        cornerstone.setViewport(this.props.imageElement, viewport);
+        setTimeout(() => {
+            that.props.imageElement.addEventListener('cornerstoneimagerendered', this.handleImageRenderEvent);
+        }, 500);
     }
 
+    onChangeVoi(type, value) {
+        this.setState({[type]: value}, _.debounce(this.handleSetImageVoi, 10));
+    }
+
+    onChangeVoiSelect(event) {
+        const values = event.target.value.split('/');
+        if(values.length !== 2) return;
+        if(Number(values[0]) === this.state.imageWW && Number(values[1]) === this.state.imageWL) return;
+        console.log('change');
+        this.setState({ imageWW: Number(values[0]), imageWL: Number(values[1]) }, this.handleSetImageVoi);
+    }
 
     render() {
         const {cursorPosition, imageZoomLevel, imageWW, imageWL} = this.state;
@@ -91,6 +119,19 @@ export default class ImageOverlap extends Component {
                         <AutosizeInput type='number' extraWidth={0} value={imageWW} onChange={(e) => this.onChangeVoi('imageWW', e.target.value)}/>
                         <span className='ml-1 mr-1'>/</span>
                         <AutosizeInput type='number' extraWidth={0} value={imageWL} onChange={(e) => this.onChangeVoi('imageWL', e.target.value)}/>
+                        <div>
+                            {
+                                this.state.voiList.length > 1 &&
+                                <Input type={'select'} value={''} onChange={(e) => this.onChangeVoiSelect(e)}>
+                                    <option value='' style={{display: 'none'}}/>
+                                    {
+                                        this.state.voiList.map((v, i) =>
+                                            <option value={`${v.ww}/${v.wl}`} key={i}>{`${v.ww} / ${v.wl}`}</option>
+                                        )
+                                    }
+                                </Input>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

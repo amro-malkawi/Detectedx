@@ -109,6 +109,17 @@ function getOverlayPlaneModule(metaData) {
     };
 }
 
+function getArrayValue(element) {
+    if (!element) {
+        return;
+    }
+    // Value is not present if the attribute has a zero length value
+    if (!element.Value) {
+        return;
+    }
+    return element.Value;
+}
+
 function findValuesHelper(obj, key, list) {
     if (!obj) return list;
     if (obj instanceof Array) {
@@ -155,11 +166,19 @@ function metaDataProvider(type, imageId) {
     }
 
     if (type === 'voiLutModule') {
+        let wwList = getArrayValue(recursiveFindTags('00281051', metaData)[0]);
+        let wlList = getArrayValue(recursiveFindTags('00281050', metaData)[0]);
+        if(wwList === undefined || wwList.length === 0) wwList = [255];
+        if(wlList === undefined || wlList.length === 0) wlList = [128];
         return {
-            // TODO VOT LUT Sequence
-            windowCenter: getNumberString(recursiveFindTags('00281050', metaData)[0], 0, 128),
-            windowWidth: getNumberString(recursiveFindTags('00281051', metaData)[0], 0, 255),
-        };
+            windowWidth: wwList,
+            windowCenter:wlList
+        }
+        // return {
+        //     // TODO VOT LUT Sequence
+        //     windowCenter: getNumberString(recursiveFindTags('00281050', metaData)[0], 0, 128),
+        //     windowWidth: getNumberString(recursiveFindTags('00281051', metaData)[0], 0, 255),
+        // };
     }
 
     if (type === 'age') {
