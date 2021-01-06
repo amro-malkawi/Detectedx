@@ -20,6 +20,24 @@ const cookie = new Cookies();
 /**
  * Redux Action To Sigin User With Email
  */
+export const login = (userId, userName, userEmail, accessToken, history) => (dispatch, getState) => {
+    if (Apis.apiHost.indexOf(':') !== -1) {
+        cookie.set('user_id', userId, {path: '/'});
+        cookie.set('user_name', userName, {path: '/'});
+        cookie.set('user_email', userEmail, {path: '/'});
+        cookie.set('access_token', accessToken, {path: '/'});
+    }
+    dispatch({
+        type: LOGIN_USER_SUCCESS, payload: {
+            user: userId,
+            userName: userName,
+            userEmail: userEmail,
+            accessToken: accessToken,
+        }
+    });
+    history.push('/');
+}
+
 export const signinUserInEmail = (user, history) => (dispatch) => {
     Apis.login(user.email, user.password).then((result) => {
         dispatch({type: LOGIN_USER});

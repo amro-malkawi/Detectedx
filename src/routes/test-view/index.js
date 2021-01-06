@@ -663,7 +663,6 @@ class TestView extends Component {
                                     radius={this.state.test_case.modalities.circle_size}
                                     complete={this.state.complete}
                                     stage={this.state.attemptDetail.stage}
-                                    width={100 / this.state.test_case.images.length}
                                     onShowPopup={this.handleShowPopup.bind(this)}
                                     onShowQualityModal={(!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) ? this.onShowImageQualityModal.bind(this) : null}
                                     isShowQuality={this.state.test_case.modalities.modality_type === 'image_quality'}

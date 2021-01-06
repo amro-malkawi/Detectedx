@@ -131,6 +131,7 @@ div.viewer {
         .image-row {
           display: flex;
           flex: 1;
+          overflow: hidden;
         }
 
         &.cursor-Pan > div {
@@ -183,7 +184,7 @@ div.viewer {
           height: 100%;
           position: relative;
           border: 1px solid #00a4d9;
-          //width: 25%;
+
           &.drag-hover {
             border-color: #d9dae0;
           }

@@ -38,6 +38,7 @@ const ImageViewerDropContainer = ({id, rowIndex, colIndex, imageList, param}) =>
 const ImageViewerContainer = (props) => {
     const noSynchronizerProps = {...props};
     noSynchronizerProps.synchronizer = undefined;
+    const focusImageViewerRow = Number(props.focusImageViewerIndex.toString().split('_')[0]);
     return (
         <div className={'image-container'}>
             {props.volparaImageId &&
@@ -45,6 +46,8 @@ const ImageViewerContainer = (props) => {
                     <div className={'image-row'}>
                     <ImageViewerDropContainer
                         id={props.volparaImageId}
+                        rowIndex={-1}
+                        colIndex={-1}
                         imageList={props.imageList}
                         param={noSynchronizerProps}
                         key={`${0}_${0}_${props.resetId}_${props.volparaImageId}`}
@@ -56,7 +59,9 @@ const ImageViewerContainer = (props) => {
             <ContextMenuTrigger id={'images'} renderTag='div' attributes={{id: 'images'}} holdToDisplay={-1}>
                 {
                     props.showImageList.map((row, rowIndex) => (
-                        <div className={'image-row'} key={rowIndex}>
+                        <div className={'image-row'} key={rowIndex}
+                             style={(focusImageViewerRow !== -1 && focusImageViewerRow !== rowIndex) ? {display: 'none'} : {}}
+                        >
                             {
                                 row.map((id, colIndex) => (
                                     <ImageViewerDropContainer
@@ -91,7 +96,8 @@ const mapStateToProps = (state) => {
         volparaImageId: state.testView.volparaImageId,
         resetId: state.testView.resetId,
         toolList:state.testView.toolList,
-        currentTool: state.testView.currentTool
+        currentTool: state.testView.currentTool,
+        focusImageViewerIndex: state.testView.focusImageViewerIndex,
     };
 };
 

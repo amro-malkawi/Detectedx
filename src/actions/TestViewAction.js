@@ -13,7 +13,9 @@ import {
     TEST_VIEW_SET_RESET_ID,
     TEST_VIEW_SET_FULL_IMAGE_QUALITY,
     TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
-    TEST_VIEW_SET_CURRENT_TOOL, TEST_VIEW_SET_THICKNESS_TYPE,
+    TEST_VIEW_SET_CURRENT_TOOL,
+    TEST_VIEW_SET_THICKNESS_TYPE,
+    TEST_VIEW_FOCUS_IMAGEVIEWER
 } from 'Actions/types';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
@@ -335,7 +337,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         volparaImageId,
         toolList: toolList,
         currentTool: 'Pan',
-        currentThicknessType: thicknessImageCount >= 4 ? 'SLABS' : 'NOTHICKNESS'
+        currentThicknessType: thicknessImageCount >= 4 ? 'SLABS' : 'NOTHICKNESS',
     });
 };
 
@@ -359,6 +361,10 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
         dispatch({
             type: TEST_VIEW_SET_HANGING_TYPE,
             payload: type
+        });
+        dispatch({
+            type: TEST_VIEW_FOCUS_IMAGEVIEWER,
+            payload: '-1_-1'
         });
     });
 };
@@ -453,6 +459,10 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
             type: TEST_VIEW_SET_RESET_ID,
             payload: Math.random().toString(36).substring(7),
         });
+        dispatch({
+            type: TEST_VIEW_FOCUS_IMAGEVIEWER,
+            payload: '-1_-1',
+        });
     });
 };
 
@@ -476,6 +486,13 @@ export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
         dispatch({
             type: TEST_VIEW_SET_THICKNESS_TYPE,
             payload: thicknessType
-        })
+        });
     });
 };
+
+export const focusImageViewer = (viewerIndex) =>(dispatch, getState) => {
+    dispatch({
+        type: TEST_VIEW_FOCUS_IMAGEVIEWER,
+        payload: viewerIndex
+    });
+}

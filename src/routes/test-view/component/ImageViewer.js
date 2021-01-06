@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {setImageAnswer} from "Actions";
+import {setImageAnswer, focusImageViewer} from "Actions";
 import ResizeDetector from 'react-resize-detector';
 import {IconButton, Switch} from "@material-ui/core";
 import cornerstone from 'cornerstone-core';
@@ -187,10 +187,9 @@ class ImageViewer extends Component {
     }
 
     initEvents() {
-        if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1) {
-            this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleDoubleClickEvent(event));
-            this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
-        }
+
+        this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleDoubleClickEvent(event));
+        this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
 
         // this.imageElement.addEventListener('cornerstonenewimage', _.debounce((e) => this.handleChangeStack(e), 0));
         this.imageElement.addEventListener('cornerstonenewimage', (e) => this.handleChangeStack(e));
@@ -389,9 +388,22 @@ class ImageViewer extends Component {
     }
 
     handleDoubleClickEvent(event) {
-        // disable double click when current tool is freehand
-        if (this.props.currentTool === 'MarkerFreehand') return;
-        this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
+        // if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1 && this.props.currentTool === 'Marker') {
+        //     // disable double click when current tool is freehand
+        //     this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
+        // }
+        if(this.props.index !== '-1_-1') {
+            // index="-1_-1" disable focus image feature
+            let viewerIndex;
+            if (this.props.focusImageViewerIndex === this.props.index) {
+                viewerIndex = '-1_-1';
+                this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
+            } else {
+                viewerIndex = this.props.index;
+                this.props.synchronizer && this.props.synchronizer.remove(this.imageElement);
+            }
+            this.props.focusImageViewer(viewerIndex);
+        }
     }
 
     handleMeasureCompleteEvent(event) {
@@ -830,6 +842,11 @@ class ImageViewer extends Component {
 
     render() {
         const {imageInfo, dndRef, isDragOver, toolList} = this.props;
+        const viewerStyle = {};
+        if(this.props.focusImageViewerIndex !== '-1_-1' && this.props.index !== '-1_-1' && this.props.focusImageViewerIndex !== this.props.index) {
+            // viewerStyle.flex = 0;
+            viewerStyle.display = 'none';
+        }
         const canDrawMarker = toolList.filter((v) => (v === 'Marker' || v === 'MarkerFreehand')).length > 0;
         return (
             <div ref={dndRef}
@@ -840,7 +857,7 @@ class ImageViewer extends Component {
                  data-index={this.props.index}
                  data-stack={imageInfo.stack_count}
                  data-hanging-id={imageInfo.hangingId}
-                 style={{width: this.props.width + '%'}}
+                 style={viewerStyle}
             >
                 <div className={'control-btn'}>
                     {
@@ -875,7 +892,7 @@ class ImageViewer extends Component {
                     handleHeight
                     skipOnMount={true}
                     refreshMode={'throttle'}
-                    refreshRate={500}
+                    refreshRate={100}
                     onResize={() => {
                         cornerstone.resize(this.imageElement);
                     }}
@@ -913,6 +930,7 @@ const mapStateToProps = (state) => {
 };
 
 export default withRouter(connect(mapStateToProps, {
-    setImageAnswer
+    setImageAnswer,
+    focusImageViewer
 })(ImageViewer));
 

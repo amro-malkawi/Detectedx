@@ -83,7 +83,9 @@ export default class MarkerPopup extends Component {
                 if(rootLesionObj !== undefined && rootLesionObj.children !== undefined && rootLesionObj.children.length > 0) {
                     if (rootLesionObj.children[0].children !== undefined && rootLesionObj.children[0].children.length > 0) {
                         // has sublesions
-                        if (rootLesionObj.children.some((v) => selectedLesionList[Object.keys(selectedLesionList)[0]][v.name] === undefined)) {
+                        if (rootLesionObj.children.some((v) => (
+                            v.name !== 'Associated features' && selectedLesionList[Object.keys(selectedLesionList)[0]][v.name] === undefined
+                        ))) {
                             NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
                             return;
                         }

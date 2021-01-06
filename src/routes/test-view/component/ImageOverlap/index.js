@@ -31,8 +31,10 @@ export default class ImageOverlap extends Component {
                 const voiList = [];
                 voiLutModuleInfo.windowWidth.forEach((v, i) => {
                     if(voiLutModuleInfo.windowCenter[i]) {
-                        if(!voiList.some((vv) => (vv.ww === v && vv.wl === voiLutModuleInfo.windowCenter[i]))) {
-                            voiList.push({ww: v, wl: voiLutModuleInfo.windowCenter[i]});
+                        const ww = Math.round(v);
+                        const wl = Math.round(voiLutModuleInfo.windowCenter[i])
+                        if(!voiList.some((vv) => (vv.ww === ww && vv.wl === wl))) {
+                            voiList.push({ww: ww, wl: wl});
                         }
                     }
                 });

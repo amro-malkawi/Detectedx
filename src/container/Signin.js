@@ -13,16 +13,19 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
 import LanguageProvider from "Components/Header/LanguageProvider";
 import AppConfig from 'Constants/AppConfig';
-import { signinUserInEmail} from 'Actions';
+import { login} from 'Actions';
 import * as selectors from "Selectors";
 import IntlMessages from "Util/IntlMessages";
+import * as Apis from "Api";
 
 
 class Signin extends Component {
 
     state = {
         email: '',
-        password: ''
+        password: '',
+        errorMsg: '',
+        loading: false
     };
 
     componentDidMount() {
@@ -35,8 +38,13 @@ class Signin extends Component {
      */
     onUserLogin(e) {
         e.preventDefault();
+        this.setState({loading: true});
         if (this.state.email !== '' && this.state.password !== '') {
-            this.props.signinUserInEmail(this.state, this.props.history);
+            Apis.login(this.state.email, this.state.password).then((result) => {
+                this.props.login(result.userId, result.userName, result.userEmail, result.id, this.props.history);
+            }).catch((e) => {
+                this.setState({errorMsg: e.response.data.error.message, loading: false});
+            });
         }
     }
 
@@ -48,8 +56,7 @@ class Signin extends Component {
     }
 
     render() {
-        const {email, password} = this.state;
-        const {loading} = this.props;
+        const {email, password, loading} = this.state;
         return (
             <QueueAnim type="bottom" duration={2000}>
                 <div className="rct-session-wrapper">
@@ -90,7 +97,7 @@ class Signin extends Component {
                                                     id="user-mail"
                                                     className="has-input input-lg"
                                                     placeholder="Enter Email Address"
-                                                    onChange={(event) => this.setState({email: event.target.value})}
+                                                    onChange={(event) => this.setState({email: event.target.value, errorMsg: ''})}
                                                 />
                                                 <span className="has-icon"><i className="ti-email"/></span>
                                             </FormGroup>
@@ -102,10 +109,14 @@ class Signin extends Component {
                                                     id="pwd"
                                                     className="has-input input-lg"
                                                     placeholder="Password"
-                                                    onChange={(event) => this.setState({password: event.target.value})}
+                                                    onChange={(event) => this.setState({password: event.target.value, errorMsg: ''})}
                                                 />
                                                 <span className="has-icon"><i className="ti-lock"/></span>
                                             </FormGroup>
+                                            {
+                                                this.state.errorMsg !== '' &&
+                                                <div style={{margin: "-17px 10px 7px", textAlign: 'left', color: '#f34949'}}>Invalid username and password</div>
+                                            }
                                             <FormGroup className="mb-15">
                                                 <Button
                                                     type={'submit'}
@@ -139,5 +150,5 @@ const mapStateToProps = ({authUser}) => {
 };
 
 export default connect(mapStateToProps, {
-    signinUserInEmail,
+    login,
 })(Signin);
