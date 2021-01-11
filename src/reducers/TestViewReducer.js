@@ -23,7 +23,7 @@ const INIT_STATE = {
     imageQuality: -1,
     showImageList: [[]],
     initialZoomLevel: 0,
-    isShowImageBrowser: false,
+    isShowImageBrowser: true,
     testSetHangingIdList: [],
     selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
     defaultImagesNumber: 1,

@@ -107,7 +107,8 @@ const getImageHangingIdList = (images) => {
                 'CC-L_CC-L-P',
                 'MLO-L_MLO-L-P',
                 'CC-R_CC-R-P_MLO-R_MLO-R-P',
-                'MLO-L-P_MLO-L_CC-L-P_CC-L'
+                'MLO-L-P_MLO-L_CC-L-P_CC-L',
+                'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P'
             ]
         };
     } else if (hasAllTestImages) {
@@ -210,7 +211,12 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
         });
         idList = idList.slice(0, defaultImagesNumber);
     }
-    return [idList]  // 1 row x 0 column
+    if(type === 'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P') {
+        const firstRowIds = idList.splice(0, 4);
+        return [firstRowIds, idList];
+    } else {
+        return [idList]  // 1 row x 0 column
+    }
 
 };
 

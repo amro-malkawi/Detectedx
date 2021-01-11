@@ -63,7 +63,7 @@ export default function() {
                         </ul>
                             </Col>
                             <Col sm={6}>
-                                <img src={require('Assets/img/instruction/img_lesion.png')} width={'50%'} alt={''}/>
+                                <img src={require('Assets/img/instruction/img_dentalED1.png')} width={'50%'} alt={''}/>
                             </Col>
                         </div>
                     </div>
@@ -99,7 +99,7 @@ export default function() {
                     </ul>
                 </Col>
                 <Col sm={6}>
-                    <img src={require('Assets/img/instruction/img_dentalED1.png')} width={'70%'} alt={''}/>
+                    <img src={require('Assets/img/instruction/img_dentalED2.png')} width={'70%'} alt={''}/>
                 </Col>
             </div>
             <hr/>
@@ -112,7 +112,7 @@ export default function() {
                     </p>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_dentalED2.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
+                    <img src={require('Assets/img/instruction/img_dentalED3.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr/>

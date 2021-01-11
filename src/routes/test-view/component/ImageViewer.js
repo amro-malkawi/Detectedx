@@ -894,7 +894,7 @@ class ImageViewer extends Component {
                     refreshMode={'throttle'}
                     refreshRate={100}
                     onResize={() => {
-                        cornerstone.resize(this.imageElement);
+                        cornerstone.resize(this.imageElement, true);
                     }}
                 >
                     <div className="dicom" ref={this.imageElementRef}/>
