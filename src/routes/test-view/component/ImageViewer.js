@@ -388,7 +388,7 @@ class ImageViewer extends Component {
     }
 
     handleDoubleClickEvent(event) {
-        // if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1 && this.props.currentTool === 'Marker') {
+        // if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1 && this.props.currentTool !== 'MarkerFreehand') {
         //     // disable double click when current tool is freehand
         //     this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
         // }
