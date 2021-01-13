@@ -44,7 +44,7 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                 <div className="series-details">
                     <div className="series-description">
                         {metaData.viewPosition ? metaData.viewPosition : ''}
-                        <span className={'ml-20 fs-12'}>{metaData.positionDesc}</span>
+                        { metaData.positionDesc && <span className={'ml-20 fs-12'}>{metaData.positionDesc}</span> }
                     </div>
                     <div className="series-information">
                         <div className="item item-series">
