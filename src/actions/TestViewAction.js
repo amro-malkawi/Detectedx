@@ -132,7 +132,7 @@ const getImageHangingIdList = (images) => {
     }
 }
 
-const calcInitialZoomLevel = (showImageIds, totalImageObjList) => {
+const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser) => {
     if(showImageIds.length === 0 || showImageIds[0].length === 0) return 0;
     const imageObjList = showImageIds[0].map((v) => totalImageObjList.find((vv) => vv.id === v));
     // calculate for initial position
@@ -147,6 +147,9 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList) => {
         if (canvasInstance.length === 0) {
             //did not load
             canvasWidth = $(window).width();
+            if(isShowImageBrowser) {
+                canvasWidth = canvasWidth - 300;
+            }
             canvasHeight = $(window).height() - 80;
         } else {
             canvasWidth = canvasInstance.width();
@@ -270,6 +273,11 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         newList = newList.filter(image => (image.type === 'test' || image.type === 'prior'));
     }
 
+    // sort images by image type, postion
+    newList.sort((a, b) => {
+        return a.type > b.type ? -1 : a.type < b.type ? 1 : 0;
+    });
+
     // check hanging type
     const {testSetHangingType, testSetHangingIdList} = getImageHangingIdList(newList)
 
@@ -306,8 +314,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             image.hangingId = '';
         }
     });
-
-    const selectedHangingType = getState().testView.selectedHangingType;
+    const {selectedHangingType, currentThicknessType, isShowImageBrowser} = getState().testView;
     let showImageList, initialZoomLevel;
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
@@ -316,19 +323,19 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         const imageLine1 = getHangingImageOrder(
             newList.filter(image => (image.type === 'test' || image.type === 'prior')),
             "CC-R_CC-L", defaultImagesNumber,
-            false, getState().testView.currentThicknessType)[0];
+            false, currentThicknessType)[0];
         const imageLine2 = getHangingImageOrder(
             newList.filter(image => (image.type === 'test' || image.type === 'prior')),
             "MLO-R_MLO-L", defaultImagesNumber,
-            false, getState().testView.currentThicknessType)[0];
+            false, currentThicknessType)[0];
         showImageList = [imageLine1, imageLine2];
         initialZoomLevel = 0;
     } else {
         showImageList = getHangingImageOrder(
             newList.filter(image => (image.type === 'test' || image.type === 'prior')),
             selectedHangingType, defaultImagesNumber,
-            true, getState().testView.currentThicknessType);
-        initialZoomLevel = calcInitialZoomLevel(showImageList, newList);
+            true, currentThicknessType);
+        initialZoomLevel = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser);
     }
     showImageList = showImageList.filter((v) => v.length !== 0);
     const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
@@ -348,9 +355,9 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
-    const {imageList, defaultImagesNumber} = getState().testView;
+    const {imageList, defaultImagesNumber, isShowImageBrowser} = getState().testView;
     const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
-    const initialZoomLevel = calcInitialZoomLevel(list, imageList);
+    const initialZoomLevel = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -436,7 +443,8 @@ export const changeCurrentTool = (tool) => (dispatch) => {
 };
 
 export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) => {
-    const oldList = getState().testView.showImageList.flat();
+    const {imageList, showImageList, isShowImageBrowser} = getState().testView;
+    const oldList = showImageList.flat();
     const list = [];
     let imageIndex = 0;
     for (let i = 0; i < rowCount; i++) {
@@ -451,7 +459,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         }
         list.push(row);
     }
-    const initialZoomLevel = calcInitialZoomLevel(list, getState().testView.imageList);
+    const initialZoomLevel = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -473,9 +481,9 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
 };
 
 export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
-    const {imageList, defaultImagesNumber, selectedHangingType} = getState().testView;
+    const {imageList, defaultImagesNumber, selectedHangingType, isShowImageBrowser} = getState().testView;
     const list = getHangingImageOrder(imageList, selectedHangingType, defaultImagesNumber, true, thicknessType);
-    const initialZoomLevel = calcInitialZoomLevel(list, imageList);
+    const initialZoomLevel = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,

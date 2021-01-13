@@ -1,8 +1,10 @@
 import dataSetCacheManager from './dataSetCacheManager.js';
 
 function getInsensitiveElement(metaData, key) {
-    if (metaData[key.toUpperCase()] !== undefined) return metaData[key.toUpperCase()];
-    return metaData[key.toLowerCase()];
+    const upperValue = recursiveFindTags(key.toUpperCase(), metaData)[0];
+    const lowerValue = recursiveFindTags(key.toLowerCase(), metaData)[0];
+    if (upperValue !== undefined) return upperValue;
+    return lowerValue;
 }
 
 function getValue(element, index, defaultValue) {
@@ -152,16 +154,9 @@ function metaDataProvider(type, imageId) {
     }
 
     if (type === 'imagePlaneModule') {
-        const pixelSpacing = metaData['00280030'];
-        let columnPixelSpacing = 0.1;
-        let rowPixelSpacing = 0.1;
-        if (pixelSpacing && pixelSpacing.length === 2) {
-            rowPixelSpacing = pixelSpacing[0];
-            columnPixelSpacing = pixelSpacing[1];
-        }
         return {
-            rowPixelSpacing,
-            columnPixelSpacing,
+            rowPixelSpacing: getNumberString(recursiveFindTags('00280030', metaData)[0], 0, 0.1),
+            columnPixelSpacing: getNumberString(recursiveFindTags('00280030', metaData)[0], 1, 0.1),
         }
     }
 
@@ -182,42 +177,47 @@ function metaDataProvider(type, imageId) {
     }
 
     if (type === 'age') {
-        const ageStr = getValue(metaData['00101010']);
+        const ageStr = getValue(recursiveFindTags('00101010', metaData)[0]);
         if (ageStr === undefined) return 0;
         return Number(ageStr.match(/\d+/)[0]);
     }
 
     if (type === 'imagePosition') {
-        let viewPosition = getValue(metaData['00185101']);
-
+        let viewPosition = getValue(recursiveFindTags('00185101', metaData)[0]);
+        let imageLaterality = getValue(recursiveFindTags('00200062', metaData)[0]);
         // for GE modality
         let positionDesc = '';
         let seriesDescription = getValue(getInsensitiveElement(metaData, '0008103e'));
         if (seriesDescription !== undefined) {
-            if (viewPosition === undefined) {
-                if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0 && seriesDescription.lastIndexOf('MLO') === seriesDescription.length - 3) {
+            seriesDescription = seriesDescription.toUpperCase();
+            if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0) {
+                positionDesc = 'GE-PLANES';
+            } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0) {
+                positionDesc = 'GE-SLABS';
+            } else if(seriesDescription.indexOf('V-PREVIEW') !== -1) {
+                positionDesc = 'V-PREVIEW';
+            }
+
+            if(viewPosition === undefined) {
+                if(seriesDescription.lastIndexOf('MLO') === seriesDescription.length - 3) {
                     viewPosition = 'MLO';
-                    positionDesc = 'GE-PLANES';
-                } else if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0 && seriesDescription.lastIndexOf('CC') === seriesDescription.length - 2) {
+                } else if(seriesDescription.lastIndexOf('CC') === seriesDescription.length - 2) {
                     viewPosition = 'CC';
-                    positionDesc = 'GE-PLANES';
-                } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0 && seriesDescription.lastIndexOf('MLO') === seriesDescription.length - 3) {
-                    viewPosition = 'MLO';
-                    positionDesc = 'GE-SLABS';
-                } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0 && seriesDescription.lastIndexOf('CC') === seriesDescription.length - 2) {
-                    viewPosition = 'CC';
-                    positionDesc = 'GE-SLABS';
                 }
-            } else {
-                if (seriesDescription.indexOf('V-Preview') !== -1) {
-                    positionDesc = 'V-PREVIEW';
+            }
+
+            if(imageLaterality === undefined) {
+                if (seriesDescription.lastIndexOf('RMLO') === seriesDescription.length - 4 || seriesDescription.lastIndexOf('RCC') === seriesDescription.length - 3) {
+                    imageLaterality = 'R';
+                } else if (seriesDescription.lastIndexOf('LMLO') === seriesDescription.length - 4 || seriesDescription.lastIndexOf('LCC') === seriesDescription.length - 3) {
+                    imageLaterality = 'L';
                 }
             }
         }
 
         const imagePosition = {
             viewPosition: viewPosition ? viewPosition : '',
-            imageLaterality: getValue(recursiveFindTags('00200062', metaData)[0], 0, ''),
+            imageLaterality: imageLaterality ? imageLaterality : '',
             positionDesc: positionDesc,
         }
         return imagePosition;
