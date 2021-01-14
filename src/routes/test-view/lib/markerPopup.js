@@ -12,23 +12,13 @@ export default class MarkerPopup extends Component {
     constructor(props) {
         super(props);
 
-        const {attempts_id, test_cases_id, markData, lesion_types, lesion_list, isPostTest, ratings, complete} = props;
+        const {attempts_id, test_cases_id, markData, lesion_list, isPostTest, ratings, complete} = props;
         let isShowDeleteButton = true;
         if (markData.isNew) {
             isShowDeleteButton = false;
         }
 
-        let selectedLesionTypes = [];
-        let lesions = markData.lesionTypes.map(v => v.toString());
-        lesion_types.forEach(v => {
-            if (lesions.indexOf(v.id.toString()) !== -1) {
-                selectedLesionTypes.push({value: v.id, label: v.name});
-            }
-        });
         let rating = (markData.rating === undefined || isNaN(markData.rating)) ? '2' : markData.rating;
-        if (Number(rating) < 3) {
-            selectedLesionTypes = [];
-        }
 
         let lesionList = [];
         try{
@@ -38,7 +28,6 @@ export default class MarkerPopup extends Component {
             attempts_id,
             test_cases_id,
             isPostTest,
-            selectedLesionTypes,
             selectedMarkData: markData,
             selectedRating: rating.toString(),
             lesionList: lesionList,
@@ -66,34 +55,26 @@ export default class MarkerPopup extends Component {
         if (
             type === 'save' && Number(this.state.selectedRating) > 2
         ) {
-            if(this.state.lesionList === null || this.state.lesionList.length === 0) {
-                // old lesion types check
-                if (this.state.selectedLesionTypes === null || this.state.selectedLesionTypes.length === 0) {
-                    NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
-                    return;
-                }
-            } else {
-                // new lesion types check
-                const {lesionList, selectedLesionList} = this.state;
-                if(Object.keys(selectedLesionList).length === 0) {
-                    NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
-                    return;
-                }
-                const rootLesionObj = lesionList.find((v) => v.name === Object.keys(selectedLesionList)[0]);
-                if(rootLesionObj !== undefined && rootLesionObj.children !== undefined && rootLesionObj.children.length > 0) {
-                    if (rootLesionObj.children[0].children !== undefined && rootLesionObj.children[0].children.length > 0) {
-                        // has sublesions
-                        if (rootLesionObj.children.some((v) => (
-                            v.name !== 'Associated features' && selectedLesionList[Object.keys(selectedLesionList)[0]][v.name] === undefined
-                        ))) {
-                            NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
-                            return;
-                        }
-                    } else {
-                        if (selectedLesionList[Object.keys(selectedLesionList)[0]] === '') {
-                            NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
-                            return;
-                        }
+            // new lesion types check
+            const {lesionList, selectedLesionList} = this.state;
+            if(Object.keys(selectedLesionList).length === 0) {
+                NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                return;
+            }
+            const rootLesionObj = lesionList.find((v) => v.name === Object.keys(selectedLesionList)[0]);
+            if(rootLesionObj !== undefined && rootLesionObj.children !== undefined && rootLesionObj.children.length > 0) {
+                if (rootLesionObj.children[0].children !== undefined && rootLesionObj.children[0].children.length > 0) {
+                    // has sublesions
+                    if (rootLesionObj.children.some((v) => (
+                        v.name !== 'Associated features' && selectedLesionList[Object.keys(selectedLesionList)[0]][v.name] === undefined
+                    ))) {
+                        NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                        return;
+                    }
+                } else {
+                    if (selectedLesionList[Object.keys(selectedLesionList)[0]] === '') {
+                        NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
+                        return;
                     }
                 }
             }
@@ -115,7 +96,6 @@ export default class MarkerPopup extends Component {
                     attempt_id: this.state.attempts_id,
                     test_case_id: this.state.test_cases_id,
                     rating: this.state.selectedRating,
-                    answer_lesion_types: this.state.selectedLesionTypes.map((v) => v.value.toString()),
                     answer_lesion_list: JSON.stringify(this.state.selectedLesionList),
                     isNew: this.state.selectedMarkData.isNew,
                     is_post_test: this.state.isPostTest
@@ -221,10 +201,6 @@ export default class MarkerPopup extends Component {
     }
 
     render() {
-        const {lesion_types} = this.props;
-        let lesionsTypes = lesion_types.map((v, i) => {
-            return {label: v.name, value: v.id}
-        });
         return (
             <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
                 <div id="mark-details" onClick={(e) => {e.stopPropagation()}}>
@@ -258,18 +234,7 @@ export default class MarkerPopup extends Component {
                         </FormGroup>
                         <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
                         {
-                            this.state.lesionList !== null && this.state.lesionList.length !== 0 ? this.renderLesion() :
-                                <Select
-                                    isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                                    placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
-                                    isMulti
-                                    name="lesions"
-                                    isSearchable={false}
-                                    options={lesionsTypes}
-                                    value={this.state.selectedLesionTypes}
-                                    styles={selectStyles}
-                                    onChange={(options) => this.setState({selectedLesionTypes: options})}
-                                />
+                            this.renderLesion()
                         }
 
                         <div className="actions">

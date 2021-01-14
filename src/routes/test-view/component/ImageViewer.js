@@ -439,7 +439,6 @@ class ImageViewer extends Component {
             marker_tool_type: toolName,
             active: true,
             imageId: this.props.imageInfo.id,
-            lesionTypes: [],
             lesionList: {},
             isTruth: false,
             imageElement: this.imageElement,
@@ -499,7 +498,6 @@ class ImageViewer extends Component {
         }
         Apis[act](data).then(response => {
             response.isTruth = false;
-            response.lesionTypes = response.answer_lesion_types;
             response.lesionList = JSON.parse(response.answer_lesion_list);
             if (data.isNew) {
                 this.markList.push(response);
@@ -628,7 +626,6 @@ class ImageViewer extends Component {
                         lesionNumber: mark.number,
                         rating: mark.rating,
                         radius: this.props.radius,
-                        lesionTypes: mark.lesionTypes,
                         lesionList: mark.lesionList,
                         imageElement: this.imageElement
                     };

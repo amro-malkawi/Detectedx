@@ -94,30 +94,20 @@ export default class MarkerTool extends BaseAnnotationTool {
             let radius = mark.radius * viewport.scale;
 
             draw(context, context => {
-                let lesionNameObj = [];
-                MarkerTool.lesions.forEach((v) => {
-                    if(mark.lesionTypes.indexOf(v.id) !== -1) {
-                        lesionNameObj.push(v.name);
-                    }
-                });
                 let lesionNames = [];
-                if(mark.lesionList !== undefined && mark.lesionList !== null && mark.lesionList !== {}) {
-                    const rootLesion = Object.keys(mark.lesionList)[0];
-                    if(rootLesion !== undefined) {
-                        if(typeof mark.lesionList[rootLesion] === "object") {
-                            lesionNames.push(rootLesion);
-                            Object.keys(mark.lesionList[rootLesion]).forEach((key) => {
-                                lesionNames.push(mark.lesionList[rootLesion][key]);
-                            });
-                        } else if(typeof mark.lesionList[rootLesion] === "string" && mark.lesionList[rootLesion].length > 0) {
-                            lesionNames.push(rootLesion);
-                            lesionNames.push(mark.lesionList[rootLesion]);
-                        } else {
-                            lesionNames.push(rootLesion);
-                        }
+                const rootLesion = Object.keys(mark.lesionList)[0];
+                if(rootLesion !== undefined) {
+                    if(typeof mark.lesionList[rootLesion] === "object") {
+                        lesionNames.push(rootLesion);
+                        Object.keys(mark.lesionList[rootLesion]).forEach((key) => {
+                            lesionNames.push(mark.lesionList[rootLesion][key]);
+                        });
+                    } else if(typeof mark.lesionList[rootLesion] === "string" && mark.lesionList[rootLesion].length > 0) {
+                        lesionNames.push(rootLesion);
+                        lesionNames.push(mark.lesionList[rootLesion]);
+                    } else {
+                        lesionNames.push(rootLesion);
                     }
-                } else {
-                    lesionNames = lesionNameObj;
                 }
                 let colour;
                 let padding;
@@ -178,7 +168,6 @@ export default class MarkerTool extends BaseAnnotationTool {
             data.truth = mark.truth;
             data.id = mark.id;
             data.rating = mark.rating;
-            data.lesionTypes = mark.lesionTypes;
             cornerstoneTools.addToolState(imageElement, 'MarkerTool', data);
         }
 

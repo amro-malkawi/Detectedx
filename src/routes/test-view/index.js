@@ -161,7 +161,6 @@ class TestView extends Component {
                 answerDensity: complete ? testCasesAnswers.answerDensity : undefined,
                 loading: false
             }, () => {
-                Marker.lesions = that.state.test_case.modalities.lesion_types;
                 Marker.modalityRatings = that.state.test_case.ratings;
                 // ImageViewer.adjustSlideSize();
             });
@@ -701,7 +700,6 @@ class TestView extends Component {
                             <MarkerPopup
                                 attempts_id={this.state.attempts_id}
                                 test_cases_id={this.state.test_cases_id}
-                                lesion_types={this.state.test_case.modalities.lesion_types}
                                 lesion_list={this.state.test_case.modalities.lesion_list}
                                 isPostTest={this.state.isPostTest}
                                 markData={this.state.selectedMarkData}

@@ -230,7 +230,6 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         const markList = [];
         imageAnswers.answers && imageAnswers.answers.forEach((mark) => {
             mark.isTruth = false;
-            mark.lesionTypes = mark.answers_lesion_types.map((v) => v.lesion_type_id);
             mark.lesionList = {};
             try {
                 mark.lesionList = JSON.parse(mark.answer_lesion_list);
@@ -241,7 +240,6 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         });
         imageAnswers.truths && imageAnswers.truths.forEach((mark) => {
             mark.isTruth = true;
-            mark.lesionTypes = mark.truths_lesion_types.map((v) => v.lesion_type_id);
             mark.lesionList = {};
             try {
                 mark.lesionList = JSON.parse(mark.truth_lesion_list);
