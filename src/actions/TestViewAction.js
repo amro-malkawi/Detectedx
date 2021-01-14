@@ -135,6 +135,7 @@ const getImageHangingIdList = (images) => {
 const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser) => {
     if(showImageIds.length === 0 || showImageIds[0].length === 0) return 0;
     const imageObjList = showImageIds[0].map((v) => totalImageObjList.find((vv) => vv.id === v));
+    const imageRow = showImageIds.length;
     // calculate for initial position
     try {
         // check all breast image
@@ -143,17 +144,17 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
         }
         // get canvas width, height
         let canvasWidth, canvasHeight;
-        const canvasInstance = $('div.image-row');
+        const canvasInstance = $('div#images');
         if (canvasInstance.length === 0) {
             //did not load
             canvasWidth = $(window).width();
             if(isShowImageBrowser) {
                 canvasWidth = canvasWidth - 300;
             }
-            canvasHeight = $(window).height() - 80;
+            canvasHeight = ($(window).height() - 80) / imageRow;
         } else {
             canvasWidth = canvasInstance.width();
-            canvasHeight = canvasInstance.height();
+            canvasHeight = canvasInstance.height() / imageRow;
         }
         let imgMaxRealWidth = 0;
         let imgMaxRealHeight = 0;
