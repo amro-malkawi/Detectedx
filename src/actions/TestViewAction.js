@@ -11,8 +11,7 @@ import {
     TEST_VIEW_SET_SHOW_IMAGE_BROWSER,
     TEST_VIEW_SET_HANGING_TYPE,
     TEST_VIEW_SET_RESET_ID,
-    TEST_VIEW_SET_FULL_IMAGE_QUALITY,
-    TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
+    TEST_VIEW_SET_CASE_DENSITY,
     TEST_VIEW_SET_CURRENT_TOOL,
     TEST_VIEW_SET_THICKNESS_TYPE,
     TEST_VIEW_FOCUS_IMAGEVIEWER
@@ -260,7 +259,6 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         });
         return {
             ...v,
-            imageQuality: -1,
             answers: {
                 markList,
                 shapeList
@@ -415,23 +413,11 @@ export const setImageAnswer = (imageId, type, value) => (dispatch, getState) => 
     }
 };
 
-export const setImageQuality = (imageId, value) => (dispatch, getState) => {
-    const imageList = [...getState().testView.imageList];
-    if (imageId === '') {
-        dispatch({
-            type: TEST_VIEW_SET_FULL_IMAGE_QUALITY,
-            payload: value
-        });
-    } else {
-        const index = imageList.findIndex((v) => v.id === imageId);
-        dispatch({
-            type: TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
-            payload: {
-                index,
-                value
-            }
-        });
-    }
+export const setCaseDensity = (value) => (dispatch, getState) => {
+    dispatch({
+        type: TEST_VIEW_SET_CASE_DENSITY,
+        payload: value
+    });
 };
 
 export const changeCurrentTool = (tool) => (dispatch) => {

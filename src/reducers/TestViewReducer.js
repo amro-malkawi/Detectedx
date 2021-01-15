@@ -9,8 +9,7 @@ import {
     TEST_VIEW_SET_SHOW_IMAGE_BROWSER,
     TEST_VIEW_SET_HANGING_TYPE,
     TEST_VIEW_SET_RESET_ID,
-    TEST_VIEW_SET_FULL_IMAGE_QUALITY,
-    TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY,
+    TEST_VIEW_SET_CASE_DENSITY,
     TEST_VIEW_SET_CURRENT_TOOL,
     TEST_VIEW_SET_THICKNESS_TYPE,
     TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
@@ -20,7 +19,7 @@ import {
 const INIT_STATE = {
     attemptId: '',
     imageList: [],
-    imageQuality: -1,
+    caseDensity: -1,
     showImageList: [[]],
     initialZoomLevel: 0,
     isShowImageBrowser: true,
@@ -47,7 +46,7 @@ export default (state = INIT_STATE, action) => {
                 selectedHangingType: action.selectedHangingType,
                 defaultImagesNumber: action.defaultImagesNumber,
                 volparaImageId: action.volparaImageId,
-                imageQuality: -1,
+                caseDensity: -1,
                 toolList: action.toolList,
                 currentTool: action.currentTool,
                 currentThicknessType: action.currentThicknessType,
@@ -65,18 +64,8 @@ export default (state = INIT_STATE, action) => {
             return { ...state, selectedHangingType: action.payload };
         case TEST_VIEW_SET_RESET_ID:
             return {...state, resetId: action.payload};
-        case TEST_VIEW_SET_FULL_IMAGE_QUALITY:
-            return {...state, imageQuality: action.payload};
-        case TEST_VIEW_SET_INDIVIDUAL_IMAGE_QUALITY:
-            return update(state, {
-                imageList: {
-                    [action.payload.index]: {
-                        imageQuality: {
-                            $set: action.payload.value
-                        }
-                    }
-                }
-            });
+        case TEST_VIEW_SET_CASE_DENSITY:
+            return {...state, caseDensity: action.payload};
         case TEST_VIEW_SET_CURRENT_TOOL:
             return {...state, currentTool: action.payload}
         case TEST_VIEW_SET_THICKNESS_TYPE:

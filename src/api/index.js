@@ -269,20 +269,9 @@ export function attemptsCertificatePdf(id, type) {
     });
 }
 
-export function attemptsQuality(id, test_case_id, quality) {
-    const url = '/attempts/' + id + '/quality?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
-    return instance.post(url, quality).then((response) => response.data);
-}
-
-export function attemptsConfirmQuality(id, test_case_id, quality, isAgree, msg) {
-    const url = '/attempts/' + id + '/confirm_quality?access_token=' + getAccessToken();
-    const data = {
-        test_case_id,
-        quality,
-        isAgree,
-        msg
-    };
-    return instance.post(url, data).then((response) => response.data);
+export function attemptsDensity(id, test_case_id, density) {
+    const url = '/attempts/' + id + '/set_density?test_case_id=' + test_case_id + '&density=' + density + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 
 export function attemptsSavePostAnswer(id, answer) {

@@ -748,23 +748,6 @@ class ImageViewer extends Component {
         }
     }
 
-    renderImageQuality() {
-        if (this.props.isShowQuality) {
-            const imageQuality = Number(this.props.stage === 1 ? this.props.imageInfo.imageQuality : this.props.imageInfo.quality);
-            return (
-                <div className={'individual-quality-btn'}>
-                    <a className="eye" onClick={() => this.props.stage === 1 ? this.props.onShowQualityModal(this.props.imageInfo.id) : null}>
-                        <Tooltip title="Image Quality" placement="bottom">
-                            <div className={(imageQuality === -1 ? 'quality-none' : ['inadequate', 'moderate', 'good', 'perfect'][imageQuality]) + '-icon'}/>
-                        </Tooltip>
-                    </a>
-                </div>
-            )
-        } else {
-            return null;
-        }
-    }
-
     renderStackComponent() {
         if (this.state.imageIds.length <= 1) {
             return null;
@@ -883,7 +866,6 @@ class ImageViewer extends Component {
                     age={this.state.age}
                     metaData={this.props.imageInfo.metaData}
                 />
-                {this.renderImageQuality()}
                 <ResizeDetector
                     handleWidth
                     handleHeight

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {changeHangingLayout, setImageListAction, setShowImageBrowser, setImageQuality} from 'Actions';
+import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity} from 'Actions';
 import {Button, Switch, Dialog} from '@material-ui/core';
 import SkipPreviousOutlinedIcon from '@material-ui/icons/SkipPreviousOutlined';
 import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
@@ -66,9 +66,6 @@ class TestView extends Component {
             selectedMarkData: {},
             isShowToolModal: false,
             isShowInstructionModal: false,
-            isShowQualityModal: false,
-            imageIdForQuality: '',
-            isShowConfirmQualityModal: false,
             isShowLoadingIndicator: true,
 
             possiblePostTestReattempt: false,
@@ -165,10 +162,6 @@ class TestView extends Component {
                 // ImageViewer.adjustSlideSize();
             });
 
-            if(testCaseViewInfo.modalities.modality_type === 'volpara') {
-                that.props.setImageQuality('', testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
-            }
-
             // load images metadata
             Promise.all(testCaseViewInfo.images.map((v) => cornerstoneWebImageLoader.dataSetCacheManager.loadMetaData(v.image_url_path))).then(() => {
                 testCaseViewInfo.images.forEach((v) => {
@@ -184,6 +177,9 @@ class TestView extends Component {
                     testCaseViewInfo.modalities.number_of_slides,
                     complete
                 );
+                if(testCaseViewInfo.modalities.modality_type === 'volpara') {
+                    that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
+                }
             });
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
@@ -239,14 +235,8 @@ class TestView extends Component {
     }
 
     onNext() {
-        if (
-            !this.state.complete &&
-            ((this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) || this.state.test_case.modalities.modality_type === 'volpara')
-        ) {
-            // this.setState({isShowQualityModal: true});
-            this.onSendQuality(this.state.test_case.modalities.modality_type);
-        } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 2) {
-            this.setState({isShowConfirmQualityModal: true});
+        if ( !this.state.complete && this.state.test_case.modalities.modality_type === 'volpara' ) {
+            this.onSendCaseDensity();
         } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'covid') {
             const covidRating = this.covidQuestionRef.current.state.selectedRating;
             if (isNaN(covidRating) || Number(covidRating) < 0 || Number(covidRating) > 5) {
@@ -260,13 +250,8 @@ class TestView extends Component {
     }
 
     onFinish() {
-        if (
-            !this.state.complete &&
-            ((this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) || this.state.test_case.modalities.modality_type === 'volpara')
-        ) {
-            this.onSendQuality(this.state.test_case.modalities.modality_type);
-        } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 2) {
-            this.setState({isShowConfirmQualityModal: true});
+        if ( !this.state.complete && this.state.test_case.modalities.modality_type === 'volpara' ) {
+            this.onSendCaseDensity();
         } else {
             this.onComplete();
         }
@@ -309,13 +294,8 @@ class TestView extends Component {
                             this.props.history.replace(nextPath);
                         });
                     } else {
-                        if (this.state.test_case.modalities.modality_type === 'image_quality') {
-                            NotificationManager.success(<IntlMessages id={"testView.testFinishMessage"}/>);
-                            this.props.history.push('/app/test/complete-list/' + this.state.test_sets_id);  // go to scores tab
-                        } else {
                             this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
                             // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
-                        }
                     }
                 }).catch((e) => {
                     console.warn(e.response ? e.response.data.error.message : e.message);
@@ -362,46 +342,25 @@ class TestView extends Component {
         });
     }
 
-    onShowImageQualityModal(imageId) {
-        if (this.state.attemptDetail.stage === 2) return;
-        this.setState({isShowQualityModal: true, imageIdForQuality: imageId});
-    }
-
     onShowDensityModal() {
         if (this.state.complete) return;
-        this.setState({isShowDensityModal: true, imageIdForQuality: ''});
-    }
-
-    onSetQuality(quality) {
-        if (quality === -1) return;
-        this.setState({isShowQualityModal: false});
-        this.props.setImageQuality(this.state.imageIdForQuality, quality);
+        this.setState({isShowDensityModal: true});
     }
 
     onSetDensity(density) {
         if (density === -1) return;
         this.setState({isShowDensityModal: false});
-        this.props.setImageQuality(this.state.imageIdForQuality, density);
+        this.props.setCaseDensity(density);
         setTimeout(() => this.onNext(), 100);
     }
 
-    onSendQuality(modality_type) {
-        const quality = {
-            full: this.props.imageQuality,
-            image: this.props.imageList.map((v) => ({id: v.id, quality: v.imageQuality}))
-        };
-        if (quality.full === -1) {
-            if (modality_type === 'image_quality') {
-                NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
-            } else if (modality_type === 'volpara') {
-                NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
-            }
-        } else if (modality_type === 'image_quality' && quality.image.some((v) => v.quality === -1)) {
-            NotificationManager.error(<IntlMessages id={"testView.selectEveryImageQuality"}/>);
+    onSendCaseDensity() {
+        if (this.props.caseDensity === -1) {
+            NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
         } else {
             const test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
             const test_case_length = this.state.test_set_cases.length;
-            Apis.attemptsQuality(this.state.attempts_id, this.state.test_cases_id, quality).then((resp) => {
+            Apis.attemptsDensity(this.state.attempts_id, this.state.test_cases_id, this.props.caseDensity).then((resp) => {
                 if (test_case_index + 1 === test_case_length) {
                     this.onComplete();
                 } else {
@@ -409,19 +368,6 @@ class TestView extends Component {
                 }
             });
         }
-    }
-
-    onConfirmImageQuality(isAgree, msg) {
-        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
-        let test_case_length = this.state.test_set_cases.length;
-        this.setState({isShowConfirmQualityModal: false});
-        Apis.attemptsConfirmQuality(this.state.attempts_id, this.state.test_cases_id, this.state.test_case.quality, isAgree, msg).then((resp) => {
-            if (test_case_index + 1 === test_case_length) {
-                this.onComplete();
-            } else {
-                this.onMove(1);
-            }
-        });
     }
 
     handleShowPopup(markData, cancelCallback, deleteCallback, saveCallback) {
@@ -528,40 +474,10 @@ class TestView extends Component {
         }
     }
 
-    renderTruthImageQuality() {
-        if (this.state.test_case.modalities.modality_type === 'image_quality') {
-            const imageQuality = Number(this.state.attemptDetail.stage === 1 ? this.props.imageQuality : this.state.test_case.quality);
-            if (imageQuality === -1) {
-                return (
-                    <div className={'truth-quality'} onClick={() => this.onShowImageQualityModal('')}>
-                        <div className={'quality-icon quality-none-icon'}/>
-                        <span className={'quality-text'}><IntlMessages id={"testView.quality"}/></span>
-                    </div>
-                )
-            } else {
-                let qualityIcon = [
-                    'inadequate-icon',
-                    'moderate-icon',
-                    'good-icon',
-                    'perfect-icon'
-                ][imageQuality];
-
-                let quality = [
-                    <IntlMessages id={"testView.quality.inadequate"}/>,
-                    <IntlMessages id={"testView.quality.moderate"}/>,
-                    <IntlMessages id={"testView.quality.good"}/>,
-                    <IntlMessages id={"testView.quality.perfect"}/>
-                ][imageQuality];
-                return (
-                    <div className={'truth-quality'} onClick={() => this.onShowImageQualityModal('')}>
-                        <div className={'quality-icon ' + qualityIcon}/>
-                        <span className={'quality-text'}>{quality}</span>
-                    </div>
-                )
-            }
-        } else if (this.state.test_case.modalities.modality_type === 'volpara') {
+    renderCaseDensity() {
+        if (this.state.test_case.modalities.modality_type === 'volpara') {
             if (!this.state.complete) {
-                const imageDensity = Number(this.props.imageQuality);
+                const imageDensity = Number(this.props.caseDensity);
                 return (
                     <div className={'truth-quality'} onClick={() => this.onShowDensityModal()}>
                         {
@@ -629,7 +545,7 @@ class TestView extends Component {
                     <ShortcutContainer className={'viewer-content'} complete={this.state.complete} stage={this.state.attemptDetail.stage}>
                         <div id="toolbar">
                             {this.renderToolBar()}
-                            {this.renderTruthImageQuality()}
+                            {this.renderCaseDensity()}
                             {this.renderHeaderNumber()}
                             {this.renderNav()}
                         </div>
@@ -663,8 +579,6 @@ class TestView extends Component {
                                     complete={this.state.complete}
                                     stage={this.state.attemptDetail.stage}
                                     onShowPopup={this.handleShowPopup.bind(this)}
-                                    onShowQualityModal={(!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality' && this.state.attemptDetail.stage === 1) ? this.onShowImageQualityModal.bind(this) : null}
-                                    isShowQuality={this.state.test_case.modalities.modality_type === 'image_quality'}
                                 />
                                 {
                                     this.state.test_case.modalities.modality_type === 'covid' &&
@@ -718,27 +632,10 @@ class TestView extends Component {
                         type={this.state.test_case.modalities.instruction_type}
                         video={{thumbnail: this.state.test_case.modalities.instruction_video_thumbnail, link: this.state.test_case.modalities.instruction_video}}
                     />
-                    <QualityModal
-                        isOpen={this.state.isShowQualityModal}
-                        toggle={() => this.setState({isShowQualityModal: false})}
-                        confirm={(quality) => this.onSetQuality(quality)}
-                    />
                     <DensityModal
                         isOpen={this.state.isShowDensityModal}
                         toggle={() => this.setState({isShowDensityModal: false})}
                         confirm={(density) => this.onSetDensity(density)}
-                    />
-                    <ConfirmQualityModal
-                        isOpen={this.state.isShowConfirmQualityModal}
-                        toggle={() => this.setState({isShowConfirmQualityModal: false})}
-                        quality={
-                            [
-                                <IntlMessages id={"testView.quality.inadequate"}/>,
-                                <IntlMessages id={"testView.quality.moderate"}/>,
-                                <IntlMessages id={"testView.quality.good"}/>,
-                                <IntlMessages id={"testView.quality.perfect"}/>
-                            ][Number(this.state.test_case.quality)]}
-                        confirm={(isAgree, msg) => this.onConfirmImageQuality(isAgree, msg)}
                     />
                     <ReattemptPostTestModal
                         open={this.state.isShowPostTestReattemptModal}
@@ -760,7 +657,7 @@ const mapStateToProps = (state) => {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
         isShowImageBrowser: state.testView.isShowImageBrowser,
-        imageQuality: state.testView.imageQuality,
+        caseDensity: state.testView.caseDensity,
     };
 };
 
@@ -768,7 +665,7 @@ export default withRouter(connect(mapStateToProps, {
     setImageListAction,
     setShowImageBrowser,
     changeHangingLayout,
-    setImageQuality,
+    setCaseDensity,
 })(TestView));
 
 const AntSwitch = withStyles(theme => ({

@@ -226,18 +226,6 @@ div.viewer {
             left: 13px;
           }
 
-          .individual-quality-btn {
-            position: absolute;
-            top: 27px;
-            left: 50%;
-            margin-left: -20px;
-
-            div {
-              width: 40px;
-              height: 40px;
-            }
-          }
-
           .image-overlap-container {
             position: absolute;
             top: 0;
@@ -1183,16 +1171,6 @@ div.viewer {
           font-size: 50px;
         }
       }
-    }
-  }
-
-  .individual-quality-btn {
-    top: 40px !important;
-    margin-left: -15px !important;
-
-    div {
-      width: 30px !important;
-      height: 30px !important;
     }
   }
 
