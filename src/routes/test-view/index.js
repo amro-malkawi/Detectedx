@@ -30,9 +30,8 @@ import ImageViewerContainer from './component/ImageViewerContainer'
 import Marker from './lib/tools/MarkerTool';
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from '../instructions';
-import CovidQuestions from "Routes/test-view/component/CovidQuestions";
-import QualityModal from './QualityModal';
-import ConfirmQualityModal from './ConfirmQualityModal';
+import CovidQuestions from "./component/CovidQuestions";
+import QualityQuestions from "./component/QualityQuestions";
 import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
 import ImageBrowser from "./component/ImageBrowser";
@@ -583,6 +582,17 @@ class TestView extends Component {
                                 {
                                     this.state.test_case.modalities.modality_type === 'covid' &&
                                     <CovidQuestions
+                                        ref={this.covidQuestionRef}
+                                        attempts_id={this.state.attempts_id}
+                                        test_case_id={this.state.test_cases_id}
+                                        complete={this.state.complete}
+                                        isTruth={false}
+                                        isPostTest={this.state.isPostTest}
+                                    />
+                                }
+                                {
+                                    this.state.test_case.modalities.modality_type === 'image_quality' &&
+                                    <QualityQuestions
                                         ref={this.covidQuestionRef}
                                         attempts_id={this.state.attempts_id}
                                         test_case_id={this.state.test_cases_id}
