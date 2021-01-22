@@ -42,6 +42,9 @@ module.exports = {
     "test.enterCouponCode": "Nhập mã phiếu giảm giá",
     "test.verify": "XÁC MINH",
     "test.apply": "ÁP DỤNG",
+
+    "test.list.instructionVideo": "Video hướng dẫn",
+
     "test.purchase.warning": "Cảnh báo",
     "test.purchase.attention": "Chú ý",
     "test.purchase.subscribe": "Đăng ký",
@@ -150,7 +153,6 @@ module.exports = {
     "testView.submit": "Gửi",
     "testView.next": "Tiếp theo",
     "testView.instructions": "Hướng dẫn",
-    "testView.instruction": "Hướng dẫn",
     "testView.scores": "Điểm",
     "testView.home": "Trang chủ",
     "testView.stage": "Giai đoạn",
@@ -169,7 +171,7 @@ module.exports = {
     "testView.modal.selectBreastDensity": "Chọn danh mục mật độ vú",
     "testView.confirm": "Xác nhận",
     "testView.synopticComment": "Nhận xét khái quát",
-    "testView.comment": "Nhận xét",
+    "testView.comment": "Lịch sử bệnh nhân",
     "testView.covidQuestion.title1": "Phân phối xuất hiện COVID",
     "testView.covidQuestion.title2": "Nghi ngờ nhiễm COVID-19",
     "testView.covidQuestion.expertJudgement": "Chuyên gia phán đoán",

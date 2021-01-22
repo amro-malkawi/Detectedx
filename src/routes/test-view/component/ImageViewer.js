@@ -330,6 +330,7 @@ class ImageViewer extends Component {
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'StackScrollMouseWheel', {});
         } else {
             this.handlePrefecthDone(true);
+            this.handlePrefecthDone(false);
             // images are loaded with the zoom mousewheel enabled by default
             cornerstoneTools.setToolActiveForElement(this.imageElement, 'ZoomMouseWheel', {});
         }
@@ -388,22 +389,22 @@ class ImageViewer extends Component {
     }
 
     handleDoubleClickEvent(event) {
-        // if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1 && this.props.currentTool !== 'MarkerFreehand') {
-        //     // disable double click when current tool is freehand
-        //     this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
-        // }
-        if(this.props.index !== '-1_-1') {
-            // index="-1_-1" disable focus image feature
-            let viewerIndex;
-            if (this.props.focusImageViewerIndex === this.props.index) {
-                viewerIndex = '-1_-1';
-                this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
-            } else {
-                viewerIndex = this.props.index;
-                this.props.synchronizer && this.props.synchronizer.remove(this.imageElement);
-            }
-            this.props.focusImageViewer(viewerIndex);
+        if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1 && this.props.currentTool !== 'MarkerFreehand') {
+            // disable double click when current tool is freehand
+            this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
         }
+        // if(this.props.index !== '-1_-1') {
+        //     // index="-1_-1" disable focus image feature
+        //     let viewerIndex;
+        //     if (this.props.focusImageViewerIndex === this.props.index) {
+        //         viewerIndex = '-1_-1';
+        //         this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
+        //     } else {
+        //         viewerIndex = this.props.index;
+        //         this.props.synchronizer && this.props.synchronizer.remove(this.imageElement);
+        //     }
+        //     this.props.focusImageViewer(viewerIndex);
+        // }
     }
 
     handleMeasureCompleteEvent(event) {

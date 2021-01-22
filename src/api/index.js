@@ -321,11 +321,16 @@ export function attemptsSetProgress(id, progress) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsStartVideo(id) {
+    let url = '/attempts/' + id + '/start_video?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * score operation
  */
 export function attemptsPercentile(attempt_id, score_type, user_position) {
-    const url = `/scores/attempt_percentile?attempt_id=${attempt_id}&score_type=${score_type}&position=${user_position}` + '&access_token=' + getAccessToken();
+    const url = `/scores/attempt_percentile?attempt_id=${attempt_id}&score_type=${score_type}&position=${user_position}&access_token=` + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

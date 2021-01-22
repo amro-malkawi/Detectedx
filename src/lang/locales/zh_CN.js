@@ -42,6 +42,9 @@ module.exports = {
     "test.enterCouponCode": "输入优惠券代码",
     "test.verify": "校验",
     "test.apply": "应用",
+
+    "test.list.instructionVideo": "指导视频",
+
     "test.purchase.warning": "警告",
     "test.purchase.attention": "注意",
     "test.purchase.subscribe": "订阅",
@@ -150,7 +153,6 @@ module.exports = {
     "testView.submit": "提交",
     "testView.next": "下一步",
     "testView.instructions": "指令",
-    "testView.instruction": "指令",
     "testView.scores": "分数",
     "testView.home": "主页",
     "testView.stage": "舞台",
@@ -169,7 +171,7 @@ module.exports = {
     "testView.modal.selectBreastDensity": "选择乳房密度类别",
     "testView.confirm": "确认",
     "testView.synopticComment": "突触评论",
-    "testView.comment": "Comment",
+    "testView.comment": "患者病史",
     "testView.covidQuestion.title1": "COVID外观的分布",
     "testView.covidQuestion.title2": "怀疑感染COVID-19",
     "testView.covidQuestion.expertJudgement": "专家判断",

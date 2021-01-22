@@ -17,6 +17,7 @@ import {
     TEST_VIEW_SET_THICKNESS_TYPE,
     TEST_VIEW_FOCUS_IMAGEVIEWER
 } from 'Actions/types';
+import {isMobile} from 'react-device-detect';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
 
@@ -225,6 +226,13 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 };
 
 export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
+    const {selectedHangingType, currentThicknessType} = getState().testView;
+    let isShowImageBrowser = getState().testView.isShowImageBrowser;
+    if (list.length < 2 || isMobile) {
+        isShowImageBrowser = false;
+    } else {
+        isShowImageBrowser = true;
+    }
     let newList = list.map((v, i) => {
         let imageAnswers = answer.find((vv) => v.id === vv.id);
         const markList = [];
@@ -315,7 +323,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             image.hangingId = '';
         }
     });
-    const {selectedHangingType, currentThicknessType, isShowImageBrowser} = getState().testView;
+
     let showImageList, initialZoomLevel;
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
@@ -344,6 +352,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         type: TEST_VIEW_SET_IMAGE_LIST,
         imageList: newList,
         showImageList,
+        isShowImageBrowser,
         initialZoomLevel,
         testSetHangingIdList,
         selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',

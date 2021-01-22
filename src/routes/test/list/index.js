@@ -249,7 +249,7 @@ class List extends Component {
                         {
                             modality_info.instruction_type !== null ?
                                 <MuiButton variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
-                                    <IntlMessages id={"testView.instruction"}/>
+                                    <IntlMessages id={"testView.instructions"}/>
                                 </MuiButton> : <div style={{height: 35}}/>
                         }
                     </div>
@@ -285,15 +285,20 @@ class List extends Component {
                     }
                     {
                         !unavailableVideo &&
-                        <div className={(unavailableDescText ? 'col-sm-12' : 'col-md-5 col-sm-12') + ' instruction-video'}
-                             onClick={() => this.setState({
-                                 isShowModalType: 'instructionVideoModal',
-                                 modalInfo: {type: modality_info.instruction_type, video: instruction_video}
-                             })}
-                        >
-                            <img src={instruction_video_thumbnail} alt=''/>
-                            <p/>
-                            <i className="zmdi zmdi-play-circle-outline"/>
+                        <div className={(unavailableDescText ? 'col-sm-12' : 'col-md-5 col-sm-12') + ' d-flex flex-column justify-content-center'}>
+                            <div className={'d-flex justify-content-center'}>
+                                <h3><strong><IntlMessages id="test.list.instructionVideo"/></strong></h3>
+                            </div>
+                            <div className={'instruction-video'}
+                                 onClick={() => this.setState({
+                                     isShowModalType: 'instructionVideoModal',
+                                     modalInfo: {type: modality_info.instruction_type, video: instruction_video}
+                                 })}
+                            >
+                                <img src={instruction_video_thumbnail} alt=''/>
+                                <p/>
+                                <i className="zmdi zmdi-play-circle-outline"/>
+                            </div>
                         </div>
                     }
                 </div>
@@ -301,160 +306,180 @@ class List extends Component {
         }
     }
 
-    renderTestSets({test_sets, modality_info}) {
-        return (
-            <div className={'m-0'} key={modality_info.id}>
-                {
-                    this.renderModalityDesc(modality_info)
-                }
-                {
-                    test_sets.map((item, index) => {
-                        return (
-                            <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
-                                <Card className="rct-block">
-                                    <CardBody>
-                                        <div className="row d-flex justify-content-between">
-                                            <div className={'col-sm-12 col-md-9'}>
-                                                <div className={'d-flex flex-row align-items-center mb-5'}>
-                                                    <span className="fs-14 fw-bold">{item.name}</span>
-                                                    {this.renderLearningButton(item, modality_info)}
+    renderTestSets(
+        {
+            test_sets, modality_info
+        }
+    )
+        {
+            return (
+                <div className={'m-0'} key={modality_info.id}>
+                    {
+                        this.renderModalityDesc(modality_info)
+                    }
+                    {
+                        test_sets.map((item, index) => {
+                            return (
+                                <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
+                                    <Card className="rct-block">
+                                        <CardBody>
+                                            <div className="row d-flex justify-content-between">
+                                                <div className={'col-sm-12 col-md-9'}>
+                                                    <div className={'d-flex flex-row align-items-center mb-5'}>
+                                                        <span className="fs-14 fw-bold">{item.name}</span>
+                                                        {this.renderLearningButton(item, modality_info)}
+                                                    </div>
+                                                    {this.renderExpireDate(item)}
                                                 </div>
-                                                {this.renderExpireDate(item)}
+                                                <div className={'col-sm-12 col-md-3 test-list-action-buttons'}>
+                                                    {this.renderScoresButton(item, modality_info.instruction_type)}
+                                                    {this.renderStartButton(item, modality_info.modality_type)}
+                                                </div>
                                             </div>
-                                            <div className={'col-sm-12 col-md-3 test-list-action-buttons'}>
-                                                {this.renderScoresButton(item, modality_info.instruction_type)}
-                                                {this.renderStartButton(item, modality_info.modality_type)}
-                                            </div>
-                                        </div>
-                                        {
-                                            item.test_set_desc !== null && item.test_set_desc !== '' &&
-                                            <div className={'test-list-desc-text'}>
-                                                {item.test_set_desc}
-                                            </div>
-                                        }
-                                    </CardBody>
-                                </Card>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        )
-    }
-
-    render() {
-        return (
-            <div className="test-list-container news-dashboard-wrapper mb-20">
-                <div className={'test-set-coupon'}>
-                    <MuiButton variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
-                        <IntlMessages id={"test.testSetCoupon"}/>
-                    </MuiButton>
+                                            {
+                                                item.test_set_desc !== null && item.test_set_desc !== '' &&
+                                                <div className={'test-list-desc-text'}>
+                                                    {item.test_set_desc}
+                                                </div>
+                                            }
+                                        </CardBody>
+                                    </Card>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
-                <AppBar position="static" color="default">
-                    <ModalityTabs
-                        value={this.state.tabIndex}
-                        onChange={(e, value) => this.setState({tabIndex: value})}
-                        variant="scrollable"
-                        scrollButtons="auto"
-                        indicatorColor="primary"
-                        textColor="primary"
-                        aria-label="scrollable force tabs example"
+            )
+        }
+
+    render()
+        {
+            return (
+                <div className="test-list-container news-dashboard-wrapper mb-20">
+                    <div className={'test-set-coupon'}>
+                        <MuiButton variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
+                            <IntlMessages id={"test.testSetCoupon"}/>
+                        </MuiButton>
+                    </div>
+                    <AppBar position="static" color="default">
+                        <ModalityTabs
+                            value={this.state.tabIndex}
+                            onChange={(e, value) => this.setState({tabIndex: value})}
+                            variant="scrollable"
+                            scrollButtons="auto"
+                            indicatorColor="primary"
+                            textColor="primary"
+                            aria-label="scrollable force tabs example"
+                        >
+                            {
+                                this.state.testSetsList.map((v) => this.renderModalityTab(v))
+                            }
+                        </ModalityTabs>
+                    </AppBar>
+                    <SwipeableViews
+                        index={this.state.tabIndex}
+                        style={{display: 'flex', flex: 1}}
+                        containerStyle={{width: '100%', height: '100%'}}
+                        onChangeIndex={(index, indexLatest, meta) => this.setState({tabIndex: index})}
                     >
                         {
-                            this.state.testSetsList.map((v) => this.renderModalityTab(v))
+                            this.state.testSetsList.map(v => this.renderTestSets(v))
                         }
-                    </ModalityTabs>
-                </AppBar>
-                <SwipeableViews
-                    index={this.state.tabIndex}
-                    style={{display: 'flex', flex: 1}}
-                    containerStyle={{width: '100%', height: '100%'}}
-                    onChangeIndex={(index, indexLatest, meta) => this.setState({tabIndex: index})}
-                >
+                    </SwipeableViews>
+                    <LearningModal
+                        open={this.state.isShowModalType === 'learningModal'}
+                        type={this.state.modalInfo.learningType}
+                        name={this.state.modalInfo.name}
+                        postTestCount={this.state.modalInfo.postTestCount}
+                        credit={this.state.modalInfo.credit}
+                        onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
+                    />
                     {
-                        this.state.testSetsList.map(v => this.renderTestSets(v))
+                        (this.state.isShowModalType === 'creditPurchase' || this.state.isShowModalType === 'planSubscribe') &&
+                        <PaymentModal
+                            type={this.state.isShowModalType}
+                            onFinish={() => this.onPaymentSuccess()}
+                            onClose={() => this.setState({isShowModalType: ''})}
+                        />
                     }
-                </SwipeableViews>
-                <LearningModal
-                    open={this.state.isShowModalType === 'learningModal'}
-                    type={this.state.modalInfo.learningType}
-                    name={this.state.modalInfo.name}
-                    postTestCount={this.state.modalInfo.postTestCount}
-                    credit={this.state.modalInfo.credit}
-                    onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
-                />
-                {
-                    (this.state.isShowModalType === 'creditPurchase' || this.state.isShowModalType === 'planSubscribe') &&
-                    <PaymentModal
-                        type={this.state.isShowModalType}
-                        onFinish={() => this.onPaymentSuccess()}
+                    <InstructionModal
+                        isOpen={this.state.isShowModalType === 'instructionModal'}
+                        onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
+                        theme={'white'}
+                        type={this.state.modalInfo.type}
+                    />
+                    <TestSetCouponModal
+                        isOpen={this.state.isShowModalType === 'couponModal'}
+                        onFinish={() => this.getData()}
                         onClose={() => this.setState({isShowModalType: ''})}
                     />
-                }
-                <InstructionModal
-                    isOpen={this.state.isShowModalType === 'instructionModal'}
-                    onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
-                    theme={'white'}
-                    type={this.state.modalInfo.type}
-                />
-                <TestSetCouponModal
-                    isOpen={this.state.isShowModalType === 'couponModal'}
-                    onFinish={() => this.getData()}
-                    onClose={() => this.setState({isShowModalType: ''})}
-                />
-                <VideoModal
-                    open={this.state.isShowModalType === 'instructionVideoModal'}
-                    onClose={() => this.setState({isShowModalType: ''})}
-                    link={this.state.modalInfo.video}
-                />
-                <SweetAlert
-                    type={'default'}
-                    show={this.state.isShowModalType === 'purchaseConfirmModal'}
-                    customClass={'sweetalert-container'}
-                    title={<IntlMessages id={'test.purchase.confirm'}/>}
-                    confirmBtnText={<IntlMessages id={"testView.ok"}/>}
-                    confirmBtnCssClass={'sweetalert-confirm-btn'}
-                    cancelBtnText={<IntlMessages id={"testView.cancel"}/>}
-                    cancelBtnBsStyle={'danger'}
-                    cancelBtnCssClass={'sweetalert-cancel-btn'}
-                    showConfirm
-                    showCancel
-                    reverseButtons
-                    onConfirm={() => this.onBuyTestSetWithCredit()}
-                    onCancel={() => this.setState({isShowModalType: ''})}
-                >
-                    <IntlMessages id={"test.purchase.message3"}/>
-                    {this.state.selectedItem.name} ?
-                </SweetAlert>
+                    <VideoModal
+                        open={this.state.isShowModalType === 'instructionVideoModal'}
+                        onClose={() => this.setState({isShowModalType: ''})}
+                        link={this.state.modalInfo.video}
+                    />
+                    <SweetAlert
+                        type={'default'}
+                        show={this.state.isShowModalType === 'purchaseConfirmModal'}
+                        customClass={'sweetalert-container'}
+                        title={<IntlMessages id={'test.purchase.confirm'}/>}
+                        confirmBtnText={<IntlMessages id={"testView.ok"}/>}
+                        confirmBtnCssClass={'sweetalert-confirm-btn'}
+                        cancelBtnText={<IntlMessages id={"testView.cancel"}/>}
+                        cancelBtnBsStyle={'danger'}
+                        cancelBtnCssClass={'sweetalert-cancel-btn'}
+                        showConfirm
+                        showCancel
+                        reverseButtons
+                        onConfirm={() => this.onBuyTestSetWithCredit()}
+                        onCancel={() => this.setState({isShowModalType: ''})}
+                    >
+                        <IntlMessages id={"test.purchase.message3"}/>
+                        {this.state.selectedItem.name} ?
+                    </SweetAlert>
 
-            </div>
-        )
+                </div>
+            )
+        }
     }
-}
 
-// map state to props
-const mapStateToProps = (state) => {
-    return {
-        locale: state.settings.locale.locale,
-    };
-};
+    // map state to props
+    const mapStateToProps = (state) =>
+        {
+            return {
+                locale: state.settings.locale.locale,
+            };
+        }
+    ;
 
-export default withRouter(connect(mapStateToProps)(List));
+    export default withRouter(connect(mapStateToProps)(List));
 
-const ModalityTabs = withStyles({
-    root: {},
-    indicator: {
-        height: 3,
-    },
-})(Tabs);
+    const ModalityTabs = withStyles(
+        {
+            root: {
+            }
+        ,
+            indicator: {
+                height: 3,
+            }
+        ,
+        }
+    )(Tabs);
 
-const ModalityTab = withStyles((theme) => ({
-    root: {
-        '&$selected': {
-            fontWeight: 'bold',
-        },
-    },
-    selected: {
-        fontWeight: 'bold',
-    },
-}))(Tab);
+    const ModalityTab = withStyles((theme) => (
+        {
+            root: {
+                '&$selected'
+            :
+                {
+                    fontWeight: 'bold',
+                }
+            ,
+            }
+        ,
+            selected: {
+                fontWeight: 'bold',
+            }
+        ,
+        }
+    ))(Tab);
