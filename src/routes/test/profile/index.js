@@ -553,10 +553,10 @@ export default class Profile extends Component {
                             <SaveIcon className={'mr-1'} />
                             <IntlMessages id={"profile.update"} />
                         </Fab>
-                        {/*<Fab variant="extended" aria-label="add" className={'m-1 btn-danger text-white'} onClick={() => this.onClickDeleteProfile()}>*/}
-                        {/*    <DeleteForeverIcon className={'mr-1'} />*/}
-                        {/*    <IntlMessages id={"profile.delete"} />*/}
-                        {/*</Fab>*/}
+                        <Fab variant="extended" aria-label="add" className={'m-1 btn-danger text-white'} onClick={() => this.onClickDeleteProfile()}>
+                            <DeleteForeverIcon className={'mr-1'} />
+                            <IntlMessages id={"profile.delete"} />
+                        </Fab>
                     </div>
                     <Modal
                         isOpen={this.state.showModalType === 'changePassword'}
