@@ -8,8 +8,9 @@ import IntlMessages from "Util/IntlMessages";
 import $ from 'jquery';
 import PropTypes from "prop-types";
 import 'Assets/css/quill.snow.css'
+import {connect} from "react-redux";
 
-export default class CommentInfo extends Component {
+class CommentInfo extends Component {
 
     static propTypes = {
         test_case_id: PropTypes.string.isRequired,
@@ -28,12 +29,23 @@ export default class CommentInfo extends Component {
         this.state = {
             commentText: '',
             panelOpen: (props.modality_type === 'volpara' && props.complete),
+            imageCount: props.imageList.length,
+            isGETestCase: false,
             loading: true,
         }
     }
 
     componentDidMount() {
         this.getComment();
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if(nextProps.imageList.length !== prevState.imageCount) {
+            if(nextProps.imageList.some((image) => (image.hangingId !== undefined && image.hangingId.indexOf('VPREVIEW') !== -1))) {
+                return {panelOpen: true, isGETestCase: true, imageCount: nextProps.imageList.length}
+            }
+        }
+        return null;
     }
 
     getComment() {
@@ -84,7 +96,10 @@ export default class CommentInfo extends Component {
                             <Scrollbars className="rct-scroll" autoHeight autoHeightMin={100} autoHeightMax={530} autoHide autoHideDuration={100}>
                                 <ul className="list-unstyled text-center mb-0">
                                     <li className="header-title mb-10">
-                                        <IntlMessages id={"testView.comment"}/>
+                                        {
+                                            this.state.isGETestCase ? <IntlMessages id={"testView.comment.patient"}/> :
+                                                <IntlMessages id={"testView.comment"}/>
+                                        }
                                     </li>
                                     <li className={'comment-text'}>
                                         <div className={'ql-editor'} dangerouslySetInnerHTML={{__html: this.state.commentText}}/>
@@ -98,3 +113,10 @@ export default class CommentInfo extends Component {
         }
     }
 }
+
+// map state to props
+const mapStateToProps = (state) => ({
+    imageList: state.testView.imageList,
+});
+
+export default connect(mapStateToProps, null)(CommentInfo);
