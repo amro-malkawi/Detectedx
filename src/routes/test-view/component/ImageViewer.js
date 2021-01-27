@@ -213,7 +213,7 @@ class ImageViewer extends Component {
         // so we can reset zoom and position
         let viewport = cornerstone.getViewport(this.imageElement);
         // add all tools to the image
-        const setToolElementFunc = this.props.complete || this.props.stage >= 2 ? 'setToolEnabledForElement' : 'setToolPassiveForElement';
+        const setToolElementFunc = this.props.complete ? 'setToolEnabledForElement' : 'setToolPassiveForElement';
         // cornerstoneTools.addToolForElement(this.imageElement, MarkerTool, {addMarkFunc: this.handleAddMark.bind(this), editMarkFunc: this.handleEditMark.bind(this)});
         cornerstoneTools.addToolForElement(this.imageElement, MarkerTool);
         cornerstoneTools.addToolForElement(this.imageElement, MarkerFreehandTool);

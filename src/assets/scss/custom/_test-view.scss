@@ -11,16 +11,6 @@ div.viewer {
     height: $toolbar-height;
     background-color: black;
 
-    .stage {
-      height: 42px;
-      line-height: 42px;
-      font-size: 19px;
-      padding: 0px 10px;
-      margin-right: 10px;
-      border-radius: 5px;
-      background-color: red;
-    }
-
     .correct-result {
       position: absolute;
       top: 5px;

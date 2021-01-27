@@ -73,6 +73,7 @@ class TestView extends Component {
             postTestRemainCount: 0,
         };
         this.covidQuestionRef = React.createRef();
+        this.qualityQuestionRef = React.createRef();
         this.popupCancelHandler = null;
         this.popupDeleteHandler = null;
         this.popupSaveHandler = null;
@@ -243,6 +244,12 @@ class TestView extends Component {
             } else {
                 this.onMove(1);
             }
+        } else if(!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality') {
+            if(this.qualityQuestionRef.current.checkQualityAnswerValidate()) {
+                this.onMove(1);
+            } else {
+                NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
+            }
         } else {
             this.onMove(1);
         }
@@ -286,16 +293,8 @@ class TestView extends Component {
         this.setState({loading: true}, () => {
             if (!this.state.isPostTest) {
                 Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
-                    if (resp.stage === 2) {
-                        let nextPath = '/test-view/' + this.state.test_sets_id + '/' + this.state.attempts_id + '/' + this.state.test_set_cases[0].test_case_id;
-                        this.setState({test_cases_id: this.state.test_set_cases[0].test_case_id}, () => {
-                            this.getData();
-                            this.props.history.replace(nextPath);
-                        });
-                    } else {
-                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
-                            // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
-                    }
+                    this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
+                    // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
                 }).catch((e) => {
                     console.warn(e.response ? e.response.data.error.message : e.message);
                 });
@@ -381,7 +380,6 @@ class TestView extends Component {
         let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         return (
             <h1 className={'test-view-header-number'}>
-                {this.state.attemptDetail.stage !== 1 ? <span className={'stage'}><IntlMessages id={"testView.stage"}/>{this.state.attemptDetail.stage}</span> : null}
                 <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={test_case_index} onChange={(e) => this.onSeek(e.target.value)}>
                     {
                         this.state.test_set_cases.map((v, i) =>
@@ -455,7 +453,7 @@ class TestView extends Component {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
-        } else if (this.state.test_case.modalities.modality_type === 'volpara') {
+        } else if (this.state.test_case.modalities.modality_type === 'volpara' || this.state.test_case.modalities.modality_type === 'image_quality') {
             return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
@@ -518,7 +516,6 @@ class TestView extends Component {
                 </div>
                 <TestViewToolList
                     complete={this.state.complete}
-                    stage={this.state.attemptDetail.stage}
                     isShowToolModal={this.state.isShowToolModal}
                     onClickShowToolModal={() => this.setState({isShowToolModal: true})}
                     onClose={() => this.setState({isShowToolModal: false})}
@@ -541,7 +538,7 @@ class TestView extends Component {
         if (!this.state.loading) {
             return (
                 <div className="viewer">
-                    <ShortcutContainer className={'viewer-content'} complete={this.state.complete} stage={this.state.attemptDetail.stage}>
+                    <ShortcutContainer className={'viewer-content'} complete={this.state.complete}>
                         <div id="toolbar">
                             {this.renderToolBar()}
                             {this.renderCaseDensity()}
@@ -576,7 +573,6 @@ class TestView extends Component {
                                     synchronizer={this.synchronizer}
                                     radius={this.state.test_case.modalities.circle_size}
                                     complete={this.state.complete}
-                                    stage={this.state.attemptDetail.stage}
                                     onShowPopup={this.handleShowPopup.bind(this)}
                                 />
                                 {
@@ -593,11 +589,10 @@ class TestView extends Component {
                                 {
                                     this.state.test_case.modalities.modality_type === 'image_quality' &&
                                     <QualityQuestions
-                                        ref={this.covidQuestionRef}
+                                        ref={this.qualityQuestionRef}
                                         attempts_id={this.state.attempts_id}
                                         test_case_id={this.state.test_cases_id}
                                         complete={this.state.complete}
-                                        isTruth={false}
                                         isPostTest={this.state.isPostTest}
                                     />
                                 }
@@ -612,7 +607,6 @@ class TestView extends Component {
                         <div className={'test-view-toolbar tooltip-toolbar-overlay'}>
                             <TestViewToolList
                                 complete={this.state.complete}
-                                stage={this.state.attemptDetail.stage}
                                 isShowToolModal={this.state.isShowToolModal}
                                 onClickShowToolModal={() => this.setState({isShowToolModal: true})}
                                 onClose={() => this.setState({isShowToolModal: false})}

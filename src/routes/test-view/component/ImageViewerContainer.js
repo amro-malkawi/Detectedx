@@ -82,7 +82,6 @@ const ImageViewerContainer = (props) => {
             <TestViewContextMenu
                 toolList={props.toolList}
                 complete={props.complete}
-                stage={props.stage}
             />
         </div>
     )

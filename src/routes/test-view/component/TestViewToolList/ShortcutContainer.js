@@ -3,7 +3,7 @@ import { HotKeys} from "react-hotkeys";
 import {connect} from "react-redux";
 import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
 
-const ShortcutContainer = ({className, complete, stage, children, toolList, currentTool, changeHangingLayout, changeCurrentTool}) => {
+const ShortcutContainer = ({className, complete, children, toolList, currentTool, changeHangingLayout, changeCurrentTool}) => {
     const keyMap = {
         TOOL_PAN: "p",
         TOOL_ZOOM: "z",
@@ -40,7 +40,7 @@ const ShortcutContainer = ({className, complete, stage, children, toolList, curr
         const testToolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser', 'Marker', 'MarkerFreehand'];
         if(toolList.indexOf(selectedTool) !== -1) {
             if(testToolList.indexOf(selectedTool) !== -1) {
-                if(!complete && stage === 1) changeCurrentTool(selectedTool);
+                if(!complete) changeCurrentTool(selectedTool);
             } else {
                 changeCurrentTool(selectedTool);
             }

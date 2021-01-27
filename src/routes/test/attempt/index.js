@@ -76,7 +76,7 @@ class Attempt extends Component {
         return true;
     }
 
-    getData(isMount) {
+    getData(isFirstMount) {
         const that = this;
         Promise.all([
             Apis.attemptsDetail(that.state.attempts_id),
@@ -97,8 +97,18 @@ class Attempt extends Component {
                 }
             }
             steps = steps.filter((v) => (hiddenTabs.indexOf(v) === -1));
-            const stepIndex = !isMount ? that.state.stepIndex + 1 :
-                (that.props.match.params.step === undefined ? 0 : (steps.indexOf(that.props.match.params.step) > -1 ? steps.indexOf(that.props.match.params.step) : 0));
+            let stepIndex;
+            if(isFirstMount) {
+                if (that.props.match.params.step !== undefined && steps.indexOf(that.props.match.params.step) > -1) {
+                    stepIndex = steps.indexOf(that.props.match.params.step);
+                } else if(detail.complete) {
+                    stepIndex = steps.indexOf('score')
+                } else {
+                    stepIndex = 0;
+                }
+            } else {
+                stepIndex = that.state.stepIndex + 1
+            }
             that.setState({
                 mainQuestions: questionnaires.main,
                 isFinishMainQuestions,
@@ -949,15 +959,6 @@ class Attempt extends Component {
                             </Button>
                         </div>
                     </div>
-                    {/*<div className={'score-extra'}>*/}
-                    {/*    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>*/}
-                    {/*    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>*/}
-                    {/*    <div className={'extra-button-container'}>*/}
-                    {/*        <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>*/}
-                    {/*            <IntlMessages id="test.attempt.volparaNext"/>*/}
-                    {/*        </Button>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
                     <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
                 </div>
             </div>
@@ -1095,15 +1096,73 @@ class Attempt extends Component {
                             </Button>
                         </div>
                     </div>
-                    {/*<div className={'score-extra'}>*/}
-                    {/*    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>*/}
-                    {/*    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>*/}
-                    {/*    <div className={'extra-button-container'}>*/}
-                    {/*        <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({showModalType: 'extraInfo'})}>*/}
-                    {/*            <IntlMessages id="test.attempt.volparaNext"/>*/}
-                    {/*        </Button>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
+                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type} />
+                </div>
+            </div>
+        )
+    }
+
+    renderImageQualityScore() {
+        return (
+            <div className={'volpara-score-container'}>
+                <div className={'row'}>
+                    <div className={'col-md-6 score-data-container'}>
+                        <div className={'volpara-score-data'}>
+                            <div className={'score-title'}>
+                                <p><IntlMessages id="test.attempt.imageQualityScoreTitle"/></p>
+                            </div>
+                            <p className={'score-value'} style={{padding: '42px 0'}}>
+                                {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                                <span>%</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div className={'col-md-6 score-chart-container'}>
+                        <BoxplotChart
+                            title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
+                            score_type={'volpara_all'}
+                            attempt_id={this.state.attempts_id}
+                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                        />
+                        <BoxplotChart
+                            title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
+                            score_type={'volpara_region'}
+                            attempt_id={this.state.attempts_id}
+                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                        />
+                    </div>
+                </div>
+                <div className={'row score-extra-container'}>
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
+                        {
+                            this.state.attemptInfo.view_answer_time === null ?
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                        }
+                        <div className={'extra-button-container'}>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
+                                onClick={() => this.onGetCertPdf('normal')}
+                                disabled={this.state.attemptInfo.view_answer_time === null}
+                            >
+                                <SchoolIcon className={'mr-10'}/>
+                                <IntlMessages id="test.attempt.volparaCertTitle"/>
+                            </Button>
+                        </div>
+                    </div>
+                    {this.renderVolparaScorePostBlock()}
+                    <div className={'score-extra'}>
+                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
+                        <div className={'extra-button-container'}>
+                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
+                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
+                            </Button>
+                        </div>
+                    </div>
                     <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type} />
                 </div>
             </div>
@@ -1139,10 +1198,12 @@ class Attempt extends Component {
                     </div>
                 );
             case 'score':
-                if (this.state.attemptInfo.test_sets.modalities.modality_type !== 'volpara') {
-                    return this.renderNormalScore();
-                } else {
+                if(this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
                     return this.renderVolparaScore();
+                } else if (this.state.attemptInfo.test_sets.modalities.modality_type === 'image_quality') {
+                    return this.renderImageQualityScore();
+                } else {
+                    return this.renderNormalScore();
                 }
             case 'answer':
                 return (

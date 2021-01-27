@@ -451,3 +451,16 @@ export function couponApplyTestSetCoupon(couponCode) {
     const url = 'coupons/apply_test_set_coupon?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
+
+/**
+ * image quality functions
+ */
+export function setAttemptImageQuality(attempt_id, test_case_id, answer, is_post_test) {
+    const url = 'answer_image_qualities/set_image_quality?access_token=' + getAccessToken();
+    return instance.post(url, {attempt_id, test_case_id, answer, is_post_test}).then((response) => response.data);
+}
+
+export function getAttemptImageQuality(attempt_id, test_case_id, is_post_test) {
+    const url = 'answer_image_qualities/get_image_quality?access_token=' + getAccessToken();
+    return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
+}

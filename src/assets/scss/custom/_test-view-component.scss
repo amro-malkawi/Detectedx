@@ -64,13 +64,50 @@
   background-color: black;
   border-top: 1px solid #00a4d9;
   overflow: auto;
+  user-select: none;
+
+  &::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #d5d5d5;
+  }
+
+  &::-webkit-scrollbar
+  {
+    width: 6px;
+    background-color: #d5d5d5;
+  }
+
+  &::-webkit-scrollbar-thumb
+  {
+    border-radius: 2px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+  }
+
+  &.pointer-cursor {
+    .question-title {
+      cursor: pointer;
+    }
+    .question-number {
+      cursor: pointer;
+    }
+  }
+
+  &.disable-cursor {
+    .question-title {
+      cursor: not-allowed;
+    }
+    .question-number {
+      cursor: not-allowed;
+    }
+  }
 
   .quality-question {
     .question-title {
       display: flex;
       flex-direction: row;
       color: #d2d2d2;
-      cursor: pointer;
 
       & > div {
         font-size: 20px;
@@ -109,7 +146,6 @@
             margin-right: 10px;
             color: #d2d2d2;
             font-size: 13px;
-            cursor: pointer;
 
             .yellow-circle {
               position: absolute;

@@ -5,7 +5,7 @@ import IntlMessages from "Util/IntlMessages";
 import {connect} from "react-redux";
 import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
 
-const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHangingLayout, changeCurrentTool}) => {
+const TestViewContextMenu = ({toolList, complete, currentTool, changeHangingLayout, changeCurrentTool}) => {
     const onClickMenuItem = (e, data) => {
         if (data.tool === 'Reset') {
             changeHangingLayout('MLO-R_MLO-L_CC-R_CC-L');
@@ -64,7 +64,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('Length') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('Length') !== -1 && !complete &&
                 <MenuItem data={{tool: 'Length'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'Length' ? 'tool-selected' : ''}}
                 >
@@ -76,7 +76,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('Angle') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('Angle') !== -1 && !complete &&
                 <MenuItem data={{tool: 'Angle'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'Angle' ? 'tool-selected' : ''}}
                 >
@@ -88,7 +88,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('EllipticalRoi') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('EllipticalRoi') !== -1 && !complete &&
                 <MenuItem data={{tool: 'EllipticalRoi'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'EllipticalRoi' ? 'tool-selected' : ''}}
                 >
@@ -100,7 +100,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('RectangleRoi') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('RectangleRoi') !== -1 && !complete &&
                 <MenuItem data={{tool: 'RectangleRoi'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'RectangleRoi' ? 'tool-selected' : ''}}
                 >
@@ -112,7 +112,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('ArrowAnnotate') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('ArrowAnnotate') !== -1 && !complete &&
                 <MenuItem data={{tool: 'ArrowAnnotate'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'ArrowAnnotate' ? 'tool-selected' : ''}}
                 >
@@ -124,7 +124,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('Eraser') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('Eraser') !== -1 && !complete &&
                 <MenuItem data={{tool: 'Eraser'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'Eraser' ? 'tool-selected' : ''}}
                 >
@@ -136,7 +136,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('Marker') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('Marker') !== -1 && !complete &&
                 <MenuItem data={{tool: 'Marker'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'Marker' ? 'tool-selected' : ''}}
                 >
@@ -148,7 +148,7 @@ const TestViewContextMenu = ({toolList, complete, stage, currentTool, changeHang
                 </MenuItem>
             }
             {
-                toolList.indexOf('MarkerFreehand') !== -1 && !complete && stage === 1 &&
+                toolList.indexOf('MarkerFreehand') !== -1 && !complete &&
                 <MenuItem data={{tool: 'MarkerFreehand'}} onClick={onClickMenuItem}
                           attributes={{className: currentTool === 'MarkerFreehand' ? 'tool-selected' : ''}}
                 >
