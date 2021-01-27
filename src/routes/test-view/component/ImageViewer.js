@@ -25,6 +25,7 @@ import stackPrefetch from '../lib/stackTools/stackPrefetch';
 import MarkerTool from "../lib/tools/MarkerTool";
 import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
 import LengthTool from "../lib/tools/LengthTool";
+import cornerstoneResize from "../lib/resize";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -137,6 +138,7 @@ class ImageViewer extends Component {
                     'imagePosition',
                     this.props.imageInfo.image_url_path
                 );
+                this.imagePosition = imagePosition;
                 const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
                 const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
                 const realContentRegion = this.props.imageInfo.real_content_region.split(',');
@@ -145,13 +147,15 @@ class ImageViewer extends Component {
                 const realContentRight = Number(realContentRegion[2]);
                 const realContentBottom = Number(realContentRegion[3]);
                 let offsetX = 0, offsetY = 0;
-                if (imagePosition.imageLaterality === 'L') {
-                    offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
-                } else if (imagePosition.imageLaterality === 'R') {
-                    offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
-                }
-                if (imagePosition.positionDesc === 'V-PREVIEW') {
-                    offsetY = 385;
+                if(this.props.showImageList[0].length > 1 && imagePosition !== undefined) {
+                    if (imagePosition.imageLaterality === 'L') {
+                        offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
+                    } else if (imagePosition.imageLaterality === 'R') {
+                        offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
+                    }
+                    if (imagePosition.positionDesc === 'V-PREVIEW') {
+                        offsetY = 385;
+                    }
                 }
                 initialViewport.translation = {x: offsetX, y: offsetY};
             } catch (e) {
@@ -733,6 +737,16 @@ class ImageViewer extends Component {
         this.setStack(Number(event.target.value));
     }
 
+    onResize() {
+        let imagePosition = this.imagePosition;
+        if(this.props.showImageList[0].length <= 1 || this.props.index === this.props.focusImageViewerIndex) {
+            // if there is one image, don't need to change image position
+            imagePosition = undefined;
+        }
+        cornerstoneResize(this.imageElement, this.props.imageInfo.real_content_region, imagePosition);
+        // cornerstone.resize(this.imageElement, true)
+    }
+
     setStack(value) {
         const newIndex = Number(value) - 1;
         let stackToolDataSource = cornerstoneTools.getToolState(this.imageElement, 'stack');
@@ -893,10 +907,8 @@ class ImageViewer extends Component {
                     handleHeight
                     skipOnMount={true}
                     refreshMode={'throttle'}
-                    refreshRate={100}
-                    onResize={() => {
-                        cornerstone.resize(this.imageElement, true);
-                    }}
+                    refreshRate={300}
+                    onResize={() => this.onResize()}
                 >
                     <div className="dicom" ref={this.imageElementRef}/>
                 </ResizeDetector>

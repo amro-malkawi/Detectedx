@@ -146,7 +146,8 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
         // get canvas width, height
         let canvasWidth, canvasHeight;
         const canvasInstance = $('div#images');
-        if (canvasInstance.length === 0) {
+        // if (canvasInstance.length === 0) {
+        if (true) {
             //did not load
             canvasWidth = $(window).width();
             if(isShowImageBrowser) {
