@@ -210,7 +210,7 @@ class BoxplotChart extends Component {
     }
 
     renderUserType() {
-        if(this.props.score_type.indexOf('volpara') !== -1) return null;
+        if(!this.props.showUserSelect) return null;
         return (
             <Input type="select" name="select" onChange={(e) => this.onChangeUserPosition(e.target.value)}>
                 <option value={'all'}>All</option>

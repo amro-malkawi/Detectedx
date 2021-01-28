@@ -882,7 +882,7 @@ class Attempt extends Component {
         });
 
         return (
-            <div className={'volpara-score-container'}>
+            <div className={'score-container'}>
                 <div className={'row'}>
                     <div className={'col-md-6 score-data-container'}>
                         <div className={'normal-score-data'}>
@@ -911,18 +911,21 @@ class Attempt extends Component {
                         <BoxplotChart
                             title={'Sensitivity compared to'}
                             score_type={'Sensitivity'}
+                            showUserSelect={true}
                             attempt_id={this.state.attempts_id}
                             value={sensitivity}
                         />
                         <BoxplotChart
                             title={'Specificity compared to'}
                             score_type={'Specificity'}
+                            showUserSelect={true}
                             attempt_id={this.state.attempts_id}
                             value={specitifity}
                         />
                         <BoxplotChart
                             title={'ROC compared to'}
                             score_type={'ROC'}
+                            showUserSelect={true}
                             attempt_id={this.state.attempts_id}
                             value={roc}
                         />
@@ -1036,7 +1039,7 @@ class Attempt extends Component {
 
     renderVolparaScore() {
         return (
-            <div className={'volpara-score-container'}>
+            <div className={'score-container'}>
                 <div className={'row'}>
                     <div className={'col-md-6 score-data-container'}>
                         <div className={'volpara-score-data'}>
@@ -1054,12 +1057,14 @@ class Attempt extends Component {
                         <BoxplotChart
                             title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
                             score_type={'volpara_all'}
+                            showUserSelect={false}
                             attempt_id={this.state.attempts_id}
                             value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                         />
                         <BoxplotChart
                             title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
                             score_type={'volpara_region'}
+                            showUserSelect={false}
                             attempt_id={this.state.attempts_id}
                             value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                         />
@@ -1103,33 +1108,51 @@ class Attempt extends Component {
     }
 
     renderImageQualityScore() {
+        let scoreAverage = 0;
+        const scores = this.state.attemptInfo.scores;
+        if(scores.length > 0) {
+            let scoreSum = 0;
+            scores.forEach((v) => {scoreSum += v.score});
+            scoreAverage = (scoreSum / scores.length).toFixed(2);
+        }
         return (
-            <div className={'volpara-score-container'}>
+            <div className={'score-container'}>
                 <div className={'row'}>
                     <div className={'col-md-6 score-data-container'}>
-                        <div className={'volpara-score-data'}>
-                            <div className={'score-title'}>
-                                <p><IntlMessages id="test.attempt.imageQualityScoreTitle"/></p>
+                        <div className={'image-score-data'}>
+                            <div className={'quality-score-title'}>
+                                <span><IntlMessages id="test.attempt.imageQualityScoreCategory"/></span>
+                                <span><IntlMessages id="test.attempt.imageQualityScoreAgreeScore"/></span>
                             </div>
-                            <p className={'score-value'} style={{padding: '42px 0'}}>
-                                {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
-                                <span>%</span>
-                            </p>
+                            {
+                                this.state.attemptInfo.scores.map((v, i) => (
+                                    <div className={'quality-score-row'} key={i}><span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                ))
+                            }
                         </div>
                     </div>
-                    <div className={'col-md-6 score-chart-container'}>
-                        <BoxplotChart
-                            title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
-                            score_type={'volpara_all'}
-                            attempt_id={this.state.attempts_id}
-                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
-                        />
-                        <BoxplotChart
-                            title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
-                            score_type={'volpara_region'}
-                            attempt_id={this.state.attempts_id}
-                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
-                        />
+                    <div className={'col-md-6'}>
+                        <div className={' score-data-container'}>
+                            <div className={'volpara-score-data'}>
+                                <div className={'score-title'}>
+                                    <p><IntlMessages id="test.attempt.imageQualityScoreTitle"/></p>
+                                </div>
+                                <p className={'score-value'}>
+                                    {scoreAverage}
+                                    <span>%</span>
+                                </p>
+                                <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/></p>
+                            </div>
+                        </div>
+                        <div className={'score-chart-container'}>
+                            <BoxplotChart
+                                title={<IntlMessages id="test.attempt.imageQualityScoreTitle"/>}
+                                score_type={'image_quality_average'}
+                                showUserSelect={false}
+                                attempt_id={this.state.attempts_id}
+                                value={scoreAverage}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className={'row score-extra-container'}>

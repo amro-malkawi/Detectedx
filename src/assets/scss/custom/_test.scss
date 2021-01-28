@@ -213,38 +213,7 @@
     }
   }
 
-  .normal-score-container {
-    .rct-block {
-      background-color: #343434;
-
-      table {
-        thead {
-          background-color: #202020;
-
-          tr {
-            th {
-              color: white;
-              border-color: #515151;
-            }
-          }
-        }
-
-        tbody {
-          tr {
-            &:hover {
-              background-color: rgba(255, 255, 255, 0.08);
-            }
-
-            td {
-              border-top-color: #515151;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .volpara-score-container {
+  .score-container {
     .score-data-container {
       margin: 5px 0;
 
@@ -358,6 +327,31 @@
           text-align: center;
           font-size: 12px;
           color: #d0d0d0;
+        }
+      }
+
+      .image-score-data {
+        flex: 1;
+        padding: 18px;
+        background-color: #343435;
+        border-radius: 7px;
+        overflow-y: auto;
+        color: #eeeeee;
+
+        .quality-score-title {
+          display: flex;
+          justify-content: space-between;
+          padding-bottom: 15px;
+          font-size: 23px;
+          font-weight: 600;
+        }
+
+        .quality-score-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0;
+          font-size: 17px;
+          border-top: 1px solid #888888;
         }
       }
     }
