@@ -42,6 +42,9 @@ module.exports = {
 	"test.enterCouponCode": "Enter coupon code",
 	"test.verify": "VERIFY",
 	"test.apply": "APPLY",
+
+	"test.list.instructionVideo": "Instruction Video",
+
 	"test.purchase.warning": "Warning",
 	"test.purchase.attention": "Attention",
 	"test.purchase.subscribe": "Subscribe",
@@ -55,6 +58,7 @@ module.exports = {
 	"test.purchase.message1": "You must subscribe to the plan before purchasing the test set.",
 	"test.purchase.message2": "Not enough points to purchase this test set",
 	"test.purchase.message3": "Are you sure you want to buy ",
+
 
 	"profile.changePassword": "Change Password",
 	"profile.personalInformation": "Personal Information",
@@ -150,7 +154,6 @@ module.exports = {
 	"testView.submit": "Submit",
 	"testView.next": "Next",
 	"testView.instructions": "Instructions",
-	"testView.instruction": "Instruction",
 	"testView.scores": "Scores",
 	"testView.home": "Home",
 	"testView.selectLesionType": "Please select lesion type",
@@ -163,6 +166,7 @@ module.exports = {
 	"testView.confirm": "Confirm",
 	"testView.synopticComment": "Synoptic Comment",
 	"testView.comment": "Comment",
+	"testView.comment.patient": "Patient History",
 	"testView.covidQuestion.title1": "Distribution of COVID appearances",
 	"testView.covidQuestion.title2": "Suspicion for COVID-19 infection",
 	"testView.covidQuestion.expertJudgement": "Experts judgement",

@@ -42,6 +42,8 @@ import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
+import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
+import VideoModal from "Routes/instructions/VideoModal";
 
 class TestView extends Component {
 
@@ -56,11 +58,14 @@ class TestView extends Component {
             attemptDetail: {},
             test_case: {},
             test_set_cases: [],
+            testCaseIndex: 0,
             complete: false,
             isAnswerCancer: undefined,
             isTruthCancer: undefined,
             answerDensity: undefined,
             imageAnswers: [],
+            testSetStartVideo: '',
+            possibleCloseStartVideo: false,
             isShowPopup: false,
             selectedMarkData: {},
             isShowToolModal: false,
@@ -78,6 +83,9 @@ class TestView extends Component {
         this.popupDeleteHandler = null;
         this.popupSaveHandler = null;
         this.synchronizer = null;
+        this.needLoadImagePathList = [];
+        this.startPreloadImageFunc = false;
+        this.isMount = false;
         this.initConerstone();
     }
 
@@ -98,6 +106,7 @@ class TestView extends Component {
     }
 
     componentDidMount() {
+        this.isMount = true;
         this.getData();
         setTimeout(() => {
             this.setState({isShowLoadingIndicator: false});
@@ -111,14 +120,15 @@ class TestView extends Component {
     }
 
     componentWillUnmount() {
+        this.isMount = false;
         this.props.setImageListAction([], []);
         cornerstoneWebImageLoader.dataSetCacheManager.purge();
     }
 
     getData() {
         // reset for next case image preloader
-        this.nextCaseImagePreloaded = false;
         this.imageViewLoadedStatus = [];
+        this.startPreloadImageFunc = false;
 
         this.props.setImageListAction([], []);
         const that = this;
@@ -126,8 +136,9 @@ class TestView extends Component {
             Apis.testCasesViewInfo(that.state.test_cases_id),
             Apis.testSetsCaseList(that.state.test_sets_id, that.state.isPostTest),
             Apis.attemptsDetail(that.state.attempts_id, that.state.test_cases_id),
-            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest)
-        ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers]) {
+            Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest),
+            Apis.attemptsStartVideo(that.state.attempts_id)
+        ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers, startVideoInfo]) {
             let complete = false;
             let possiblePostTestReattempt = false;
             if (!attemptsDetail.test_sets.has_post) {
@@ -147,10 +158,14 @@ class TestView extends Component {
                 }
             }
             that.synchronizer.enabled = testCaseViewInfo.images.every((v) => v.stack_count === 1);
+            const testCaseIndex = testSetsCases.findIndex((v) => v.test_case_id === that.state.test_cases_id);
             that.setState({
                 test_case: testCaseViewInfo,
                 test_set_cases: testSetsCases,
+                testCaseIndex,
                 attemptDetail: attemptsDetail,
+                testSetStartVideo: startVideoInfo.link,
+                possibleCloseStartVideo: startVideoInfo.possibleClose,
                 complete,
                 possiblePostTestReattempt,
                 isAnswerCancer: complete ? testCasesAnswers.isAnswerCancer : undefined,
@@ -160,6 +175,22 @@ class TestView extends Component {
             }, () => {
                 Marker.modalityRatings = that.state.test_case.ratings;
                 // ImageViewer.adjustSlideSize();
+            });
+
+            // make need images list for loading
+            that.needLoadImagePathList = [];
+            let needLoadImageList = [];
+            needLoadImageList = needLoadImageList.concat(testSetsCases[testCaseIndex].images);
+            if(testCaseIndex + 1 < testSetsCases.length) {
+                needLoadImageList = needLoadImageList.concat(testSetsCases[testCaseIndex + 1].images);
+            }
+            if (!complete) {
+                needLoadImageList = needLoadImageList.filter(image => (image.type === 'test' || image.type === 'prior'));
+            }
+            needLoadImageList.forEach((v) => {
+                for(let i = 0; i < v.stack_count; i++) {
+                    that.needLoadImagePathList.push(testCaseViewInfo.image_url_base + v.id + '/' + i);
+                }
             });
 
             // load images metadata
@@ -201,36 +232,29 @@ class TestView extends Component {
     }
 
     handleImageViewPrefetchDone(e) {
-        // check already preloaded
-        if(this.nextCaseImagePreloaded !== undefined && this.nextCaseImagePreloaded) return;
+        // all images preloaded
+        if(this.needLoadImagePathList.length === 0) return;
         if(this.imageViewLoadedStatus === undefined) this.imageViewLoadedStatus = [];
         this.imageViewLoadedStatus.push(e.detail.imageViewImageId);
-        let showImageLength = 0;
-        this.props.showImageList.forEach((v) => showImageLength += v.length);
-        if(this.imageViewLoadedStatus.length === showImageLength) {
-            //load finished all current test case images
-            console.log('all image prefetch loaded');
-            this.nextCaseImagePreloaded = true;
-            let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
-            // check last test case
-            if(test_case_index + 1 >= this.state.test_set_cases.length) return;
-            const url_base = this.state.test_case.image_url_base;
-            const tempImageIds = [];
-            this.state.test_set_cases[test_case_index + 1].images.forEach((v) => {
-                 for(let i = 0; i < v.stack_count; i++) {
-                     tempImageIds.push(url_base + v.id + '/' + i);
-                 }
-            });
-            const imageIdGroups = [];
-            while (tempImageIds.length) imageIdGroups.push(tempImageIds.splice(0, 17));
-            imageIdGroups.reduce((accumulatorPromise, idGroup) => {
-                return accumulatorPromise.then(() => {
-                    return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
-                    })));
-                });
-            }, Promise.resolve()).then(() => {
-                //all finished
-            });
+        this.needLoadImagePathList = this.needLoadImagePathList.filter((imgPath) =>
+            this.imageViewLoadedStatus.every((imgId) => imgPath.indexOf(imgId) === -1)
+        );
+        let loadAllImageView = true;
+        this.props.showImageList.forEach((imgRow) => {
+            imgRow.forEach((imgId) => {
+                if(this.imageViewLoadedStatus.indexOf(imgId) === -1) loadAllImageView = false;
+            })
+        });
+        if(!this.startPreloadImageFunc && loadAllImageView) {
+            this.startPreloadImageFunc = true;
+            this.startPreloadImages();
+        }
+    }
+
+    async startPreloadImages() {
+        while (this.needLoadImagePathList.length > 0 && this.isMount) {
+            const tempImagePaths = this.needLoadImagePathList.splice(0, 17);
+            await Promise.all(tempImagePaths.map((path) => cornerstone.loadImage(path, {type: 'prefetch'})));
         }
     }
 
@@ -264,8 +288,7 @@ class TestView extends Component {
     }
 
     onMove(step) { // previous -1, next 1
-        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
-        this.onSeek(test_case_index + step);
+        this.onSeek(this.state.testCaseIndex + step);
     }
 
     onSeek(number) {
@@ -356,10 +379,9 @@ class TestView extends Component {
         if (this.props.caseDensity === -1) {
             NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
         } else {
-            const test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
             const test_case_length = this.state.test_set_cases.length;
             Apis.attemptsDensity(this.state.attempts_id, this.state.test_cases_id, this.props.caseDensity).then((resp) => {
-                if (test_case_index + 1 === test_case_length) {
+                if (this.state.testCaseIndex + 1 === test_case_length) {
                     this.onComplete();
                 } else {
                     this.onMove(1);
@@ -377,10 +399,9 @@ class TestView extends Component {
     }
 
     renderHeaderNumber() {
-        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         return (
             <h1 className={'test-view-header-number'}>
-                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={test_case_index} onChange={(e) => this.onSeek(e.target.value)}>
+                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
                     {
                         this.state.test_set_cases.map((v, i) =>
                             <option value={i} key={i}>{i + 1}</option>
@@ -394,26 +415,25 @@ class TestView extends Component {
     }
 
     renderNav() {
-        let test_case_index = this.state.test_set_cases.findIndex((v) => v.test_case_id === this.state.test_cases_id);
         let test_case_length = this.state.test_set_cases.length;
         return (
             <nav className={'test-view-action-buttons'}>
                 {
-                    test_case_index > 0 && (this.state.complete || !this.state.test_case.modalities.force_flow) ?
+                    this.state.testCaseIndex > 0 && (this.state.complete || !this.state.test_case.modalities.force_flow) ?
                         <Button className='test-previous-btn' variant="contained" color="primary" onClick={() => this.onMove(-1)}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.previous"}/></span>
                             <SkipPreviousOutlinedIcon size="small"/>
                         </Button> : null
                 }
                 {
-                    (this.state.complete || test_case_index + 1 !== test_case_length) ? null :
+                    (this.state.complete || this.state.testCaseIndex + 1 !== test_case_length) ? null :
                         <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
                             <CheckCircleOutlineIcon size="small"/>
                         </Button>
                 }
                 {
-                    test_case_index + 1 < test_case_length ?
+                    this.state.testCaseIndex + 1 < test_case_length ?
                         <Button className='mr-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext()}>
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.next"}/></span>
                             <SkipNextOutlinedIcon size="small"/>
@@ -629,6 +649,12 @@ class TestView extends Component {
                                 onClose={() => this.setState({isShowPopup: false})}
                             /> : null
                     }
+                    <VideoModal
+                        open={this.state.testSetStartVideo !== ''}
+                        onClose={() => this.setState({testSetStartVideo: ''})}
+                        possibleClose={this.state.possibleCloseStartVideo}
+                        link={this.state.testSetStartVideo}
+                    />
                     <InstructionModal
                         isOpen={this.state.isShowInstructionModal}
                         onClose={() => this.setState({isShowInstructionModal: false})}

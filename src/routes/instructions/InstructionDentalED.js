@@ -9,7 +9,7 @@ export default function() {
                 <img src={require("Assets/img/instruction/toolbar_dentalED.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_next.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the next case.
+                <img src={require("Assets/img/instruction/btn_next_previous.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the previous/next case.
             </p>
             <p>
                 <img src={require("Assets/img/instruction/btn_instruction.png")} className={'mr-10'} height={40} alt={''}/>Opens this document.
@@ -18,25 +18,25 @@ export default function() {
                 <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>Will take you to the Tests main page.
             </p>
             <p>
+                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold, then move the mouse to move an image.
+            </p>
+            <p>
                 <img src={require("Assets/img/instruction/icon_zoom.png")} className={'mr-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
             </p>
             <p>
                 <img src={require("Assets/img/instruction/icon_window.png")} className={'mr-10'} height={40} alt={''}/>Changes contrast and brightness for an image, click and drag left/right for contrast or up/down for brightness.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold then move the mouse to move an image
+                <img src={require("Assets/img/instruction/icon_mark_freehand.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can mark a region of interest.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_reset.png")} className={'mr-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, images)
+                <img src={require("Assets/img/instruction/icon_eye.png")} className={'mr-10'} height={40} alt={''}/>View/hide cancer selection information.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_eye.png")} className={'mr-10'} height={40} alt={''}/>View/hide cancer selection information
+                <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image
-            </p>
-            <p>
-                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'mr-10'} height={40} alt={''}/>Delete cancer selection
+                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'mr-10'} height={40} alt={''}/>Delete all cancer selections.
             </p>
             <hr/>
 
@@ -51,9 +51,11 @@ export default function() {
             <div className={'row'}>
                 <Col sm={12}>
                     <div>
-                        <p> 1.	If an abnormality is detected, place your mouse pointer over the site you want to mark. </p>
-                        <p> 2.	Double click on your mouse. </p>
-                        <p> 3.	A pop-up menu will appear asking you to rate your level of confidence that the marked area contains an abnormality: </p>
+                        <p>If an abnormality is detected:</p>
+                        <p> 1. Select the <span style={{color: '#42A5F5'}}>Mark</span> tool </p>
+                        <p> 2. Place your mouse pointer over the site you want to mark. </p>
+                        <p> 3. Click on your mouse.</p>
+                        <p> 4. A pop-up menu will appear asking you to rate your level of confidence that the marked area contains an abnormality:</p>
                         <div className={'row'}>
                             <Col sm={6}>
                         <ul>
@@ -70,7 +72,7 @@ export default function() {
                 </Col>
                 <Col sm={12}>
                     <div className={'mt-20'}>
-                        <p> 4.	After the confidence rating, you will have to select a description that fits the abnormality detected (NB. “description” is used instead of “lesions”). </p>
+                        <p> 5.	After the confidence rating, you will have to select a description that fits the abnormality detected (NB. “description” is used instead of “lesions”). </p>
                         <p> To select an abnormality type:</p>
                         <ul>
                             <li>Click on “Select abnormality type”</li>

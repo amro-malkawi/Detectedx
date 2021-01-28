@@ -42,6 +42,9 @@ module.exports = {
 	"test.enterCouponCode": "Entrer le code de réduction",
 	"test.verify": "VÉRIFIER",
 	"test.apply": "APPLIQUER",
+
+	"test.list.instructionVideo": "Vidéo d'instruction",
+
 	"test.purchase.warning": "avertissement",
 	"test.purchase.attention": "Attention",
 	"test.purchase.subscribe": "Souscrire",
@@ -150,7 +153,6 @@ module.exports = {
 	"testView.submit": "Soumettre",
 	"testView.next": "Suivant",
 	"testView.instructions": "Instructions",
-	"testView.instruction": "Instruction",
 	"testView.scores": "Scores",
 	"testView.home": "Accueil",
 	"testView.selectLesionType": "Veuillez sélectionner le type de lésion",
@@ -163,6 +165,7 @@ module.exports = {
 	"testView.confirm": "Confirmer",
 	"testView.synopticComment": "Commentaire synaptique",
 	"testView.comment": "Commentaire",
+	"testView.comment.patient": "Histoire du patient",
 	"testView.covidQuestion.title1": "Répartition des apparitions COVID",
 	"testView.covidQuestion.title2": "Suspicion d'infection par COVID-19",
 	"testView.covidQuestion.expertJudgement": "Jugement d'experts",
