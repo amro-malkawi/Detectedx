@@ -172,3 +172,15 @@
     }
   }
 }
+
+.video-close-button {
+  position: absolute;
+  top: 0;
+  right: 1px;
+  line-height: 23px;
+  i {
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+}
