@@ -17,19 +17,21 @@ export default class VideoModal extends Component {
 
     constructor(props) {
         super(props);
-        this.possibleClose = props.possibleClose;
+        this.state = {
+            possibleClose: props.possibleClose
+        }
         this.playedSeconds = 0;
         this.playerRef = React.createRef();
     }
 
     onClose() {
-        if(this.possibleClose) {
+        if(this.state.possibleClose) {
             this.props.onClose();
         }
     }
 
     handleProgress(e) {
-        if(!this.possibleClose && (e.playedSeconds - this.playedSeconds) > 2) {
+        if(!this.state.possibleClose && (e.playedSeconds - this.playedSeconds) > 2) {
             this.playerRef.current.seekTo(parseFloat(this.playedSeconds), 'seconds');
         } else {
             this.playedSeconds = e.playedSeconds;
@@ -37,24 +39,25 @@ export default class VideoModal extends Component {
     }
 
     handleSeek(seekTime) {
-        if(!this.possibleClose && (seekTime - this.playedSeconds) > 0.1) {
+        if(!this.state.possibleClose && (seekTime - this.playedSeconds) > 0.1) {
             //impossilbe seek
             this.playerRef.current.seekTo(parseFloat(this.playedSeconds), 'seconds');
         }
     }
 
     handleEnded() {
-        this.possibleClose = true;
+        this.setState({possibleClose: true});
         // this.playerRef.current.seekTo(0, 'seconds');
         // this.playedSeconds = 0;
 
     }
 
     render() {
-        const {open, onClose, link} = this.props;
+        const {open, link} = this.props;
         return (
             <Dialog open={open} onClose={() => this.onClose()} style={{backgroundColor: '#000000d0'}}
-                    aria-labelledby="alert-dialog-title" maxWidth='xl' PaperProps={{style: {backgroundColor: 'transparent'}}}
+                    aria-labelledby="alert-dialog-title" maxWidth='xl'
+                    PaperProps={{style: {padding: 10, backgroundColor: 'transparent', boxShadow: 'none'}}}
             >
                 <DialogContent style={{padding: 0}}>
                     <ReactPlayer
@@ -69,6 +72,12 @@ export default class VideoModal extends Component {
                         onEnded={() => this.handleEnded()}
                     />
                 </DialogContent>
+                {
+                    this.state.possibleClose &&
+                    <div className={'video-close-button'} onClick={() => this.onClose()}>
+                        <i className="zmdi zmdi-close-circle"/>
+                    </div>
+                }
             </Dialog>
         )
     }
