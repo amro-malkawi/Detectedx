@@ -109,13 +109,19 @@ class BoxplotChart extends Component {
         let x = d3ScaleLinear()
             .domain([min, max])
             .range([0, width]);
-        svg
+        const xTicks = svg
             .append("g")
             .attr("stroke", "#8f8f8f")
             .style("font-family", "din-next-w01-light, sans-serif")
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + (height - 10) + ")")
             // .call(d3AxisBottom(x).tickValues([q1, median, q3, value]));
-            .call(d3AxisBottom(x).tickValues([q1, median, q3, value]).tickFormat(d => d / this.state.scoreTimes));
+            .call(d3AxisBottom(x)
+                .tickValues([q1, median, q3, value])
+                .tickFormat(d => d / this.state.scoreTimes)
+            );
+        xTicks.selectAll('text').attr('transform', function(d){
+            return 'rotate(40, -3, 20)';
+        });
 
         // a few features for the box
         let center = 40;

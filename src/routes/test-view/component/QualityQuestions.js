@@ -9,6 +9,7 @@ export default class QualityQuestions extends Component {
             question: [],
             selectedValue: {},
             truthValue: {},
+            openQuestionList: {},
         }
     }
 
@@ -18,10 +19,16 @@ export default class QualityQuestions extends Component {
 
     getData() {
         Apis.getAttemptImageQuality(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then((resp) => {
+            const {qualityQuestion, quality_answer, quality_truth} = resp;
+            const openQuestionList = {};
+            qualityQuestion.forEach((q) => {
+                openQuestionList[q.id] = (quality_answer[q.id] !== undefined || quality_truth[q.id] !== undefined);
+            });
             this.setState({
-                question: resp.qualityQuestion,
-                selectedValue: resp.quality_answer,
-                truthValue: resp.quality_truth
+                question: qualityQuestion,
+                selectedValue: quality_answer,
+                truthValue: quality_truth,
+                openQuestionList,
             });
         }).catch((error) => {
             NotificationManager.error(error.response ? error.response.data.error.message : error.message);
@@ -54,14 +61,9 @@ export default class QualityQuestions extends Component {
     }
 
     onChangeRootQuestion(qId) {
-        if(this.props.complete) return;
-        const selectedValue = {...this.state.selectedValue};
-        if(selectedValue[qId] === undefined) {
-            selectedValue[qId] = {};
-        } else {
-            selectedValue[qId] = undefined;
-        }
-        this.setState({selectedValue}, this.saveQualityAnswer);
+        const openQuestionList = {...this.state.openQuestionList};
+        openQuestionList[qId] = !openQuestionList[qId];
+        this.setState({openQuestionList});
     }
 
     onChangeQuestionNumber(qId, childQuestion, number) {
@@ -73,7 +75,7 @@ export default class QualityQuestions extends Component {
         ) {
             delete selectedValue[qId][childQuestion];
         } else {
-            if (selectedValue[qId] === undefined) {
+            if (selectedValue[qId] === undefined || typeof selectedValue[qId] !== 'object') {
                 selectedValue[qId] = {};
             }
             selectedValue[qId][childQuestion] = number;
@@ -121,7 +123,7 @@ export default class QualityQuestions extends Component {
     }
 
     renderQuestion(questionObj, i) {
-        const isShowChild = (this.state.selectedValue[questionObj.id] !== undefined || this.state.truthValue[questionObj.id] !== undefined);
+        const isShowChild = this.state.openQuestionList[questionObj.id];
         return (
             <div key={questionObj.id} className={'quality-question'}>
                 <div className={'question-title'} onClick={() => this.onChangeRootQuestion(questionObj.id)}>

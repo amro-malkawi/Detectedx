@@ -1139,7 +1139,6 @@ class Attempt extends Component {
                                 </div>
                                 <p className={'score-value'}>
                                     {scoreAverage}
-                                    <span>%</span>
                                 </p>
                                 <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/></p>
                             </div>
