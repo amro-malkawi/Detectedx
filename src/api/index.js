@@ -469,3 +469,16 @@ export function getAttemptImageQuality(attempt_id, test_case_id, is_post_test) {
     const url = 'answer_image_qualities/get_image_quality?access_token=' + getAccessToken();
     return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
 }
+
+/**
+ * chest answer functions
+ */
+export function setAttemptChestAnswer(attempt_id, test_case_id, chest_rating, chest_answer, is_post_test) {
+    const url = 'answers_chests/set_chest_answer?access_token=' + getAccessToken();
+    return instance.post(url, {attempt_id, test_case_id, chest_rating, chest_answer, is_post_test}).then((response) => response.data);
+}
+
+export function getAttemptChestAnswer(attempt_id, test_case_id, is_post_test) {
+    const url = 'answers_chests/get_chest_answer?access_token=' + getAccessToken();
+    return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
+}
