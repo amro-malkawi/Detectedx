@@ -153,12 +153,21 @@ class ImageViewer extends Component {
                     } else if (imagePosition.imageLaterality === 'R') {
                         offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
                     }
-                    if (imagePosition.positionDesc === 'V-PREVIEW') {
-                        offsetY = 385;
+                    // if (imagePosition.positionDesc === 'V-PREVIEW') {
+                    //     // offsetY = 385;
+                    //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
+                    // }
+                    if(
+                        imagePosition.viewPosition.indexOf('MLO') !== -1 &&
+                        this.props.imgMLOMaxHeight !== 0 &&
+                        (realContentBottom - realContentTop) !== this.props.imgMLOMaxHeight
+                    ) {
+                        offsetY = (this.props.imageInfo.height - this.props.imgMLOMaxHeight) / 2;
                     }
                 }
                 initialViewport.translation = {x: offsetX, y: offsetY};
             } catch (e) {
+                console.log(e.message)
             }
         }
         if(this.props.imageInfo.ww && this.props.imageInfo.wc) {
@@ -918,6 +927,7 @@ const mapStateToProps = (state) => {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
         initialZoomLevel: state.testView.initialZoomLevel,
+        imgMLOMaxHeight: state.testView.imgMLOMaxHeight,
     };
 };
 
