@@ -134,7 +134,7 @@ const getImageHangingIdList = (images) => {
 
 const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser) => {
     let initialZoomLevel = 0;
-    let imgMLOMaxHeight = 0;
+    let imgMLOMaxRealHeight = 0;
     if(showImageIds.length === 0 || showImageIds[0].length === 0) {
         initialZoomLevel = 0;
     } else {
@@ -171,10 +171,11 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                         img.realContentRight = Number(region[2]);
                         img.realContentBottom = Number(region[3]);
                         if ((Number(region[2]) - Number(region[0])) > imgMaxRealWidth) imgMaxRealWidth = (Number(region[2]) - Number(region[0]));
-                        if ((Number(region[3]) - Number(region[1])) > imgMaxRealHeight) imgMaxRealHeight = (Number(region[3]) - Number(region[1]));
-
-                        if (img.hangingId.indexOf('MLO') !== -1 && imgMLOMaxHeight < img.height) {
-                            imgMLOMaxHeight = img.height;
+                        if ((Number(region[3]) - Number(region[1])) > imgMaxRealHeight) {
+                            imgMaxRealHeight = (Number(region[3]) - Number(region[1]));
+                            if (img.hangingId.indexOf('MLO') !== -1 && imgMLOMaxRealHeight < imgMaxRealHeight) {
+                                imgMLOMaxRealHeight = imgMaxRealHeight;
+                            }
                         }
                     } catch (e) {
                     }
@@ -190,7 +191,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
         } catch (e) {
         }
     }
-    return {initialZoomLevel, imgMLOMaxHeight};
+    return {initialZoomLevel, imgMLOMaxRealHeight};
 }
 
 const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, currentThicknessType) => {
@@ -339,7 +340,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
 
     let showImageList, initialZoomLevel;
-    let imgMLOMaxHeight = 0;
+    let imgMLOMaxRealHeight = 0;
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
     if (volparaImage !== undefined) {
@@ -361,7 +362,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             true, currentThicknessType);
         const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser);
         initialZoomLevel = initZoomResult.initialZoomLevel;
-        imgMLOMaxHeight = initZoomResult.imgMLOMaxHeight;
+        imgMLOMaxRealHeight = initZoomResult.imgMLOMaxRealHeight;
     }
     showImageList = showImageList.filter((v) => v.length !== 0);
     const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
@@ -371,7 +372,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         showImageList,
         isShowImageBrowser,
         initialZoomLevel,
-        imgMLOMaxHeight,
+        imgMLOMaxRealHeight,
         testSetHangingIdList,
         selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
         defaultImagesNumber,
@@ -385,7 +386,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 export const changeHangingLayout = (type) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber, isShowImageBrowser} = getState().testView;
     const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
-    const { initialZoomLevel, imgMLOMaxHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -393,7 +394,7 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel, imgMLOMaxHeight},
+            payload: { initialZoomLevel, imgMLOMaxRealHeight},
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -475,7 +476,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         }
         list.push(row);
     }
-    const { initialZoomLevel, imgMLOMaxHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -483,7 +484,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel, imgMLOMaxHeight },
+            payload: { initialZoomLevel, imgMLOMaxRealHeight },
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -499,7 +500,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
 export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber, selectedHangingType, isShowImageBrowser} = getState().testView;
     const list = getHangingImageOrder(imageList, selectedHangingType, defaultImagesNumber, true, thicknessType);
-    const { initialZoomLevel, imgMLOMaxHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -507,7 +508,7 @@ export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel, imgMLOMaxHeight },
+            payload: { initialZoomLevel, imgMLOMaxRealHeight },
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,

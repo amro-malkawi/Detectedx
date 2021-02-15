@@ -157,12 +157,13 @@ class ImageViewer extends Component {
                     //     // offsetY = 385;
                     //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
                     // }
+
+                    offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
                     if(
                         imagePosition.viewPosition.indexOf('MLO') !== -1 &&
-                        this.props.imgMLOMaxHeight !== 0 &&
-                        (realContentBottom - realContentTop) !== this.props.imgMLOMaxHeight
+                        this.props.imgMLOMaxRealHeight !== 0
                     ) {
-                        offsetY = (this.props.imageInfo.height - this.props.imgMLOMaxHeight) / 2;
+                        offsetY = offsetY + ((realContentBottom - realContentTop) - this.props.imgMLOMaxRealHeight) / 2;
                     }
                 }
                 initialViewport.translation = {x: offsetX, y: offsetY};
@@ -927,7 +928,7 @@ const mapStateToProps = (state) => {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
         initialZoomLevel: state.testView.initialZoomLevel,
-        imgMLOMaxHeight: state.testView.imgMLOMaxHeight,
+        imgMLOMaxRealHeight: state.testView.imgMLOMaxRealHeight,
     };
 };
 
