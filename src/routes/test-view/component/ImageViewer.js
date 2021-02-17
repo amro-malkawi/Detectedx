@@ -16,7 +16,6 @@ import {isMobile} from 'react-device-detect';
 
 import DownloadTopBarProgress from "./DownloadTopBarProgress";
 import ImageOverlap from "./ImageOverlap";
-import GEThicknessSwitch from './ImageOverlap/GEThicknessSwitch';
 import _ from 'lodash';
 import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
@@ -88,11 +87,10 @@ class ImageViewer extends Component {
             this.imageHeight = image.height;
             const initialViewport = this.getInitialViewport();
             cornerstone.displayImage(this.imageElement, image, initialViewport);
-            this.setState({loadedImage: true});
             this.initTools();
+            this.setState({loadedImage: true});
         });
         this.initEvents();
-        ImageViewer.adjustSlideSize();
         this.runWorker();
     }
 
@@ -351,20 +349,6 @@ class ImageViewer extends Component {
         // render shapes
         this.renderShapes();
         this.renderMarks();
-    }
-
-    static adjustSlideSize() {
-        let sliders = document.querySelectorAll('div .stack-scrollbar input');
-        for (let i = 0; i < sliders.length; i++) {
-            sliders[i].style.width = sliders[i].parentNode.clientHeight + 'px';
-        }
-        window.addEventListener('resize', () => {
-            console.log('resize----------------------')
-            let sliders = document.querySelectorAll('div .stack-scrollbar input');
-            for (let i = 0; i < sliders.length; i++) {
-                sliders[i].style.width = sliders[i].parentNode.clientHeight + 'px';
-            }
-        });
     }
 
     setupLoadHandlers(clear = false) {
@@ -727,6 +711,7 @@ class ImageViewer extends Component {
         } else {
             Apis.answersDeleteAll(this.props.imageInfo.id, this.props.attemptId, this.props.imageInfo.test_case_id).then((resp) => {
                 this.markList = [];
+                this.props.setImageAnswer(this.props.imageInfo.id, 'markList', this.markList);
                 this.renderMarks();
             }).catch((error) => {
                 NotificationManager.error(error.response ? error.response.data.error.message : error.message);
@@ -864,33 +849,33 @@ class ImageViewer extends Component {
                  data-hanging-id={imageInfo.hangingId}
                  style={viewerStyle}
             >
-                <div className={'control-btn'}>
-                    {
-                        canDrawMarker &&
-                        <a className="eye" onClick={() => this.toggleMarkInfo()}>
-                            <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
-                                <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
-                            </Tooltip>
-                        </a>
-                    }
-                    <a onClick={() => null}>
-                        <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
-                            <i className={"zmdi zmdi-brightness-6 fs-23"} onClick={() => this.onInvert()}/>
-                        </Tooltip>
-                    </a>
-                    {
-                        (!this.props.complete && canDrawMarker) &&
-                        <a onClick={() => null}>
-                            <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
-                                <i className={"zmdi zmdi-delete fs-23 ml-2"} onClick={() => this.onClearSymbols()}/>
-                            </Tooltip>
-                        </a>
-                    }
-                </div>
-                <GEThicknessSwitch
-                    age={this.state.age}
-                    metaData={this.props.imageInfo.metaData}
-                />
+                {/*<div className={'control-btn'}>*/}
+                {/*    {*/}
+                {/*        canDrawMarker &&*/}
+                {/*        <a className="eye" onClick={() => this.toggleMarkInfo()}>*/}
+                {/*            <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">*/}
+                {/*                <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>*/}
+                {/*            </Tooltip>*/}
+                {/*        </a>*/}
+                {/*    }*/}
+                {/*    <a onClick={() => this.onInvert()}>*/}
+                {/*        <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">*/}
+                {/*            <i className={"zmdi zmdi-brightness-6 fs-23"}/>*/}
+                {/*        </Tooltip>*/}
+                {/*    </a>*/}
+                {/*    {*/}
+                {/*        (!this.props.complete && canDrawMarker) &&*/}
+                {/*        <a onClick={() => this.onClearSymbols()}>*/}
+                {/*            <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">*/}
+                {/*                <i className={"zmdi zmdi-delete fs-23 ml-2"}/>*/}
+                {/*            </Tooltip>*/}
+                {/*        </a>*/}
+                {/*    }*/}
+                {/*</div>*/}
+                {/*<GEThicknessSwitch*/}
+                {/*    age={this.state.age}*/}
+                {/*    metaData={this.props.imageInfo.metaData}*/}
+                {/*/>*/}
                 <ResizeDetector
                     handleWidth
                     handleHeight
@@ -905,14 +890,21 @@ class ImageViewer extends Component {
                     totalCount={this.state.downStatus.length}
                     downCount={this.state.downStatus.filter((v) => v).length}
                 />
-                {this.renderStackComponent()}
+                {/*{this.renderStackComponent()}*/}
                 {
                     this.state.loadedImage &&
                     <ImageOverlap
+                        imageElement={this.imageElement}
                         imageId={this.props.imageInfo.id}
                         ww={this.props.imageInfo.ww}
                         wc={this.props.imageInfo.wc}
-                        imageElement={this.imageElement}
+                        stackCount={this.props.imageInfo.stack_count}
+                        complete={this.props.complete}
+                        canDrawMarker={canDrawMarker}
+                        onClearSymbols={this.onClearSymbols.bind(this)}
+                        age={this.state.age}
+                        imageMetaData={this.props.imageInfo.metaData}
+                        imagePosition={this.imagePosition}
                     />
                 }
                 {/*{this.state.isLoading && <LoadingIndicator type="image"/>}*/}

@@ -24,7 +24,7 @@ const GEThicknessSwitch = ({metaData, age, currentThicknessType, changeThickness
     const renderToggleButtonGroup = () => {
         if(currentThicknessType === 'NOTHICKNESS' || (metaData.positionDesc !== 'GE-PLANES' && metaData.positionDesc !== 'GE-SLABS')) return null;
         return (
-            <StyledToggleButtonGroup size="small" value={currentThicknessType} exclusive orientation="vertical" onChange={(e, type) => onChange(type)}>
+            <StyledToggleButtonGroup className='thickness-toggle' size="small" value={currentThicknessType} exclusive orientation="vertical" onChange={(e, type) => onChange(type)}>
                 <StyledToggleButton value="SLABS">
                     SLABS
                 </StyledToggleButton>

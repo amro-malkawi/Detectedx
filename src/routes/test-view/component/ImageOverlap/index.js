@@ -3,6 +3,11 @@ import cornerstone from "cornerstone-core";
 import AutosizeInput from 'react-input-autosize';
 import {Input} from 'reactstrap';
 import _ from 'lodash';
+import Tooltip from "@material-ui/core/Tooltip";
+import IntlMessages from "Util/IntlMessages";
+import {isMobile} from "react-device-detect";
+import GEThicknessSwitch from "./GEThicknessSwitch";
+import ImageScrollBar, {adjustSlideSize} from "./ImageScrollBar";
 
 export default class ImageOverlap extends Component {
     constructor(props) {
@@ -13,6 +18,7 @@ export default class ImageOverlap extends Component {
             imageWW: props.ww ? props.ww : 255,
             imageWL: props.wc ? props.wc : 128,
             voiList: [],
+            isShowMarkInfo: !isMobile,
         }
         this.windowWidth = 255;
         this.windowLength = 128;
@@ -30,15 +36,15 @@ export default class ImageOverlap extends Component {
                 const imageWL = voiLutModuleInfo.windowCenter[0];
                 const voiList = [];
                 voiLutModuleInfo.windowWidth.forEach((v, i) => {
-                    if(voiLutModuleInfo.windowCenter[i]) {
+                    if (voiLutModuleInfo.windowCenter[i]) {
                         const ww = Math.round(v);
                         const wl = Math.round(voiLutModuleInfo.windowCenter[i])
-                        if(!voiList.some((vv) => (vv.ww === ww && vv.wl === wl))) {
+                        if (!voiList.some((vv) => (vv.ww === ww && vv.wl === wl))) {
                             voiList.push({ww: ww, wl: wl});
                         }
                     }
                 });
-                if(voiList.length === 0) {
+                if (voiList.length === 0) {
                     voiList.push({ww: 255, wl: 128});
                 }
                 this.windowWidth = imageWW;
@@ -50,18 +56,21 @@ export default class ImageOverlap extends Component {
                 })
             }
             this.initEvent();
+            adjustSlideSize();
         }
     }
 
     initEvent() {
-        this.props.imageElement.addEventListener('cornerstonetoolsmousemove', (event) => {
-            let point = event.detail.currentPoints.image;
-            const x = point.x.toFixed(0);
-            const y = point.y.toFixed(0);
-            this.setState({cursorPosition: {x, y}});
-        });
+        this.props.imageElement.addEventListener('cornerstonetoolsmousemove', _.throttle(this.handleMousemoveEvent.bind(this), 100));
 
-        this.props.imageElement.addEventListener('cornerstoneimagerendered', this.handleImageRenderEvent);
+        this.props.imageElement.addEventListener('cornerstoneimagerendered', _.throttle(this.handleImageRenderEvent.bind(this), 100));
+    }
+
+    handleMousemoveEvent(event) {
+        let point = event.detail.currentPoints.image;
+        const x = point.x.toFixed(0);
+        const y = point.y.toFixed(0);
+        this.setState({cursorPosition: {x, y}});
     }
 
     handleImageRenderEvent(event) {
@@ -98,43 +107,90 @@ export default class ImageOverlap extends Component {
 
     onChangeVoiSelect(event) {
         const values = event.target.value.split('/');
-        if(values.length !== 2) return;
-        if(Number(values[0]) === this.state.imageWW && Number(values[1]) === this.state.imageWL) return;
+        if (values.length !== 2) return;
+        if (Number(values[0]) === this.state.imageWW && Number(values[1]) === this.state.imageWL) return;
         console.log('change');
-        this.setState({ imageWW: Number(values[0]), imageWL: Number(values[1]) }, this.handleSetImageVoi);
+        this.setState({imageWW: Number(values[0]), imageWL: Number(values[1])}, this.handleSetImageVoi);
+    }
+
+    onToggleMarkInfo() {
+        this.setState({isShowMarkInfo: !this.state.isShowMarkInfo}, () => {
+            cornerstone.invalidate(this.props.imageElement);
+        });
+    }
+
+    onInvert() {
+        let viewport = cornerstone.getViewport(this.props.imageElement);
+        viewport.invert = !viewport.invert;
+        cornerstone.setViewport(this.props.imageElement, viewport);
     }
 
     render() {
+        const {canDrawMarker, onClearSymbols, age, imageMetaData, imagePosition} = this.props;
         const {cursorPosition, imageZoomLevel, imageWW, imageWL} = this.state;
-        return (
-            <div className={'image-overlap-container'}>
-                <div>
 
-                </div>
-                <div className={'overlap-info-text'}>
+        const isRightBrestImage = (this.props.stackCount > 1 && imagePosition !== undefined && imagePosition.imageLaterality === 'R');
+
+        return (
+            <div className={'image-overlap-container ' + (isRightBrestImage ? 'right-brest-overlap' : '')}>
+                <div className={'image-overlap-content'}>
                     <div>
-                        (x: {cursorPosition.x}, y: {cursorPosition.y})
-                    </div>
-                    <div>Zoom: {imageZoomLevel}</div>
-                    <div className={'ww-wl-input-container'}>
-                        <span className='mr-5'>WW/WL: </span>
-                        <AutosizeInput type='number' extraWidth={0} value={imageWW} onChange={(e) => this.onChangeVoi('imageWW', e.target.value)}/>
-                        <span className='ml-1 mr-1'>/</span>
-                        <AutosizeInput type='number' extraWidth={0} value={imageWL} onChange={(e) => this.onChangeVoi('imageWL', e.target.value)}/>
-                        <div>
+                        <div className={'control-btn'}>
                             {
-                                this.state.voiList.length > 1 &&
-                                <Input type={'select'} value={''} onChange={(e) => this.onChangeVoiSelect(e)}>
-                                    <option value='' style={{display: 'none'}}/>
-                                    {
-                                        this.state.voiList.map((v, i) =>
-                                            <option value={`${v.ww}/${v.wl}`} key={i}>{`${v.ww} / ${v.wl}`}</option>
-                                        )
-                                    }
-                                </Input>
+                                canDrawMarker &&
+                                <a className="eye" onClick={() => this.onToggleMarkInfo()}>
+                                    <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
+                                        <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
+                                    </Tooltip>
+                                </a>
+                            }
+                            <a onClick={() => this.onInvert()}>
+                                <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
+                                    <i className={"zmdi zmdi-brightness-6 fs-23"}/>
+                                </Tooltip>
+                            </a>
+                            {
+                                (!this.props.complete && canDrawMarker) &&
+                                <a onClick={() => onClearSymbols()}>
+                                    <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
+                                        <i className={"zmdi zmdi-delete fs-23 ml-2"}/>
+                                    </Tooltip>
+                                </a>
                             }
                         </div>
+                        <GEThicknessSwitch
+                            age={age}
+                            metaData={imageMetaData}
+                        />
                     </div>
+                    <div className={'overlap-info-text'}>
+                        <div>
+                            (x: {cursorPosition.x}, y: {cursorPosition.y})
+                        </div>
+                        <div>Zoom: {imageZoomLevel}</div>
+                        <div className={'ww-wl-input-container'}>
+                            <span className='mr-5'>WW/WL: </span>
+                            <AutosizeInput type='number' extraWidth={0} value={imageWW} onChange={(e) => this.onChangeVoi('imageWW', e.target.value)}/>
+                            <span className='ml-1 mr-1'>/</span>
+                            <AutosizeInput type='number' extraWidth={0} value={imageWL} onChange={(e) => this.onChangeVoi('imageWL', e.target.value)}/>
+                            <div>
+                                {
+                                    this.state.voiList.length > 1 &&
+                                    <Input type={'select'} value={''} onChange={(e) => this.onChangeVoiSelect(e)}>
+                                        <option value='' style={{display: 'none'}}/>
+                                        {
+                                            this.state.voiList.map((v, i) =>
+                                                <option value={`${v.ww}/${v.wl}`} key={i}>{`${v.ww} / ${v.wl}`}</option>
+                                            )
+                                        }
+                                    </Input>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className={'image-overlap-scroll'}>
+                    <ImageScrollBar imageId={this.props.imageId} imageElement={this.props.imageElement} />
                 </div>
             </div>
         )

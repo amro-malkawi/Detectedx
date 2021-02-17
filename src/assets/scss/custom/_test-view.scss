@@ -192,6 +192,7 @@ div.viewer {
             position: absolute;
             top: 10px;
             left: 5px;
+            pointer-events: initial;
 
             a {
               margin-left: 5px;
@@ -214,6 +215,10 @@ div.viewer {
             position: absolute;
             top: 40px;
             left: 13px;
+
+            .thickness-toggle {
+              pointer-events: initial;
+            }
           }
 
           .image-overlap-container {
@@ -224,57 +229,64 @@ div.viewer {
             left: 0;
             pointer-events: none;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: space-between;
 
-            .overlap-info-text {
-              margin-left: 10px;
-              margin-bottom: 10px;
-              color: white;
-              font-size: 14px;
-              line-height: 17px;
+            .image-overlap-content {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
 
-              .ww-wl-input-container {
-                display: flex;
+              .overlap-info-text {
+                margin-left: 10px;
+                margin-bottom: 10px;
+                color: white;
+                font-size: 14px;
+                line-height: 17px;
 
-                input {
-                  color: white;
-                  padding: 0;
-                  background-color: transparent;
-                  pointer-events: initial;
-                  border: 1px solid transparent;
-                  border-radius: 3px;
+                .ww-wl-input-container {
+                  display: flex;
 
-                  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
+                  input {
+                    color: white;
+                    padding: 0;
+                    background-color: transparent;
+                    pointer-events: initial;
+                    border: 1px solid transparent;
+                    border-radius: 3px;
+
+                    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+                      -webkit-appearance: none;
+                      margin: 0;
+                    }
+
+                    &:hover, &:focus {
+                      border: 1px solid #d6de1d75;
+                    }
+                  }
+
+                  select {
+                    width: 19px;
+                    height: 18px;
+                    padding: 0;
                     margin: 0;
+                    border: 1px solid transparent;
+                    border-radius: 3px;
+                    color: white;
+                    background-color: transparent;
+                    pointer-events: initial;
+
+                    &:hover {
+                      border: 1px solid #d6de1d75;
+                    }
+
+                    option {
+                      background-color: black;
+                    }
                   }
 
-                  &:hover, &:focus {
-                    border: 1px solid #d6de1d75;
-                  }
                 }
-
-                select {
-                  width: 19px;
-                  height: 18px;
-                  padding: 0;
-                  margin: 0;
-                  border: 1px solid transparent;
-                  border-radius: 3px;
-                  color: white;
-                  background-color: transparent;
-                  pointer-events: initial;
-
-                  &:hover {
-                    border: 1px solid #d6de1d75;
-                  }
-
-                  option {
-                    background-color: black;
-                  }
-                }
-
               }
             }
           }
@@ -308,6 +320,7 @@ div.viewer {
             display: flex;
             flex-direction: column;
             margin: 0 5px;
+            pointer-events: initial;
 
             .change-btn {
               display: flex;
@@ -354,6 +367,7 @@ div.viewer {
             position: absolute;
             right: 25px;
             top: 7px;
+            pointer-events: initial;
 
             .floating-item-content::-webkit-scrollbar-track {
               -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);

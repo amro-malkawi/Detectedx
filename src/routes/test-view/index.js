@@ -174,7 +174,6 @@ class TestView extends Component {
                 loading: false
             }, () => {
                 Marker.modalityRatings = that.state.test_case.ratings;
-                // ImageViewer.adjustSlideSize();
             });
 
             // make need images list for loading
