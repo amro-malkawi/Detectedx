@@ -269,7 +269,7 @@ class TestView extends Component {
                 valid = false;
             }
         } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'chest') {
-            const chestRating = this.chestQuestionRef.current.state.selectedRating;
+            const chestRating = this.chestQuestionRef.current.state.answerRating;
             if (isNaN(chestRating) || Number(chestRating) < 0 || Number(chestRating) > 5) {
                 NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
                 valid = false;
