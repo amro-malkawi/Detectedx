@@ -23,6 +23,7 @@ import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
 import JSONParseDefault from 'json-parse-default';
 import {connect} from "react-redux";
 import VideoModal from "Routes/instructions/VideoModal";
+import NetSpeedMeter from "Components/NetSpeedMeter";
 
 class List extends Component {
 
@@ -438,6 +439,13 @@ class List extends Component {
                         {this.state.selectedItem.name} ?
                     </SweetAlert>
 
+                    <NetSpeedMeter
+                        imageUrl={'https://static.detectedx.com/data/dummy.dat'}
+                        downloadSize={104857600}
+                        pingInterval={40000} // milliseconds
+                        thresholdUnit = 'megabyte'
+                        callbackFunctionOnNetworkDown={(speed)=>console.log("down speed", speed)}
+                    />
                 </div>
             )
         }

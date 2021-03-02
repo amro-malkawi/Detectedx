@@ -173,7 +173,7 @@ module.exports = {
 	"testView.covidQuestion.expertJudgement": "Experts judgement",
 	"testView.covidQuestion.doyousee": "Do you see",
 	"testView.covidQuestion.yourJudgement": "Your judgement",
-	"testView.chestQuestion.ratingTitle": "Confidence",
+	"testView.chestQuestion.ratingTitle": "Should worker see personal physician because of findings?",
 	"testView.browser.laterality": "Laterality:",
 	"testView.browser.type": "Type:",
 	"testView.viewer.slice": "Slice",

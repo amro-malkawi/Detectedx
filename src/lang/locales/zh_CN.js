@@ -172,7 +172,7 @@ module.exports = {
     "testView.covidQuestion.expertJudgement": "专家判断",
     "testView.covidQuestion.doyousee": "看到了",
     "testView.covidQuestion.yourJudgement": "您的判断",
-    "testView.chestQuestion.ratingTitle": "置信度",
+    "testView.chestQuestion.ratingTitle": "工人是否应该因为发现而去看私人医生？",
     "testView.browser.laterality": "纬度: ",
     "testView.browser.type": "类型: ",
     "testView.viewer.slice": "切片",

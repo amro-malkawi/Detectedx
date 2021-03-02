@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Button, IconButton, InputBase} from "@material-ui/core";
+import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
 import green from '@material-ui/core/colors/green';
 import {fade, withStyles} from '@material-ui/core/styles';
 import yellow from "@material-ui/core/colors/yellow";
@@ -66,11 +66,53 @@ const question = [
                 id: 'chestQ4b',
                 label: '4B. Other symbols (Obligatory)',
                 options: [
-                    ['aa', 'at', 'ax', 'bu', 'ca', 'cg'],
-                    ['cn', 'co', 'cp', 'cv', 'di', 'ef'],
-                    ['em', 'es', 'fr', 'hi', 'ho', 'id'],
-                    ['ih', 'kl', 'me', 'pa', 'pb', 'pi'],
-                    ['px', 'ra', 'rp', 'tb', 'OD'],
+                    [
+                        {value: 'aa', label: 'aa', hover: 'atherosclerotic aorta'},
+                        {value: 'at', label: 'at', hover: 'significant apical pleural thickening'},
+                        {
+                            value: 'ax',
+                            label: 'ax',
+                            hover: 'coalescence of small opacities - with margins of the small opacities remaining visible,whereas a large opacity demonstrates a homogeneous opaque appearance – may be recorded either in the presence or in the absence of large opacities'
+                        },
+                        {value: 'bu', label: 'bu', hover: 'bulla(e)'},
+                        {value: 'ca', label: 'ca', hover: 'cancer, thoracic malignancies excluding mesothelioma'},
+                        {value: 'cg', label: 'cg', hover: 'calcified non-pneumoconiotic nodules (e.g. granuloma) or nodes'},
+                    ],
+                    [
+                        {value: 'cn', label: 'cn', hover: 'calcification in small pneumoconiotic opacities'},
+                        {value: 'co', label: 'co', hover: 'abnormality of cardiac size or shape'},
+                        {value: 'cp', label: 'cp', hover: 'cor pulmonale'},
+                        {value: 'cv', label: 'cv', hover: 'cavity'},
+                        {value: 'di', label: 'di', hover: 'marked distortion of an intrathoracic structure'},
+                        {value: 'ef', label: 'ef', hover: 'pleural effusion'},
+                    ],
+                    [
+                        {value: 'em', label: 'em', hover: 'emphysema'},
+                        {value: 'es', label: 'es', hover: 'eggshell calcification of hilar or mediastinal lymph nodes'},
+                        {value: 'fr', label: 'fr', hover: 'fractured rib(s) (acute or healed)'},
+                        {value: 'hi', label: 'hi', hover: 'enlargement of non-calcified hilar or mediastinal lymph nodes'},
+                        {value: 'ho', label: 'ho', hover: 'honeycomb lung'},
+                        {value: 'id', label: 'id', hover: 'ill-defined diaphragm border - should be recorded only if more than one-third of one hemidiaphragm is affected'},
+                    ],
+                    [
+                        {
+                            value: 'ih',
+                            label: 'ih',
+                            hover: 'ill-defined heart border - should be recorded only if the length of the heart border affected, whether on the right or on the left side, is more than one-third of the length of the left heart border'
+                        },
+                        {value: 'kl', label: 'kl', hover: 'septal (Kerley) lines'},
+                        {value: 'me', label: 'me', hover: 'mesothelioma'},
+                        {value: 'pa', label: 'pa', hover: 'plate atelectasis'},
+                        {value: 'pb', label: 'pb', hover: 'parenchymal bands - significant parenchymal fibrotic stands in continuity with the pleura'},
+                        {value: 'pi', label: 'pi', hover: 'pleural thickening of an interlobar fissure'},
+                    ],
+                    [
+                        {value: 'px', label: 'px', hover: 'pneumothorax'},
+                        {value: 'ra', label: 'ra', hover: 'rounded atelectasis'},
+                        {value: 'rp', label: 'rp', hover: 'rheumatoid pneumoconiosis'},
+                        {value: 'tb', label: 'tb', hover: 'tuberculosis'},
+                        {value: 'OD', label: 'OD', hover: 'tuberculosis'},
+                    ]
                 ]
             }
         }
@@ -159,18 +201,39 @@ export default class ChestQuestions extends Component {
         const qTruths = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
         let checkValues = answerValue[qId][childQId];
         if (checkValues === undefined) checkValues = [];
-        return values.map((v, i) =>
-            <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
-                <QuestionCheckbox
-                    icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
-                    checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
-                    disableRipple
-                    checked={checkValues.indexOf(v.value) !== -1}
-                    onChange={() => this.onChangeCheck(qId, childQId, v.value)}
-                    name={childQId}
-                />
-            } label={v.label}/>
-        )
+        return values.map((v, i) => {
+            if (!v.hover) {
+                return (
+                    <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
+                        <QuestionCheckbox
+                            icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                            checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                            disableRipple
+                            checked={checkValues.indexOf(v.value) !== -1}
+                            onChange={() => this.onChangeCheck(qId, childQId, v.value)}
+                            name={childQId}
+                        />
+                    } label={v.label}
+                    />
+                )
+            } else {
+                return (
+                    <CheckboxTooltip title={v.hover}>
+                        <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
+                            <QuestionCheckbox
+                                icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                                checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                                disableRipple
+                                checked={checkValues.indexOf(v.value) !== -1}
+                                onChange={() => this.onChangeCheck(qId, childQId, v.value)}
+                                name={childQId}
+                            />
+                        } label={v.label}
+                        />
+                    </CheckboxTooltip>
+                )
+            }
+        })
     }
 
     renderOptionList(values, optionClass = '', disabled, qId, childQId) {
@@ -234,7 +297,7 @@ export default class ChestQuestions extends Component {
         const question2bObj = questionObj.child.chestQ2b;
         const question2cObj = questionObj.child.chestQ2c;
         let t2aPValue = '', t2aSValue = '';
-        if(truthValue[questionObj.id] !== undefined) {
+        if (truthValue[questionObj.id] !== undefined) {
             t2aPValue = truthValue[questionObj.id]['q2aPValues'];
             t2aSValue = truthValue[questionObj.id]['q2aSValues'];
         }
@@ -363,7 +426,10 @@ export default class ChestQuestions extends Component {
                                     </div>
                                     <div>
                                         {
-                                            this.renderCheckList(question3bObj.options.values.map((vv) => ({label: vv, value: v + '_calcification_' + vv})), 'mb-0 mr-1', disabled, questionObj.id, 'q3bValues')
+                                            this.renderCheckList(question3bObj.options.values.map((vv) => ({
+                                                label: vv,
+                                                value: v + '_calcification_' + vv
+                                            })), 'mb-0 mr-1', disabled, questionObj.id, 'q3bValues')
                                         }
                                     </div>
                                 </div>
@@ -476,7 +542,7 @@ export default class ChestQuestions extends Component {
                         question4bObj.options.map((checkLine, i) =>
                             <div className={'d-flex flex-column'} key={i}>
                                 {
-                                    this.renderCheckList(checkLine.map((v) => ({label: v, value: v})), 'mb-0 mr-2', disabled, questionObj.id, 'q4bValues')
+                                    this.renderCheckList(checkLine, 'mb-0 mr-2', disabled, questionObj.id, 'q4bValues')
                                 }
                             </div>
                         )
@@ -572,6 +638,7 @@ export default class ChestQuestions extends Component {
                             value={answerRating !== undefined ? answerRating.toString() : ''}
                             onChange={(event) => this.onChangeRating(event.target.value)}
                             row
+                            className={'justify-content-center mt-0'}
                         >
                             {
                                 [0, 1, 2, 3, 4, 5].map((v, i) => {   // [0, 1, 2, 3...]
@@ -599,8 +666,6 @@ export default class ChestQuestions extends Component {
         )
     }
 }
-
-
 
 
 const QuestionLabel = withStyles(theme => ({
@@ -710,3 +775,12 @@ const RatingLabel = withStyles(theme => ({
         cursor: 'not-allowed'
     },
 }))(FormControlLabel);
+
+const CheckboxTooltip = withStyles((theme) => ({
+    tooltip: {
+        backgroundColor: theme.palette.common.white,
+        color: 'rgba(0, 0, 0, 0.87)',
+        boxShadow: theme.shadows[1],
+        fontSize: 11,
+    },
+}))(Tooltip);
