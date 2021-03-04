@@ -53,7 +53,10 @@ const question = [
             chestQ3c: {
                 id: 'chestQ3c',
                 label: '3C. Costophrenic angle obliteration',
-                options: ['0', 'R', 'L']
+                options: ['0', 'R', 'L'],
+                addOptions: {labels: ['In profile', 'Face on'], values: ['0', 'R', 'L']},
+                extendOptions: [['0', 'R'], ['0', 'L'], ['1', '2', '3']],
+                widthOptions: [['0', 'R'], ['0', 'L'], ['a', 'b', 'c']],
             }
         }
     },
@@ -157,12 +160,38 @@ export default class ChestQuestions extends Component {
         }
     }
 
+    getAnswerTruth(qId) {
+        let questionAnswer, questionTruth;
+        if(this.state.answerValue[qId] === undefined) {
+            questionAnswer = {};
+        } else {
+            questionAnswer = this.state.answerValue[qId];
+        }
+
+        if(this.state.truthValue[qId] === undefined) {
+            questionTruth = {};
+        } else {
+            questionTruth = this.state.truthValue[qId];
+        }
+        return {questionAnswer, questionTruth}
+    }
+
     onChangeCheck(qId, childQId, value) {
         const {answerValue} = this.state;
         let checkValues = answerValue[qId][childQId];
         if (checkValues === undefined) checkValues = [];
         const valueIndex = checkValues.indexOf(value);
         if (valueIndex === -1) {
+            // chestQ3a/chestQ3a has to be 0 or R, L
+            if( qId === 'chestQ3a' && (childQId === 'q3cValues' || childQId.indexOf('q3bChest') === 0 || childQId.indexOf('q3cChest') === 0)) {
+                if(value === '0') {
+                    checkValues = [];
+                } else {
+                    const zeroIndex = checkValues.indexOf('0');
+                    if(zeroIndex !== -1) checkValues.splice(zeroIndex, 1);
+                }
+            }
+
             checkValues.push(value);
         } else {
             checkValues.splice(valueIndex, 1);
@@ -183,7 +212,9 @@ export default class ChestQuestions extends Component {
 
     onChangeQuestion(qId, value) {
         const {answerValue} = this.state;
-        if (answerValue[qId] === undefined) answerValue[qId] = {};
+        if(answerValue[qId] === undefined || answerValue[qId].value !== value) {
+            answerValue[qId] = {};
+        }
         answerValue[qId].value = value;
         this.setState({answerValue: {...answerValue}}, () => {
             this.saveChestAnswer();
@@ -199,7 +230,7 @@ export default class ChestQuestions extends Component {
     renderCheckList(values, checkClass = '', disabled, qId, childQId) {
         const {answerValue, truthValue} = this.state;
         const qTruths = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
-        let checkValues = answerValue[qId][childQId];
+        let checkValues = (answerValue[qId] !== undefined && answerValue[qId][childQId] !== undefined) ? answerValue[qId][childQId] : [];
         if (checkValues === undefined) checkValues = [];
         return values.map((v, i) => {
             if (!v.hover) {
@@ -218,8 +249,8 @@ export default class ChestQuestions extends Component {
                 )
             } else {
                 return (
-                    <CheckboxTooltip title={v.hover}>
-                        <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
+                    <CheckboxTooltip title={v.hover} key={i}>
+                        <QuestionLabel className={checkClass} disabled={disabled} control={
                             <QuestionCheckbox
                                 icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
                                 checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
@@ -236,7 +267,7 @@ export default class ChestQuestions extends Component {
         })
     }
 
-    renderOptionList(values, optionClass = '', disabled, qId, childQId) {
+    renderOptionList(values, optionClass = '', disabled, qId, childQId, iconClass='chest-question-radio-icon') {
         const {truthValue} = this.state;
         const qTruth = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
         return values.map((v, i) =>
@@ -246,8 +277,8 @@ export default class ChestQuestions extends Component {
                 value={v}
                 control={
                     <QuestionRadio
-                        icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                        checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                        icon={<span className={ iconClass + ' ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                        checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
                         disableRipple
                     />
                 }
@@ -259,8 +290,9 @@ export default class ChestQuestions extends Component {
     }
 
     renderQuestion1Additional(questionObj, disabled) {
-        const {answerValue, truthValue} = this.state;
-        const truthOtherText = (truthValue[questionObj.id] !== undefined && truthValue[questionObj.id]['q1OtherText'] !== undefined) ? truthValue[questionObj.id]['q1OtherText'] : '';
+        const {questionAnswer, questionTruth} = this.getAnswerTruth(questionObj.id);
+
+        const truthOtherText = (questionTruth['q1OtherText'] !== undefined) ? questionTruth['q1OtherText'] : '';
         return (
             <div className={'ml-3'}>
                 <div className={'chest-question-sub-desc'}>Please mark all boxes that apply</div>
@@ -279,11 +311,11 @@ export default class ChestQuestions extends Component {
                         }
                         <QuestionInput
                             id="q1OtherText" placeholder={'please specify'}
-                            value={answerValue[questionObj.id]['q1OtherText']}
+                            value={questionAnswer['q1OtherText']}
                             onChange={(event) => this.onChangeChildValue(questionObj.id, 'q1OtherText', event.target.value)}
                             disabled={
-                                disabled || answerValue[questionObj.id]['q1Values'] === undefined ||
-                                answerValue[questionObj.id]['q1Values'].indexOf('Other') === -1
+                                disabled || questionAnswer['q1Values'] === undefined ||
+                                questionAnswer['q1Values'].indexOf('Other') === -1
                             }
                         />
                     </div>
@@ -293,14 +325,9 @@ export default class ChestQuestions extends Component {
     }
 
     renderQuestion2Additional(questionObj, disabled) {
-        const {answerValue, truthValue} = this.state;
+        const {questionAnswer, questionTruth} = this.getAnswerTruth(questionObj.id);
         const question2bObj = questionObj.child.chestQ2b;
         const question2cObj = questionObj.child.chestQ2c;
-        let t2aPValue = '', t2aSValue = '';
-        if (truthValue[questionObj.id] !== undefined) {
-            t2aPValue = truthValue[questionObj.id]['q2aPValues'];
-            t2aSValue = truthValue[questionObj.id]['q2aSValues'];
-        }
         return (
             <div>
                 <div className={'chest-question-title'}>{question2bObj.label}</div>
@@ -310,37 +337,40 @@ export default class ChestQuestions extends Component {
                     <div className={'d-flex'}>
                         <div className={'col d-flex align-items-center flex-column'}>
                             <div className={'fs-14'}>
-                                Primary {(t2aPValue !== undefined && t2aPValue !== '') && <span className={'fs-13 text-red'}>({t2aPValue})</span>}
+                                Primary
                             </div>
-                            <Input type="select" name="shape-primary" id="shape-primary" className={'chest-shape-select'}
-                                   disabled={disabled}
-                                   value={answerValue[questionObj.id]['q2aPValues'] !== undefined ? answerValue[questionObj.id]['q2aPValues'] : ''}
-                                   onChange={(event) => this.onChangeChildValue(questionObj.id, 'q2aPValues', event.target.value)}
+
+                            <RadioGroup
+                                className={'ml-3 mt-1'}
+                                aria-label="position"
+                                name="position"
+                                value={questionAnswer['q2aPValues'] !== undefined ? questionAnswer['q2aPValues'] : ''}
+                                onChange={(event) => this.onChangeChildValue(questionObj.id, 'q2aPValues', event.target.value)}
+                                disabled={false}
+                                row
                             >
-                                <option style={{display: 'none'}}>Select</option>
                                 {
-                                    question2bObj.aOptions.map((v) =>
-                                        <option value={v} key={v}>{v}</option>
-                                    )
+                                    this.renderOptionList(question2bObj.aOptions, '', disabled, questionObj.id, 'q2aPValues', 'chest-question-checkbox-icon')
                                 }
-                            </Input>
+                            </RadioGroup>
                         </div>
                         <div className={'col d-flex align-items-center flex-column'}>
                             <div className={'fs-14'}>
-                                Secondary {(t2aSValue !== undefined && t2aSValue !== '') && <span className={'fs-13 text-red'}>({t2aSValue})</span>}
+                                Secondary
                             </div>
-                            <Input type="select" name="shape-secondary" id="shape-secondary" className={'chest-shape-select'}
-                                   disabled={disabled}
-                                   value={answerValue[questionObj.id]['q2aSValues'] !== undefined ? answerValue[questionObj.id]['q2aSValues'] : ''}
-                                   onChange={(event) => this.onChangeChildValue(questionObj.id, 'q2aSValues', event.target.value)}
+                            <RadioGroup
+                                className={'ml-3 mt-1'}
+                                aria-label="position"
+                                name="position"
+                                value={questionAnswer['q2aSValues'] !== undefined ? questionAnswer['q2aSValues'] : ''}
+                                onChange={(event) => this.onChangeChildValue(questionObj.id, 'q2aSValues', event.target.value)}
+                                disabled={false}
+                                row
                             >
-                                <option style={{display: 'none'}}>Select</option>
                                 {
-                                    question2bObj.aOptions.map((v) =>
-                                        <option value={v} key={v}>{v}</option>
-                                    )
+                                    this.renderOptionList(question2bObj.aOptions, '', disabled, questionObj.id, 'q2aSValues', 'chest-question-checkbox-icon')
                                 }
-                            </Input>
+                            </RadioGroup>
                         </div>
                     </div>
                     <div className={'chest-question-sub-title'}>b. Zones</div>
@@ -364,7 +394,7 @@ export default class ChestQuestions extends Component {
                             className={'ml-3 mt-1'}
                             aria-label="position"
                             name="position"
-                            value={answerValue[questionObj.id]['q2bcValues'] !== undefined ? answerValue[questionObj.id]['q2bcValues'] : ''}
+                            value={questionAnswer['q2bcValues'] !== undefined ? questionAnswer['q2bcValues'] : ''}
                             onChange={(event) => this.onChangeChildValue(questionObj.id, 'q2bcValues', event.target.value)}
                             disabled={false}
                         >
@@ -387,7 +417,7 @@ export default class ChestQuestions extends Component {
                         className={'ml-3 mt-1'}
                         aria-label="position"
                         name="position"
-                        value={answerValue[questionObj.id]['q2cValues'] !== undefined ? answerValue[questionObj.id]['q2cValues'] : ''}
+                        value={questionAnswer['q2cValues'] !== undefined ? questionAnswer['q2cValues'] : ''}
                         onChange={(event) => this.onChangeChildValue(questionObj.id, 'q2cValues', event.target.value)}
                         row
                         disabled={false}
@@ -402,6 +432,7 @@ export default class ChestQuestions extends Component {
     }
 
     renderQuestion3Additional(questionObj, disabled) {
+        const {questionAnswer, questionTruth} = this.getAnswerTruth(questionObj.id);
         const question3bObj = questionObj.child.chestQ3b;
         const question3cObj = questionObj.child.chestQ3c;
         return (
@@ -421,15 +452,18 @@ export default class ChestQuestions extends Component {
                                     <div>{v}</div>
                                     <div>
                                         {
-                                            this.renderCheckList(question3bObj.options.values.map((vv) => ({label: vv, value: v + '_site_' + vv})), 'mb-0 mr-1', disabled, questionObj.id, 'q3bValues')
+                                            this.renderCheckList(
+                                                question3bObj.options.values.map((vv) => ({label: vv, value: vv})),
+                                                'mb-0 mr-1', disabled, questionObj.id, 'q3bChestSiteValues' + v
+                                            )
                                         }
                                     </div>
                                     <div>
                                         {
-                                            this.renderCheckList(question3bObj.options.values.map((vv) => ({
-                                                label: vv,
-                                                value: v + '_calcification_' + vv
-                                            })), 'mb-0 mr-1', disabled, questionObj.id, 'q3bValues')
+                                            this.renderCheckList(
+                                                question3bObj.options.values.map((vv) => ({label: vv,value: vv})),
+                                                'mb-0 mr-1', disabled, questionObj.id, 'q3bChestCalcValues' + v
+                                            )
                                         }
                                     </div>
                                 </div>
@@ -447,34 +481,66 @@ export default class ChestQuestions extends Component {
                     <div className={'d-flex'}>
                         <div className={'d-flex flex-column align-items-start ml-40'}>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.extendOptions[0].map((v) => ({label: v, value: 'line11' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bExtendValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bExtend11Values'] !== undefined ? questionAnswer['q3bExtend11Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bExtend11Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.extendOptions[0], 'mb-0 mr-1', disabled, questionObj.id, 'q3bExtend11Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.extendOptions[2].map((v) => ({label: v, value: 'line12' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bExtendValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bExtend12Values'] !== undefined ? questionAnswer['q3bExtend12Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bExtend12Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.extendOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3bExtend12Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                         </div>
                         <div className={'d-flex flex-column align-items-start ml-30'}>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.extendOptions[1].map((v) => ({label: v, value: 'line21' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bExtendValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bExtend21Values'] !== undefined ? questionAnswer['q3bExtend21Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bExtend21Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.extendOptions[1], 'mb-0 mr-1', disabled, questionObj.id, 'q3bExtend21Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.extendOptions[2].map((v) => ({label: v, value: 'line22' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bExtendValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bExtend22Values'] !== undefined ? questionAnswer['q3bExtend22Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bExtend22Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.extendOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3bExtend22Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                         </div>
                     </div>
@@ -489,34 +555,66 @@ export default class ChestQuestions extends Component {
                     <div className={'d-flex'}>
                         <div className={'d-flex flex-column align-items-start ml-40'}>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.widthOptions[0].map((v) => ({label: v, value: 'line11' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bWidthValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bWidth11Values'] !== undefined ? questionAnswer['q3bWidth11Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bWidth11Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.widthOptions[0], 'mb-0 mr-1', disabled, questionObj.id, 'q3bWidth11Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.widthOptions[2].map((v) => ({label: v, value: 'line12' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bWidthValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bWidth12Values'] !== undefined ? questionAnswer['q3bWidth12Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bWidth12Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.widthOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3bWidth12Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                         </div>
                         <div className={'d-flex flex-column align-items-start ml-30'}>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.widthOptions[1].map((v) => ({label: v, value: 'line21' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bWidthValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bWidth21Values'] !== undefined ? questionAnswer['q3bWidth21Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bWidth21Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.widthOptions[1], 'mb-0 mr-1', disabled, questionObj.id, 'q3bWidth21Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                             <div>
-                                {
-                                    this.renderCheckList(
-                                        question3bObj.widthOptions[0].map((v) => ({label: v, value: 'line22' + v})),
-                                        'mb-0 mr-1', disabled, questionObj.id, 'q3bWidthValues')
-                                }
+                                <RadioGroup
+                                    className={''}
+                                    aria-label="position"
+                                    name="position"
+                                    value={questionAnswer['q3bWidth22Values'] !== undefined ? questionAnswer['q3bWidth22Values'] : ''}
+                                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3bWidth22Values', event.target.value)}
+                                    disabled={false}
+                                    row
+                                >
+                                    {
+                                        this.renderOptionList(question3bObj.widthOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3bWidth22Values', 'chest-question-checkbox-icon')
+                                    }
+                                </RadioGroup>
                             </div>
                         </div>
                     </div>
@@ -528,6 +626,196 @@ export default class ChestQuestions extends Component {
                         this.renderCheckList(question3cObj.options.map((v) => ({label: v, value: v})), 'mb-0 mr-30', disabled, questionObj.id, 'q3cValues')
                     }
                 </div>
+                {
+                    ( (questionAnswer['q3cValues'] !== undefined &&
+                        (questionAnswer['q3cValues'].indexOf('R') !== -1 ||
+                            questionAnswer['q3cValues'].indexOf('L') !== -1)) ||
+                        (questionTruth['q3cValues'] !== undefined &&
+                            (questionTruth['q3cValues'].indexOf('R') !== -1 ||
+                                questionTruth['q3cValues'].indexOf('L') !== -1))
+                    ) &&
+                    <div>
+                        <div className={'d-flex'}>
+                            <div className={'d-flex flex-column ml-4'}>
+                                <div className={'question3-check-title-line'}>
+                                    <div>Chest wall</div>
+                                    <div>Site</div>
+                                    <div>Calcification</div>
+                                </div>
+                                {
+                                    question3cObj.addOptions.labels.map((v, i) =>
+                                        <div className={'question3-check-line'} key={i}>
+                                            <div>{v}</div>
+                                            <div>
+                                                {
+                                                    this.renderCheckList(
+                                                        question3bObj.options.values.map((vv) => ({label: vv,value: vv})),
+                                                        'mb-0 mr-1', disabled, questionObj.id, 'q3cChestSiteValues' + v
+                                                    )
+                                                }
+                                            </div>
+                                            <div>
+                                                {
+                                                    this.renderCheckList(question3bObj.options.values.map((vv) => ({label: vv, value: vv })),
+                                                        'mb-0 mr-1', disabled, questionObj.id, 'q3cChestCalcValues' + v
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            </div>
+                        </div>
+                        <div className={'question3-extent'}>
+                            <div>Extent</div>
+                            <div>(chest wall ; combined for in-profile and face-on)<br/>
+                                up to 1⁄4 of lateral chest wall = 1<br/>
+                                1⁄4 to 1⁄2 of lateral chest wall = 2<br/>
+                                > 1⁄2 of lateral chest wall = 3
+                            </div>
+                            <div className={'d-flex'}>
+                                <div className={'d-flex flex-column align-items-start ml-40'}>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cExtend11Values'] !== undefined ? questionAnswer['q3cExtend11Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cExtend11Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.extendOptions[0], 'mb-0 mr-1', disabled, questionObj.id, 'q3cExtend11Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cExtend12Values'] !== undefined ? questionAnswer['q3cExtend12Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cExtend12Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.extendOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3cExtend12Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                </div>
+                                <div className={'d-flex flex-column align-items-start ml-30'}>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cExtend21Values'] !== undefined ? questionAnswer['q3cExtend21Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cExtend21Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.extendOptions[1], 'mb-0 mr-1', disabled, questionObj.id, 'q3cExtend21Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cExtend22Values'] !== undefined ? questionAnswer['q3cExtend22Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cExtend22Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.extendOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3cExtend22Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={'question3-extent'}>
+                            <div>Width</div>
+                            <div>(in profile only, 3 mm minimum width required)<br/>
+                                a= 3 to 5 mm<br/>
+                                b= 5 to 10 mm<br/>
+                                c= > 10 mm
+                            </div>
+                            <div className={'d-flex'}>
+                                <div className={'d-flex flex-column align-items-start ml-40'}>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cWidth11Values'] !== undefined ? questionAnswer['q3cWidth11Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cWidth11Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.widthOptions[0], 'mb-0 mr-1', disabled, questionObj.id, 'q3cWidth11Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cWidth12Values'] !== undefined ? questionAnswer['q3cWidth12Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cWidth12Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.widthOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3cWidth12Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                </div>
+                                <div className={'d-flex flex-column align-items-start ml-30'}>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cWidth21Values'] !== undefined ? questionAnswer['q3cWidth21Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cWidth21Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.widthOptions[1], 'mb-0 mr-1', disabled, questionObj.id, 'q3cWidth21Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                    <div>
+                                        <RadioGroup
+                                            className={''}
+                                            aria-label="position"
+                                            name="position"
+                                            value={questionAnswer['q3cWidth22Values'] !== undefined ? questionAnswer['q3cWidth22Values'] : ''}
+                                            onChange={(event) => this.onChangeChildValue(questionObj.id, 'q3cWidth22Values', event.target.value)}
+                                            disabled={false}
+                                            row
+                                        >
+                                            {
+                                                this.renderOptionList(question3cObj.widthOptions[2], 'mb-0 mr-1', disabled, questionObj.id, 'q3cWidth22Values', 'chest-question-checkbox-icon')
+                                            }
+                                        </RadioGroup>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         )
     }
@@ -553,15 +841,25 @@ export default class ChestQuestions extends Component {
     }
 
     renderAdditionalQuestion(questionObj, disabled) {
-        const {answerValue} = this.state;
-        if (answerValue[questionObj.id] === undefined) return null;
-        if (questionObj.id === 'chestQ1' && answerValue[questionObj.id].value !== undefined && answerValue[questionObj.id].value !== '1') {
+        const {answerValue, truthValue} = this.state;
+        if (answerValue[questionObj.id] === undefined && truthValue[questionObj.id] === undefined) return null;
+        const answerExist = answerValue[questionObj.id] !== undefined && answerValue[questionObj.id].value !== undefined;
+        const truthExist = truthValue[questionObj.id] !== undefined && truthValue[questionObj.id].value !== undefined;
+        if (
+            questionObj.id === 'chestQ1' && ((answerExist && answerValue[questionObj.id].value !== '1') || (truthExist && truthValue[questionObj.id].value !== '1'))
+        ) {
             return this.renderQuestion1Additional(questionObj, disabled);
-        } else if (questionObj.id === 'chestQ2a' && answerValue[questionObj.id].value === 'Yes') {
+        } else if (
+            questionObj.id === 'chestQ2a' && ((answerExist && answerValue[questionObj.id].value === 'Yes') || (truthExist && truthValue[questionObj.id].value === 'Yes'))
+        ) {
             return this.renderQuestion2Additional(questionObj, disabled);
-        } else if (questionObj.id === 'chestQ3a' && answerValue[questionObj.id].value === 'Yes') {
+        } else if (
+            questionObj.id === 'chestQ3a' && ((answerExist && answerValue[questionObj.id].value === 'Yes') || (truthExist && truthValue[questionObj.id].value === 'Yes'))
+        ) {
             return this.renderQuestion3Additional(questionObj, disabled);
-        } else if (questionObj.id === 'chestQ4a' && answerValue[questionObj.id].value === 'Yes') {
+        } else if (
+            questionObj.id === 'chestQ4a' && ((answerExist && answerValue[questionObj.id].value === 'Yes') || (truthExist && truthValue[questionObj.id].value === 'Yes'))
+        ) {
             return this.renderQuestion4Additional(questionObj, disabled);
         }
     }
@@ -584,6 +882,7 @@ export default class ChestQuestions extends Component {
                     {
                         questionObj.options.map((v) => (
                             <QuestionLabel
+                                key={v}
                                 value={v}
                                 control={
                                     <QuestionRadio
@@ -594,7 +893,6 @@ export default class ChestQuestions extends Component {
                                 }
                                 label={v}
                                 labelPlacement="end"
-                                key={v}
                                 disabled={disabled}
                             />
                         ))
@@ -644,6 +942,7 @@ export default class ChestQuestions extends Component {
                                 [0, 1, 2, 3, 4, 5].map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
                                         <RatingLabel
+                                            key={i}
                                             value={v.toString()}
                                             control={
                                                 <RatingRadio
@@ -653,7 +952,6 @@ export default class ChestQuestions extends Component {
                                                 />
                                             }
                                             label={v}
-                                            key={i}
                                             disabled={disabled}
                                         />
                                     )
