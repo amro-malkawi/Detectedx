@@ -284,6 +284,15 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                 console.warn('shape json error', shape.id)
             }
         });
+        imageAnswers.truth_shapes && imageAnswers.truth_shapes.forEach((shape) => {
+            try {
+                let measurementData = JSON.parse(shape.data);
+                if (shapeList[shape.type] === undefined) shapeList[shape.type] = [];
+                shapeList[shape.type].push({stack: shape.stack, measurementData});
+            } catch (e) {
+                console.warn('shape json error', shape.id)
+            }
+        });
         return {
             ...v,
             answers: {

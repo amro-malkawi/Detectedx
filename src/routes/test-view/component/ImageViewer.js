@@ -554,11 +554,11 @@ class ImageViewer extends Component {
 
     handleMouseUp(event) {
         const that = this;
-        if (that.tempMeasureToolData !== null && that.tempMeasureToolData.measurementData.id !== undefined) {
-            if (that.tempMeasureToolData.toolName === 'Marker' || that.tempMeasureToolData.toolName === 'MarkerFreehand') {
+        if (that.tempMeasureToolData.toolName === 'Marker' || that.tempMeasureToolData.toolName === 'MarkerFreehand') {
 
-            } else {
-                setTimeout(function () {
+        } else {
+            setTimeout(function () {
+                if (that.tempMeasureToolData !== null && that.tempMeasureToolData.measurementData.id !== undefined) {
                     const data = {
                         id: that.tempMeasureToolData.measurementData.id,
                         image_id: that.props.imageInfo.id,
@@ -576,8 +576,8 @@ class ImageViewer extends Component {
                         that.shapeList[data.type][index] = {stack: data.stack, measurementData: JSON.parse(data.data)};
                         that.props.setImageAnswer(that.props.imageInfo.id, 'shapeList', this.shapeList);
                     });
-                }, 500);
-            }
+                }
+            }, 500);
         }
     }
 
