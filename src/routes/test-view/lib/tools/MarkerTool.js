@@ -124,7 +124,6 @@ export default class MarkerTool extends BaseAnnotationTool {
                     handleRadius: radius,
                     color: colour,
                 });
-                console.log('isTruth', mark.isTruth);
                 if(isShowInfo && mark.isTruth !== undefined) {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
                     let ratingLabel = mark.rating;

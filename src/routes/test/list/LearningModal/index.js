@@ -10,7 +10,6 @@ import LearningLungEDModal from "./LearningLungEDModal";
 
 export default ({open, type, name, postTestCount, credit, onClose}) => {
     if(!open) return null;
-    console.log(postTestCount, credit)
     if (type === 'normal') {
         return <LearningModal open={open} onClose={onClose} />
     } else if (type === 'has_post') {

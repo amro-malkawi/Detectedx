@@ -55,10 +55,7 @@ export default class Profile extends Component {
                 postcode: '',
                 referrer_by: '',
                 extra_info: '',
-                user_subscription: undefined,
-                need_user_subscribe: false,
                 payment_history: [],
-                user_credit_history: []
             },
             birthday: '',
             interestList: [],
@@ -176,12 +173,6 @@ export default class Profile extends Component {
         }).catch(e => {
             NotificationManager.error(e.response.data.error.message);
         });
-    }
-
-    onFinishSubscribe() {
-        this.setState({showModalType: '', loading: true}, () => {
-            this.getData();
-        })
     }
 
     render() {
@@ -443,56 +434,14 @@ export default class Profile extends Component {
                                     />
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
-                            <ExpansionPanel expanded={this.state.expanded === 'payment'} onChange={this.onExpandeChange('payment')}>
-                                <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
-                                    <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.subscriptions"}/></span>
-                                    <SubscriptionButton
-                                        variant="contained"
-                                        size="small"
-                                        color="primary"
-                                        disabled={!this.state.userInfo.need_user_subscribe}
-                                        onClick={(e) => this.setState({showModalType: 'subscription'})}
-                                    >
-                                        <IntlMessages id={"profile.subscribe"}/>
-                                    </SubscriptionButton>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails style={{display: 'block'}}>
-                                    <div className={'d-flex justify-content-center'}>
-                                        <table className="table table-middle table-hover mb-0 mobile-table">
-                                            <thead>
-                                            <tr>
-                                                <th className="text-center"><IntlMessages id={"profile.subscriptionType"}/></th>
-                                                <th className="text-center"><IntlMessages id={"profile.status"}/></th>
-                                                <th className="text-center"><IntlMessages id={"profile.lastPayment"}/></th>
-                                                <th className="text-center"><IntlMessages id={"profile.nextPayment"}/></th>
-                                                <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {
-                                                this.state.userInfo.user_subscription === undefined ? null :
-                                                    <tr>
-                                                        <td className="text-center" data-title={'Subscription Type'}>{this.state.userInfo.user_subscription.subscription_plans.name}</td>
-                                                        <td className='text-center' data-title={'Status'}><span className='text-primary'>{this.state.userInfo.user_subscription.status}</span></td>
-                                                        <td className="text-center" data-title={'Last Payment'}>{moment(this.state.userInfo.user_subscription.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                                        <td className="text-center" data-title={'Next Payment Due'}>{moment(this.state.userInfo.user_subscription.expire_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                                        <td className="text-center" data-title={'Payment Method'}>{this.state.userInfo.user_subscription.payment_type}</td>
-                                                    </tr>
-                                            }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
                         </RctCollapsibleCard>
                         <RctCollapsibleCard
-                            colClasses="col-sm-12 col-md-12 col-xl-6 b-100 w-xs-full"
+                            colClasses="col-sm-12 col-md-12 col-xl-12 b-100 w-xs-full"
                         >
                             <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.billingHistory"}/></span>
                             <table className="table table-middle table-hover mb-0 mobile-table">
                                 <thead>
                                 <tr>
-                                    <th className="text-center"><IntlMessages id={"profile.paymentType"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.description"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.total"}/></th>
                                     <th className="text-center"><IntlMessages id={"profile.paymentMethod"}/></th>
@@ -504,7 +453,6 @@ export default class Profile extends Component {
                                 {
                                     this.state.userInfo.payment_history.map((v) => (
                                         <tr>
-                                            <td className="text-center" data-title={'Type'}>{v.payment_history_type}</td>
                                             <td className="text-center" data-title={'Description'}>{v.payment_history_desc}</td>
                                             <td className="text-center" data-title={'Total'}>{v.payment_history_amount} {v.payment_history_currency}</td>
                                             <td className="text-center" data-title={'Payment Method'}>{v.payment_history_pay_type}</td>
@@ -513,33 +461,6 @@ export default class Profile extends Component {
                                                     <Tooltip id="tooltip-icon" title="Download Invoice"><DescriptionOutlinedIcon /></Tooltip>
                                                 </NavLink>
                                             </td>
-                                            <td className="text-center" data-title={'Date'}>{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
-                                        </tr>
-                                    ))
-                                }
-                                </tbody>
-                            </table>
-                        </RctCollapsibleCard>
-                        <RctCollapsibleCard
-                            colClasses="col-sm-12 col-md-12 col-xl-6 b-100 w-xs-full"
-                        >
-                            <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.creditHistory"}/></span>
-                            <table className="table table-middle table-hover mb-0 mobile-table">
-                                <thead>
-                                <tr>
-                                    <th className="text-center"><IntlMessages id={"profile.paymentType"}/></th>
-                                    <th className="text-center"><IntlMessages id={"profile.description"}/></th>
-                                    <th className="text-center"><IntlMessages id={"profile.total"}/></th>
-                                    <th className="text-center"><IntlMessages id={"profile.date"}/></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {
-                                    this.state.userInfo.user_credit_history.map((v) => (
-                                        <tr>
-                                            <td className="text-center" data-title={'Type'}>{v.credit_history_type}</td>
-                                            <td className="text-center" data-title={'Description'}>{v.credit_history_desc}</td>
-                                            <td className="text-center" data-title={'Total'}>{v.credit_history_amount} points</td>
                                             <td className="text-center" data-title={'Date'}>{moment(v.created_at).format('MMM Do YYYY, HH:mm:ss')}</td>
                                         </tr>
                                     ))
@@ -619,14 +540,6 @@ export default class Profile extends Component {
                         </ModalFooter>
                     </Modal>
                     <DeleteProfileModal open={this.state.showModalType === 'deleteProfile'} onClose={() => this.setState({showModalType: ''})} />
-                    {
-                        this.state.showModalType === 'subscription' &&
-                        <PaymentModal
-                            type={'planSubscribe'}
-                            onFinish={() => this.onFinishSubscribe()}
-                            onClose={() => this.setState({showModalType: ''})}
-                        />
-                    }
                 </div>
             )
         } else {
@@ -653,15 +566,3 @@ const CustomInputLabel = withStyles(theme => ({
         paddingRight: 2,
     }
 }))(InputLabel);
-
-const SubscriptionButton = withStyles((theme) => ({
-    root: {
-        padding: '0 10px',
-        marginLeft: 20,
-        color: theme.palette.getContrastText(red[500]),
-        backgroundColor: red[500],
-        '&:hover': {
-            backgroundColor: red[700],
-        },
-    },
-}))(Button);

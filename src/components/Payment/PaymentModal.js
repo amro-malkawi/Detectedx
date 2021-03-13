@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {withStyles} from "@material-ui/core/styles";
 import {Dialog} from "@material-ui/core";
 import SwipeableViews from 'react-swipeable-views';
-import PlanItem from "Components/Payment/PlanItem";
 import * as Apis from "Api/index";
 import {NotificationManager} from "react-notifications";
 import Checkout from './Checkout';
@@ -15,13 +14,8 @@ import PropTypes from "prop-types";
 export default class PaymentModal extends Component {
 
     static propTypes = {
-        type: PropTypes.oneOf(['creditPurchase', 'planSubscribe']).isRequired,
         onFinish: PropTypes.func,
         onClose: PropTypes.func
-    };
-
-    static defaultProps = {
-        type: 'planSubscribe',
     };
 
     constructor(props) {
@@ -29,15 +23,11 @@ export default class PaymentModal extends Component {
         this.state = {
             loading: true,
             swipeIndex: 0,
-            selectedType: props.type === 'creditPurchase' ? 'creditPurchase' : 'planSubscribe',
-            plans: [],
-            ratioInfo: {ratio: 1, currency: 'USD'},
             stripeKey: '',
             paypalKey: '',
-            selectedPlan: {},
-            productPrice: '',
-            productCurrency: '',
-            productName: '',
+            productPrice: props.testSetItem.test_set_price.price,
+            productCurrency: props.testSetItem.test_set_price.currency,
+            productName: props.testSetItem.name,
             resultPrice: '',
             resultCurrency: '',
             errorMessage: '',
@@ -49,13 +39,10 @@ export default class PaymentModal extends Component {
     }
 
     getData() {
-        Apis.getProductPlans().then(resp => {
+        Apis.paymentInfo().then(resp => {
             this.setState({
-                plans: resp.planList,
-                ratioInfo: resp.ratioInfo,
-                disableSubscribe: resp.planList.some((v) => v.plan_subscribed),
-                stripeKey: resp.key.stripe,
-                paypalKey: resp.key.paypal,
+                stripeKey: resp.stripe,
+                paypalKey: resp.paypal,
                 loading: false
             });
         }).catch((e) => {
@@ -70,43 +57,23 @@ export default class PaymentModal extends Component {
         this.setState({swipeIndex: swipeIndex - 1});
     }
 
-    onSelectPlan(plan) {
-        this.setState({
-            selectedPlan: plan,
-            swipeIndex: this.state.swipeIndex + 1
-        });
+    /**
+     * purchase free coupon discount 100%
+     */
+    onFreeOrder(price, currency, couponCode, token) {
+        return Apis.paymentFree(this.props.testSetItem.id, price, currency, couponCode, token);
     }
 
-    onFreeOrder(product_id, price, currency, couponCode, token) {
-        if (this.state.selectedType === 'creditPurchase') {
-            return Apis.orderFree(price, currency, couponCode, token);
-        } else if (this.state.selectedType === 'planSubscribe') {
-            return Apis.subscriptionPlanFree(product_id, price, currency, couponCode, token);
-        }
+    onStripeOrder(price, currency, couponCode, token) {
+        return Apis.paymentStripe(this.props.testSetItem.id, price, currency, couponCode, token);
     }
 
-    onStripeOrder(product_id, price, currency, couponCode, token) {
-        if (this.state.selectedType === 'creditPurchase') {
-            return Apis.orderCreditStripe(price, currency, couponCode, token);
-        } else if (this.state.selectedType === 'planSubscribe') {
-            return Apis.subscriptionPlanStripe(product_id, price, currency, couponCode, token);
-        }
+    onPaypalOrderCreate(price, currency, couponCode) {
+        return Apis.paymentPaypalCreate(this.props.testSetItem.id, price, currency, couponCode);
     }
 
-    onPaypalOrderCreate(product_id, price, currency, couponCode) {
-        if (this.state.selectedType === 'creditPurchase') {
-            return Apis.orderCreditPaypalCreate(price, currency, couponCode);
-        } else if (this.state.selectedType === 'planSubscribe') {
-            return Apis.subscriptionPlanPaypalCreate(product_id, price, currency, couponCode);
-        }
-    }
-
-    onPaypalOrderApprove(product_id, price, currency, couponCode, approveData) {
-        if (this.state.selectedType === 'creditPurchase') {
-            return Apis.orderCreditPaypalApprove(price, currency, couponCode, JSON.stringify(approveData));
-        } else if (this.state.selectedType === 'planSubscribe') {
-            return Apis.subscriptionPlanPaypalApprove(product_id, price, currency, couponCode, JSON.stringify(approveData));
-        }
+    onPaypalOrderApprove(price, currency, couponCode, approveData) {
+        return Apis.paymentPaypalApprove(this.props.testSetItem.id, price, currency, couponCode, JSON.stringify(approveData));
     }
 
     onPaymentSuccess(resultPrice, resultCurrency) {
@@ -123,67 +90,17 @@ export default class PaymentModal extends Component {
     }
 
     onClose() {
-        this.setState({loading: true, selectedPlan: undefined});
+        this.setState({loading: true});
         this.props.onClose();
     }
 
-    renderPlans() {
-        return (
-            <div className={'payment-slide-container'}>
-                <div className={'payment-slide-title'}>
-                    <div>
-                        {
-                            this.props.type !== 'creditPurchase' ? null :
-                                <i className="zmdi zmdi-arrow-left" onClick={() => this.onBackSwipe()}/>
-                        }
-                        <span><IntlMessages id={'test.purchase.packages'}/></span>
-                    </div>
-                    <IconButton onClick={() => this.onClose()}><CloseIcon/></IconButton>
-                </div>
-                <div className="price-list">
-                    <div className="row row-eq-height justify-content-md-center m-0">
-                        {
-                            this.state.plans.map((v, i) => (
-                                <PlanItem
-                                    key={v.id}
-                                    planType={v.name}
-                                    type={v.name}
-                                    color={v.color}
-                                    price={v.amount}
-                                    currency={v.currency}
-                                    planSubscribed={v.plan_subscribed}
-                                    disabled={this.state.disableSubscribe}
-                                    planCredit={v.plan_credit}
-                                    features={JSON.parse(v.functions)}
-                                    onClick={() => this.onSelectPlan(v)}
-                                />
-                            ))
-                        }
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
     renderOrder() {
-        const {selectedType, selectedPlan} = this.state;
-        const productPrice = selectedType === 'creditPurchase' ? 0 : selectedPlan.amount;
-        const productCurrency = selectedType === 'creditPurchase' ? this.state.ratioInfo.currency : selectedPlan.currency;
-        const productName = selectedType === 'creditPurchase' ? '' : selectedPlan.name + ' Points';
-        const productId = selectedType === 'creditPurchase' ? '' : selectedPlan.id;
+        const { productName, productPrice, productCurrency } = this.state;
         return (
             <div className={'payment-slide-container'}>
                 <div className={'payment-slide-title'}>
                     <div>
-                        {
-                            productName !== '' &&
-                            <i className="zmdi zmdi-arrow-left" onClick={() => this.onBackSwipe()}/>
-                        }
-                        <span>
-                        {
-                            productName !== '' ? 'Checkout' : 'Purchase Points'
-                        }
-                    </span>
+                        <span> Purchase {productName}</span>
                     </div>
                     <IconButton onClick={() => this.onClose()}><CloseIcon/></IconButton>
                 </div>
@@ -193,13 +110,13 @@ export default class PaymentModal extends Component {
                         productPrice={productPrice}
                         productCurrency={productCurrency}
                         productName={productName}
-                        creditRatio={this.state.ratioInfo.ratio}
+                        creditRatio={1}
                         stripeKey={this.state.stripeKey}
                         paypalKey={this.state.paypalKey}
-                        onFreeOrder={(price, currency, couponCode) => this.onFreeOrder(productId, price, currency, couponCode)}
-                        onStripeOrder={(price, currency, couponCode, token) => this.onStripeOrder(productId, price, currency, couponCode, token)}
-                        onPaypalOrderCreate={(price, currency, couponCode) => this.onPaypalOrderCreate(productId, price, currency, couponCode)}
-                        onPaypalOrderApprove={(price, currency, couponCode, approveData) => this.onPaypalOrderApprove(productId, price, currency, couponCode, approveData)}
+                        onFreeOrder={(price, currency, couponCode) => this.onFreeOrder(price, currency, couponCode)}
+                        onStripeOrder={(price, currency, couponCode, token) => this.onStripeOrder(price, currency, couponCode, token)}
+                        onPaypalOrderCreate={(price, currency, couponCode) => this.onPaypalOrderCreate(price, currency, couponCode)}
+                        onPaypalOrderApprove={(price, currency, couponCode, approveData) => this.onPaypalOrderApprove(price, currency, couponCode, approveData)}
                         onFinish={(resultPrice, resultCurrency) => this.onPaymentSuccess(resultPrice, resultCurrency)}
                     />
                 }
@@ -237,34 +154,17 @@ export default class PaymentModal extends Component {
     }
 
     renderContent() {
-        if (this.state.selectedType === 'creditPurchase') {
-            return (
-                <SwipeableViews
-                    index={this.state.swipeIndex}
-                    style={{display: 'flex', flex: 1}}
-                    containerStyle={{width: '100%', height: '100%'}}
-                    className={'payment-modal'}
-                >
-                    {this.renderOrder()}
-                    {this.renderSuccess()}
-                </SwipeableViews>
-            )
-        } else if (this.state.selectedType === 'planSubscribe') {
-            return (
-                <SwipeableViews
-                    index={this.state.swipeIndex}
-                    style={{display: 'flex', flex: 1}}
-                    containerStyle={{width: '100%', height: '100%'}}
-                    className={'payment-modal'}
-                >
-                    {this.renderPlans()}
-                    {this.renderOrder()}
-                    {this.renderSuccess()}
-                </SwipeableViews>
-            )
-        } else {
-            return null;
-        }
+        return (
+            <SwipeableViews
+                index={this.state.swipeIndex}
+                style={{display: 'flex', flex: 1}}
+                containerStyle={{width: '100%', height: '100%'}}
+                className={'payment-modal'}
+            >
+                {this.renderOrder()}
+                {this.renderSuccess()}
+            </SwipeableViews>
+        )
     }
 
     render() {

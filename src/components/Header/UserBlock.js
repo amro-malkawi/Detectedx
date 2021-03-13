@@ -37,11 +37,6 @@ class UserBlock extends Component {
         this.setState({userDropdownMenu: !this.state.userDropdownMenu});
     }
 
-    onFinishSubscribe() {
-        this.setState({isShowSubscriptionModal: false});
-        window.location.reload();
-    }
-
     render() {
         return (
             <div className="user-block mr-15">
@@ -86,18 +81,9 @@ class UserBlock extends Component {
                                     <span><IntlMessages id={'header.modules'}/></span>
                                 </Link>
                             </li>
-                            <li>
-                                <Link
-                                    to="/app/test"
-                                    onClick={() => this.setState({isShowSubscriptionModal: true, userDropdownMenu: false})}
-                                >
-                                    <SubscriptionsIcon style={{fontSize: 11.5, marginRight: 15, color: 'red'}}/>
-                                    <span><IntlMessages id={'header.subscribe'}/></span>
-                                </Link>
-                        </li>
 
                             <LanguageProvider/>
-                            <DropdownItem divider />
+                            <DropdownItem divider/>
                             <li className="border-top">
                                 <a onClick={() => this.logoutUser()}>
                                     <i className="zmdi zmdi-power text-danger mr-3"/>
@@ -107,14 +93,6 @@ class UserBlock extends Component {
                         </ul>
                     </DropdownMenu>
                 </Dropdown>
-                {
-                    this.state.isShowSubscriptionModal &&
-                    <PaymentModal
-                        type={'planSubscribe'}
-                        onFinish={() => this.onFinishSubscribe()}
-                        onClose={() => this.setState({isShowSubscriptionModal: false})}
-                    />
-                }
             </div>
         );
     }

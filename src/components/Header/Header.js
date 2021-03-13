@@ -64,11 +64,6 @@ class Header extends Component {
                                 <img src={require('Assets/img/white-logo.png')} className="mr-15" alt="site logo" width="115" height="35"/>
                             </Link>
                         </div>
-                        {/*<li className="list-inline-item menu-icon" onClick={(e) => this.setState({showModalType: 'drawer'})}>*/}
-                        {/*    <IconButton color="inherit" mini="true" aria-label="Menu" className="humburger p-0">*/}
-                        {/*        <MenuIcon fontSize={'small'}/>*/}
-                        {/*    </IconButton>*/}
-                        {/*</li>*/}
                     </div>
                     <ul className="navbar-right list-inline mb-0">
                         <li className="list-inline-item">
@@ -76,67 +71,16 @@ class Header extends Component {
                                 <IntlMessages id={"header.home"}/>
                             </Button>
                         </li>
-                        {/*<li className="list-inline-item">*/}
-                        {/*    <Button onClick={() => this.setState({showModalType: 'instructions'})} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">*/}
-                        {/*        <IntlMessages id={"header.instructions"}/>*/}
-                        {/*    </Button>*/}
-                        {/*</li>*/}
-                        {/*<li className="list-inline-item">*/}
-                        {/*    <Button onClick={() => this.setState({showModalType: 'subscribe'})} variant="contained" className="upgrade-btn tour-step-4 text-white" color="primary">*/}
-                        {/*        <IntlMessages id={"header.subscribe"}/>*/}
-                        {/*    </Button>*/}
-                        {/*</li>*/}
-                        {/*<LanguageProvider/>*/}
-                        {/*<UserInfo history={this.props.history}/>*/}
-                        {/*<Logout/>*/}
                         <li className="list-inline-item">
                             <UserBlock />
                         </li>
                     </ul>
                 </Toolbar>
-                {/*<Drawer*/}
-                {/*    anchor="left"*/}
-                {/*    open={this.state.showModalType === 'drawer'}*/}
-                {/*    onClose={() => this.setState({showModalType: ''})}*/}
-                {/*>*/}
-                {/*    <div className="mt-30 ml-15">*/}
-                {/*        <Link to="/" className="logo-mini">*/}
-                {/*            <img src={AppConfig.appLogo} alt="session-logo" width="120" height="29"/>*/}
-                {/*        </Link>*/}
-                {/*    </div>*/}
-                {/*    <List className={'pt-30'}>*/}
-                {/*        <ListItem button onClick={() => {this.setState({showModalType: ''}); this.props.history.push(`/${getAppLayout(location)}/test`);}}>*/}
-                {/*            <ListItemIcon><CollectionsBookmark/></ListItemIcon>*/}
-                {/*            <ListItemText primary={<IntlMessages id={"header.modules"}/>}/>*/}
-                {/*        </ListItem>*/}
-                {/*        <ListItem button onClick={() => this.setState({showModalType: 'instructions'})}>*/}
-                {/*            <ListItemIcon><Info/></ListItemIcon>*/}
-                {/*            <ListItemText primary={<IntlMessages id={"header.instructions"}/>}/>*/}
-                {/*        </ListItem>*/}
-                {/*        <ListItem button onClick={() => this.setState({showModalType: 'subscribe'})}>*/}
-                {/*            <ListItemIcon><Subscriptions/></ListItemIcon>*/}
-                {/*            <ListItemText primary={<IntlMessages id={"header.subscribe"}/>}/>*/}
-                {/*        </ListItem>*/}
-                {/*    </List>*/}
-                {/*</Drawer>*/}
                 <InstructionModal
                     isOpen={this.state.showModalType === 'instructions'}
                     toggle={() => this.setState({showModalType: ''})}
                     theme={'white'}
                 />
-                {
-                    this.state.showModalType === 'subscribe' &&
-                    <PaymentModal
-                        type={'planSubscribe'}
-                        onFinish={() => {
-                            this.setState({showModalType: ''});
-                            window.location.reload();
-                        }}
-                        onClose={() => {
-                            this.setState({showModalType: ''})
-                        }}
-                    />
-                }
             </AppBar>
         );
     }

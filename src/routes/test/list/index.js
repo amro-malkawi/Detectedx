@@ -23,7 +23,7 @@ import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
 import JSONParseDefault from 'json-parse-default';
 import {connect} from "react-redux";
 import VideoModal from "Routes/instructions/VideoModal";
-import NetSpeedMeter from "Components/NetSpeedMeter";
+// import NetSpeedMeter from "Components/NetSpeedMeter";
 
 class List extends Component {
 
@@ -31,8 +31,7 @@ class List extends Component {
         super(props);
         this.state = {
             tabIndex: 0,
-            testSetsList: [],
-            userInfo: {},
+            modalityList: [],
             selectedItem: {},
             selectedId: null,
             isShowModalType: '',
@@ -46,8 +45,9 @@ class List extends Component {
     }
 
     getData() {
-        Apis.currentTestSets().then((testSetsInfo) => {
-            this.setState({testSetsList: testSetsInfo.testSetsList, userInfo: testSetsInfo.userInfo});
+        Apis.currentTestSets().then((modalityList) => {
+            console.log('asdfasdf', modalityList)
+            this.setState({modalityList: modalityList});
         });
     }
 
@@ -66,7 +66,7 @@ class List extends Component {
         }
         this.setState({
             isShowModalType: 'learningModal',
-            modalInfo: {learningType: type, name: test_set.name, postTestCount: test_set.post_test_count, credit: test_set.test_set_credit}
+            modalInfo: {learningType: type, name: test_set.name, postTestCount: test_set.post_test_count, credit: test_set.test_set_point}
         });
     }
 
@@ -95,45 +95,15 @@ class List extends Component {
     }
 
     onPay(test_set_item) {
-        const {userInfo} = this.state;
-        let isShowModalType = '';
-        if (userInfo.user_subscription_id === null || userInfo.is_subscription_expired) {
-            NotificationManager.warning(<IntlMessages id={"test.purchase.message1"}/>);
-            isShowModalType = 'planSubscribe';
-        } else if (userInfo.user_credit < test_set_item.test_set_credit) {
-            NotificationManager.warning(<IntlMessages id={"test.purchase.message2"}/>);
-            isShowModalType = 'creditPurchase';
-        } else {
-            isShowModalType = 'purchaseConfirmModal';
-        }
         this.setState({
             selectedItem: test_set_item,
-            isShowModalType: isShowModalType
+            isShowModalType: 'purchaseTestSet'
         });
     }
 
-    onBuyTestSetWithCredit() {
-        const {userInfo, selectedItem} = this.state;
-        if (userInfo.user_subscription_id === null || userInfo.is_subscription_expired) {
-            NotificationManager.warning(<IntlMessages id={"test.purchase.message1"}/>);
-            this.setState({isShowModalType: 'planSubscribe'});
-        } else if (userInfo.user_credit < selectedItem.test_set_credit) {
-            NotificationManager.warning(<IntlMessages id={"test.purchase.message2"}/>);
-            this.setState({isShowModalType: 'creditPurchase'})
-        } else {
-            this.setState({isShowModalType: ''});
-            Apis.buyTestSet(this.state.selectedItem.id).then(resp => {
-                NotificationManager.success(this.state.selectedItem.name + 'test set purchase succeeded.');
-                this.getData();
-            }).catch(e => {
-                if (e.response) NotificationManager.error(e.response.data.error.message);
-            });
-        }
-    }
-
     onPaymentSuccess() {
+        this.setState({isShowModalType: ''});
         this.getData();
-        this.setState({isShowModalType: 'purchaseConfirmModal'});
     }
 
     onInstruction(modality_info) {
@@ -160,8 +130,8 @@ class List extends Component {
     }
 
     renderExpireDate(test_set_item) {
-        const {test_set_credit, test_set_expiry_date, is_test_set_expired} = test_set_item;
-        if (test_set_credit === 0 || test_set_expiry_date === 'unpaid') {
+        const {test_set_point, test_set_expiry_date, is_test_set_expired} = test_set_item;
+        if (test_set_point === 0 || test_set_expiry_date === 'unpaid') {
             return null;
         } else {
             if (is_test_set_expired) {
@@ -177,11 +147,9 @@ class List extends Component {
     }
 
     renderScoresButton(test_set_item, instruction_type) {
-        const {id, attempts, has_post, test_set_paid, test_set_credit} = test_set_item;
+        const {id, attempts} = test_set_item;
         if (
-            (test_set_credit === 0 || (this.state.userInfo.user_subscription_id !== null && !this.state.userInfo.is_subscription_expired)) &&
-            instruction_type !== 'PCT' &&
-            attempts.some((v) => v.complete)
+            instruction_type !== 'PCT' && attempts.some((v) => v.complete)
         ) {
             return (
                 <Button
@@ -197,15 +165,15 @@ class List extends Component {
     }
 
     renderStartButton(test_set_item, modality_type) {
-        const {id, attempts, has_post, test_set_paid, test_set_credit, is_test_set_expired} = test_set_item;
+        const {id, attempts, has_post, test_set_paid, test_set_point, is_test_set_expired, test_set_price} = test_set_item;
         const test_set_id = id;
         let attempt = attempts[0];
         if (!test_set_paid || is_test_set_expired) {
             // free test set
             return (
                 <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="secondary" size="sm"
-                        onClick={() => test_set_credit === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
-                    {test_set_credit === 0 ? <IntlMessages id="test.start"/> : (test_set_credit + ' Points')}
+                        onClick={() => test_set_point === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
+                    {test_set_point === 0 ? <IntlMessages id="test.start"/> : `Buy (${test_set_price.price} ${test_set_price.currency})`}
                 </Button>
             );
         } else if (attempt === undefined) {
@@ -373,7 +341,7 @@ class List extends Component {
                             aria-label="scrollable force tabs example"
                         >
                             {
-                                this.state.testSetsList.map((v) => this.renderModalityTab(v))
+                                this.state.modalityList.map((v) => this.renderModalityTab(v))
                             }
                         </ModalityTabs>
                     </AppBar>
@@ -384,7 +352,7 @@ class List extends Component {
                         onChangeIndex={(index, indexLatest, meta) => this.setState({tabIndex: index})}
                     >
                         {
-                            this.state.testSetsList.map(v => this.renderTestSets(v))
+                            this.state.modalityList.map(v => this.renderTestSets(v))
                         }
                     </SwipeableViews>
                     <LearningModal
@@ -396,9 +364,9 @@ class List extends Component {
                         onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
                     />
                     {
-                        (this.state.isShowModalType === 'creditPurchase' || this.state.isShowModalType === 'planSubscribe') &&
+                        (this.state.isShowModalType === 'purchaseTestSet') &&
                         <PaymentModal
-                            type={this.state.isShowModalType}
+                            testSetItem={this.state.selectedItem}
                             onFinish={() => this.onPaymentSuccess()}
                             onClose={() => this.setState({isShowModalType: ''})}
                         />
@@ -419,33 +387,14 @@ class List extends Component {
                         onClose={() => this.setState({isShowModalType: ''})}
                         link={this.state.modalInfo.video}
                     />
-                    <SweetAlert
-                        type={'default'}
-                        show={this.state.isShowModalType === 'purchaseConfirmModal'}
-                        customClass={'sweetalert-container'}
-                        title={<IntlMessages id={'test.purchase.confirm'}/>}
-                        confirmBtnText={<IntlMessages id={"testView.ok"}/>}
-                        confirmBtnCssClass={'sweetalert-confirm-btn'}
-                        cancelBtnText={<IntlMessages id={"testView.cancel"}/>}
-                        cancelBtnBsStyle={'danger'}
-                        cancelBtnCssClass={'sweetalert-cancel-btn'}
-                        showConfirm
-                        showCancel
-                        reverseButtons
-                        onConfirm={() => this.onBuyTestSetWithCredit()}
-                        onCancel={() => this.setState({isShowModalType: ''})}
-                    >
-                        <IntlMessages id={"test.purchase.message3"}/>
-                        {this.state.selectedItem.name} ?
-                    </SweetAlert>
 
-                    <NetSpeedMeter
-                        imageUrl={'https://static.detectedx.com/data/dummy.dat'}
-                        downloadSize={104857600}
-                        pingInterval={40000} // milliseconds
-                        thresholdUnit = 'megabyte'
-                        callbackFunctionOnNetworkDown={(speed)=>console.log("down speed", speed)}
-                    />
+                    {/*<NetSpeedMeter*/}
+                    {/*    imageUrl={'https://static.detectedx.com/data/dummy.dat'}*/}
+                    {/*    downloadSize={104857600}*/}
+                    {/*    pingInterval={40000} // milliseconds*/}
+                    {/*    thresholdUnit = 'megabyte'*/}
+                    {/*    callbackFunctionOnNetworkDown={(speed)=>console.log("down speed", speed)}*/}
+                    {/*/>*/}
                 </div>
             )
         }

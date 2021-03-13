@@ -194,11 +194,6 @@ export function currentTestSets() {
     return instance.get(url).then((response) => response.data);
 }
 
-export function buyTestSet(test_set_id) {
-    const url = '/test_set_assignments/buy_test_set?test_set_id=' + test_set_id +'&access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
-
 /**
  * attempt operation
  */
@@ -384,55 +379,60 @@ export function shapeDeleteAll(imageId, attemptId, testCaseId, type) {
  * product plans
  */
 
-export function getProductPlans() {
-    const url = '/subscription_plans/list?access_token=' + getAccessToken();
-    return instance.get(url).then((response) => response.data);
-}
+// export function getProductPlans() {
+//     const url = '/subscription_plans/list?access_token=' + getAccessToken();
+//     return instance.get(url).then((response) => response.data);
+// }
 
 /**
  * order subscriptions
  */
-export function subscriptionPlanFree(planId, price, currency, couponCode) {
-    const url = 'user_subscriptions/plan_free?access_token=' + getAccessToken();
-    return instance.post(url, {planId, price, currency, couponCode}).then((response) => response.data);
-}
-
-export function subscriptionPlanStripe(planId, price, currency, couponCode, token) {
-    const url = 'user_subscriptions/plan_stripe?access_token=' + getAccessToken();
-    return instance.post(url, {planId, price, currency, couponCode, token}).then((response) => response.data);
-}
-
-export function subscriptionPlanPaypalCreate(planId, price, currency, couponCode) {
-    const url = 'user_subscriptions/plan_paypal_create?access_token=' + getAccessToken();
-    return instance.post(url, {planId, currency, price, couponCode}).then((response) => response.data);
-}
-
-export function subscriptionPlanPaypalApprove(planId, price, currency, couponCode, paymentInfo) {
-    const url = 'user_subscriptions/plan_paypal_approve?access_token=' + getAccessToken();
-    return instance.post(url, {planId, price, currency, couponCode, paymentInfo}).then((response) => response.data);
-}
+// export function subscriptionPlanFree(planId, price, currency, couponCode) {
+//     const url = 'user_subscriptions/plan_free?access_token=' + getAccessToken();
+//     return instance.post(url, {planId, price, currency, couponCode}).then((response) => response.data);
+// }
+//
+// export function subscriptionPlanStripe(planId, price, currency, couponCode, token) {
+//     const url = 'user_subscriptions/plan_stripe?access_token=' + getAccessToken();
+//     return instance.post(url, {planId, price, currency, couponCode, token}).then((response) => response.data);
+// }
+//
+// export function subscriptionPlanPaypalCreate(planId, price, currency, couponCode) {
+//     const url = 'user_subscriptions/plan_paypal_create?access_token=' + getAccessToken();
+//     return instance.post(url, {planId, currency, price, couponCode}).then((response) => response.data);
+// }
+//
+// export function subscriptionPlanPaypalApprove(planId, price, currency, couponCode, paymentInfo) {
+//     const url = 'user_subscriptions/plan_paypal_approve?access_token=' + getAccessToken();
+//     return instance.post(url, {planId, price, currency, couponCode, paymentInfo}).then((response) => response.data);
+// }
 
 /**
- * user orders
+ * payment functions
  */
-export function orderFree(price, currency, couponCode) {
-    const url = 'user_orders/free?access_token=' + getAccessToken();
-    return instance.post(url, {price, currency, couponCode}).then((response) => response.data);
+export function paymentInfo() {
+    const url = 'payments/info?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 
-export function orderCreditStripe(price, currency, couponCode, token) {
-    const url = 'user_orders/credit_stripe?access_token=' + getAccessToken();
-    return instance.post(url, {price, currency, couponCode, token}).then((response) => response.data);
+export function paymentFree(test_set_id, price, currency, couponCode) {
+    const url = 'payments/free?access_token=' + getAccessToken();
+    return instance.post(url, {test_set_id, price, currency, couponCode}).then((response) => response.data);
 }
 
-export function orderCreditPaypalCreate(price, currency, couponCode) {
-    const url = 'user_orders/credit_paypal_create?access_token=' + getAccessToken();
-    return instance.post(url, {currency, price, couponCode}).then((response) => response.data);
+export function paymentStripe(test_set_id, price, currency, couponCode, token) {
+    const url = 'payments/stripe?access_token=' + getAccessToken();
+    return instance.post(url, {test_set_id, price, currency, couponCode, token}).then((response) => response.data);
 }
 
-export function orderCreditPaypalApprove(price, currency, couponCode, paymentInfo) {
-    const url = 'user_orders/credit_paypal_approve?access_token=' + getAccessToken();
-    return instance.post(url, {price, currency, couponCode, paymentInfo}).then((response) => response.data);
+export function paymentPaypalCreate(test_set_id, price, currency, couponCode) {
+    const url = 'payments/paypal_create?access_token=' + getAccessToken();
+    return instance.post(url, {test_set_id, currency, price, couponCode}).then((response) => response.data);
+}
+
+export function paymentPaypalApprove(test_set_id, price, currency, couponCode, paymentInfo) {
+    const url = 'payments/paypal_approve?access_token=' + getAccessToken();
+    return instance.post(url, {test_set_id, price, currency, couponCode, paymentInfo}).then((response) => response.data);
 }
 
 

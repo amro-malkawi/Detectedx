@@ -127,6 +127,7 @@ class _OrderForm extends Component {
                 }).then((token) => {
                     // return Apis.orderChargeCard(this.props.plan.id, token);
                     if(discountPrice !== 0) {
+                        console.log('bdddd');
                         return this.props.onStripeOrder(price, currency, couponCode, token);
                     } else {
                         return this.props.onFreeOrder(price, currency, couponCode, token);
@@ -139,6 +140,7 @@ class _OrderForm extends Component {
                         }, 500);
                     });
                 }).catch(e => {
+                    console.log(e);
                     if (e.response) NotificationManager.error(e.response.data.error.message);
                 }).finally(() => {
                     this.setState({paying: false});
@@ -361,7 +363,7 @@ class _OrderForm extends Component {
                             <div className={'order-info'}>
                                 <p className={'order-summery'}>Order Summary</p>
                                 <div className={'order-info-item'}>
-                                    <span>Name</span>
+                                    <span>Test Set Name</span>
                                     <span>{this.props.productName}</span>
                                 </div>
                                 <div className={'order-info-item'}>
