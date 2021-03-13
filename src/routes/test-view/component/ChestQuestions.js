@@ -939,21 +939,26 @@ export default class ChestQuestions extends Component {
                             className={'justify-content-center mt-0'}
                         >
                             {
-                                [0, 1, 2, 3, 4, 5].map((v, i) => {   // [0, 1, 2, 3...]
+                                [
+                                    {value: 0, tooltip: 'Absolutely not'}, {value: 1, tooltip: 'Probably not'}, {value: 2, tooltip: 'Possibly not'},
+                                    {value: 3, tooltip: 'Possibly yes'}, {value: 4, tooltip: 'Probably yes'}, {value: 5, tooltip: 'Absolutely yes'}
+                                ].map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
-                                        <RatingLabel
-                                            key={i}
-                                            value={v.toString()}
-                                            control={
-                                                <RatingRadio
-                                                    icon={<span className={'chest-question-rating-radio-icon ' + (truthRating === v ? 'truth-icon' : '')}/>}
-                                                    checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating === v ? 'truth-icon' : '')}/>}
-                                                    disableRipple
-                                                />
-                                            }
-                                            label={v}
-                                            disabled={disabled}
-                                        />
+                                        <CheckboxTooltip title={v.tooltip} key={i}>
+                                            <RatingLabel
+                                                key={i}
+                                                value={v.value.toString()}
+                                                control={
+                                                    <RatingRadio
+                                                        icon={<span className={'chest-question-rating-radio-icon ' + (truthRating === v ? 'truth-icon' : '')}/>}
+                                                        checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating === v ? 'truth-icon' : '')}/>}
+                                                        disableRipple
+                                                    />
+                                                }
+                                                label={v.value}
+                                                disabled={disabled}
+                                            />
+                                        </CheckboxTooltip>
                                     )
                                 })
                             }
