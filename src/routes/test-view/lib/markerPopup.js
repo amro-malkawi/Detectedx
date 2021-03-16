@@ -4,7 +4,7 @@ import IntlMessages from "Util/IntlMessages";
 import {Button, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import Select from "react-select";
 import {withStyles} from "@material-ui/core/styles";
-import {yellow, green, red} from "@material-ui/core/colors";
+import {yellow} from "@material-ui/core/colors";
 import {NotificationManager} from "react-notifications";
 import chroma from "chroma-js";
 import {connect} from "react-redux";
@@ -218,7 +218,7 @@ class MarkerPopup extends Component {
                         row
                     >
                         <Col sm={4} className={'d-flex flex-column align-items-center'}>
-                            <div className={'fs-15 text-green fw-bold'} style={{marginBottom: 16}}>Benign (2)</div>
+                            <div className={'fs-15 fw-bold'} style={{marginBottom: 16, color: '#2eff2e'}}>Benign (2)</div>
                             <CustomFormControlLabel
                                 classes={{label: 'green-label'}}
                                 disabled={this.state.complete}
@@ -339,10 +339,10 @@ const CustomFormControlLabel = withStyles(theme => ({
             color: yellow[200],
         },
         '&.green-label': {
-            color: green[600]
+            color: '#2eff2e'
         },
         '&.red-label': {
-            color: red[600]
+            color: 'red'
         }
     },
     disabled: {},
@@ -358,10 +358,10 @@ const CustomRadio = withStyles(theme => ({
             color: yellow[200],
         },
         '&.green-icon': {
-            color: green[600]
+            color: '#2eff2e'
         },
         '&.red-icon': {
-            color: red[600]
+            color: 'red'
         }
     },
     checked: {},
