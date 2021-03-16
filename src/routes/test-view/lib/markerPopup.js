@@ -4,11 +4,12 @@ import IntlMessages from "Util/IntlMessages";
 import {Button, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import Select from "react-select";
 import {withStyles} from "@material-ui/core/styles";
-import yellow from "@material-ui/core/colors/yellow";
+import {yellow, green, red} from "@material-ui/core/colors";
 import {NotificationManager} from "react-notifications";
 import chroma from "chroma-js";
+import {connect} from "react-redux";
 
-export default class MarkerPopup extends Component {
+class MarkerPopup extends Component {
     constructor(props) {
         super(props);
 
@@ -21,9 +22,10 @@ export default class MarkerPopup extends Component {
         let rating = (markData.rating === undefined || isNaN(markData.rating)) ? '2' : markData.rating;
 
         let lesionList = [];
-        try{
+        try {
             lesionList = JSON.parse(lesion_list);
-        } catch (e) {}
+        } catch (e) {
+        }
         this.state = {
             attempts_id,
             test_cases_id,
@@ -57,12 +59,12 @@ export default class MarkerPopup extends Component {
         ) {
             // new lesion types check
             const {lesionList, selectedLesionList} = this.state;
-            if(Object.keys(selectedLesionList).length === 0) {
+            if (Object.keys(selectedLesionList).length === 0) {
                 NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
                 return;
             }
             const rootLesionObj = lesionList.find((v) => v.name === Object.keys(selectedLesionList)[0]);
-            if(rootLesionObj !== undefined && rootLesionObj.children !== undefined && rootLesionObj.children.length > 0) {
+            if (rootLesionObj !== undefined && rootLesionObj.children !== undefined && rootLesionObj.children.length > 0) {
                 if (rootLesionObj.children[0].children !== undefined && rootLesionObj.children[0].children.length > 0) {
                     // has sublesions
                     if (rootLesionObj.children.some((v) => (
@@ -102,7 +104,7 @@ export default class MarkerPopup extends Component {
                 };
                 if (data.marker_tool_type === 'Marker') {
                     data.marker_data = JSON.stringify({x: this.state.selectedMarkData.handles.end.x, y: this.state.selectedMarkData.handles.end.y})
-                } else if(data.marker_tool_type === 'MarkerFreehand') {
+                } else if (data.marker_tool_type === 'MarkerFreehand') {
                     data.marker_data = JSON.stringify(this.state.selectedMarkData.handles).replace(/-?\d+\.\d+/g, function (x) {
                         return parseFloat(x).toFixed(2)
                     });
@@ -116,10 +118,10 @@ export default class MarkerPopup extends Component {
 
     onChangeLesionList(type, subType, option) {
         const {selectedLesionList} = this.state;
-        if(type === 'root') {
+        if (type === 'root') {
             this.setState({selectedLesionList: {[option.label]: ''}});
-        } else if(subType !== undefined && subType !== '') {
-            if(typeof selectedLesionList[type] !== 'object') selectedLesionList[type] = {};
+        } else if (subType !== undefined && subType !== '') {
+            if (typeof selectedLesionList[type] !== 'object') selectedLesionList[type] = {};
             selectedLesionList[type][subType] = option.label;
             this.setState({selectedLesionList: selectedLesionList});
         } else {
@@ -159,14 +161,14 @@ export default class MarkerPopup extends Component {
         let hasSubLesion;
         let childrenOptions = [];
         let selectedChildrenOption = [];
-        if(selectedLesionObj !== undefined && selectedLesionObj.children !== undefined && selectedLesionObj.children.length > 0) {
-            if(selectedLesionObj.children[0].children !== undefined && selectedLesionObj.children[0].children.length > 0) {
+        if (selectedLesionObj !== undefined && selectedLesionObj.children !== undefined && selectedLesionObj.children.length > 0) {
+            if (selectedLesionObj.children[0].children !== undefined && selectedLesionObj.children[0].children.length > 0) {
                 hasSubLesion = true;
             } else {
                 hasSubLesion = false;
                 childrenOptions = selectedLesionObj.children.map((v) => ({value: v.id, label: v.name}));
                 const selectedChildLesionObj = selectedLesionObj.children.find((v) => v.name === selectedLesionList[selectedLesionObj.name]);
-                if(selectedChildLesionObj !== undefined) {
+                if (selectedChildLesionObj !== undefined) {
                     selectedChildrenOption = [{value: selectedChildLesionObj.id, label: selectedChildLesionObj.name}];
                 }
             }
@@ -188,7 +190,8 @@ export default class MarkerPopup extends Component {
                         selectedLesionObj.children && selectedLesionObj.children.map((v, i) => this.renderSubLesion(selectedLesionObj.name, v)) :
                         <Select
                             isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectChildLesion"}/>}
+                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> :
+                                <IntlMessages id={"testView.selectChildLesion"}/>}
                             isSearchable={false}
                             options={childrenOptions}
                             value={selectedChildrenOption}
@@ -200,38 +203,92 @@ export default class MarkerPopup extends Component {
         );
     }
 
+    renderRatings() {
+        const ratings = [...this.state.ratings];
+        if(this.props.testSetHangingIdList.length > 0 && ratings.length > 0) {
+            return (
+                <div>
+                    <div className={'fs-19 mb-2'}>Bi-RADS Categories:</div>
+                    <RadioGroup
+                        disabled
+                        aria-label="position"
+                        name="position"
+                        value={this.state.selectedRating}
+                        onChange={this.onChangeRating.bind(this)}
+                        row
+                    >
+                        <Col sm={4} className={'d-flex flex-column align-items-center'}>
+                            <div className={'fs-15 text-green fw-bold'} style={{marginBottom: 16}}>Benign (2)</div>
+                            <CustomFormControlLabel
+                                classes={{label: 'green-label'}}
+                                disabled={this.state.complete}
+                                value={ratings[0].value.toString()}
+                                control={<CustomRadio classes={{root: 'green-icon'}}/>}
+                                label={ratings[0].label}
+                            />
+                        </Col>
+                        <Col sm={8}>
+                            <div className={'fs-15 text-red fw-bold'}>Assess (0)</div>
+                            <div className={'fs-11 text-red'}>Please select your level of confidence</div>
+                            {
+                                ratings.splice(1).map((v, i) => {   // [0, 1, 2, 3...]
+                                    return (
+                                        <CustomFormControlLabel
+                                            classes={{label: 'red-label'}}
+                                            disabled={this.state.complete}
+                                            value={v.value.toString()}
+                                            control={<CustomRadio classes={{root: 'red-icon'}}/>}
+                                            label={v.label}
+                                            key={i}
+                                        />
+                                    )
+                                })
+                            }
+                        </Col>
+                    </RadioGroup>
+                </div>
+            );
+        } else {
+            return (
+                <FormGroup className={'mb-5'} row>
+                    <Label sm={3} style={{marginTop: 6}}><IntlMessages id="testView.rating"/></Label>
+                    <Col sm={9}>
+                        <RadioGroup
+                            disabled
+                            aria-label="position"
+                            name="position"
+                            value={this.state.selectedRating}
+                            onChange={this.onChangeRating.bind(this)}
+                            row
+                        >
+                            {
+                                this.state.ratings.map((v, i) => {   // [0, 1, 2, 3...]
+                                    return (
+                                        <CustomFormControlLabel
+                                            disabled={this.state.complete}
+                                            value={v.value.toString()}
+                                            control={<CustomRadio/>}
+                                            label={v.label}
+                                            key={i}
+                                        />
+                                    )
+                                })
+                            }
+                        </RadioGroup>
+                    </Col>
+                </FormGroup>
+            )
+        }
+    }
+
     render() {
         return (
             <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
-                <div id="mark-details" onClick={(e) => {e.stopPropagation()}}>
+                <div id="mark-details" onClick={(e) => {
+                    e.stopPropagation()
+                }}>
                     <form>
-                        <FormGroup className={'mb-5'} row>
-                            <Label sm={3} style={{marginTop: 6}}><IntlMessages id="testView.rating"/></Label>
-                            <Col sm={9}>
-                                <RadioGroup
-                                    disabled
-                                    aria-label="position"
-                                    name="position"
-                                    value={this.state.selectedRating}
-                                    onChange={this.onChangeRating.bind(this)}
-                                    row
-                                >
-                                    {
-                                        this.state.ratings.map((v, i) => {   // [0, 1, 2, 3...]
-                                            return (
-                                                <CustomFormControlLabel
-                                                    disabled={this.state.complete}
-                                                    value={v.value.toString()}
-                                                    control={<CustomRadio/>}
-                                                    label={v.label}
-                                                    key={i}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </RadioGroup>
-                            </Col>
-                        </FormGroup>
+                        {this.renderRatings()}
                         <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
                         {
                             this.renderLesion()
@@ -248,7 +305,8 @@ export default class MarkerPopup extends Component {
                                     <div className="right">
                                         {
                                             this.state.isShowPopupDelete ?
-                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}><IntlMessages id={"testView.delete"}/></Button> : null
+                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}><IntlMessages
+                                                    id={"testView.delete"}/></Button> : null
                                         }
                                         <Button variant="contained" className="save" onClick={() => this.handleClosePopup('save')}><IntlMessages id={"testView.save"}/></Button>
                                     </div>
@@ -262,6 +320,14 @@ export default class MarkerPopup extends Component {
 
 }
 
+const mapStateToProps = (state) => {
+    return {
+        testSetHangingIdList: state.testView.testSetHangingIdList,
+    };
+};
+
+export default connect(mapStateToProps)(MarkerPopup);
+
 
 const CustomFormControlLabel = withStyles(theme => ({
     label: {
@@ -272,6 +338,12 @@ const CustomFormControlLabel = withStyles(theme => ({
         '&$disabled': {
             color: yellow[200],
         },
+        '&.green-label': {
+            color: green[600]
+        },
+        '&.red-label': {
+            color: red[600]
+        }
     },
     disabled: {},
 }))(FormControlLabel);
@@ -285,6 +357,12 @@ const CustomRadio = withStyles(theme => ({
         '&$disabled': {
             color: yellow[200],
         },
+        '&.green-icon': {
+            color: green[600]
+        },
+        '&.red-icon': {
+            color: red[600]
+        }
     },
     checked: {},
     disabled: {},
