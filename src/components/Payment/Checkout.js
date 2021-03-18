@@ -205,7 +205,8 @@ class _OrderForm extends Component {
             <div className={'payment-content'}>
                 <div className={'payment-card-number ' + (this.state.cardNumberError ? 'invalid' : '')}>
                     <CardNumberElement
-                        placeholder={'Card Number'}
+                        showIcon
+                        placeholder={'Credit/Debit Card Number'}
                         onChange={(value) => this.onChangeCardNumber(value)}
                     />
                     <i className={`pf ${this.state.cardBrand}`} style={{color: this.state.cardError ? 'red' : '#464d69'}}/>
@@ -214,11 +215,13 @@ class _OrderForm extends Component {
                     <Col sm={8} className={'p-0 ' + (this.state.cardExpiryError ? 'invalid' : '')}>
                         <CardExpiryElement
                             className={'mr-10'}
+                            placeholder={'Expiration MM/YY'}
                             onChange={(value) => this.onChangeCardExpiry(value)}
                         />
                     </Col>
                     <Col sm={4} className={'p-0 ' + (this.state.cardCVCError ? 'invalid' : '')}>
                         <CardCVCElement
+                            placeholder={'CVV'}
                             onChange={(value) => this.onChangeCardCVC(value)}
                         />
                     </Col>
@@ -232,14 +235,14 @@ class _OrderForm extends Component {
                     invalid={this.state.cardNameError}
                     onChange={(e) => this.setState({cardName: e.target.value, cardNameError: false})}
                 />
-                <div className={'payment-card-list'}>
-                    <img src={require('Assets/img/card/visa.png')} alt=''/>
-                    <img src={require('Assets/img/card/amex.png')} alt=''/>
-                    <img src={require('Assets/img/card/mastercard.png')} alt=''/>
-                    <img src={require('Assets/img/card/discover.png')} alt=''/>
-                    <img src={require('Assets/img/card/jcb.png')} alt=''/>
-                    <img src={require('Assets/img/card/diners.png')} alt=''/>
-                </div>
+                {/*<div className={'payment-card-list'}>*/}
+                {/*    <img src={require('Assets/img/card/visa.png')} alt=''/>*/}
+                {/*    <img src={require('Assets/img/card/amex.png')} alt=''/>*/}
+                {/*    <img src={require('Assets/img/card/mastercard.png')} alt=''/>*/}
+                {/*    <img src={require('Assets/img/card/discover.png')} alt=''/>*/}
+                {/*    <img src={require('Assets/img/card/jcb.png')} alt=''/>*/}
+                {/*    <img src={require('Assets/img/card/diners.png')} alt=''/>*/}
+                {/*</div>*/}
             </div>
         )
     }
@@ -258,6 +261,23 @@ class _OrderForm extends Component {
         return (
             <div>
                 <div className={'order-info-item row ml-0 mr-0'}>
+                    <div className={'p-0 coupon-input-container'}>
+                        <Input
+                            type="text"
+                            name="couponCode"
+                            id="couponCode"
+                            placeholder="Enter coupon code"
+                            value={this.state.couponCode}
+                            invalid={false}
+                            spellCheck="false"
+                            onChange={(e) => this.setState({couponCode: e.target.value, couponData: null})}
+                        />
+                    </div>
+                    <div className={'coupon-button-container ' + (this.state.couponCode !== '' ? 'enable' : '')} onClick={() => this.onCheckCouponCode()}>
+                        Apply
+                    </div>
+                </div>
+                {/*<div className={'order-info-item row ml-0 mr-0'}>
                     <Col sm={12} md={7} className={'p-0 coupon-input-container'}>
                         <Input
                             type="text"
@@ -275,7 +295,7 @@ class _OrderForm extends Component {
                             APPLY
                         </Button>
                     </Col>
-                </div>
+                </div>*/}
                 <p className={'coupon-error'} style={{color: (this.state.couponData && this.state.couponData.valid ? 'green' : 'red')}}>
                     {this.state.couponData === null ? '' : (this.state.couponData.valid ? this.state.couponData.coupon_discount_value + '% discount is available' : this.state.couponData.errorMsg)}
                 </p>

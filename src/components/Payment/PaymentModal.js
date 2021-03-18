@@ -179,7 +179,7 @@ export default class PaymentModal extends Component {
 
 const FullDialog = withStyles(theme => ({
     paper: {
-        height: 570,
+        height: 550,
         maxWidth: 1100
     }
 }))(Dialog);

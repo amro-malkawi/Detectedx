@@ -610,6 +610,15 @@
       max-height: 29px;
     }
   }
+
+  .test-set-buy-btn {
+    color: white;
+    background-color: #00ac00;
+    border: none;
+    &:hover {
+      background-color: #00bf17;
+    }
+  }
 }
 
 .instruction-video {
