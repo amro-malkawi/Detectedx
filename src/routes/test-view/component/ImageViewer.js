@@ -554,7 +554,7 @@ class ImageViewer extends Component {
 
     handleMouseUp(event) {
         const that = this;
-        if (that.tempMeasureToolData.toolName === 'Marker' || that.tempMeasureToolData.toolName === 'MarkerFreehand') {
+        if (that.tempMeasureToolData === null || that.tempMeasureToolData.toolName === 'Marker' || that.tempMeasureToolData.toolName === 'MarkerFreehand') {
 
         } else {
             setTimeout(function () {

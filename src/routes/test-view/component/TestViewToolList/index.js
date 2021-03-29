@@ -113,7 +113,7 @@ const Toolbar = (props) => {
                         <p><IntlMessages id={"testView.tool.freehand"}/></p>
                     </div> : null
             }
-            <div className={"tool option"} onClick={() => changeHangingLayout('MLO-R_MLO-L_CC-R_CC-L')}>
+            <div className={"tool option"} onClick={() => changeHangingLayout('reset')}>
                 <CornerstoneToolIcon name={'Reset'}/>
                 <p><IntlMessages id={"testView.tool.reset"}/></p>
             </div>

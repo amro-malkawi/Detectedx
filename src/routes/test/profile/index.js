@@ -198,7 +198,6 @@ export default class Profile extends Component {
                                         <div className="media-body pt-10">
                                             <h1 className="mb-5">{this.state.userInfo.email}</h1>
                                             <span className="text-muted fs-14"><i className="ti-time"/> {moment(this.state.userInfo.created_at).format('MMM Do YYYY, HH:mm:ss')}</span>
-                                            <h3 className="mt-20 mb-5">Current Points: {this.state.userInfo.user_credit}</h3>
                                         </div>
                                     </div>
                                     <div className="card-footer">

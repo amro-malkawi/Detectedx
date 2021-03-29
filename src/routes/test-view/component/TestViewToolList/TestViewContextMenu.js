@@ -8,7 +8,7 @@ import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
 const TestViewContextMenu = ({toolList, complete, currentTool, changeHangingLayout, changeCurrentTool}) => {
     const onClickMenuItem = (e, data) => {
         if (data.tool === 'Reset') {
-            changeHangingLayout('MLO-R_MLO-L_CC-R_CC-L');
+            changeHangingLayout('reset');
         } else {
             changeCurrentTool(data.tool);
         }

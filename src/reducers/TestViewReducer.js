@@ -24,6 +24,7 @@ const INIT_STATE = {
     initialZoomLevel: 0,
     imgMLOMaxRealHeight: 0,
     isShowImageBrowser: true,
+    testSetHangingType: 'normal',
     testSetHangingIdList: [],
     selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
     defaultImagesNumber: 1,

@@ -19,8 +19,39 @@ import {
 import {isMobile} from 'react-device-detect';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
+const hangingIdList = {
+    normal: [],
+    breast:[
+        'MLO-R_MLO-L_CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'CC-R_CC-L',
+        'CC-R_MLO-R',
+        'CC-L_MLO-L',
+    ],
+    breastWith3D: [
+        'MLO-R_MLO-L_CC-R_CC-L',
+        'CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D',
+        'MLO-R-3D_MLO-L-3D'
+    ],
+    breastWithPrior: [
+        'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P',
+        'MLO-R_MLO-L_CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'MLO-R_MLO-R-P',
+        'MLO-L_MLO-L-P',
+        'CC-R_CC-L',
+        'CC-R_CC-R-P',
+        'CC-L_CC-L-P',
+        'CC-R_CC-R-P_MLO-R_MLO-R-P',
+        'MLO-L-P_MLO-L_CC-L-P_CC-L',
+        // 'CC-R_MLO-R',
+        // 'CC-L_MLO-L',
+    ]
+}
 
-const getImageHangingIdList = (images) => {
+const getImageHangingType = (images) => {
     let hasAllTestImages = true;
     let hasAllPriorImages = true;
     let had3dImages = true;
@@ -82,53 +113,16 @@ const getImageHangingIdList = (images) => {
 
     if (had3dImages) {
         // 3d test set( for GE modality)
-        return {
-            testSetHangingType: 'breastWith3D',
-            testSetHangingIdList: [
-                'MLO-R_MLO-L_CC-R_CC-L',
-                'CC-R_CC-L',
-                'MLO-R_MLO-L',
-                'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D',
-                'MLO-R-3D_MLO-L-3D'
-            ]
-        };
+        return 'breastWith3D';
     } else if (hasAllTestImages && hasAllPriorImages) {
         // breast with prior images
-        return {
-            testSetHangingType: 'breastWithPrior',
-            testSetHangingIdList: [
-                'MLO-R_MLO-L_CC-R_CC-L',
-                'CC-R_CC-L',
-                'MLO-R_MLO-L',
-                'CC-R_MLO-R',
-                'CC-L_MLO-L',
-                'CC-R_CC-R-P',
-                'MLO-R_MLO-R-P',
-                'CC-L_CC-L-P',
-                'MLO-L_MLO-L-P',
-                'CC-R_CC-R-P_MLO-R_MLO-R-P',
-                'MLO-L-P_MLO-L_CC-L-P_CC-L',
-                'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P'
-            ]
-        };
+        return'breastWithPrior';
     } else if (hasAllTestImages) {
         // breast
-        return {
-            testSetHangingType: 'breast',
-            testSetHangingIdList: [
-                'MLO-R_MLO-L_CC-R_CC-L',
-                'CC-R_CC-L',
-                'MLO-R_MLO-L',
-                'CC-R_MLO-R',
-                'CC-L_MLO-L',
-            ]
-        };
+        return 'breast';
     } else {
         // normal
-        return {
-            testSetHangingType: 'normal',
-            testSetHangingIdList: []
-        }
+        return 'normal';
     }
 }
 
@@ -244,7 +238,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 };
 
 export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
-    const {selectedHangingType, currentThicknessType} = getState().testView;
+    const {currentThicknessType} = getState().testView;
     let isShowImageBrowser = getState().testView.isShowImageBrowser;
     if (list.length < 2 || isMobile) {
         isShowImageBrowser = false;
@@ -312,7 +306,9 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
 
     // check hanging type
-    const {testSetHangingType, testSetHangingIdList} = getImageHangingIdList(newList)
+    const testSetHangingType = getImageHangingType(newList);
+    const testSetHangingIdList = hangingIdList[testSetHangingType];
+    const selectedHangingType = hangingIdList[testSetHangingType].length > 0 ? hangingIdList[testSetHangingType][0] : '';
 
     // set image's hangingId
     newList.forEach((image) => {
@@ -354,15 +350,18 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     let volparaImageId;
     if (volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        const imageLine1 = getHangingImageOrder(
-            newList.filter(image => (image.type === 'test' || image.type === 'prior')),
-            "CC-R_CC-L", defaultImagesNumber,
-            false, currentThicknessType)[0];
-        const imageLine2 = getHangingImageOrder(
-            newList.filter(image => (image.type === 'test' || image.type === 'prior')),
-            "MLO-R_MLO-L", defaultImagesNumber,
-            false, currentThicknessType)[0];
-        showImageList = [imageLine1, imageLine2];
+        // const imageLine1 = getHangingImageOrder(
+        //     newList.filter(image => (image.type === 'test' || image.type === 'prior')),
+        //     "CC-R_CC-L", defaultImagesNumber,
+        //     false, currentThicknessType)[0];
+        // const imageLine2 = getHangingImageOrder(
+        //     newList.filter(image => (image.type === 'test' || image.type === 'prior')),
+        //     "MLO-R_MLO-L", defaultImagesNumber,
+        //     false, currentThicknessType)[0];
+        // showImageList = [imageLine1, imageLine2];
+
+        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, false, currentThicknessType);
+
         initialZoomLevel = 0;
     } else {
         showImageList = getHangingImageOrder(
@@ -382,8 +381,9 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         isShowImageBrowser,
         initialZoomLevel,
         imgMLOMaxRealHeight,
+        testSetHangingType,
         testSetHangingIdList,
-        selectedHangingType: 'MLO-R_MLO-L_CC-R_CC-L',
+        selectedHangingType,
         defaultImagesNumber,
         volparaImageId,
         toolList: toolList,
@@ -393,7 +393,18 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
-    const {imageList, defaultImagesNumber, isShowImageBrowser} = getState().testView;
+    const {imageList, defaultImagesNumber, isShowImageBrowser, selectedHangingType, testSetHangingIdList} = getState().testView;
+    if(type === 'next') {
+        if(testSetHangingIdList.length === 0) return;
+        const i = testSetHangingIdList.findIndex((v) => v === selectedHangingType);
+        if(i !== -1) {
+            type = i === testSetHangingIdList.length - 1 ? testSetHangingIdList[0] : testSetHangingIdList[i + 1];
+        } else {
+            type = '';
+        }
+    } else if(type === 'reset') {
+        type = testSetHangingIdList.length > 0 ? testSetHangingIdList[0] : '';
+    }
     const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
     const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
     batch(() => {

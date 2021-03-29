@@ -18,6 +18,7 @@ const ShortcutContainer = ({className, complete, children, toolList, currentTool
         TOOL_MARKER: "m",
         TOOL_MARKERFREEHAND: "f",
         TOOL_RESET: "r",
+        HANGING_NEXT: "space",
     };
 
     const handlers = {
@@ -33,7 +34,9 @@ const ShortcutContainer = ({className, complete, children, toolList, currentTool
         TOOL_ERASE: () => onChangeTool('Eraser'),
         TOOL_MARKER: () => onChangeTool('Marker'),
         TOOL_MARKERFREEHAND: () => onChangeTool('MarkerFreehand'),
-        TOOL_RESET: () => changeHangingLayout('MLO-R_MLO-L_CC-R_CC-L'),
+        TOOL_RESET: () => changeHangingLayout('reset'),
+        HANGING_NEXT: () => changeHangingLayout('next'),
+        // HANGING_NEXT: () => console.log('space'),
     };
 
     const onChangeTool = (selectedTool) => {

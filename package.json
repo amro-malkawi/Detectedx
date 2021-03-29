@@ -5,7 +5,8 @@
    "scripts": {
       "start": "webpack-dev-server --mode development --inline --progress",
       "build": "webpack --mode production",
-      "postbuild": "node scripts/postbuild.js"
+      "postbuild": "node scripts/postbuild.js",
+      "postinstall": "node scripts/postinstall.js"
    },
    "keywords": [
       "detectedx medical"
