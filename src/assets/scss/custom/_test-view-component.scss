@@ -181,7 +181,16 @@
 
 .right-brest-overlap.image-overlap-container {
   .image-overlap-content {
-    margin-left: 20px;
+    .image-overlap-top {
+      align-items: flex-start !important;
+    }
+
+    .overlap-info-text {
+      justify-content: flex-start !important;
+      & > div {
+        align-items: flex-start !important;
+      }
+    }
   }
 
   .image-overlap-scroll {
@@ -195,6 +204,8 @@
     }
 
     .slice.status {
+      //left: 27px !important;
+      left: unset !important;
       right: 5px !important;
     }
   }

@@ -188,36 +188,41 @@ div.viewer {
             }
           }
 
-          .control-btn {
-            position: absolute;
-            top: 10px;
-            left: 5px;
-            pointer-events: initial;
+          .image-overlap-top {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 10px;
 
-            a {
+            .overlap-control-btn {
               margin-left: 5px;
-              color: transparent;
-              font-size: 14px;
+              margin-right: 5px;
+              pointer-events: initial;
 
-              i {
-                padding: 2px 3px;
-                border-radius: 15.5px;
-                color: #FFB300;
+              a {
+                margin-left: 5px;
+                color: transparent;
+                font-size: 14px;
 
-                &:hover {
-                  background-color: #FFB30033;
+                i {
+                  padding: 2px 3px;
+                  border-radius: 15.5px;
+                  color: #FFB300;
+
+                  &:hover {
+                    background-color: #FFB30033;
+                  }
                 }
               }
             }
-          }
 
-          .ge-thickness-switch {
-            position: absolute;
-            top: 40px;
-            left: 13px;
+            .ge-thickness-switch {
+              margin-left: 13px;
+              margin-right: 8px;
 
-            .thickness-toggle {
-              pointer-events: initial;
+              .thickness-toggle {
+                pointer-events: initial;
+              }
             }
           }
 
@@ -237,13 +242,22 @@ div.viewer {
               display: flex;
               flex-direction: column;
               justify-content: space-between;
+              width: 100%;
 
               .overlap-info-text {
-                margin-left: 10px;
+                display: flex;
+                justify-content: flex-end;
+                //margin-left: 10px;
                 margin-bottom: 10px;
                 color: white;
                 font-size: 14px;
                 line-height: 17px;
+
+                & > div {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-end;
+                }
 
                 .ww-wl-input-container {
                   display: flex;
@@ -293,7 +307,7 @@ div.viewer {
 
           .slice {
             position: absolute;
-            right: 35px;
+            left: 5px;
             bottom: 10px;
             color: white;
             font-size: 14px;

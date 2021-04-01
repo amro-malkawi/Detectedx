@@ -141,7 +141,7 @@ class List extends Component {
                 )
             } else {
                 return (
-                    <span className={'fs-12'}>Expires: {moment(test_set_expiry_date).format('MM/DD/YYYY')}</span>
+                    <span className={'fs-12'}>Expires: {moment(test_set_expiry_date).format('DD MMM YYYY')}</span>
                 )
             }
         }

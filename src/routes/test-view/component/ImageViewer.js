@@ -758,78 +758,6 @@ class ImageViewer extends Component {
         }
     }
 
-    renderStackComponent() {
-        if (this.state.imageIds.length <= 1) {
-            return null;
-        } else {
-            let countPerStack = {};
-            this.markList.forEach((v) => {
-                if (countPerStack[v.stack] === undefined) {
-                    countPerStack[v.stack] = {answerCount: 0, truthCount: 0};
-                }
-                if (v.isTruth) {
-                    countPerStack[v.stack].truthCount++;
-                } else {
-                    countPerStack[v.stack].answerCount++;
-                }
-            });
-            let floatingButton = [];
-            for (let v in countPerStack) {
-                floatingButton.push({
-                    stack: v,
-                    answerCount: countPerStack[v].answerCount,
-                    truthCount: countPerStack[v].truthCount,
-                });
-            }
-
-            return (
-                <div>
-                    <div className={'side-bar'}>
-                        <IconButton className={'change-btn'} onClick={() => this.onStepSlide(-1)}>
-                            <i className="zmdi zmdi-minus"/>
-                        </IconButton>
-                        <div className="stack-scrollbar">
-                            <input type="range" min={1} max={this.state.imageIds.length} value={this.state.currentStackIndex + 1} onChange={this.onStackSlide.bind(this)}/>
-                        </div>
-                        <IconButton className={'change-btn'} onClick={() => this.onStepSlide(1)}>
-                            <i className="zmdi zmdi-plus"/>
-                        </IconButton>
-                    </div>
-                    <div className="slice status"><IntlMessages id={"testView.viewer.slice"}/>: [{this.state.currentStackIndex + 1}/{this.state.imageIds.length}]</div>
-                    {
-                        floatingButton.length > 0 ?
-                            <div className={'floating-menu'}>
-                                <FloatingMenu
-                                    slideSpeed={500}
-                                    direction={'down'}
-                                    isOpen={this.state.isShowFloatingMenu}
-                                    spacing={8}
-                                    onClose={() => this.setState({isShowFloatingMenu: !this.state.isShowFloatingMenu})}
-                                    isScroll={floatingButton.length > 10}
-                                    itemContainerClass={'floating-item-content'}
-                                >
-                                    {
-                                        floatingButton.map((v, i) =>
-                                            <ChildButton
-                                                key={i}
-                                                answerCount={v.answerCount}
-                                                truthCount={v.truthCount}
-                                                label={'Slice ' + (Number(v.stack) + 1)}
-                                                buttonTooltip={''}
-                                                active={Number(this.state.currentStackIndex) === Number(v.stack)}
-                                                size={40}
-                                                onClick={() => this.setStack(Number(v.stack) + 1)}
-                                            />
-                                        )
-                                    }
-                                </FloatingMenu>
-                            </div> : null
-                    }
-                </div>
-            )
-        }
-    }
-
     render() {
         const {imageInfo, dndRef, isDragOver, toolList} = this.props;
         const viewerStyle = {};
@@ -849,33 +777,6 @@ class ImageViewer extends Component {
                  data-hanging-id={imageInfo.hangingId}
                  style={viewerStyle}
             >
-                {/*<div className={'control-btn'}>*/}
-                {/*    {*/}
-                {/*        canDrawMarker &&*/}
-                {/*        <a className="eye" onClick={() => this.toggleMarkInfo()}>*/}
-                {/*            <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">*/}
-                {/*                <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>*/}
-                {/*            </Tooltip>*/}
-                {/*        </a>*/}
-                {/*    }*/}
-                {/*    <a onClick={() => this.onInvert()}>*/}
-                {/*        <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">*/}
-                {/*            <i className={"zmdi zmdi-brightness-6 fs-23"}/>*/}
-                {/*        </Tooltip>*/}
-                {/*    </a>*/}
-                {/*    {*/}
-                {/*        (!this.props.complete && canDrawMarker) &&*/}
-                {/*        <a onClick={() => this.onClearSymbols()}>*/}
-                {/*            <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">*/}
-                {/*                <i className={"zmdi zmdi-delete fs-23 ml-2"}/>*/}
-                {/*            </Tooltip>*/}
-                {/*        </a>*/}
-                {/*    }*/}
-                {/*</div>*/}
-                {/*<GEThicknessSwitch*/}
-                {/*    age={this.state.age}*/}
-                {/*    metaData={this.props.imageInfo.metaData}*/}
-                {/*/>*/}
                 <ResizeDetector
                     handleWidth
                     handleHeight
@@ -890,7 +791,6 @@ class ImageViewer extends Component {
                     totalCount={this.state.downStatus.length}
                     downCount={this.state.downStatus.filter((v) => v).length}
                 />
-                {/*{this.renderStackComponent()}*/}
                 {
                     this.state.loadedImage &&
                     <ImageOverlap
