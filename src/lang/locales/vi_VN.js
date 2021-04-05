@@ -169,7 +169,7 @@ module.exports = {
     "testView.covidQuestion.expertJudgement": "Chuyên gia phán đoán",
     "testView.covidQuestion.doyousee": "Bạn có thấy",
     "testView.covidQuestion.yourJudgement": "Phán quyết của bạn",
-    "testView.chestQuestion.ratingTitle": "Nhân viên có nên gặp bác sĩ riêng vì phát hiện không?",
+    "testView.chestQuestion.ratingTitle": "Tin chắc rằng đối tượng mắc bệnh phổi nghề nghiệp",
     "testView.browser.laterality": "Độ trễ:",
     "testView.browser.type": "Loại:",
     "testView.viewer.slice": "Lát",

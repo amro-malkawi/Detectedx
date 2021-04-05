@@ -169,7 +169,7 @@ module.exports = {
 	"testView.covidQuestion.expertJudgement": "Jugement d'experts",
 	"testView.covidQuestion.doyousee": "Voyez-vous",
 	"testView.covidQuestion.yourJudgement": "Votre jugement",
-	"testView.chestQuestion.ratingTitle": "Le travailleur devrait-il consulter un médecin personnel en raison des constatations?",
+	"testView.chestQuestion.ratingTitle": "Confiance que le sujet a une maladie pulmonaire professionnelle",
 	"testView.browser.laterality": "Latéralité:",
 	"testView.browser.type": "Type:",
 	"testView.viewer.slice": "Slice",

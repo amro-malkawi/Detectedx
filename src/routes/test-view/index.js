@@ -38,7 +38,8 @@ import ReattemptPostTestModal from './ReattemptPostTestModal';
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
-import MarkerPopup from "./lib/markerPopup";
+import MarkerPopup from "./lib/MarkerPopup/markerPopup";
+import MarkerPopupLungED from "./lib/MarkerPopup/markerPopupLungED";
 import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
@@ -655,7 +656,8 @@ class TestView extends Component {
                         </div>
                     </Dialog>
                     {
-                        this.state.isShowPopup ?
+                        !this.state.isShowPopup ? null :
+                            this.state.test_case.modalities.name !== 'LungED' ?
                             <MarkerPopup
                                 attempts_id={this.state.attempts_id}
                                 test_cases_id={this.state.test_cases_id}
@@ -668,7 +670,20 @@ class TestView extends Component {
                                 popupDeleteHandler={this.popupDeleteHandler}
                                 popupSaveHandler={this.popupSaveHandler}
                                 onClose={() => this.setState({isShowPopup: false})}
-                            /> : null
+                            /> :
+                            <MarkerPopupLungED
+                                attempts_id={this.state.attempts_id}
+                                test_cases_id={this.state.test_cases_id}
+                                lesion_list={this.state.test_case.modalities.lesion_list}
+                                isPostTest={this.state.isPostTest}
+                                markData={this.state.selectedMarkData}
+                                ratings={this.state.test_case.ratings}
+                                complete={this.state.complete}
+                                popupCancelHandler={this.popupCancelHandler}
+                                popupDeleteHandler={this.popupDeleteHandler}
+                                popupSaveHandler={this.popupSaveHandler}
+                                onClose={() => this.setState({isShowPopup: false})}
+                            />
                     }
                     <VideoModal
                         open={this.state.testSetStartVideo !== ''}
