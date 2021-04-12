@@ -200,7 +200,12 @@
     }
 
     .floating-menu {
+      left: initial !important;
       right: 1px !important;
+      .floating-menu-icon {
+        right: 0 !important;
+        left: initial !important;
+      }
     }
 
     .slice.status {

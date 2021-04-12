@@ -46,6 +46,7 @@ export default (state = INIT_STATE, action) => {
                 isShowImageBrowser: action.isShowImageBrowser,
                 initialZoomLevel: action.initialZoomLevel,
                 imgMLOMaxRealHeight: action.imgMLOMaxRealHeight,
+                testSetHangingType: action.testSetHangingType,
                 testSetHangingIdList: action.testSetHangingIdList,
                 selectedHangingType: action.selectedHangingType,
                 defaultImagesNumber: action.defaultImagesNumber,

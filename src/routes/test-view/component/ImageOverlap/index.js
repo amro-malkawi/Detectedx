@@ -147,6 +147,8 @@ export default class ImageOverlap extends Component {
             }
         }
 
+
+
         return (
             <div className={containerClass}>
                 <div className={'image-overlap-content'}>

@@ -263,7 +263,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(MarkerPopup);
+export default connect(mapStateToProps)(MarkerPopupLungED);
 
 
 const CustomFormControlLabel = withStyles(theme => ({

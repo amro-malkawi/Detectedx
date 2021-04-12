@@ -1,5 +1,6 @@
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from "cornerstone-tools";
+import cornerstoneMath from "cornerstone-math";
 
 const getNewContext = cornerstoneTools.import('drawing/getNewContext');
 const draw = cornerstoneTools.import('drawing/draw');
@@ -38,7 +39,38 @@ function getPixelSpacing(image) {
     };
 }
 
+function lineSegDistance(element, start, end, coords) {
+    const lineSegment = {
+        start: cornerstone.pixelToCanvas(element, start),
+        end: cornerstone.pixelToCanvas(element, end),
+    };
+
+    return cornerstoneMath.lineSegment.distanceToPoint(
+        lineSegment,
+        coords
+    );
+}
+
 export default class MyLengthTool extends LengthTool {
+    pointNearTool(element, data, coords) {
+        const hasStartAndEndHandles =
+            data && data.handles && data.handles.start && data.handles.end;
+        const validParameters = hasStartAndEndHandles;
+
+        if (!validParameters) {
+            return false;
+        }
+
+        if (data.visible === false) {
+            return false;
+        }
+
+        return (
+            lineSegDistance(element, data.handles.start, data.handles.end, coords) <
+            3
+        );
+    }
+
     renderToolData(evt) {
         const eventData = evt.detail;
         const { handleRadius, drawHandlesOnHover } = this.configuration;

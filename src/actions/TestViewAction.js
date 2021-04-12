@@ -48,6 +48,13 @@ const hangingIdList = {
         'MLO-L-P_MLO-L_CC-L-P_CC-L',
         // 'CC-R_MLO-R',
         // 'CC-L_MLO-L',
+    ],
+    volparaGrid: [
+        'VOLPARA_MLO-R_MLO-L_CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'CC-R_CC-L',
+        'CC-R_MLO-R',
+        'CC-L_MLO-L',
     ]
 }
 
@@ -55,6 +62,7 @@ const getImageHangingType = (images) => {
     let hasAllTestImages = true;
     let hasAllPriorImages = true;
     let had3dImages = true;
+    let hasVolparaImage = false;
     breastPositions.forEach((position) => {
         const testCount = images.filter((image) => {
             try {
@@ -111,7 +119,11 @@ const getImageHangingType = (images) => {
         }
     });
 
-    if (had3dImages) {
+    if(images.some((image) => image.type === 'volpara')) hasVolparaImage = true;
+    if(hasVolparaImage && hasAllTestImages) {
+        return 'volparaGrid'
+    }
+    else if (had3dImages) {
         // 3d test set( for GE modality)
         return 'breastWith3D';
     } else if (hasAllTestImages && hasAllPriorImages) {
@@ -126,7 +138,7 @@ const getImageHangingType = (images) => {
     }
 }
 
-const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser) => {
+const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser, testSetHangingType) => {
     let initialZoomLevel = 0;
     let imgMLOMaxRealHeight = 0;
     if(showImageIds.length === 0 || showImageIds[0].length === 0) {
@@ -149,6 +161,9 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                     canvasWidth = $(window).width();
                     if (isShowImageBrowser) {
                         canvasWidth = canvasWidth - 300;
+                    }
+                    if(testSetHangingType === 'volparaGrid') {
+                        canvasWidth = canvasWidth / 2
                     }
                     canvasHeight = ($(window).height() - 80) / imageRow;
                 } else {
@@ -229,7 +244,12 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
         idList = idList.slice(0, defaultImagesNumber);
     }
     if(type === 'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P') {
+        // two line grid
         const firstRowIds = idList.splice(0, 4);
+        return [firstRowIds, idList];
+    } else if(type === 'VOLPARA_MLO-R_MLO-L_CC-R_CC-L') {
+        // volpara image grid
+        const firstRowIds = idList.splice(0, 2);
         return [firstRowIds, idList];
     } else {
         return [idList]  // 1 row x 0 column
@@ -344,8 +364,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         }
     });
 
-    let showImageList, initialZoomLevel;
-    let imgMLOMaxRealHeight = 0;
+    let showImageList;
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
     if (volparaImage !== undefined) {
@@ -362,16 +381,14 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 
         showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, false, currentThicknessType);
 
-        initialZoomLevel = 0;
     } else {
         showImageList = getHangingImageOrder(
             newList.filter(image => (image.type === 'test' || image.type === 'prior')),
             selectedHangingType, defaultImagesNumber,
             true, currentThicknessType);
-        const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser);
-        initialZoomLevel = initZoomResult.initialZoomLevel;
-        imgMLOMaxRealHeight = initZoomResult.imgMLOMaxRealHeight;
     }
+    const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser, testSetHangingType);
+console.log(testSetHangingType, 'asdfwefasdf')
     showImageList = showImageList.filter((v) => v.length !== 0);
     const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
     dispatch({
@@ -379,8 +396,8 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         imageList: newList,
         showImageList,
         isShowImageBrowser,
-        initialZoomLevel,
-        imgMLOMaxRealHeight,
+        initialZoomLevel: initZoomResult.initialZoomLevel,
+        imgMLOMaxRealHeight: initZoomResult.imgMLOMaxRealHeight,
         testSetHangingType,
         testSetHangingIdList,
         selectedHangingType,
@@ -393,7 +410,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 };
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
-    const {imageList, defaultImagesNumber, isShowImageBrowser, selectedHangingType, testSetHangingIdList} = getState().testView;
+    const {imageList, defaultImagesNumber, isShowImageBrowser, testSetHangingType, selectedHangingType, testSetHangingIdList} = getState().testView;
     if(type === 'next') {
         if(testSetHangingIdList.length === 0) return;
         const i = testSetHangingIdList.findIndex((v) => v === selectedHangingType);
@@ -406,7 +423,7 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
         type = testSetHangingIdList.length > 0 ? testSetHangingIdList[0] : '';
     }
     const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
-    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -480,7 +497,7 @@ export const changeCurrentTool = (tool) => (dispatch) => {
 };
 
 export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) => {
-    const {imageList, showImageList, isShowImageBrowser} = getState().testView;
+    const {imageList, showImageList, isShowImageBrowser, testSetHangingType} = getState().testView;
     const oldList = showImageList.flat();
     const list = [];
     let imageIndex = 0;
@@ -496,7 +513,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         }
         list.push(row);
     }
-    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -518,9 +535,9 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
 };
 
 export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
-    const {imageList, defaultImagesNumber, selectedHangingType, isShowImageBrowser} = getState().testView;
+    const {imageList, defaultImagesNumber, selectedHangingType, isShowImageBrowser, testSetHangingType} = getState().testView;
     const list = getHangingImageOrder(imageList, selectedHangingType, defaultImagesNumber, true, thicknessType);
-    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser);
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,

@@ -20,7 +20,8 @@ const Wrapper = styled('a')(({background, size, iconColor}) => ({
     height: size,
     position: 'absolute',
     top: 0,
-    right: 0,
+    // right: 0,
+    left: 3,
     background,
 }));
 
@@ -50,7 +51,7 @@ class MainButton extends Component {
         const {iconResting, iconActive, isOpen} = this.props;
 
         return (
-            <Wrapper {...this.props}>
+            <Wrapper {...this.props} className={'floating-menu-icon'}>
                 <IconWrapper isOpen={isOpen}>{isOpen ? iconActive : iconResting}</IconWrapper>
             </Wrapper>
         );

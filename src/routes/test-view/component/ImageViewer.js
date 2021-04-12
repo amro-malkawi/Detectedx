@@ -128,6 +128,9 @@ class ImageViewer extends Component {
 
     getInitialViewport() {
         let initialViewport = {};
+        if(this.props.imageInfo.type === 'volpara') {
+            return initialViewport;
+        }
         if (!isNaN(this.props.initialZoomLevel) && this.props.initialZoomLevel !== Infinity && this.props.initialZoomLevel !== 0) {
             initialViewport.scale = this.props.initialZoomLevel;
 
