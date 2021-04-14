@@ -24,6 +24,15 @@ export default class QualityQuestions extends Component {
             qualityQuestion.forEach((q) => {
                 openQuestionList[q.id] = (quality_answer[q.id] !== undefined || quality_truth[q.id] !== undefined);
             });
+
+            // expand first question
+            for (const id in openQuestionList) {
+                if(!openQuestionList[id]) {
+                    openQuestionList[id] = true;
+                    break;
+                }
+            }
+
             this.setState({
                 question: qualityQuestion,
                 selectedValue: quality_answer,
@@ -80,7 +89,14 @@ export default class QualityQuestions extends Component {
             }
             selectedValue[qId][childQuestion] = number;
         }
-        this.setState({selectedValue}, this.saveQualityAnswer);
+        // expand next question
+        const {question} = this.state;
+        const openQuestionList = {...this.state.openQuestionList};
+        const questionIndex = question.findIndex((v) => v.id === qId);
+        if((questionIndex + 1 < question.length) && question[questionIndex].child.length === Object.keys(selectedValue[qId]).length) {
+            openQuestionList[question[questionIndex + 1].id] = true;
+        }
+        this.setState({selectedValue, openQuestionList}, this.saveQualityAnswer);
     }
 
     renderChildItem(qId, childQuestion, value, index) {
