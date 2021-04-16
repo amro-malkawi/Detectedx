@@ -266,7 +266,7 @@ module.exports = {
     "test.attempt.volparaAnswerDesc": "Xem lại câu trả lời của bạn cùng với ghi chú của chúng tôi về lý do tại sao các trường hợp được chấm theo cách đó.",
     "test.attempt.volparaExtraTitle": "Thông tin bổ sung",
     "test.attempt.volparaExtraDesc": "Tìm hiểu thêm về cách đọc theo thể tích với các video giáo dục này.",
-    "test.attempt.volparaNext": "Tiếp theo",
+    "test.attempt.volparaNext": "Bắt đầu video",
     "test.attempt.imageQualityScoreTitle": "Tổng điểm trung bình",
     "test.attempt.imageQualityScoreTitleDesc": "Điều này được tính toán bằng cách sử dụng Cohen's Kappa",
     "test.attempt.imageQualityScoreCategory": "thể loại",

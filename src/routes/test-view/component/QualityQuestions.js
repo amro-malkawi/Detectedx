@@ -69,10 +69,18 @@ export default class QualityQuestions extends Component {
         return valid;
     }
 
+    scrollToQuestion(qId) {
+        if(this.state.openQuestionList[qId]) {
+            const containerElem = document.getElementsByClassName('quality-question-container')[0];
+            const objOffsetBottom = document.getElementById(qId).offsetTop + document.getElementById(qId).offsetHeight;
+            if(objOffsetBottom > containerElem.offsetHeight) containerElem.scrollTop = objOffsetBottom - containerElem.offsetHeight + 10;
+        }
+    }
+
     onChangeRootQuestion(qId) {
         const openQuestionList = {...this.state.openQuestionList};
         openQuestionList[qId] = !openQuestionList[qId];
-        this.setState({openQuestionList});
+        this.setState({openQuestionList}, () => this.scrollToQuestion(qId));
     }
 
     onChangeQuestionNumber(qId, childQuestion, number) {
@@ -96,7 +104,10 @@ export default class QualityQuestions extends Component {
         if((questionIndex + 1 < question.length) && question[questionIndex].child.length === Object.keys(selectedValue[qId]).length) {
             openQuestionList[question[questionIndex + 1].id] = true;
         }
-        this.setState({selectedValue, openQuestionList}, this.saveQualityAnswer);
+        this.setState({selectedValue, openQuestionList}, () => {
+            this.scrollToQuestion(qId);
+            this.saveQualityAnswer();
+        });
     }
 
     renderChildItem(qId, childQuestion, value, index) {
@@ -141,7 +152,7 @@ export default class QualityQuestions extends Component {
     renderQuestion(questionObj, i) {
         const isShowChild = this.state.openQuestionList[questionObj.id];
         return (
-            <div key={questionObj.id} className={'quality-question'}>
+            <div key={questionObj.id} className={'quality-question'} id={questionObj.id}>
                 <div className={'question-title'} onClick={() => this.onChangeRootQuestion(questionObj.id)}>
                     <div><i className={'zmdi zmdi-forward ' + (isShowChild ? 'zmdi-hc-rotate-270': 'zmdi-hc-rotate-90')}/></div>
                     <span>{questionObj.text}</span>

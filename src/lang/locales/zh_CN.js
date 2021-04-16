@@ -266,7 +266,7 @@ module.exports = {
     "test.attempt.volparaAnswerDesc": "除了查看我们为何以这种方式评分案件的注释外,还应查看您的答案。",
     "test.attempt.volparaExtraTitle": "其他信息",
     "test.attempt.volparaExtraDesc": "通过这些教育视频来了解有关体积阅读的更多信息。",
-    "test.attempt.volparaNext": "下一步",
+    "test.attempt.volparaNext": "播放视频",
     "test.attempt.imageQualityScoreTitle": "总平均分",
     "test.attempt.imageQualityScoreTitleDesc": "这是使用Cohen的Kappa计算的",
     "test.attempt.imageQualityScoreCategory": "类别",

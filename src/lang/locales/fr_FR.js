@@ -266,7 +266,7 @@ module.exports = {
 	"test.attempt.volparaAnswerDesc": "Passez en revue vos réponses avec nos notes expliquant pourquoi les cas ont été notés de cette manière.",
 	"test.attempt.volparaExtraTitle": "Informations supplémentaires",
 	"test.attempt.volparaExtraDesc": "Apprenez-en plus sur la lecture volumétrique avec ces vidéos éducatives.",
-	"test.attempt.volparaNext": "Suivant",
+	"test.attempt.volparaNext": "Lancer la vidéo",
 	"test.attempt.imageQualityScoreTitle": "Note moyenne totale",
 	"test.attempt.imageQualityScoreTitleDesc": "Ceci est calculé en utilisant Cohen's Kappa",
 	"test.attempt.imageQualityScoreCategory": "Catégorie",
