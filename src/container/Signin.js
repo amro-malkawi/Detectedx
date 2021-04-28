@@ -13,7 +13,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import QueueAnim from 'rc-queue-anim';
 import LanguageProvider from "Components/Header/LanguageProvider";
 import AppConfig from 'Constants/AppConfig';
-import { login} from 'Actions';
+import {login} from 'Actions';
 import * as selectors from "Selectors";
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from "Api";
@@ -29,10 +29,11 @@ class Signin extends Component {
     };
 
     componentDidMount() {
-        if(this.props.isLogin) {
+        if (this.props.isLogin) {
             this.props.history.push('/');
         }
     }
+
     /**
      * On User Login
      */
@@ -132,6 +133,19 @@ class Signin extends Component {
                                                 <Link to="/forgot-password"><IntlMessages id={"user.forgotPassword"}/></Link>
                                             </div>
                                         </Form>
+                                        <div className={'d-flex flex-column'}>
+                                            <div className={'d-flex align-items-center mt-2'}>
+                                                <div className={'signin-sso-bar'}/>
+                                                <span>or</span>
+                                                <div className={'signin-sso-bar'}/>
+                                            </div>
+                                            <div className={'d-flex sso-button justify-content-center mt-2'}>
+                                                <a onClick={() => window.location.href="/sso/siemens_login"}>
+                                                    <img src={require('Assets/img/sso/siemens_healthineers_logo.png')} className="" alt=""/>
+                                                    <span>Sign in with Siemens</span>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -10,6 +10,7 @@ export default class QualityQuestions extends Component {
             selectedValue: {},
             truthValue: {},
             openQuestionList: {},
+            errorQuestions: [],
         }
     }
 
@@ -54,18 +55,24 @@ export default class QualityQuestions extends Component {
 
     checkQualityAnswerValidate() {
         const {selectedValue} = this.state;
+        const errorQuestions = [];
         let valid = true;
         this.state.question.forEach((questionObj) => {
             if(selectedValue[questionObj.id] === undefined) {
                 valid = false;
+                if(errorQuestions.indexOf(questionObj.id) === -1) errorQuestions.push(questionObj.id);
             } else {
                 questionObj.child.forEach((childQuestion) => {
                    if(selectedValue[questionObj.id][childQuestion] === undefined) {
                        valid = false;
+                       if(errorQuestions.indexOf(questionObj.id) === -1) errorQuestions.push(questionObj.id);
                    }
                 });
             }
         });
+        if(!valid) {
+            this.setState({errorQuestions});
+        }
         return valid;
     }
 
@@ -80,7 +87,7 @@ export default class QualityQuestions extends Component {
     onChangeRootQuestion(qId) {
         const openQuestionList = {...this.state.openQuestionList};
         openQuestionList[qId] = !openQuestionList[qId];
-        this.setState({openQuestionList}, () => this.scrollToQuestion(qId));
+        this.setState({openQuestionList, errorQuestions: []}, () => this.scrollToQuestion(qId));
     }
 
     onChangeQuestionNumber(qId, childQuestion, number) {
@@ -101,11 +108,13 @@ export default class QualityQuestions extends Component {
         const {question} = this.state;
         const openQuestionList = {...this.state.openQuestionList};
         const questionIndex = question.findIndex((v) => v.id === qId);
+        let nextQId;
         if((questionIndex + 1 < question.length) && question[questionIndex].child.length === Object.keys(selectedValue[qId]).length) {
             openQuestionList[question[questionIndex + 1].id] = true;
+            nextQId = question[questionIndex + 1].id;
         }
-        this.setState({selectedValue, openQuestionList}, () => {
-            this.scrollToQuestion(qId);
+        this.setState({selectedValue, openQuestionList, errorQuestions: []}, () => {
+            if(nextQId !== undefined )this.scrollToQuestion(nextQId);
             this.saveQualityAnswer();
         });
     }
@@ -151,11 +160,12 @@ export default class QualityQuestions extends Component {
 
     renderQuestion(questionObj, i) {
         const isShowChild = this.state.openQuestionList[questionObj.id];
+        const isError = this.state.errorQuestions.indexOf(questionObj.id) !== -1;
         return (
             <div key={questionObj.id} className={'quality-question'} id={questionObj.id}>
                 <div className={'question-title'} onClick={() => this.onChangeRootQuestion(questionObj.id)}>
                     <div><i className={'zmdi zmdi-forward ' + (isShowChild ? 'zmdi-hc-rotate-270': 'zmdi-hc-rotate-90')}/></div>
-                    <span>{questionObj.text}</span>
+                    <span className={isError ? 'text-red' : ''}>{questionObj.text}</span>
                 </div>
                 <div className={'question-child-container'}>
                 {
