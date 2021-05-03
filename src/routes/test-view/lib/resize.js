@@ -200,7 +200,7 @@ export default function (element, realContentRegion, imagePosition) {
         } else if (imagePosition.imageLaterality === 'R') {
             enabledElement.viewport.translation.x = -(realContentRight - enabledElement.image.width / 2 -  Math.floor(canvasWidth / scale) / 2);
         }
-        if (imagePosition.positionDesc === 'V-PREVIEW') {
+        if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
             enabledElement.viewport.translation.y = 385;
         }
     } else {

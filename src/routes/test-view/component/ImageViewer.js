@@ -154,7 +154,7 @@ class ImageViewer extends Component {
                     } else if (imagePosition.imageLaterality === 'R') {
                         offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
                     }
-                    // if (imagePosition.positionDesc === 'V-PREVIEW') {
+                    // if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
                     //     // offsetY = 385;
                     //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
                     // }

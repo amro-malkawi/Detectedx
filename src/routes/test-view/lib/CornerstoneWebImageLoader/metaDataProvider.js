@@ -195,7 +195,7 @@ function metaDataProvider(type, imageId) {
             } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0) {
                 positionDesc = 'GE-SLABS';
             } else if(seriesDescription.indexOf('V-PREVIEW') !== -1) {
-                positionDesc = 'V-PREVIEW';
+                positionDesc = 'GE-V-PREVIEW';
             }
 
             if(viewPosition === undefined) {
