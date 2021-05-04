@@ -139,7 +139,9 @@ export default class QualityQuestions extends Component {
     renderChildQuestion(qId, childQuestion, index) {
         return (
             <div key={index} className={'question-child'}>
-                <span>{childQuestion}</span>
+                {
+                    childQuestion !== 'HIDE_CHILD' && <span>{childQuestion}</span>
+                }
                 <div className={'question-number-container'}>
                     {
                         [1, 2, 3].map((v, i) => this.renderChildItem(qId, childQuestion, v, i))
