@@ -81,15 +81,16 @@ class ImageViewer extends Component {
         this.imageElement = this.imageElementRef.current;
         cornerstone.enable(this.imageElement);
         this.setupLoadHandlers();
-
-        cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
-            this.imageWidth = image.width;
-            this.imageHeight = image.height;
-            const initialViewport = this.getInitialViewport();
-            cornerstone.displayImage(this.imageElement, image, initialViewport);
-            this.initTools();
-            this.setState({loadedImage: true});
-        });
+        if(this.state.imageIds.length !== 0) {
+            cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
+                this.imageWidth = image.width;
+                this.imageHeight = image.height;
+                const initialViewport = this.getInitialViewport();
+                cornerstone.displayImage(this.imageElement, image, initialViewport);
+                this.initTools();
+                this.setState({loadedImage: true});
+            });
+        }
         this.initEvents();
         this.runWorker();
     }
@@ -154,7 +155,7 @@ class ImageViewer extends Component {
                     } else if (imagePosition.imageLaterality === 'R') {
                         offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
                     }
-                    // if (imagePosition.positionDesc === 'V-PREVIEW') {
+                    // if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
                     //     // offsetY = 385;
                     //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
                     // }

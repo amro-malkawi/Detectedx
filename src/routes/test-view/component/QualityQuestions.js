@@ -80,7 +80,7 @@ export default class QualityQuestions extends Component {
         if(this.state.openQuestionList[qId]) {
             const containerElem = document.getElementsByClassName('quality-question-container')[0];
             const objOffsetBottom = document.getElementById(qId).offsetTop + document.getElementById(qId).offsetHeight;
-            if(objOffsetBottom > containerElem.offsetHeight) containerElem.scrollTop = objOffsetBottom - containerElem.offsetHeight + 10;
+            if(objOffsetBottom > (containerElem.offsetHeight + containerElem.scrollTop)) containerElem.scrollTop = objOffsetBottom - containerElem.offsetHeight + 10;
         }
     }
 
@@ -106,15 +106,15 @@ export default class QualityQuestions extends Component {
         }
         // expand next question
         const {question} = this.state;
+        let expandQuestionId;
         const openQuestionList = {...this.state.openQuestionList};
         const questionIndex = question.findIndex((v) => v.id === qId);
-        let nextQId;
         if((questionIndex + 1 < question.length) && question[questionIndex].child.length === Object.keys(selectedValue[qId]).length) {
-            openQuestionList[question[questionIndex + 1].id] = true;
-            nextQId = question[questionIndex + 1].id;
+            expandQuestionId = question[questionIndex + 1].id;
+            openQuestionList[expandQuestionId] = true;
         }
-        this.setState({selectedValue, openQuestionList, errorQuestions: []}, () => {
-            if(nextQId !== undefined )this.scrollToQuestion(nextQId);
+        this.setState({selectedValue, openQuestionList}, () => {
+            if(expandQuestionId) this.scrollToQuestion(expandQuestionId);
             this.saveQualityAnswer();
         });
     }
@@ -148,7 +148,9 @@ export default class QualityQuestions extends Component {
     renderChildQuestion(qId, childQuestion, index) {
         return (
             <div key={index} className={'question-child'}>
-                <span>{childQuestion}</span>
+                {
+                    childQuestion !== 'HIDE_CHILD' && <span>{childQuestion}</span>
+                }
                 <div className={'question-number-container'}>
                     {
                         [1, 2, 3].map((v, i) => this.renderChildItem(qId, childQuestion, v, i))

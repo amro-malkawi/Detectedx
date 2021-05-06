@@ -950,8 +950,8 @@ export default class ChestQuestions extends Component {
                                                 value={v.value.toString()}
                                                 control={
                                                     <RatingRadio
-                                                        icon={<span className={'chest-question-rating-radio-icon ' + (truthRating === v ? 'truth-icon' : '')}/>}
-                                                        checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating === v ? 'truth-icon' : '')}/>}
+                                                        icon={<span className={'chest-question-rating-radio-icon ' + (truthRating === v.value ? 'truth-icon' : '')}/>}
+                                                        checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating === v.value ? 'truth-icon' : '')}/>}
                                                         disableRipple
                                                     />
                                                 }

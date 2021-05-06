@@ -19,23 +19,25 @@ import {
 import {isMobile} from 'react-device-detect';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
+const gePositions = [['GE-V-PREVIEW', 'L'], ['GE-V-PREVIEW', 'R'], ['GE-PLANES', 'L'], ['GE-PLANES', 'R'], ['GE-SLABS', 'L'], ['GE-SLABS', 'R']]
+
 const hangingIdList = {
-    normal: [],
-    breast:[
+    normalHangings: [],
+    breastHangings:[
         'MLO-R_MLO-L_CC-R_CC-L',
         'MLO-R_MLO-L',
         'CC-R_CC-L',
         'CC-R_MLO-R',
         'CC-L_MLO-L',
     ],
-    breastWith3D: [
-        'MLO-R_MLO-L_CC-R_CC-L',
-        'CC-R_CC-L',
-        'MLO-R_MLO-L',
-        'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D',
-        'MLO-R-3D_MLO-L-3D'
+    breastOnly3DHangings:[
+        'MLO-R-3D_MLO-L-3D_CC-R-3D_CC-L-3D',
+        'MLO-R-3D_MLO-L-3D',
+        'CC-R-3D_CC-L-3D',
+        'CC-R-3D_MLO-R-3D',
+        'CC-L-3D_MLO-L-3D',
     ],
-    breastWithPrior: [
+    breastPriorHangings: [
         'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P',
         'MLO-R_MLO-L_CC-R_CC-L',
         'MLO-R_MLO-L',
@@ -45,24 +47,55 @@ const hangingIdList = {
         'CC-R_CC-R-P',
         'CC-L_CC-L-P',
         'CC-R_CC-R-P_MLO-R_MLO-R-P',
-        'MLO-L-P_MLO-L_CC-L-P_CC-L',
-        // 'CC-R_MLO-R',
-        // 'CC-L_MLO-L',
+        'MLO-L-P_MLO-L_CC-L-P_CC-L'
     ],
-    volparaGrid: [
+    breast3DHangings: [
+        'MLO-R_MLO-L_CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'MLO-R_MLO-R-3D',
+        'MLO-L_MLO-L-3D',
+        'CC-R_CC-L',
+        'CC-R_CC-R-3D',
+        'CC-L_CC-L-3D'
+    ],
+    breastPrior3DHangings: [
+        'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P',
+        'MLO-R_MLO-L_CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'MLO-R_MLO-R-P',
+        'MLO-R_MLO-R-3D',
+        'MLO-L_MLO-L-P',
+        'MLO-L_MLO-L-3D',
+        'CC-R_CC-L',
+        'CC-R_CC-R-P',
+        'CC-R_CC-R-3D',
+        'CC-L_CC-L-P',
+        'CC-L_CC-L-3D',
+    ],
+    breastGEHangings: [
+        'MLO-R_MLO-L_CC-R_CC-L',
+        'CC-R_CC-L',
+        'MLO-R_MLO-L',
+        'MLO-R-3D-GE_MLO-R-GE_MLO-L-GE_MLO-L-3D-GE',
+        'MLO-R-3D-GE_MLO-L-3D-GE'
+    ],
+    volparaHangings: [
         'VOLPARA_MLO-R_MLO-L_CC-R_CC-L',
         'MLO-R_MLO-L',
         'CC-R_CC-L',
         'CC-R_MLO-R',
         'CC-L_MLO-L',
-    ]
+    ],
 }
 
 const getImageHangingType = (images) => {
-    let hasAllTestImages = true;
+    let hasAllBreastImages = true;
     let hasAllPriorImages = true;
-    let had3dImages = true;
+    let hasAll2DImages = true;
+    let hasAll3DImages = true;
+    let hasAllGEImages = true;
     let hasVolparaImage = false;
+
     breastPositions.forEach((position) => {
         const testCount = images.filter((image) => {
             try {
@@ -75,7 +108,8 @@ const getImageHangingType = (images) => {
                 return false;
             }
         }).length;
-        if (testCount < 1) hasAllTestImages = false;
+        if (testCount < 1) hasAllBreastImages = false;
+
         const priorCount = images.filter((image) => {
             try {
                 // const metaData = JSON.parse(image.metadata);
@@ -88,53 +122,69 @@ const getImageHangingType = (images) => {
             }
         }).length;
         if (priorCount < 1) hasAllPriorImages = false;
-    });
 
-    breastPositions.forEach((position) => {
-        const positionImages = images.filter((image) => {
+        const twoCount = images.filter((image) => {
             try {
                 // const metaData = JSON.parse(image.metadata);
                 const metaData = image.metaData;
                 return (image.type === 'test' &&
+                    image.stack_count === 1 &&
                     metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
-                    metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]
-                )
+                    metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1])
             } catch (e) {
                 return false;
             }
-        });
-        if (position[0] === 'MLO') {
-            if (positionImages.length < 2) {
-                had3dImages = false;
-            } else {
-                if (positionImages.filter((image) => image.stack_count === 1).length === 0 ||
-                    positionImages.filter((image) => image.stack_count > 1).length === 0) {
-                    had3dImages = false
-                }
+        }).length;
+        if (twoCount < 1) hasAll2DImages = false;
+
+        const thirdCount = images.filter((image) => {
+            try {
+                // const metaData = JSON.parse(image.metadata);
+                const metaData = image.metaData;
+                return (image.type === 'test' &&
+                    image.stack_count > 1 &&
+                    metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
+                    metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1])
+            } catch (e) {
+                return false;
             }
-        } else if (position[0] === 'CC') {
-            if (positionImages.length < 1) had3dImages = false
-        } else {
-            had3dImages = false
-        }
+        }).length;
+        if (thirdCount < 1) hasAll3DImages = false;
     });
 
+    gePositions.forEach((position) => {
+        const count = images.filter((image) => {
+            try {
+                // const metaData = JSON.parse(image.metadata);
+                const metaData = image.metaData;
+                return (
+                    metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf('MLO') > -1 &&
+                    metaData.positionDesc !== undefined && metaData.positionDesc === position[0] &&
+                    metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1])
+            } catch (e) {
+                return false;
+            }
+        }).length;
+        if (count < 1) hasAllGEImages = false;
+    })
+
     if(images.some((image) => image.type === 'volpara')) hasVolparaImage = true;
-    if(hasVolparaImage && hasAllTestImages) {
-        return 'volparaGrid'
-    }
-    else if (had3dImages) {
-        // 3d test set( for GE modality)
-        return 'breastWith3D';
-    } else if (hasAllTestImages && hasAllPriorImages) {
-        // breast with prior images
-        return'breastWithPrior';
-    } else if (hasAllTestImages) {
-        // breast
-        return 'breast';
+    if(hasVolparaImage && hasAllBreastImages) {
+        return 'volparaHangings'
+    } else if(hasAllGEImages && hasAllBreastImages) {
+        return 'breastGEHangings';
+    } else if(hasAllPriorImages && hasAll3DImages && hasAll2DImages) {
+        return 'breastPrior3DHangings';
+    } else if(hasAllPriorImages && hasAllBreastImages) {
+        return 'breastPriorHangings';
+    } else if(hasAll3DImages && hasAll2DImages) {
+        return 'breast3DHangings';
+    } else if(hasAll3DImages && !hasAll2DImages) {
+        return 'breastOnly3DHangings';
+    } else if(hasAllBreastImages) {
+        return 'breastHangings';
     } else {
-        // normal
-        return 'normal';
+        return 'normalHangings';
     }
 }
 
@@ -162,7 +212,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                     if (isShowImageBrowser) {
                         canvasWidth = canvasWidth - 300;
                     }
-                    if(testSetHangingType === 'volparaGrid') {
+                    if(testSetHangingType === 'volparaHangings') {
                         canvasWidth = canvasWidth / 2
                     }
                     canvasHeight = ($(window).height() - 80) / imageRow;
@@ -207,34 +257,47 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
     const typeArray = type.split('_');
     let idList = [];
 
+
+    typeArray.forEach((v) => {
+        let imageObj;
+        if(v.indexOf('3D-GE') !== -1) {
+            // GE
+            imageObj = images.find((vv) => (vv.hangingId === v && vv.metaData.positionDesc === 'GE-' + currentThicknessType));
+        } else {
+            imageObj = images.find((vv) => vv.hangingId === v);
+        }
+        if (imageObj !== undefined) {
+            idList.push(imageObj.id);
+        }
+    });
     // input image ids
-    if (type === 'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D' || type === 'MLO-R-3D_MLO-L-3D') {
-        // GE modality 3D hanging
-        typeArray.forEach((v) => {
-            let typeImage;
-            if(v.indexOf('3D') === -1) {
-                typeImage = images.find((vv) => vv.hangingId === (v + '-VPREVIEW'));
-            } else {
-                // select planes or slabs
-                typeImage = images.filter((vv) => vv.hangingId === v).find((vv) => vv.metaData.positionDesc === 'GE-' + currentThicknessType);
-            }
-
-            if (typeImage !== undefined) {
-                idList.push(typeImage.id);
-            } else {
-                const matchImage = images.find((vv) => vv.hangingId === v);
-                if (matchImage !== undefined) idList.push(matchImage.id);
-            }
-
-        });
-    } else {
-        typeArray.forEach((v) => {
-            const imageObj = images.find((vv) => vv.hangingId === v);
-            if (imageObj !== undefined) {
-                idList.push(imageObj.id);
-            }
-        });
-    }
+    // if (type === 'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D' || type === 'MLO-R-3D_MLO-L-3D') {
+    //     // GE modality 3D hanging
+    //     typeArray.forEach((v) => {
+    //         let typeImage;
+    //         if(v.indexOf('3D') === -1) {
+    //             typeImage = images.find((vv) => vv.hangingId === (v + '-VPREVIEW'));
+    //         } else {
+    //             // select planes or slabs
+    //             typeImage = images.filter((vv) => vv.hangingId === v).find((vv) => vv.metaData.positionDesc === 'GE-' + currentThicknessType);
+    //         }
+    //
+    //         if (typeImage !== undefined) {
+    //             idList.push(typeImage.id);
+    //         } else {
+    //             const matchImage = images.find((vv) => vv.hangingId === v);
+    //             if (matchImage !== undefined) idList.push(matchImage.id);
+    //         }
+    //
+    //     });
+    // } else {
+    //     typeArray.forEach((v) => {
+    //         const imageObj = images.find((vv) => vv.hangingId === v);
+    //         if (imageObj !== undefined) {
+    //             idList.push(imageObj.id);
+    //         }
+    //     });
+    // }
 
     // check for existing all images
     if (idList.length < typeArray.length && isForce) {
@@ -338,23 +401,19 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             breastPositions.forEach((position) => {
                 if (metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]) {
-                    if (testSetHangingType !== 'breastWith3D') {
-                        if (image.type === 'test') {
-                            image.hangingId = position[0] + '-' + position[1];
-                        } else if (image.type === 'prior') {
-                            image.hangingId = position[0] + '-' + position[1] + '-P';
-                        } else {
-                            image.hangingId = '';
+
+                    if (image.type === 'test') {
+                        image.hangingId = position[0] + '-' + position[1];
+                        if (image.stack_count > 1) {
+                            image.hangingId += '-3D';
                         }
+                        if(metaData.positionDesc.indexOf('GE-') === 0) {
+                            image.hangingId += '-GE';
+                        }
+                    } else if (image.type === 'prior') {
+                        image.hangingId = position[0] + '-' + position[1] + '-P';
                     } else {
-                        if (image.stack_count === 1) {
-                            image.hangingId = position[0] + '-' + position[1];
-                        } else {
-                            image.hangingId = position[0] + '-' + position[1] + '-3D';
-                        }
-                        if (metaData.positionDesc === 'V-PREVIEW') {
-                            image.hangingId += '-VPREVIEW'
-                        }
+                        image.hangingId = '';
                     }
                 }
 
