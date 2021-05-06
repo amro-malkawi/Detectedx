@@ -71,7 +71,6 @@ export default class QualityQuestions extends Component {
 
     scrollToQuestion(qId) {
         if(this.state.openQuestionList[qId]) {
-            console.log('asdf')
             const containerElem = document.getElementsByClassName('quality-question-container')[0];
             const objOffsetBottom = document.getElementById(qId).offsetTop + document.getElementById(qId).offsetHeight;
             if(objOffsetBottom > (containerElem.offsetHeight + containerElem.scrollTop)) containerElem.scrollTop = objOffsetBottom - containerElem.offsetHeight + 10;
