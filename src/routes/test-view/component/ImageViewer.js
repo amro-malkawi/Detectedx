@@ -81,15 +81,16 @@ class ImageViewer extends Component {
         this.imageElement = this.imageElementRef.current;
         cornerstone.enable(this.imageElement);
         this.setupLoadHandlers();
-
-        cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
-            this.imageWidth = image.width;
-            this.imageHeight = image.height;
-            const initialViewport = this.getInitialViewport();
-            cornerstone.displayImage(this.imageElement, image, initialViewport);
-            this.initTools();
-            this.setState({loadedImage: true});
-        });
+        if(this.state.imageIds.length !== 0) {
+            cornerstone.loadImage(this.state.imageIds[0], {type: 'firstFrame'}).then((image) => {
+                this.imageWidth = image.width;
+                this.imageHeight = image.height;
+                const initialViewport = this.getInitialViewport();
+                cornerstone.displayImage(this.imageElement, image, initialViewport);
+                this.initTools();
+                this.setState({loadedImage: true});
+            });
+        }
         this.initEvents();
         this.runWorker();
     }

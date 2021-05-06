@@ -71,9 +71,10 @@ export default class QualityQuestions extends Component {
 
     scrollToQuestion(qId) {
         if(this.state.openQuestionList[qId]) {
+            console.log('asdf')
             const containerElem = document.getElementsByClassName('quality-question-container')[0];
             const objOffsetBottom = document.getElementById(qId).offsetTop + document.getElementById(qId).offsetHeight;
-            if(objOffsetBottom > containerElem.offsetHeight) containerElem.scrollTop = objOffsetBottom - containerElem.offsetHeight + 10;
+            if(objOffsetBottom > (containerElem.offsetHeight + containerElem.scrollTop)) containerElem.scrollTop = objOffsetBottom - containerElem.offsetHeight + 10;
         }
     }
 
@@ -99,13 +100,15 @@ export default class QualityQuestions extends Component {
         }
         // expand next question
         const {question} = this.state;
+        let expandQuestionId;
         const openQuestionList = {...this.state.openQuestionList};
         const questionIndex = question.findIndex((v) => v.id === qId);
         if((questionIndex + 1 < question.length) && question[questionIndex].child.length === Object.keys(selectedValue[qId]).length) {
-            openQuestionList[question[questionIndex + 1].id] = true;
+            expandQuestionId = question[questionIndex + 1].id;
+            openQuestionList[expandQuestionId] = true;
         }
         this.setState({selectedValue, openQuestionList}, () => {
-            this.scrollToQuestion(qId);
+            if(expandQuestionId) this.scrollToQuestion(expandQuestionId);
             this.saveQualityAnswer();
         });
     }
