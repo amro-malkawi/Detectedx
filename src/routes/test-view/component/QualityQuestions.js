@@ -34,6 +34,8 @@ export default class QualityQuestions extends Component {
                 }
             }
 
+
+
             this.setState({
                 question: qualityQuestion,
                 selectedValue: quality_answer,
