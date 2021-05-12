@@ -490,9 +490,14 @@ class TestView extends Component {
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
             // let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
-            let resultStr = this.state.test_case.modalities.modality_type !== 'covid' ?
-                (isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>) :
-                (isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>);
+            let resultStr;
+            if(this.state.test_case.modalities.modality_type === 'covid') {
+                resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>
+            } else if (this.state.test_case.modalities.modality_type === 'chest') {
+                resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.abnormalChest"}/> : <IntlMessages id={"testView.truth.normalChest"}/>
+            } else {
+                resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
+            }
             return (
                 <div style={{display: 'inline-block'}}>
                     <div className={isTruthCancer ? 'correct-result wrong' : 'correct-result correct'}>

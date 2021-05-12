@@ -146,6 +146,8 @@ module.exports = {
 	"testView.truth.normalCase": "Normal Case",
 	"testView.truth.covidSign": "COVID-19 SIGNS",
 	"testView.truth.nonCovidSign": "NON-COVID-19",
+	"testView.truth.normalChest": "Normal",
+	"testView.truth.abnormalChest": "Abnormal",
 	"testView.previous": "Previous",
 	"testView.finish": "Finish",
 	"testView.submit": "Submit",
