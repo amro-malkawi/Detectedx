@@ -88,9 +88,9 @@ class Attempt extends Component {
             const isFinishAdditionalQuestions = questionnaires.additional.length === 0 || questionnaires.additional.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('additionalQuestions') !== -1);
             if (!detail.complete) {
                 // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
-                if(!isFinishMainQuestions || !isFinishAdditionalQuestions) {
-
-                }
+                // if(!isFinishMainQuestions || !isFinishAdditionalQuestions) {
+                //
+                // }
                 steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
             } else {
                     // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];

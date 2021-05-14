@@ -24,6 +24,7 @@ import stackPrefetch from '../lib/stackTools/stackPrefetch';
 import MarkerTool from "../lib/tools/MarkerTool";
 import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
 import LengthTool from "../lib/tools/LengthTool";
+import AngleTool from "../lib/tools/AngleTool";
 import cornerstoneResize from "../lib/resize";
 
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
@@ -239,6 +240,8 @@ class ImageViewer extends Component {
             // customized tool
             if (toolName === 'Length') {
                 cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
+            } else if (toolName === 'Angle') {
+                cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
             } else {
                 cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
             }
