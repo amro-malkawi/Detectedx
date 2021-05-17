@@ -1068,11 +1068,32 @@ div.viewer {
 
   .hanging-button {
     background-color: transparent;
+    padding: 0 !important;
+    margin-bottom: 4px;
+    margin-right: 6px;
 
     &:hover {
       background-color: grey;
     }
+
+    img {
+      margin: 6px 16px
+    }
+
+    .hanging-id-text {
+      font-size: 15px;
+      background-color: #20a5d6;
+      padding: 3px 14px;
+      border-radius: 3px;
+    }
   }
+}
+
+.hanging-id-text {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: white;
 }
 
 .layoutChooser-dropdown-menu {
@@ -1258,8 +1279,10 @@ div.viewer {
 
   .hanging-type-container {
     .hanging-button {
-      padding-left: 0;
-      padding-right: 0;
+      img {
+        margin-left: 0;
+        margin-right: 0;
+      }
     }
   }
 }

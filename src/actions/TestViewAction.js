@@ -1,6 +1,7 @@
 /**
  * Test View Actions
  */
+import cornerstone from 'cornerstone-core';
 import $ from 'jquery';
 import {batch} from 'react-redux'
 import {
@@ -86,9 +87,11 @@ const hangingIdList = {
         'CC-R_MLO-R',
         'CC-L_MLO-L',
     ],
+    chestHangings: [],
 }
 
 const getImageHangingType = (images) => {
+    // check Breast hangings
     let hasAllBreastImages = true;
     let hasAllPriorImages = true;
     let hasAll2DImages = true;
@@ -183,9 +186,25 @@ const getImageHangingType = (images) => {
         return 'breastOnly3DHangings';
     } else if(hasAllBreastImages) {
         return 'breastHangings';
-    } else {
-        return 'normalHangings';
     }
+
+    // check chest hangings
+    let isChestHanging = false;
+    images.forEach((image) => {
+        const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
+        if(chestProfusion) {
+            // reset chest hanging list
+            if(!isChestHanging) {
+                hangingIdList.chestHangings = [];
+                isChestHanging = true;
+            }
+            hangingIdList.chestHangings.push(chestProfusion)
+        }
+    });
+    if(isChestHanging) return 'chestHangings';
+
+    // no hangings
+    return 'normalHangings';
 }
 
 const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser, testSetHangingType) => {
@@ -396,12 +415,11 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     // set image's hangingId
     newList.forEach((image) => {
         try {
-            // const metaData = JSON.parse(image.metadata);
+            // breast image hanging id
             const metaData = image.metaData;
             breastPositions.forEach((position) => {
                 if (metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
                     metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]) {
-
                     if (image.type === 'test') {
                         image.hangingId = position[0] + '-' + position[1];
                         if (image.stack_count > 1) {
@@ -416,8 +434,14 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                         image.hangingId = '';
                     }
                 }
-
             });
+
+            // check chest hanging
+            const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
+            if(chestProfusion) {
+                image.hangingId = chestProfusion;
+            }
+
         } catch (e) {
             image.hangingId = '';
         }

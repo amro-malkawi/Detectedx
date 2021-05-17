@@ -223,6 +223,16 @@ function metaDataProvider(type, imageId) {
         return imagePosition;
     }
 
+    if(type === 'chestProfusion') {
+        const value = getValue(metaData['0040051A'], 0, '');
+        const matchResult = value.match(/CHEST\(([^\)]*)\)$/);
+        if(matchResult) {
+            return matchResult[1];
+        } else {
+            return undefined;
+        }
+    }
+
 }
 
 export default metaDataProvider;

@@ -48,6 +48,15 @@ class HangingSelector extends Component{
         this.props.changeHangingLayout(this.props.testSetHangingIdList[index]);
     }
 
+    renderHangingIcon(value) {
+        try {
+            const imgSrc = require('Assets/img/hangings/' + value + '.png')
+            return <img src={imgSrc} width={70} alt=''/>
+        } catch (e) {
+            return <span className={'hanging-id-text'}>{value}</span>
+        }
+    }
+
     render() {
         if(this.props.testSetHangingIdList.length > 0) {
             const {type} = this.state;
@@ -55,7 +64,7 @@ class HangingSelector extends Component{
             return (
                 <div className={'hanging-type-container'}>
                     <Button variant="contained" color="default" className={'hanging-button'} onClick={(event) => this.setState({type: event.currentTarget})}>
-                        <img src={require('Assets/img/hangings/' + this.props.selectedHangingType + '.png')} width={70} alt=''/>
+                        {this.renderHangingIcon(this.props.selectedHangingType)}
                     </Button>
                     <StyledMenu
                         id="lock-menu"
@@ -69,7 +78,7 @@ class HangingSelector extends Component{
                                 selected={index === selectedIndex}
                                 onClick={(event) => this.onChangeHanging(index)}
                             >
-                                <img src={require('Assets/img/hangings/' + option + '.png')} width={70} alt=''/>
+                                {this.renderHangingIcon(option)}
                             </StyledMenuItem>
                         ))}
                     </StyledMenu>
