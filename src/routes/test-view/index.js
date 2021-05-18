@@ -187,7 +187,7 @@ class TestView extends Component {
                 needLoadImageList = needLoadImageList.concat(testSetsCases[testCaseIndex + 1].images);
             }
             if (!complete) {
-                needLoadImageList = needLoadImageList.filter(image => (image.type === 'test' || image.type === 'prior'));
+                needLoadImageList = needLoadImageList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm'));
             }
             needLoadImageList.forEach((v) => {
                 for(let i = 0; i < v.stack_count; i++) {

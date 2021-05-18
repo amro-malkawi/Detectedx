@@ -24,14 +24,14 @@ const gePositions = [['GE-V-PREVIEW', 'L'], ['GE-V-PREVIEW', 'R'], ['GE-PLANES',
 
 const hangingIdList = {
     normalHangings: [],
-    breastHangings:[
+    breastHangings: [
         'MLO-R_MLO-L_CC-R_CC-L',
         'MLO-R_MLO-L',
         'CC-R_CC-L',
         'CC-R_MLO-R',
         'CC-L_MLO-L',
     ],
-    breastOnly3DHangings:[
+    breastOnly3DHangings: [
         'MLO-R-3D_MLO-L-3D_CC-R-3D_CC-L-3D',
         'MLO-R-3D_MLO-L-3D',
         'CC-R-3D_CC-L-3D',
@@ -49,6 +49,15 @@ const hangingIdList = {
         'CC-L_CC-L-P',
         'CC-R_CC-R-P_MLO-R_MLO-R-P',
         'MLO-L-P_MLO-L_CC-L-P_CC-L'
+    ],
+    breastCESMHangings: [
+        'MLO-R_MLO-L_CC-R_CC-L_MLO-R-CESM_MLO-L-CESM_CC-R-CESM_CC-L-CESM',
+        'MLO-R_MLO-R-CESM',
+        'MLO-L_MLO-L-CESM',
+        'CC-R_CC-R-CESM',
+        'CC-L_CC-L-CESM',
+        'CC-R_CC-R-CESM_MLO-R_MLO-R-CESM',
+        'MLO-L-CESM_MLO-L_CC-L-CESM_CC-L'
     ],
     breast3DHangings: [
         'MLO-R_MLO-L_CC-R_CC-L',
@@ -94,6 +103,7 @@ const getImageHangingType = (images) => {
     // check Breast hangings
     let hasAllBreastImages = true;
     let hasAllPriorImages = true;
+    let hasAllCESMImages = true;
     let hasAll2DImages = true;
     let hasAll3DImages = true;
     let hasAllGEImages = true;
@@ -125,6 +135,19 @@ const getImageHangingType = (images) => {
             }
         }).length;
         if (priorCount < 1) hasAllPriorImages = false;
+
+        const cesmCount = images.filter((image) => {
+            try {
+                // const metaData = JSON.parse(image.metadata);
+                const metaData = image.metaData;
+                return (image.type === 'cesm' &&
+                    metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
+                    metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1])
+            } catch (e) {
+                return false;
+            }
+        }).length;
+        if (cesmCount < 1) hasAllCESMImages = false;
 
         const twoCount = images.filter((image) => {
             try {
@@ -171,37 +194,46 @@ const getImageHangingType = (images) => {
         if (count < 1) hasAllGEImages = false;
     })
 
-    if(images.some((image) => image.type === 'volpara')) hasVolparaImage = true;
-    if(hasVolparaImage && hasAllBreastImages) {
+    if (images.some((image) => image.type === 'volpara')) hasVolparaImage = true;
+    if (hasVolparaImage && hasAllBreastImages) {
         return 'volparaHangings'
-    } else if(hasAllGEImages && hasAllBreastImages) {
+    } else if (hasAllGEImages && hasAllBreastImages) {
         return 'breastGEHangings';
-    } else if(hasAllPriorImages && hasAll3DImages && hasAll2DImages) {
+    } else if (hasAllPriorImages && hasAll3DImages && hasAll2DImages) {
         return 'breastPrior3DHangings';
-    } else if(hasAllPriorImages && hasAllBreastImages) {
+    } else if (hasAllPriorImages && hasAllBreastImages) {
         return 'breastPriorHangings';
-    } else if(hasAll3DImages && hasAll2DImages) {
+    } else if (hasAllCESMImages && hasAllBreastImages) {
+        return 'breastCESMHangings';
+    } else if (hasAll3DImages && hasAll2DImages) {
         return 'breast3DHangings';
-    } else if(hasAll3DImages && !hasAll2DImages) {
+    } else if (hasAll3DImages && !hasAll2DImages) {
         return 'breastOnly3DHangings';
-    } else if(hasAllBreastImages) {
+    } else if (hasAllBreastImages) {
         return 'breastHangings';
     }
 
     // check chest hangings
-    let isChestHanging = false;
-    images.forEach((image) => {
+    // check exist chest main image
+    const isExistCaseImage = images.some((image) => {
         const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
-        if(chestProfusion) {
-            // reset chest hanging list
-            if(!isChestHanging) {
-                hangingIdList.chestHangings = [];
-                isChestHanging = true;
-            }
-            hangingIdList.chestHangings.push(chestProfusion)
-        }
+        return chestProfusion === 'Case';
     });
-    if(isChestHanging) return 'chestHangings';
+    if(isExistCaseImage) {
+        let isChestHanging = false;
+        images.forEach((image) => {
+            const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
+            if (chestProfusion) {
+                // reset chest hanging list
+                if (!isChestHanging) {
+                    hangingIdList.chestHangings = [];
+                    isChestHanging = true;
+                }
+                hangingIdList.chestHangings.push(chestProfusion !== 'Case' ? 'Case_' + chestProfusion : chestProfusion);
+            }
+        });
+        if (isChestHanging) return 'chestHangings';
+    }
 
     // no hangings
     return 'normalHangings';
@@ -210,7 +242,7 @@ const getImageHangingType = (images) => {
 const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser, testSetHangingType) => {
     let initialZoomLevel = 0;
     let imgMLOMaxRealHeight = 0;
-    if(showImageIds.length === 0 || showImageIds[0].length === 0) {
+    if (showImageIds.length === 0 || showImageIds[0].length === 0) {
         initialZoomLevel = 0;
     } else {
         const imageObjList = showImageIds[0].map((v) => totalImageObjList.find((vv) => vv.id === v));
@@ -231,7 +263,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                     if (isShowImageBrowser) {
                         canvasWidth = canvasWidth - 300;
                     }
-                    if(testSetHangingType === 'volparaHangings') {
+                    if (testSetHangingType === 'volparaHangings') {
                         canvasWidth = canvasWidth / 2
                     }
                     canvasHeight = ($(window).height() - 80) / imageRow;
@@ -279,7 +311,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 
     typeArray.forEach((v) => {
         let imageObj;
-        if(v.indexOf('3D-GE') !== -1) {
+        if (v.indexOf('3D-GE') !== -1) {
             // GE
             imageObj = images.find((vv) => (vv.hangingId === v && vv.metaData.positionDesc === 'GE-' + currentThicknessType));
         } else {
@@ -289,34 +321,6 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
             idList.push(imageObj.id);
         }
     });
-    // input image ids
-    // if (type === 'MLO-R-3D_MLO-R_MLO-L_MLO-L-3D' || type === 'MLO-R-3D_MLO-L-3D') {
-    //     // GE modality 3D hanging
-    //     typeArray.forEach((v) => {
-    //         let typeImage;
-    //         if(v.indexOf('3D') === -1) {
-    //             typeImage = images.find((vv) => vv.hangingId === (v + '-VPREVIEW'));
-    //         } else {
-    //             // select planes or slabs
-    //             typeImage = images.filter((vv) => vv.hangingId === v).find((vv) => vv.metaData.positionDesc === 'GE-' + currentThicknessType);
-    //         }
-    //
-    //         if (typeImage !== undefined) {
-    //             idList.push(typeImage.id);
-    //         } else {
-    //             const matchImage = images.find((vv) => vv.hangingId === v);
-    //             if (matchImage !== undefined) idList.push(matchImage.id);
-    //         }
-    //
-    //     });
-    // } else {
-    //     typeArray.forEach((v) => {
-    //         const imageObj = images.find((vv) => vv.hangingId === v);
-    //         if (imageObj !== undefined) {
-    //             idList.push(imageObj.id);
-    //         }
-    //     });
-    // }
 
     // check for existing all images
     if (idList.length < typeArray.length && isForce) {
@@ -325,11 +329,11 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
         });
         idList = idList.slice(0, defaultImagesNumber);
     }
-    if(type === 'MLO-R_MLO-L_CC-R_CC-L_MLO-R-P_MLO-L-P_CC-R-P_CC-L-P') {
+    if (typeArray.length > 4) {
         // two line grid
         const firstRowIds = idList.splice(0, 4);
         return [firstRowIds, idList];
-    } else if(type === 'VOLPARA_MLO-R_MLO-L_CC-R_CC-L') {
+    } else if (type === 'VOLPARA_MLO-R_MLO-L_CC-R_CC-L') {
         // volpara image grid
         const firstRowIds = idList.splice(0, 2);
         return [firstRowIds, idList];
@@ -399,7 +403,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
     // remove other image when test did not complete
     if (!complete) {
-        newList = newList.filter(image => (image.type === 'test' || image.type === 'prior'));
+        newList = newList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm'));
     }
 
     // sort images by image type, postion
@@ -425,11 +429,13 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                         if (image.stack_count > 1) {
                             image.hangingId += '-3D';
                         }
-                        if(metaData.positionDesc.indexOf('GE-') === 0) {
+                        if (metaData.positionDesc.indexOf('GE-') === 0) {
                             image.hangingId += '-GE';
                         }
                     } else if (image.type === 'prior') {
                         image.hangingId = position[0] + '-' + position[1] + '-P';
+                    } else if (image.type === 'cesm') {
+                        image.hangingId = position[0] + '-' + position[1] + '-CESM';
                     } else {
                         image.hangingId = '';
                     }
@@ -438,7 +444,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
 
             // check chest hanging
             const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
-            if(chestProfusion) {
+            if (chestProfusion) {
                 image.hangingId = chestProfusion;
             }
 
@@ -452,26 +458,16 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     let volparaImageId;
     if (volparaImage !== undefined) {
         volparaImageId = volparaImage.id;
-        // const imageLine1 = getHangingImageOrder(
-        //     newList.filter(image => (image.type === 'test' || image.type === 'prior')),
-        //     "CC-R_CC-L", defaultImagesNumber,
-        //     false, currentThicknessType)[0];
-        // const imageLine2 = getHangingImageOrder(
-        //     newList.filter(image => (image.type === 'test' || image.type === 'prior')),
-        //     "MLO-R_MLO-L", defaultImagesNumber,
-        //     false, currentThicknessType)[0];
-        // showImageList = [imageLine1, imageLine2];
 
-        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior')), selectedHangingType, defaultImagesNumber, false, currentThicknessType);
+        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm')), selectedHangingType, defaultImagesNumber, false, currentThicknessType);
 
     } else {
         showImageList = getHangingImageOrder(
-            newList.filter(image => (image.type === 'test' || image.type === 'prior')),
+            newList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm')),
             selectedHangingType, defaultImagesNumber,
             true, currentThicknessType);
     }
     const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser, testSetHangingType);
-console.log(testSetHangingType, 'asdfwefasdf')
     showImageList = showImageList.filter((v) => v.length !== 0);
     const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
     dispatch({
@@ -494,19 +490,19 @@ console.log(testSetHangingType, 'asdfwefasdf')
 
 export const changeHangingLayout = (type) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber, isShowImageBrowser, testSetHangingType, selectedHangingType, testSetHangingIdList} = getState().testView;
-    if(type === 'next') {
-        if(testSetHangingIdList.length === 0) return;
+    if (type === 'next') {
+        if (testSetHangingIdList.length === 0) return;
         const i = testSetHangingIdList.findIndex((v) => v === selectedHangingType);
-        if(i !== -1) {
+        if (i !== -1) {
             type = i === testSetHangingIdList.length - 1 ? testSetHangingIdList[0] : testSetHangingIdList[i + 1];
         } else {
             type = '';
         }
-    } else if(type === 'reset') {
+    } else if (type === 'reset') {
         type = testSetHangingIdList.length > 0 ? testSetHangingIdList[0] : '';
     }
     const list = getHangingImageOrder(imageList, type, defaultImagesNumber, true, getState().testView.currentThicknessType);
-    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
+    const {initialZoomLevel, imgMLOMaxRealHeight} = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -514,7 +510,7 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel, imgMLOMaxRealHeight},
+            payload: {initialZoomLevel, imgMLOMaxRealHeight},
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -596,7 +592,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         }
         list.push(row);
     }
-    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
+    const {initialZoomLevel, imgMLOMaxRealHeight} = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -604,7 +600,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel, imgMLOMaxRealHeight },
+            payload: {initialZoomLevel, imgMLOMaxRealHeight},
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -620,7 +616,7 @@ export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) 
 export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
     const {imageList, defaultImagesNumber, selectedHangingType, isShowImageBrowser, testSetHangingType} = getState().testView;
     const list = getHangingImageOrder(imageList, selectedHangingType, defaultImagesNumber, true, thicknessType);
-    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
+    const {initialZoomLevel, imgMLOMaxRealHeight} = calcInitialZoomLevel(list, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -628,7 +624,7 @@ export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel, imgMLOMaxRealHeight },
+            payload: {initialZoomLevel, imgMLOMaxRealHeight},
         });
         dispatch({
             type: TEST_VIEW_SET_RESET_ID,
@@ -641,7 +637,7 @@ export const changeThicknessType = (thicknessType) => (dispatch, getState) => {
     });
 };
 
-export const focusImageViewer = (viewerIndex) =>(dispatch, getState) => {
+export const focusImageViewer = (viewerIndex) => (dispatch, getState) => {
     dispatch({
         type: TEST_VIEW_FOCUS_IMAGEVIEWER,
         payload: viewerIndex

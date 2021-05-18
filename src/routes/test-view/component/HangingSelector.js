@@ -53,7 +53,8 @@ class HangingSelector extends Component{
             const imgSrc = require('Assets/img/hangings/' + value + '.png')
             return <img src={imgSrc} width={70} alt=''/>
         } catch (e) {
-            return <span className={'hanging-id-text'}>{value}</span>
+            // remove first hangingID when chest
+            return <span className={'hanging-id-text'}>{value.split('_').pop()}</span>
         }
     }
 
