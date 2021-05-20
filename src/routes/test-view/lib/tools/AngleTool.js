@@ -206,7 +206,7 @@ export default class MyAngleTool extends AngleTool {
                         const textWidth = context.measureText(text).width + 2 * padding;
 
 
-                        if (handleMiddleCanvas.x < handleStartCanvas.x) {
+                        if (handleMiddleCanvas.x > handleStartCanvas.x) {
                             textCoords.x -= distance + textWidth + 10;
                         } else {
                             textCoords.x += distance;

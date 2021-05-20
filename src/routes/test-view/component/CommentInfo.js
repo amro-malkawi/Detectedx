@@ -28,7 +28,7 @@ class CommentInfo extends Component {
         super(props);
         this.state = {
             commentText: '',
-            panelOpen: (props.modality_type === 'volpara' && props.complete),
+            panelOpen: ((props.modality_type === 'volpara' || props.modality_type === 'image_quality') && props.complete),
             imageCount: props.imageList.length,
             isGETestCase: false,
             loading: true,
