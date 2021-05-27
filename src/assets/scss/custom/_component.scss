@@ -1,4 +1,32 @@
-/*====== Components styles ======*/
+
+/*====== fonts ======*/
+@font-face {
+  font-family: "DINNeuzeitGroteskLTW01-_812426";
+  src: url("../fonts/DINNeuzeitGroteskLTW01-_812426.eot?#iefix");
+  src: url("../fonts/DINNeuzeitGroteskLTW01-_812426.eot?#iefix") format("eot"),
+  url("../fonts/DINNeuzeitGroteskLTW01-_812426.woff2") format("woff2"),
+  url("../fonts/DINNeuzeitGroteskLTW01-_812426.woff") format("woff"),
+  url("../fonts/DINNeuzeitGroteskLTW01-_812426.ttf") format("truetype"),
+  url("../fonts/DINNeuzeitGroteskLTW01-_812426.svg#76250d27-b353-4f3b-90c6-0ff635fabaab") format("svg");
+}
+
+@font-face {
+  font-family: "DIN-Next-W01-Light";
+  src: url("../fonts/DIN-Next-W01-Light.eot?#iefix");
+  src: url("../fonts/DIN-Next-W01-Light.eot?#iefix") format("eot"),
+  url("../fonts/DIN-Next-W01-Light.woff") format("woff"),
+  url("../fonts/DIN-Next-W01-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Avenir";
+  src: url("../fonts/Avenir.eot?#iefix");
+  src: url("../fonts/Avenir.eot?#iefix") format("eot"),
+  url("../fonts/Avenir.woff2") format("woff2"),
+  url("../fonts/Avenir.woff") format("woff"),
+  url("../fonts/Avenir.ttf") format("truetype"),
+  url("../fonts/Avenir.svg#b0268c31-e450-4159-bfea-e0d20e2b5c0c") format("svg");
+}
 
 /*====== Payment component ======*/
 
@@ -140,6 +168,131 @@
       font-family: din-next-w01-light, sans-serif;
       font-size: 30px;
       font-weight: 900;
+    }
+  }
+
+
+
+  .plan-item {
+    margin: 10px 0 !important;
+    padding-top: 15px;
+    box-shadow: 1px 1px 7px 1px #aaaaaa80 !important;
+
+    p {
+      margin-bottom: 1.25rem; //20px;
+    }
+
+    .pricing-icon {
+      width: 45%;
+      margin: auto;
+      svg {
+        height: 47px;
+        fill: #a0acb8;
+      }
+    }
+
+    .pricing-title {
+      font-size: 27px;
+      font-weight: bold;
+      margin-bottom: 1.25rem; //20px
+      text-transform: capitalize;
+    }
+
+    .amount-title {
+      font-weight: 700;
+      font-size: 1.25rem; //36px;
+    }
+
+    .plan-credit {
+      color: red;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .fixed-pricing {
+      background-color: $block-bg;
+      border-radius: $block-border-radius;
+      box-shadow: $block-shadow;
+      transition: $block-transition;
+      margin-bottom: $block-margin-bottom;
+      position: relative;
+
+      .pricing-box {
+        @include border(1px solid, $input-border-color, right);
+      }
+    }
+
+    .pricing-body,
+    .pricing-head {
+      padding: 1.875rem 3.125rem; //30px 50px;
+    }
+
+    .plan-info {
+      background-color: $gray-400;
+      padding: 0.625rem 3.125rem; //10px 50px;
+    }
+
+    .plan-info-listing {
+      @extend .price-detail;
+
+      li {
+        i {
+          margin-right: 0.9375rem;
+        }
+      }
+    }
+
+    .price-button {
+      &:disabled {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        background-image: none;
+      }
+    }
+
+    .price-detail {
+      margin-bottom: 0; //35px;
+      li {
+        margin-bottom: 0.425rem; //10px;
+        font-size: 0.775rem; //14px;
+      }
+    }
+
+    .testimonial-wrapper {
+      .media-body {
+        p {
+          font-style: italic;
+          font-size: 1.125rem; //18px;
+          margin-bottom: 1.25rem; //20px;
+          line-height: 30px;
+        }
+      }
+
+      .user-meta {
+        span {
+          color: $gray-700;
+        }
+      }
+    }
+
+    .faq-wrapper {
+      .card-title {
+        margin-bottom: 1.25rem; //20px
+        font-size: 1rem; //16px;
+      }
+
+      .card-text {
+        font-size: 0.875rem; //14px;
+        color: $gray-700;
+      }
+    }
+
+    .testimonial-slider {
+      .slick-dots {
+        text-align: left;
+        bottom: -50px;
+        left: 185px;
+      }
     }
   }
 

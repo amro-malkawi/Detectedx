@@ -8,7 +8,6 @@ import {NotificationContainer} from 'react-notifications';
 import {browserName, isChrome, isFirefox} from 'react-device-detect';
 import RctThemeProvider from './RctThemeProvider';
 import RctDefaultLayout from './DefaultLayout';
-import RctSiteLayout from './SiteLayout';
 import AppSignIn from './Signin';
 import AppSignUp from './Signup';
 import Terms from './Terms';
@@ -64,15 +63,10 @@ class App extends Component {
             <RctThemeProvider>
                 <NotificationContainer/>
                 <Switch>
-                    <Route
-                        path={`${match.url}site`}
-                        component={RctSiteLayout}
-                    />
                     <PrivateRoute
                         path={`${match.url}app`}
                         authUser={isLogin}
                         component={RctDefaultLayout}
-                        // component={RctSiteLayout}
                     />
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
