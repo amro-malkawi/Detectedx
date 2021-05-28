@@ -36,7 +36,6 @@ const ShortcutContainer = ({className, complete, children, toolList, currentTool
         TOOL_MARKERFREEHAND: () => onChangeTool('MarkerFreehand'),
         TOOL_RESET: () => changeHangingLayout('reset'),
         HANGING_NEXT: () => changeHangingLayout('next'),
-        // HANGING_NEXT: () => console.log('space'),
     };
 
     const onChangeTool = (selectedTool) => {

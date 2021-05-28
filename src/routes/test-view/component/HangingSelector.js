@@ -64,7 +64,11 @@ class HangingSelector extends Component{
             const selectedIndex = this.props.testSetHangingIdList.findIndex((v) => v === this.props.selectedHangingType);
             return (
                 <div className={'hanging-type-container'}>
-                    <Button variant="contained" color="default" className={'hanging-button'} onClick={(event) => this.setState({type: event.currentTarget})}>
+                    <Button
+                        onKeyUp={(e) => e.preventDefault()}
+                        variant="contained" color="default" className={'hanging-button'}
+                        onClick={(event) => this.setState({type: event.currentTarget})}
+                    >
                         {this.renderHangingIcon(this.props.selectedHangingType)}
                     </Button>
                     <StyledMenu

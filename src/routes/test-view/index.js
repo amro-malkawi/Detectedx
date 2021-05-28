@@ -160,7 +160,8 @@ class TestView extends Component {
                     complete = attemptsDetail.complete;
                 }
             }
-            that.synchronizer.enabled = testCaseViewInfo.images.every((v) => v.stack_count === 1);
+            that.synchronizer.enabled = ( testCaseViewInfo.images.every((v) => v.stack_count === 1) && testCaseViewInfo.modalities.modality_type !== 'chest') ;
+
             const testCaseIndex = testSetsCases.findIndex((v) => v.test_case_id === that.state.test_cases_id);
             that.setState({
                 test_case: testCaseViewInfo,
