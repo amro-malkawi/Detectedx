@@ -1,8 +1,10 @@
 import React, {Component} from "react";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
+import {setImageEDBreastQuality} from "Actions";
+import {connect} from "react-redux";
 
-export default class QualityQuestions extends Component {
+class QualityQuestions extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +22,7 @@ export default class QualityQuestions extends Component {
 
     getData() {
         Apis.getAttemptImageQuality(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then((resp) => {
-            const {qualityQuestion, quality_answer, quality_truth} = resp;
+            const {qualityQuestion, quality_answer, quality_truth, breastQuality} = resp;
             const openQuestionList = {};
             qualityQuestion.forEach((q) => {
                 openQuestionList[q.id] = (quality_answer[q.id] !== undefined || quality_truth[q.id] !== undefined);
@@ -34,7 +36,7 @@ export default class QualityQuestions extends Component {
                 }
             }
 
-
+            this.props.setImageEDBreastQuality(breastQuality);
 
             this.setState({
                 question: qualityQuestion,
@@ -188,3 +190,9 @@ export default class QualityQuestions extends Component {
         )
     }
 }
+
+
+
+export default connect(null, {
+    setImageEDBreastQuality
+})(QualityQuestions);

@@ -8,6 +8,7 @@ import IntlMessages from "Util/IntlMessages";
 import {isMobile} from "react-device-detect";
 import GEThicknessSwitch from "./GEThicknessSwitch";
 import ImageScrollBar, {adjustSlideSize} from "./ImageScrollBar";
+import ImageEDMamoQuality from "../ImageEDMamoQuality";
 
 export default class ImageOverlap extends Component {
     constructor(props) {
@@ -128,7 +129,6 @@ export default class ImageOverlap extends Component {
     render() {
         const {canDrawMarker, onClearSymbols, age, imageMetaData, imagePosition} = this.props;
         const {cursorPosition, imageZoomLevel, imageWW, imageWL} = this.state;
-
         // const isRightBrestImage = (this.props.stackCount > 1 && imagePosition !== undefined && imagePosition.imageLaterality === 'R');
         const isRightBrestImage = (imagePosition !== undefined && imagePosition.imageLaterality === 'R');
         let containerClass = 'image-overlap-container ';
@@ -176,6 +176,7 @@ export default class ImageOverlap extends Component {
                                 </a>
                             }
                         </div>
+                        <ImageEDMamoQuality imagePosition={imagePosition}/>
                         <GEThicknessSwitch
                             age={age}
                             metaData={imageMetaData}
