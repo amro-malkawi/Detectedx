@@ -592,6 +592,7 @@ class TestView extends Component {
                                         test_case_id={this.state.test_cases_id}
                                         attempts_id={this.state.attempts_id}
                                         modality_type={this.state.test_case.modalities.modality_type}
+                                        modality_name={this.state.test_case.modalities.name}
                                         complete={this.state.complete}
                                     />
                                 }
