@@ -195,4 +195,4 @@ class QualityQuestions extends Component {
 
 export default connect(null, {
     setImageEDBreastQuality
-})(QualityQuestions);
+}, null, {forwardRef: true})(QualityQuestions);

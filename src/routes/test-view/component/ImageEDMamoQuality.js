@@ -4,9 +4,12 @@ import {connect} from "react-redux";
 const ImageEDMamoQuality = ({imagePosition, imageEDBreastQuality}) => {
     try {
         if (!imagePosition || !imagePosition.viewPosition || !imagePosition.imageLaterality) return null;
-        const truthQuality = imageEDBreastQuality.truth[imagePosition.viewPosition + '-' + imagePosition.imageLaterality];
-        const answerQuality = imageEDBreastQuality.answer[imagePosition.viewPosition + '-' + imagePosition.imageLaterality];
+        const viewPosition = imagePosition.viewPosition.indexOf('CC') !== -1 ? 'CC' : (imagePosition.viewPosition.indexOf('MLO') !== -1 ? 'MLO' : '');
+        const imageLaterality = imagePosition.imageLaterality;
+        const truthQuality = imageEDBreastQuality.truth[viewPosition + '-' + imageLaterality];
+        const answerQuality = imageEDBreastQuality.answer[viewPosition + '-' + imageLaterality];
         if (!truthQuality || !answerQuality) return null;
+        console.log('asdfasdfasdf', imagePosition)
         return (
             <div className={'imageed-breast-quality'}>
                 {
