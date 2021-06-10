@@ -30,9 +30,8 @@ import ImageViewerContainer from './component/ImageViewerContainer'
 import Marker from './lib/tools/MarkerTool';
 import viewerSynchronizer from "./lib/viewerSynchronizer";
 import InstructionModal from '../instructions';
-import CovidQuestions from "./component/CovidQuestions";
-import QualityQuestions from "./component/QualityQuestions";
-import ChestQuestions from "./component/ChestQuestions";
+import SideQuestions from "./component/SideQuestions";
+import CovidQuestions from "./component/SideQuestions/CovidQuestions";
 import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
 import ImageBrowser from "./component/ImageBrowser";
@@ -44,7 +43,6 @@ import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
-import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
 import VideoModal from "Routes/instructions/VideoModal";
 
 class TestView extends Component {
@@ -79,6 +77,7 @@ class TestView extends Component {
             reattemptScore: 0,
             postTestRemainCount: 0,
         };
+        this.sideQuestionRef = React.createRef();
         this.covidQuestionRef = React.createRef();
         this.qualityQuestionRef = React.createRef();
         this.chestQuestionRef = React.createRef();
@@ -263,25 +262,35 @@ class TestView extends Component {
 
     validateForNext() {
         let valid = true;
-        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'covid') {
-            const covidRating = this.covidQuestionRef.current.state.selectedRating;
-            if (isNaN(covidRating) || Number(covidRating) < 0 || Number(covidRating) > 5) {
-                NotificationManager.error(<IntlMessages id={"testView.selectSuspicionNumber"}/>);
-                valid = false;
-            }
-        } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'chest') {
-            const chestRating = this.chestQuestionRef.current.state.answerRating;
-            if (isNaN(chestRating) || Number(chestRating) < 0 || Number(chestRating) > 5) {
-                NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
-                valid = false;
-            }
-        } else if(!this.state.complete && this.state.test_case.modalities.modality_type === 'image_quality') {
-            if(!this.qualityQuestionRef.current.checkQualityAnswerValidate()) {
-                NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
+        if(!this.state.complete) {
+            if(this.sideQuestionRef.current && this.sideQuestionRef.current.checkQuestionValidate) {
+                valid = this.sideQuestionRef.current.checkQuestionValidate();
+            } else {
+                console.error('can not find question validation function');
                 valid = false;
             }
         }
-        return valid
+        return valid;
+
+        // if (!this.state.complete && this.state.test_case.modalities.modality_type === 'covid') {
+        //     const covidRating = this.covidQuestionRef.current.state.selectedRating;
+        //     if (isNaN(covidRating) || Number(covidRating) < 0 || Number(covidRating) > 5) {
+        //         NotificationManager.error(<IntlMessages id={"testView.selectSuspicionNumber"}/>);
+        //         valid = false;
+        //     }
+        // } else if (!this.state.complete && this.state.test_case.modalities.modality_type === 'chest') {
+        //     const chestRating = this.chestQuestionRef.current.state.answerRating;
+        //     if (isNaN(chestRating) || Number(chestRating) < 0 || Number(chestRating) > 5) {
+        //         NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
+        //         valid = false;
+        //     }
+        // } else if(!this.state.complete && this.state.test_case.modalities.modality_type === 'imaged_mammo') {
+        //     if(!this.qualityQuestionRef.current.checkQualityAnswerValidate()) {
+        //         NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
+        //         valid = false;
+        //     }
+        // }
+        // return valid
     }
 
     onNext() {
@@ -486,7 +495,7 @@ class TestView extends Component {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
-        } else if (this.state.test_case.modalities.modality_type === 'volpara' || this.state.test_case.modalities.modality_type === 'image_quality') {
+        } else if (this.state.test_case.modalities.modality_type === 'volpara' || this.state.test_case.modalities.modality_type === 'imaged_mammo') {
             return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
@@ -494,7 +503,7 @@ class TestView extends Component {
             let resultStr;
             if(this.state.test_case.modalities.modality_type === 'covid') {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>
-            } else if (this.state.test_case.modalities.modality_type === 'chest') {
+            } else if (this.state.test_case.modalities.modality_type === 'chest' || this.state.test_case.modalities.modality_type === 'imaged_chest') {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.abnormalChest"}/> : <IntlMessages id={"testView.truth.normalChest"}/>
             } else {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
@@ -599,7 +608,6 @@ class TestView extends Component {
                                 {
                                     this.state.complete && this.state.test_case.modalities.modality_type === 'covid' &&
                                     <CovidQuestions
-                                        ref={this.covidQuestionRef}
                                         attempts_id={this.state.attempts_id}
                                         test_case_id={this.state.test_cases_id}
                                         complete={true}
@@ -614,37 +622,46 @@ class TestView extends Component {
                                     complete={this.state.complete}
                                     onShowPopup={this.handleShowPopup.bind(this)}
                                 />
-                                {
-                                    this.state.test_case.modalities.modality_type === 'covid' &&
-                                    <CovidQuestions
-                                        ref={this.covidQuestionRef}
-                                        attempts_id={this.state.attempts_id}
-                                        test_case_id={this.state.test_cases_id}
-                                        complete={this.state.complete}
-                                        isTruth={false}
-                                        isPostTest={this.state.isPostTest}
-                                    />
-                                }
-                                {
-                                    this.state.test_case.modalities.modality_type === 'chest' &&
-                                    <ChestQuestions
-                                        ref={this.chestQuestionRef}
-                                        attempts_id={this.state.attempts_id}
-                                        test_case_id={this.state.test_cases_id}
-                                        complete={this.state.complete}
-                                        isPostTest={this.state.isPostTest}
-                                    />
-                                }
-                                {
-                                    this.state.test_case.modalities.modality_type === 'image_quality' &&
-                                    <QualityQuestions
-                                        ref={this.qualityQuestionRef}
-                                        attempts_id={this.state.attempts_id}
-                                        test_case_id={this.state.test_cases_id}
-                                        complete={this.state.complete}
-                                        isPostTest={this.state.isPostTest}
-                                    />
-                                }
+                                <SideQuestions
+                                    modality_type={this.state.test_case.modalities.modality_type}
+                                    ref={this.sideQuestionRef}
+                                    attempts_id={this.state.attempts_id}
+                                    test_case_id={this.state.test_cases_id}
+                                    complete={this.state.complete}
+                                    isTruth={false}  // for covid question(truth left panel or answer right panel)
+                                    isPostTest={this.state.isPostTest}
+                                />
+                                {/*{*/}
+                                {/*    this.state.test_case.modalities.modality_type === 'covid' &&*/}
+                                {/*    <CovidQuestions*/}
+                                {/*        ref={this.covidQuestionRef}*/}
+                                {/*        attempts_id={this.state.attempts_id}*/}
+                                {/*        test_case_id={this.state.test_cases_id}*/}
+                                {/*        complete={this.state.complete}*/}
+                                {/*        isTruth={false}   // for covid question*/}
+                                {/*        isPostTest={this.state.isPostTest}*/}
+                                {/*    />*/}
+                                {/*}*/}
+                                {/*{*/}
+                                {/*    this.state.test_case.modalities.modality_type === 'chest' &&*/}
+                                {/*    <ChestQuestions*/}
+                                {/*        ref={this.chestQuestionRef}*/}
+                                {/*        attempts_id={this.state.attempts_id}*/}
+                                {/*        test_case_id={this.state.test_cases_id}*/}
+                                {/*        complete={this.state.complete}*/}
+                                {/*        isPostTest={this.state.isPostTest}*/}
+                                {/*    />*/}
+                                {/*}*/}
+                                {/*{*/}
+                                {/*    this.state.test_case.modalities.modality_type === 'imaged_mammo' &&*/}
+                                {/*    <QualityQuestions*/}
+                                {/*        ref={this.qualityQuestionRef}*/}
+                                {/*        attempts_id={this.state.attempts_id}*/}
+                                {/*        test_case_id={this.state.test_cases_id}*/}
+                                {/*        complete={this.state.complete}*/}
+                                {/*        isPostTest={this.state.isPostTest}*/}
+                                {/*    />*/}
+                                {/*}*/}
                             </DndProvider>
                         </div>
                     </ShortcutContainer>

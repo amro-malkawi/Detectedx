@@ -4,7 +4,7 @@ import {NotificationManager} from "react-notifications";
 import {setImageEDBreastQuality} from "Actions";
 import {connect} from "react-redux";
 
-class QualityQuestions extends Component {
+class ImagEDMammoQuestions extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -57,7 +57,7 @@ class QualityQuestions extends Component {
         });
     }
 
-    checkQualityAnswerValidate() {
+    checkQuestionValidate() {
         const {selectedValue} = this.state;
         const errorQuestions = [];
         let valid = true;
@@ -193,4 +193,4 @@ class QualityQuestions extends Component {
 
 export default connect(null, {
     setImageEDBreastQuality
-}, null, {forwardRef: true})(QualityQuestions);
+}, null, {forwardRef: true})(ImagEDMammoQuestions);

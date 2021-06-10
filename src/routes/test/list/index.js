@@ -119,7 +119,7 @@ class List extends Component {
     }
 
     renderLearningButton(test_set_item, modality_info) {
-        if (modality_info.modality_type === 'image_quality' || modality_info.instruction_type === "PCT") {
+        if (modality_info.modality_type === 'imaged_mammo' || modality_info.instruction_type === "PCT") {
             return null;
         } else {
             return (
