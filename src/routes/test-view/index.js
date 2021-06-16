@@ -263,11 +263,13 @@ class TestView extends Component {
     validateForNext() {
         let valid = true;
         if(!this.state.complete) {
-            if(this.sideQuestionRef.current && this.sideQuestionRef.current.checkQuestionValidate) {
-                valid = this.sideQuestionRef.current.checkQuestionValidate();
-            } else {
-                console.error('can not find question validation function');
-                valid = false;
+            if (['covid', 'chest', 'imaged_chest', 'imaged_mammo'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
+                if (this.sideQuestionRef.current && this.sideQuestionRef.current.checkQuestionValidate) {
+                    valid = this.sideQuestionRef.current.checkQuestionValidate();
+                } else {
+                    console.error('can not find question validation function');
+                    valid = false;
+                }
             }
         }
         return valid;
