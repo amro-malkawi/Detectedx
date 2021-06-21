@@ -1,7 +1,7 @@
 import React from 'react';
 import {Col} from "reactstrap";
 
-export default function() {
+export default function({instructionLocale}) {
     return (
         <div>
             <p className={'sub-menu-title'}>The Tools bar</p>
@@ -56,7 +56,8 @@ export default function() {
             <div className={'row'}>
                 <Col sm={7} className={'right-border'}>
                     <p>
-                        Opens the images of a case as thumbnails on the right side of the screen.<br/>
+                        Open by default, you can hide by clicking on the series icon.<br/>
+                        the images of a case as thumbnails on the right side of the screen.<br/>
                         You can drag images from this window to the main windows allowing you too view extra images on the test/answers windows.
                     </p>
                 </Col>
@@ -76,22 +77,16 @@ export default function() {
                         <span style={{color: '#42A5F5'}}>Tip:</span>
                         you can <u><b><i>double click</i></b></u> on any view to open it in a single screen, <u><b><i>double click</i></b></u> again to go back to 4 screen configuration.
                     </p>
+                    <p>
+                        <span style={{color: '#42A5F5'}}>Tip:</span>
+                        you can <u><b><i>click</i></b></u> on any view and then continue pressing the space bar until you have found the hanging protocol you like.
+                    </p>
                 </Col>
                 <Col sm={5}>
                     <img src={require('Assets/img/instruction/img_grid.jpg')} width={'50%'} alt={''} style={{margin: 'auto'}}/>
                 </Col>
             </div>
             <hr />
-            <p className={'sub-menu-title'}> Slices </p>
-            <div className={'row'}>
-                <Col sm={7}>
-                    <p> Each breast view has a slide bar to help you navigate through the image slices. Use the mouse or the up/down arrow keys on your keyboard to move through the slices for each view. </p>
-                </Col>
-                <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_brest.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
-                </Col>
-            </div>
-            <hr/>
 
             <p className={'sub-menu-title'}> Marking a lesion </p>
             <div className={'row'}>
@@ -100,6 +95,12 @@ export default function() {
                         <p> 1. Select the <span style={{color: '#42A5F5'}}>Mark</span> tool </p>
                         <p> 2. Place your mouse pointer over the site you want to mark. </p>
                         <p> 3. <span style={{color: '#42A5F5'}}>Click</span> to mark a lesion </p>
+                    </div>
+                </Col>
+            </div>
+            <div className={'row'}>
+                <Col sm={7}>
+                    <div>
                         <p> 4. A pop-up menu will appear asking you yo rate the lesion </p>
                         <ul>
                             <li>2 = Benign</li>
@@ -107,16 +108,15 @@ export default function() {
                             <li>4 = Suspicious</li>
                             <li>5 = Malignant</li>
                         </ul>
+                        <p>
+                            Tip: Rating a case 3, 4, or 5, means you are calling this <span style={{color: '#42A5F5'}}>a positive case, i.e. it requires further investigation / assessment.</span>
+                        </p>
                     </div>
                 </Col>
                 <Col sm={5}>
                     <img src={require('Assets/img/instruction/img_mammo1.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
                 </Col>
             </div>
-            <hr/>
-            <p>
-                <span style={{color: '#42A5F5'}}>Tip:</span> Rating a case 3, 4, or 5, means you are calling this <span style={{color: '#42A5F5'}}>a positive case, i.e. it requires further investigation / assessment.</span>
-            </p>
             <hr/>
 
             <div className={'row'}>
@@ -130,12 +130,12 @@ export default function() {
                             <li>Click on lesion type to select it.</li>
                             <li>Other selection boxes will appear depending on your choice.</li>
                             <li>To add a second lesion, please repeat all the above steps.</li>
-                            <li>To change the lesion type on a selected lesion, you can click in the centre of the yellow circle and choose another lesion type.</li>
+                            <li>To change the lesion type on a selected lesion, you can click in the centre of the yellow circle and choose another lesion type</li>
                         </ul>
                     </div>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_mammo2.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
+                    <img src={require('Assets/img/instruction/img_mammo2.png')} width={'70%'} alt={''} style={{margin: "auto"}} />
                 </Col>
             </div>
             <hr/>

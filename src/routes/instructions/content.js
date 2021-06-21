@@ -11,6 +11,7 @@ import InstructionPCT from "./InstructionPCT";
 import InstructionVolpara from "./InstructionVolpara";
 import InstructionDentalED from "./InstructionDentalED";
 import InstructionQuality from "./InstructionQuality";
+import InstructionGECESM from "./InstructionGECESM";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
@@ -43,6 +44,8 @@ class Content extends Component {
             return <InstructionDentalED instructionLocale={this.props.locale} />
         } else if (type === 'QUALITY') {
             return <InstructionQuality instructionLocale={this.props.locale} />
+        } else if (type === 'GE-CESM') {
+            return <InstructionGECESM instructionLocale={this.props.locale} />
         } else if (type === 'all') {
             if (this.state.activeIndex === 1) {
                 return <InstructionMammo instructionLocale={this.props.locale} />

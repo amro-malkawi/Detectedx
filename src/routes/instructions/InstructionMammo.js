@@ -110,7 +110,7 @@ export default function({instructionLocale}) {
                     </div>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_lesion.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
+                    <img src={require('Assets/img/instruction/img_mammo1.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
                 </Col>
             </div>
             <hr/>
@@ -131,8 +131,7 @@ export default function({instructionLocale}) {
                     </div>
                 </Col>
                 <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_mammo1.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
-                    <img src={require('Assets/img/instruction/img_mammo2.png')} width={'70%'} alt={''} style={{margin: "auto"}} className={'mt-10'}/>
+                    <img src={require('Assets/img/instruction/img_mammo2.png')} width={'70%'} alt={''} style={{margin: "auto"}} />
                 </Col>
             </div>
             <hr/>
