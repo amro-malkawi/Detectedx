@@ -14,7 +14,7 @@ const question = [
     {
         id: 'chestQ1',
         label: '1. Image Quality',
-        options: ['1', '2', '3', 'U/R'],
+        options: ['Acceptable', 'Unacceptable'],
         child: {
             q1Options: [['Overexposed', 'Underexposed', 'Artifacts', 'Improper position', 'Poor contrast'], ['Poor processing', 'Underinflation', 'Mottle', 'Other']]
         }
@@ -856,7 +856,7 @@ export default class ChestQuestions extends Component {
         const answerExist = answerValue[questionObj.id] !== undefined && answerValue[questionObj.id].value !== undefined;
         const truthExist = truthValue[questionObj.id] !== undefined && truthValue[questionObj.id].value !== undefined;
         if (
-            questionObj.id === 'chestQ1' && ((answerExist && answerValue[questionObj.id].value !== '1') || (truthExist && truthValue[questionObj.id].value !== '1'))
+            questionObj.id === 'chestQ1' && ((answerExist && answerValue[questionObj.id].value !== 'Acceptable') || (truthExist && truthValue[questionObj.id].value !== 'Acceptable'))
         ) {
             return this.renderQuestion1Additional(questionObj, disabled);
         } else if (

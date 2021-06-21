@@ -343,13 +343,10 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 
 };
 
-export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false) => (dispatch, getState) => {
+export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false, isShowImageBrowser = true) => (dispatch, getState) => {
     const {currentThicknessType} = getState().testView;
-    let isShowImageBrowser = getState().testView.isShowImageBrowser;
-    if (list.length < 2 || isMobile) {
+    if(isMobile) {
         isShowImageBrowser = false;
-    } else {
-        isShowImageBrowser = true;
     }
     let newList = list.map((v, i) => {
         let imageAnswers = answer.find((vv) => v.id === vv.id);
