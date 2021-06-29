@@ -305,6 +305,7 @@ export default class CovidQuestions extends Component {
                             attempts_id={this.props.attempts_id}
                             modality_type={'covid'}
                             complete={this.props.complete}
+                            modality_name={'Covid'}
                         />
                     }
                     <div className={'covid-questions'}>
