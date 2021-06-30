@@ -89,7 +89,7 @@ class BoxplotChart extends Component {
         const q1 = this.state.quartile_25 * this.state.scoreTimes;
         const median = this.state.quartile_50 * this.state.scoreTimes;
         const q3 = this.state.quartile_75 * this.state.scoreTimes;
-        const value = this.props.value * this.state.scoreTimes;
+        const value = this.props.value ? this.props.value * this.state.scoreTimes : 0;
 
         let min = q1 - (q3 - q1);
         min = min < 0 ? 0 : min;
