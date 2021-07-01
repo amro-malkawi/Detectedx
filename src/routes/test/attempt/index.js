@@ -992,10 +992,10 @@ class Attempt extends Component {
                 return;
             }
             scoresForShow.push(v);
-            if (v.metrics.name.indexOf('Specificity(%)') > -1) {
+            if (v.metrics.name.indexOf('rejected') > -1) {
                 specitifity = Number(v.score);
             }
-            if (v.metrics.name.indexOf('Sensitivity(%)') > -1) {
+            if (v.metrics.name.indexOf('acceptable') > -1) {
                 sensitivity = Number(v.score);
             }
             if (v.metrics.name.indexOf('ROC') > -1) {
