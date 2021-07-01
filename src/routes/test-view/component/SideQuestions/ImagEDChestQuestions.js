@@ -24,15 +24,15 @@ const question = [
         label: '2. Are the lungs unobscured?',
         options: ['1', '2', '3'],
         desc: 'Please highlight any parameter below that is obscuring the lungs:',
-        child: ['The scapulae', 'Then chin', 'Arms', 'Patient rotation', 'Patient movement', 'Quantum mottle', 'Collimation'],
+        child: ['The scapulae', 'Then chin', 'Arms', 'Patient rotation', 'Patient movement', 'Quantum mottle', 'Collimation', 'Exposure factors', 'Scattered radiation'],
         showChildOptions: ['1', '2']
     },
     {
         id: 'imagedChestQ3',
         label: '3. Are all important technical requirements adhered to?',
-        options: ['1', '2', '3'],
-        desc: 'requirements adhered to?',
-        child: ['Side marker visible and in the right location', 'Good level of collimation'],
+        options: ['1', '2', '1&2'],
+        desc: 'Please highlight any requirement that isn’t adhered to',
+        child: ['Side marker not visible or in the wrong location', 'Poor level of collimation'],
         showChildOptions: ['3']
     },
 ]
