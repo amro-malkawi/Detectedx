@@ -30,10 +30,10 @@ const question = [
     {
         id: 'imagedChestQ3',
         label: '3. Are all important technical requirements adhered to?',
-        options: ['1', '2', '1&2'],
+        options: ['1', '2', '3'],
         desc: 'Please highlight any requirement that isn’t adhered to',
         child: ['Side marker not visible or in the wrong location', 'Poor level of collimation'],
-        showChildOptions: ['3']
+        showChildOptions: ['1', '2']
     },
 ]
 
