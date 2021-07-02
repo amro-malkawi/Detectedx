@@ -7,7 +7,7 @@
       "build": "webpack --mode production",
       "postbuild": "node scripts/postbuild.js",
       "postinstall": "node scripts/postinstall.js",
-      "test": "jest",
+      "test": "jest jest",
       "e2e": "cypress open"
    },
    "keywords": [
