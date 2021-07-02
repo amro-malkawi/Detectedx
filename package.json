@@ -6,7 +6,8 @@
       "start": "webpack-dev-server --mode development --inline --progress",
       "build": "webpack --mode production",
       "postbuild": "node scripts/postbuild.js",
-      "postinstall": "node scripts/postinstall.js"
+      "postinstall": "node scripts/postinstall.js",
+      "e2e": "cypress open"
    },
    "keywords": [
       "detectedx medical"
@@ -21,6 +22,7 @@
       "babel-preset-stage-2": "^6.24.1",
       "clean-webpack-plugin": "^0.1.19",
       "css-loader": "^0.28.11",
+      "cypress": "^7.6.0",
       "eslint": "^4.19.1",
       "eslint-config-react-app": "^2.1.0",
       "eslint-plugin-flowtype": "^2.47.1",
