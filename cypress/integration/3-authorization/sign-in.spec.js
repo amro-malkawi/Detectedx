@@ -1,4 +1,3 @@
-const frontendSignInUrl = 'http://localhost:3002/signin'
 const apiLogin = {
     method: 'POST',
     url: 'http://localhost:3000/api/users/login'
@@ -11,7 +10,7 @@ const testCredential = {
 /// <reference types="cypress" />
 describe('Sign-In', () => {
     beforeEach(() => {
-        cy.visit(frontendSignInUrl)
+        cy.visit('/signin')
     })
     it('can displays placeholder for username and password, also allow user to sign-in', () => {
         cy.get('#user-mail').type(testCredential.username).should('have.value', testCredential.username)
