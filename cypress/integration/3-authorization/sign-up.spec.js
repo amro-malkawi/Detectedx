@@ -4,7 +4,7 @@ const apiSignup = {
     url: `${apiHost}/users`
 }
 /// <reference types="cypress" />
-describe('Sign-In', () => {
+describe('Sign-Up', () => {
     beforeEach(() => {
         cy.visit('/signup')
     })

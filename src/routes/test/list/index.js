@@ -218,7 +218,7 @@ class List extends Component {
                         <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
                         {
                             modality_info.instruction_type !== null ?
-                                <MuiButton variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
+                                <MuiButton data-cy="instruction-button" variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
                                     <IntlMessages id={"testView.instructions"}/>
                                 </MuiButton> : <div style={{height: 35}}/>
                         }
@@ -248,7 +248,7 @@ class List extends Component {
             return <div className={'mt-50'}/>
         } else {
             return (
-                <div className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
+                <div data-cy="modality-desc-text" className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
                     {
                         !unavailableDescText &&
                         <div className={unavailableVideo ? 'col-sm-12' : 'col-sm-12 col-md-7'} dangerouslySetInnerHTML={{__html: descText}}/>
@@ -259,7 +259,7 @@ class List extends Component {
                             <div className={'d-flex justify-content-center'}>
                                 <h3><strong><IntlMessages id="test.list.instructionVideo"/></strong></h3>
                             </div>
-                            <div className={'instruction-video'}
+                            <div data-cy="instruction-video" className={'instruction-video'}
                                  onClick={() => this.setState({
                                      isShowModalType: 'instructionVideoModal',
                                      modalInfo: {type: modality_info.instruction_type, video: instruction_video}
@@ -289,7 +289,7 @@ class List extends Component {
                 {
                     test_sets.map((item, index) => {
                         return (
-                            <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
+                            <div data-cy="test-set" className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
                                 <Card className="rct-block">
                                     <CardBody>
                                         <div className="row d-flex justify-content-between">
@@ -325,7 +325,7 @@ class List extends Component {
         return (
             <div className="test-list-container news-dashboard-wrapper mb-20">
                 <div className={'test-set-coupon'}>
-                    <MuiButton variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
+                    <MuiButton data-cy="test-set-coupon-button" variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
                         <IntlMessages id={"test.testSetCoupon"}/>
                     </MuiButton>
                 </div>

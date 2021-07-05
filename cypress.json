@@ -1,3 +1,9 @@
 {
-    "baseUrl": "http://localhost:3002"
+    "baseUrl": "http://localhost:3002",
+    "experimentalStudio": true,
+    "env": {
+        "cypress-react-selector": {
+            "root": "#root"
+        }
+    }
 }
