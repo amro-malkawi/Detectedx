@@ -1,20 +1,20 @@
+const apiHost = Cypress.env('apiUrl')
 const apiLogin = {
     method: 'POST',
-    url: 'http://localhost:3000/api/users/login'
+    url: `${apiHost}/users/login`
 }
-const testCredential = {
-    username: 'admin@test.com',
-    password: 'test'
-}
-
 /// <reference types="cypress" />
 describe('Sign-In', () => {
     beforeEach(() => {
         cy.visit('/signin')
     })
     it('can displays placeholder for username and password, also allow user to sign-in', () => {
-        cy.get('#user-mail').type(testCredential.username).should('have.value', testCredential.username)
-        cy.get('#pwd').type(testCredential.password).should('have.value', testCredential.password)
+        cy.get('#user-mail')
+            .type(Cypress.env('test_username'))
+            .should('have.value', Cypress.env('test_username'))
+        cy.get('#pwd')
+            .type(Cypress.env('test_password'))
+            .should('have.value', Cypress.env('test_password'))
         cy.intercept({
             method: apiLogin.method,
             url: apiLogin.url,
