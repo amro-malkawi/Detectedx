@@ -32,6 +32,9 @@ module.exports = (on, config) => {
   config.env.test_signup_insitution = process.env.TEST_SIGN_UP_INSITUTION
   config.env.test_signup_checkbox_allow_to_contact = process.env.TEST_SIGN_UP_CHECKBOX_ALLOW_TO_CONTACT
   config.env.test_signup_checkbox_read_and_agree_term_of_conditions = process.env.TEST_SIGN_UP_CHECKBOX_READ_AND_AGREE_TERM_OF_CONDITIONS
+  
+  // test set coupon
+  config.env.test_set_coupon_invalid_code = process.env.TEST_SET_COUPON_INVALID_CODE
 
   return config
 }
