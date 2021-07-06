@@ -10,14 +10,15 @@ dotenv.config();
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  
+  // api url
+  config.env.apiUrl = process.env.API_URL
 
   // sign in
   config.env.test_username = process.env.TEST_USER_NAME
   config.env.test_password = process.env.TEST_PASSWORD
-  config.env.apiUrl = process.env.API_URL
 
   // sign up
-  config.env.apiUrl = process.env.API_URL
   config.env.test_signup_first_name = process.env.TEST_SIGN_UP_FIRST_NAME
   config.env.test_signup_last_name = process.env.TEST_SIGN_UP_LAST_NAME
   config.env.test_signup_email = process.env.TEST_SIGN_UP_EMAIL
