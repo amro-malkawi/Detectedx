@@ -209,7 +209,7 @@ class TestView extends Component {
                     testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
                     testCaseViewInfo.modalities.number_of_slides,
                     complete,
-                    (testCaseViewInfo.images.length >= 2 && testCaseViewInfo.modalities.modality_type !== 'chest')
+                    (testCaseViewInfo.images.length >= 2 && testCaseViewInfo.modalities.modality_type !== 'chest' && testCaseViewInfo.modalities.modality_type !== 'imaged_mammo')
                 );
                 if(testCaseViewInfo.modalities.modality_type === 'volpara') {
                     that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
