@@ -66,7 +66,7 @@ export default class TestSetCouponModal extends Component {
                         </div>
                         <div className={'col-sm-12 col-md-5'}>
                             <Input
-                                data-cypress="coupon-code-input"
+                                data-cy="coupon-code-input"
                                 type="text"
                                 name="couponCode"
                                 id="couponCode"
@@ -78,7 +78,7 @@ export default class TestSetCouponModal extends Component {
                             />
                         </div>
                         <div className={'col-sm-12 col-md-3'}>
-                            <Button data-cypress="test-set-verify-button" variant="contained" className="btn-light" onClick={() => this.onCheckCouponCode()}>
+                            <Button data-cy="test-set-verify-button" variant="contained" className="btn-light" onClick={() => this.onCheckCouponCode()}>
                                 <IntlMessages id={'test.verify'}/>
                             </Button>
                         </div>

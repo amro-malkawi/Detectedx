@@ -325,7 +325,7 @@ class List extends Component {
         return (
             <div className="test-list-container news-dashboard-wrapper mb-20">
                 <div className={'test-set-coupon'}>
-                    <MuiButton data-cypress="test-set-coupon-button" variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
+                    <MuiButton data-cy="test-set-coupon-button" variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
                         <IntlMessages id={"test.testSetCoupon"}/>
                     </MuiButton>
                 </div>
