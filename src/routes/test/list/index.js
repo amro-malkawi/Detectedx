@@ -218,7 +218,7 @@ class List extends Component {
                         <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
                         {
                             modality_info.instruction_type !== null ?
-                                <MuiButton variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
+                                <MuiButton data-cy="instruction-button" variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
                                     <IntlMessages id={"testView.instructions"}/>
                                 </MuiButton> : <div style={{height: 35}}/>
                         }
