@@ -259,7 +259,7 @@ class List extends Component {
                             <div className={'d-flex justify-content-center'}>
                                 <h3><strong><IntlMessages id="test.list.instructionVideo"/></strong></h3>
                             </div>
-                            <div className={'instruction-video'}
+                            <div data-cy="instruction-video" className={'instruction-video'}
                                  onClick={() => this.setState({
                                      isShowModalType: 'instructionVideoModal',
                                      modalInfo: {type: modality_info.instruction_type, video: instruction_video}
