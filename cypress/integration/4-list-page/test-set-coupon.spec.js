@@ -13,17 +13,15 @@ context('Test Set Coupon', () => {
             cy.visit('/app/test/list')
         })
         it('can popup modal, and allow user to add test set coupon', () => {
-            cy.get('.test-set-coupon > .MuiButtonBase-root > .MuiButton-label')
-                .click()
-            cy.get('#couponCode')
+            cy.getBySel('test-set-coupon-button').click()
+            cy.getBySel('coupon-code-input').click()
                 .type(Cypress.env('test_set_coupon_invalid_code'))
                 .should('have.value', Cypress.env('test_set_coupon_invalid_code'))
             cy.intercept({
                 method: apiCouponInfo.method,
                 url: apiCouponInfo.url,
             }).as("couponInfo");
-            cy.get('.test-set-coupon-info > :nth-child(3) > .MuiButtonBase-root')
-                .click()
+            cy.getBySel('test-set-verify-button').click()
             cy.wait('@couponInfo').then((interception) => {
                 const { statusCode, body } = interception.response;
                 expect(statusCode).to.equal(200)
@@ -37,17 +35,15 @@ context('Test Set Coupon', () => {
             cy.visit('/app/test/list')
         })
         it('can popup modal, and allow user to add test set coupon', () => {
-            cy.get('.test-set-coupon > .MuiButtonBase-root > .MuiButton-label')
-                .click()
-            cy.get('#couponCode')
+            cy.getBySel('test-set-coupon-button').click()
+            cy.getBySel('coupon-code-input').click()
                 .type(Cypress.env('test_set_coupon_valid_code'))
                 .should('have.value', Cypress.env('test_set_coupon_valid_code'))
             cy.intercept({
                 method: apiCouponInfo.method,
                 url: apiCouponInfo.url,
             }).as("couponInfo");
-            cy.get('.test-set-coupon-info > :nth-child(3) > .MuiButtonBase-root')
-                .click()
+            cy.getBySel('test-set-verify-button').click()
             cy.wait('@couponInfo').then((interception) => {
                 const { statusCode, body } = interception.response;
                 expect(statusCode).to.equal(200)
