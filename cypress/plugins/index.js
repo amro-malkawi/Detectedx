@@ -35,6 +35,7 @@ module.exports = (on, config) => {
   
   // test set coupon
   config.env.test_set_coupon_invalid_code = process.env.TEST_SET_COUPON_INVALID_CODE
+  config.env.test_set_coupon_valid_code = process.env.TEST_SET_COUPON_VALID_CODE
 
   return config
 }
