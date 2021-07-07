@@ -4,7 +4,6 @@ const apiHost = Cypress.env('apiUrl')
 const apiCouponInfo = {
     method: 'GET',
     url: `${apiHost}/coupons/**`,
-    statusCode: 200,
 }
 
 context('Test Set Coupon', () => {
