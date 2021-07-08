@@ -248,7 +248,7 @@ class List extends Component {
             return <div className={'mt-50'}/>
         } else {
             return (
-                <div className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
+                <div data-cy="modality-desc-text" className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
                     {
                         !unavailableDescText &&
                         <div className={unavailableVideo ? 'col-sm-12' : 'col-sm-12 col-md-7'} dangerouslySetInnerHTML={{__html: descText}}/>
