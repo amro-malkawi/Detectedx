@@ -289,7 +289,7 @@ class List extends Component {
                 {
                     test_sets.map((item, index) => {
                         return (
-                            <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
+                            <div data-cy="test-set" className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
                                 <Card className="rct-block">
                                     <CardBody>
                                         <div className="row d-flex justify-content-between">
