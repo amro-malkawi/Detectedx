@@ -211,9 +211,10 @@ class List extends Component {
     renderModalityTab({modality_info}) {
         return (
             <ModalityTab
+                data-cy="modality-tab"
                 key={modality_info.id}
                 label={
-                    <div className={'modality-tab-item'}>
+                    <div data-cy="modality-tab-item" className={'modality-tab-item'}>
                         <p>{modality_info.name}</p>
                         <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
                         {
