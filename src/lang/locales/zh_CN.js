@@ -173,6 +173,7 @@ module.exports = {
     "testView.covidQuestion.yourJudgement": "您的判断",
     "testView.chestQuestion.ratingTitle": "对受试者患有职业性肺病的信心",
     "testView.imagedChestQuestion.ratingTitle": "你对这张图片应该被接受有多大信心？",
+    "testView.chestCTQuestion.ratingTitle": "确信受试者患有职业性肺病",
     "testView.browser.laterality": "纬度: ",
     "testView.browser.type": "类型: ",
     "testView.viewer.slice": "切片",
