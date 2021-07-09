@@ -9,17 +9,17 @@ context('Instruction', () => {
             cy.waitForReact();
         })
 
-        it('should be able to current state', () => {
+        xit('should be able to current state', () => {
             cy.wait(500);
             cy.getReact('List', {options: {timeout: 5000}}).nthNode(2).getCurrentState()
         })
-        it('should be able to click on modality tab', () => {
+        xit('should be able to click on modality tab', () => {
             cy.getBySel('modality-tab-item').each(($el, index, $list) => {
                 cy.wrap($el).click().should('exist');
             })
         })
 
-        it('can click instruction button see instruction text', () => {
+        it('should be able to click the instruction button and see instruction text', () => {
             cy.getBySel('modality-tab-item').each(($el, index, $list) => {
                 cy.get($el).children().each((value) => {
                     if (value[0]) {
@@ -32,7 +32,7 @@ context('Instruction', () => {
                                 .click()
                                 .should('exist');
                             cy.wait(1000)
-                            cy.get('.MuiDialogContent-root').scrollTo('bottom')
+                            cy.get('.MuiDialogContent-root').scrollTo('bottom', { duration: 1000 })
                             cy.wait(1000)
                             cy.get('.MuiDialogActions-root > div > .text-white')
                                 .click()
