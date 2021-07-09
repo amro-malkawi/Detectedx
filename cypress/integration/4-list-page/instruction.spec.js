@@ -9,11 +9,11 @@ context('Instruction', () => {
             cy.waitForReact();
         })
 
-        xit('should be able to current state', () => {
+        it('should be able to current state', () => {
             cy.wait(500);
             cy.getReact('List', {options: {timeout: 5000}}).nthNode(2).getCurrentState()
         })
-        xit('should be able to click on modality tab', () => {
+        it('should be able to click on modality tab', () => {
             cy.getBySel('modality-tab-item').each(($el, index, $list) => {
                 cy.wrap($el).click().should('exist');
             })
