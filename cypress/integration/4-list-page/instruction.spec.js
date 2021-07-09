@@ -3,7 +3,7 @@
 let log = console.log
 context('Instruction', () => {
     describe('Expect to see the instruction detail', () => {
-        beforeEach(() => {
+        before(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact();
@@ -19,7 +19,7 @@ context('Instruction', () => {
             })
         })
 
-        it('can click instruction button see instruction text', () => {
+        it('should be able to click the instruction button and see instruction text', () => {
             cy.getBySel('modality-tab-item').each(($el, index, $list) => {
                 cy.get($el).children().each((value) => {
                     if (value[0]) {
@@ -32,7 +32,7 @@ context('Instruction', () => {
                                 .click()
                                 .should('exist');
                             cy.wait(1000)
-                            cy.get('.MuiDialogContent-root').scrollTo('bottom')
+                            cy.get('.MuiDialogContent-root').scrollTo('bottom', { duration: 1000 })
                             cy.wait(1000)
                             cy.get('.MuiDialogActions-root > div > .text-white')
                                 .click()
