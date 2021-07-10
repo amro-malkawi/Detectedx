@@ -263,23 +263,79 @@ export default class ChestCTQuestion extends Component {
                     {
                         aOptions.map((v, i) =>
                             <div className={'question3-check-line'} key={i}>
-                                <div style={{width: 25, paddingTop: 3}}>{v}</div>
-                                <div>
+                                <div style={{width: 30}}>{v}</div>
+                                <RadioGroup
+                                    aria-label="position"
+                                    name="position"
+                                    value={''}
+                                    onChange={(event) => null}
+                                    row
+                                    disabled={disabled}
+                                >
                                     {
-                                        this.renderCheckList(
-                                            cOptions.map((vv) => ({label: vv, value: vv})),
-                                            'mb-0 mr-1', disabled, qId, childQId + 'RValues' + v
-                                        )
+                                        cOptions.map((v) => (
+                                            <QuestionLabel
+                                                key={v}
+                                                value={v}
+                                                control={
+                                                    <QuestionRadio
+                                                        icon={<span className={'chest-question-checkbox-icon'}/>}
+                                                        checkedIcon={<span className={'chest-question-checkbox-icon checked'}/>}
+                                                        disableRipple
+                                                    />
+                                                }
+                                                label={v}
+                                                style={{marginRight: 5}}
+                                                labelPlacement="end"
+                                                disabled={disabled}
+                                            />
+                                        ))
                                     }
-                                </div>
-                                <div>
+                                </RadioGroup>
+                                {/*<div>*/}
+                                {/*    {*/}
+                                {/*        this.renderCheckList(*/}
+                                {/*            cOptions.map((vv) => ({label: vv, value: vv})),*/}
+                                {/*            'mb-0 mr-1', disabled, qId, childQId + 'RValues' + v*/}
+                                {/*        )*/}
+                                {/*    }*/}
+                                {/*</div>*/}
+                                <RadioGroup
+                                    aria-label="position"
+                                    name="position"
+                                    value={''}
+                                    onChange={(event) => null}
+                                    row
+                                    disabled={disabled}
+                                >
                                     {
-                                        this.renderCheckList(
-                                            cOptions.map((vv) => ({label: vv, value: vv})),
-                                            'mb-0 mr-1', disabled, qId, childQId + 'LValues' + v
-                                        )
+                                        cOptions.map((v) => (
+                                            <QuestionLabel
+                                                key={v}
+                                                value={v}
+                                                control={
+                                                    <QuestionRadio
+                                                        icon={<span className={'chest-question-checkbox-icon'}/>}
+                                                        checkedIcon={<span className={'chest-question-checkbox-icon checked'}/>}
+                                                        disableRipple
+                                                    />
+                                                }
+                                                label={v}
+                                                style={{marginRight: 5}}
+                                                labelPlacement="end"
+                                                disabled={disabled}
+                                            />
+                                        ))
                                     }
-                                </div>
+                                </RadioGroup>
+                                {/*<div>*/}
+                                {/*    {*/}
+                                {/*        this.renderCheckList(*/}
+                                {/*            cOptions.map((vv) => ({label: vv, value: vv})),*/}
+                                {/*            'mb-0 mr-1', disabled, qId, childQId + 'LValues' + v*/}
+                                {/*        )*/}
+                                {/*    }*/}
+                                {/*</div>*/}
                             </div>
                         )
                     }
