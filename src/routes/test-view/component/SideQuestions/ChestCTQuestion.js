@@ -48,7 +48,10 @@ const question = [
         options: ['Yes', 'No'],
         child: {
             q3Sub1: {
-                aOptions: ['A', 'B', 'C'],
+                options: ['A', 'B', 'C']
+            },
+            q3Sub2: {
+                aOptions: ['U', 'M', 'L'],
                 bOptions: ['R', 'L']
             }
         }
@@ -250,7 +253,7 @@ export default class ChestCTQuestion extends Component {
     }
 
     renderCheckGroup(qId, childQId, disabled, aOptions, bOptions, cOptions) {
-        return(
+        return (
             <div>
                 <div>
                     <div className={'question2-zone-title'} style={{width: 8, marginLeft: 83, fontSize: 12}}>R</div>
@@ -260,7 +263,7 @@ export default class ChestCTQuestion extends Component {
                     {
                         aOptions.map((v, i) =>
                             <div className={'question3-check-line'} key={i}>
-                                <div style={{width: 25}}>{v}</div>
+                                <div style={{width: 25, paddingTop: 3}}>{v}</div>
                                 <div>
                                     {
                                         this.renderCheckList(
@@ -272,7 +275,7 @@ export default class ChestCTQuestion extends Component {
                                 <div>
                                     {
                                         this.renderCheckList(
-                                            cOptions.map((vv) => ({label: vv,value: vv})),
+                                            cOptions.map((vv) => ({label: vv, value: vv})),
                                             'mb-0 mr-1', disabled, qId, childQId + 'LValues' + v
                                         )
                                     }
@@ -355,22 +358,26 @@ export default class ChestCTQuestion extends Component {
 
     renderQuestion3Additional(questionObj, disabled) {
         const q3Sub1Obj = questionObj.child.q3Sub1;
+        const q3Sub2Obj = questionObj.child.q3Sub2;
         return (
-            <div className={'ml-4'}>
-                <div>
-                    <div style={{marginLeft: 80}}>
-                        {
-                            q3Sub1Obj.bOptions.map((v) =>
-                                <div className={'question2-zone-title'} style={{width: 8, marginLeft: 24}} key={v}>{v}</div>
-                            )
-                        }
+            <div className={'d-flex flex-row ml-4'}>
+                <div className={'col-4 d-flex flex-column'}>
+                    <span>Size</span>
+                    {
+                        this.renderCheckList(q3Sub1Obj.options.map((v) => ({label: v, value: v})), 'mt-1 mb-0', disabled, questionObj.id, 'q1Sub1Values')
+                    }
+                </div>
+                <div className={'col-8'}>
+                    <div>
+                        <div className={'question2-zone-title'} style={{width: 8, marginLeft: 51, fontSize: 12}}>R</div>
+                        <div className={'question2-zone-title'} style={{width: 8, marginLeft: 28, fontSize: 12}}>L</div>
                     </div>
                     {
-                        q3Sub1Obj.aOptions.map((v, i) =>
+                        q3Sub2Obj.aOptions.map((v, i) =>
                             <div className={'ml-3'} key={i}>
-                                <div className={'question2-zone-title mr-4'} style={{width: 60}}>{v}</div>
+                                <div className={'question2-zone-title mr-4'} style={{width: 10}}>{v}</div>
                                 {
-                                    this.renderCheckList(q3Sub1Obj.bOptions.map((vv) => ({label: '', value: v + vv})), 'mb-0', disabled, questionObj.id, 'q1Sub1Values')
+                                    this.renderCheckList(q3Sub2Obj.bOptions.map((vv) => ({label: '', value: v + vv})), 'mb-0', disabled, questionObj.id, 'q1Sub2Values')
                                 }
                             </div>
                         )
