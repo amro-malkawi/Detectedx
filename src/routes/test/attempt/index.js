@@ -93,18 +93,18 @@ class Attempt extends Component {
                 // }
                 steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
             } else {
-                    // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
-                    steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'score', 'answer'] : ['mainQuestions', 'score', 'answer'];
+                // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
+                steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'score', 'answer'] : ['mainQuestions', 'score', 'answer'];
                 if (detail.test_sets.has_post) {
                     steps = steps.concat(['postTest', 'postQuestions', 'postScore']);
                 }
             }
             steps = steps.filter((v) => (hiddenTabs.indexOf(v) === -1));
             let stepIndex;
-            if(isFirstMount) {
+            if (isFirstMount) {
                 if (that.props.match.params.step !== undefined && steps.indexOf(that.props.match.params.step) > -1) {
                     stepIndex = steps.indexOf(that.props.match.params.step);
-                } else if(detail.complete) {
+                } else if (detail.complete) {
                     stepIndex = steps.indexOf('score')
                 } else {
                     stepIndex = 0;
@@ -610,7 +610,7 @@ class Attempt extends Component {
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
                     <Input
                         disabled={commponentDisable}
-                        type="text"
+                        type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
                         name="name"
                         id="name"
                         placeholder=""
@@ -856,19 +856,19 @@ class Attempt extends Component {
         let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
         const scoresForShow = [];
         this.state.attemptInfo.scores.forEach((v) => {
-            if(v.metrics.name.indexOf('True Positive') > -1) {
+            if (v.metrics.name.indexOf('True Positive') > -1) {
                 truePositives = Number(v.score);
                 return;
             }
-            if(v.metrics.name.indexOf('False Positive') > -1) {
+            if (v.metrics.name.indexOf('False Positive') > -1) {
                 falsePositives = Number(v.score);
                 return;
             }
-            if(v.metrics.name.indexOf('True Negative') > -1) {
+            if (v.metrics.name.indexOf('True Negative') > -1) {
                 trueNegatives = Number(v.score);
                 return;
             }
-            if(v.metrics.name.indexOf('False Negative') > -1) {
+            if (v.metrics.name.indexOf('False Negative') > -1) {
                 falseNegatives = Number(v.score);
                 return;
             }
@@ -975,19 +975,19 @@ class Attempt extends Component {
         let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
         const scoresForShow = [];
         this.state.attemptInfo.scores.forEach((v) => {
-            if(v.metrics.name.indexOf('True Positive') > -1) {
+            if (v.metrics.name.indexOf('True Positive') > -1) {
                 truePositives = Number(v.score);
                 return;
             }
-            if(v.metrics.name.indexOf('False Positive') > -1) {
+            if (v.metrics.name.indexOf('False Positive') > -1) {
                 falsePositives = Number(v.score);
                 return;
             }
-            if(v.metrics.name.indexOf('True Negative') > -1) {
+            if (v.metrics.name.indexOf('True Negative') > -1) {
                 trueNegatives = Number(v.score);
                 return;
             }
-            if(v.metrics.name.indexOf('False Negative') > -1) {
+            if (v.metrics.name.indexOf('False Negative') > -1) {
                 falseNegatives = Number(v.score);
                 return;
             }
@@ -1223,7 +1223,7 @@ class Attempt extends Component {
                             </Button>
                         </div>
                     </div>
-                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type} />
+                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
                 </div>
             </div>
         )
@@ -1232,9 +1232,11 @@ class Attempt extends Component {
     renderImagEDMammoScore() {
         let scoreAverage = 0;
         const scores = this.state.attemptInfo.scores;
-        if(scores.length > 0) {
+        if (scores.length > 0) {
             let scoreSum = 0;
-            scores.forEach((v) => {scoreSum += v.score});
+            scores.forEach((v) => {
+                scoreSum += v.score
+            });
             scoreAverage = (scoreSum / scores.length).toFixed(2);
         }
         return (
@@ -1307,7 +1309,7 @@ class Attempt extends Component {
                             </Button>
                         </div>
                     </div>
-                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type} />
+                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
                 </div>
             </div>
         )
@@ -1342,7 +1344,7 @@ class Attempt extends Component {
                     </div>
                 );
             case 'score':
-                if(this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
+                if (this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
                     return this.renderVolparaScore();
                 } else if (this.state.attemptInfo.test_sets.modalities.modality_type === 'imaged_chest') {
                     return this.renderImagEDChestScore();
