@@ -219,7 +219,7 @@ const getImageHangingType = (images) => {
         const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
         return chestProfusion === 'Case';
     });
-    if(isExistCaseImage) {
+    if (isExistCaseImage) {
         let isChestHanging = false;
         images.forEach((image) => {
             const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
@@ -345,7 +345,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 
 export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false, isShowImageBrowser = true) => (dispatch, getState) => {
     const {currentThicknessType} = getState().testView;
-    if(isMobile) {
+    if (isMobile) {
         isShowImageBrowser = false;
     }
     let newList = list.map((v, i) => {
@@ -400,7 +400,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
     // remove other image when test did not complete
     if (!complete) {
-        newList = newList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm'));
+        newList = newList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1));
     }
 
     // sort images by image type, postion
@@ -445,6 +445,11 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
                 image.hangingId = chestProfusion;
             }
 
+            // check ultrasound hanging
+            if(image.type === 'ultrasound') {
+                image.hangingId = 'ULTRASOUND';
+            }
+
         } catch (e) {
             image.hangingId = '';
         }
@@ -454,15 +459,36 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
     if (volparaImage !== undefined) {
+        // show volpara image when test was completed
         volparaImageId = volparaImage.id;
-
-        showImageList = getHangingImageOrder(newList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm')), selectedHangingType, defaultImagesNumber, false, currentThicknessType);
-
+        showImageList = getHangingImageOrder(
+            newList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1)),
+            selectedHangingType, defaultImagesNumber, false, currentThicknessType
+        );
+    } else if (newList.filter((v) => v.type === 'ultrasound').length > 0) {
+        // for Ultrasound modality
+        const uImageIds = newList.filter((v) => v.type === 'ultrasound').map((v) => v.id);
+        if(!complete) {
+            // while test, hanging is 4 x ultrasound image.
+            if(uImageIds.length >= 4) {
+                showImageList = [uImageIds.splice(0, 2), uImageIds.splice(0, 2)];
+            } else {
+                showImageList = [uImageIds];
+            }
+        } else {
+            // when complete, show 2 x ultrasound + 2 x breast image
+            showImageList = [uImageIds.splice(0, 2)];
+            const bImageIds = newList.filter((v) => v.type !== 'ultrasound').map((v) => v.id);
+            if(bImageIds.length > 0) {
+                showImageList.push(bImageIds.splice(0, 2));
+            }
+        }
     } else {
         showImageList = getHangingImageOrder(
-            newList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm')),
+            newList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1)),
             selectedHangingType, defaultImagesNumber,
-            true, currentThicknessType);
+            true, currentThicknessType
+        );
     }
     const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser, testSetHangingType);
     showImageList = showImageList.filter((v) => v.length !== 0);

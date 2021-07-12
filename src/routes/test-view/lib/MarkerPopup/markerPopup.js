@@ -54,11 +54,12 @@ class MarkerPopup extends Component {
 
     handleClosePopup(type) {
         const {onClose, popupCancelHandler, popupDeleteHandler, popupSaveHandler} = this.props;
+        const {lesionList, selectedLesionList} = this.state;
         if (
-            type === 'save' && Number(this.state.selectedRating) > 2
+            type === 'save' && Number(this.state.selectedRating) > 2 &&
+            lesionList.length !== 0
         ) {
             // new lesion types check
-            const {lesionList, selectedLesionList} = this.state;
             if (Object.keys(selectedLesionList).length === 0) {
                 NotificationManager.error(<IntlMessages id={"testView.selectLesionType"}/>);
                 return;
@@ -153,6 +154,7 @@ class MarkerPopup extends Component {
         // value example {Mass: {Shape: 'Oval', Margin: 'Circumscribed}}
         // value example {Asymmetry: 'Global'}
         const {lesionList, selectedLesionList} = this.state;
+        if(lesionList.length === 0) return;
         let options = lesionList.map((v, i) => {
             return {label: v.name, value: v.id}
         });
@@ -282,6 +284,7 @@ class MarkerPopup extends Component {
     }
 
     render() {
+        const {lesionList} = this.state;
         return (
             <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
                 <div id="mark-details" onClick={(e) => {
@@ -289,7 +292,10 @@ class MarkerPopup extends Component {
                 }}>
                     <form>
                         {this.renderRatings()}
-                        <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
+                        {
+                            lesionList.length > 0 &&
+                            <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
+                        }
                         {
                             this.renderLesion()
                         }

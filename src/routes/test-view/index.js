@@ -159,7 +159,7 @@ class TestView extends Component {
                     complete = attemptsDetail.complete;
                 }
             }
-            that.synchronizer.enabled = ( testCaseViewInfo.images.every((v) => v.stack_count === 1) && testCaseViewInfo.modalities.modality_type !== 'chest') ;
+            that.synchronizer.enabled = ( testCaseViewInfo.images.every((v) => v.stack_count === 1) && ['chest', 'ultrasound'].indexOf(testCaseViewInfo.modalities.modality_type) === -1) ;
 
             const testCaseIndex = testSetsCases.findIndex((v) => v.test_case_id === that.state.test_cases_id);
             that.setState({
@@ -187,7 +187,7 @@ class TestView extends Component {
                 needLoadImageList = needLoadImageList.concat(testSetsCases[testCaseIndex + 1].images);
             }
             if (!complete) {
-                needLoadImageList = needLoadImageList.filter(image => (image.type === 'test' || image.type === 'prior' || image.type === 'cesm'));
+                needLoadImageList = needLoadImageList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1));
             }
             needLoadImageList.forEach((v) => {
                 for(let i = 0; i < v.stack_count; i++) {
@@ -637,7 +637,8 @@ class TestView extends Component {
                             <MarkerPopup
                                 attempts_id={this.state.attempts_id}
                                 test_cases_id={this.state.test_cases_id}
-                                lesion_list={this.state.test_case.modalities.lesion_list}
+                                // ultrasound modality does not have lesion in test
+                                lesion_list={this.state.test_case.modalities.modality_type !== 'ultrasound' ? this.state.test_case.modalities.lesion_list : '[]'}
                                 isPostTest={this.state.isPostTest}
                                 markData={this.state.selectedMarkData}
                                 ratings={this.state.test_case.ratings}
