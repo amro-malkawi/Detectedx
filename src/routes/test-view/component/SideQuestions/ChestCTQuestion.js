@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
+import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip} from "@material-ui/core";
 import green from '@material-ui/core/colors/green';
-import {fade, withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import yellow from "@material-ui/core/colors/yellow";
 import red from "@material-ui/core/colors/red";
 import * as Apis from 'Api';
@@ -187,16 +187,6 @@ export default class ChestCTQuestion extends Component {
         if (checkValues === undefined) checkValues = [];
         const valueIndex = checkValues.indexOf(value);
         if (valueIndex === -1) {
-            // chestQ3a/chestQ3a has to be 0 or R, L
-            if (qId === 'chestQ3a' && (childQId === 'q3cValues' || childQId.indexOf('q3bChest') === 0 || childQId.indexOf('q3cChest') === 0)) {
-                if (value === '0') {
-                    checkValues = [];
-                } else {
-                    const zeroIndex = checkValues.indexOf('0');
-                    if (zeroIndex !== -1) checkValues.splice(zeroIndex, 1);
-                }
-            }
-
             checkValues.push(value);
         } else {
             checkValues.splice(valueIndex, 1);
@@ -253,6 +243,15 @@ export default class ChestCTQuestion extends Component {
     }
 
     renderCheckGroup(qId, childQId, disabled, aOptions, bOptions, cOptions) {
+        const {answerValue, truthValue} = this.state;
+        const getTruthIconClass = (childQId, aOption, bOption, value) => {
+            if(
+                !truthValue[qId] ||
+                !truthValue[qId][childQId + aOption + bOption] ||
+                truthValue[qId][childQId + aOption + bOption] !== value
+            ) return '';
+            return ' truth-icon'
+        }
         return (
             <div>
                 <div>
@@ -267,24 +266,24 @@ export default class ChestCTQuestion extends Component {
                                 <RadioGroup
                                     aria-label="position"
                                     name="position"
-                                    value={''}
-                                    onChange={(event) => null}
+                                    value={answerValue[qId][childQId + v + 'R'] ? answerValue[qId][childQId + v + 'R'] : ''}
+                                    onChange={(event) => (disabled ? null : this.onChangeChildValue(qId, childQId + v + 'R', event.target.value))}
                                     row
                                     disabled={disabled}
                                 >
                                     {
-                                        cOptions.map((v) => (
+                                        cOptions.map((vv) => (
                                             <QuestionLabel
-                                                key={v}
-                                                value={v}
+                                                key={vv}
+                                                value={v + vv}
                                                 control={
                                                     <QuestionRadio
-                                                        icon={<span className={'chest-question-checkbox-icon'}/>}
-                                                        checkedIcon={<span className={'chest-question-checkbox-icon checked'}/>}
+                                                        icon={<span className={'chest-question-checkbox-icon' + getTruthIconClass(childQId, v, 'R', v + vv)}/>}
+                                                        checkedIcon={<span className={'chest-question-checkbox-icon checked' + getTruthIconClass(childQId, v, 'R', v + vv)}/>}
                                                         disableRipple
                                                     />
                                                 }
-                                                label={v}
+                                                label={vv}
                                                 style={{marginRight: 5}}
                                                 labelPlacement="end"
                                                 disabled={disabled}
@@ -292,35 +291,27 @@ export default class ChestCTQuestion extends Component {
                                         ))
                                     }
                                 </RadioGroup>
-                                {/*<div>*/}
-                                {/*    {*/}
-                                {/*        this.renderCheckList(*/}
-                                {/*            cOptions.map((vv) => ({label: vv, value: vv})),*/}
-                                {/*            'mb-0 mr-1', disabled, qId, childQId + 'RValues' + v*/}
-                                {/*        )*/}
-                                {/*    }*/}
-                                {/*</div>*/}
                                 <RadioGroup
                                     aria-label="position"
                                     name="position"
-                                    value={''}
-                                    onChange={(event) => null}
+                                    value={answerValue[qId][childQId + v + 'L'] ? answerValue[qId][childQId + v + 'L'] : ''}
+                                    onChange={(event) => (disabled ? null : this.onChangeChildValue(qId, childQId + v + 'L', event.target.value))}
                                     row
                                     disabled={disabled}
                                 >
                                     {
-                                        cOptions.map((v) => (
+                                        cOptions.map((vv) => (
                                             <QuestionLabel
-                                                key={v}
-                                                value={v}
+                                                key={vv}
+                                                value={v + vv}
                                                 control={
                                                     <QuestionRadio
-                                                        icon={<span className={'chest-question-checkbox-icon'}/>}
-                                                        checkedIcon={<span className={'chest-question-checkbox-icon checked'}/>}
+                                                        icon={<span className={'chest-question-checkbox-icon' + getTruthIconClass(childQId, v, 'L', v + vv)}/>}
+                                                        checkedIcon={<span className={'chest-question-checkbox-icon checked' + getTruthIconClass(childQId, v, 'L', v + vv)}/>}
                                                         disableRipple
                                                     />
                                                 }
-                                                label={v}
+                                                label={vv}
                                                 style={{marginRight: 5}}
                                                 labelPlacement="end"
                                                 disabled={disabled}
@@ -328,14 +319,6 @@ export default class ChestCTQuestion extends Component {
                                         ))
                                     }
                                 </RadioGroup>
-                                {/*<div>*/}
-                                {/*    {*/}
-                                {/*        this.renderCheckList(*/}
-                                {/*            cOptions.map((vv) => ({label: vv, value: vv})),*/}
-                                {/*            'mb-0 mr-1', disabled, qId, childQId + 'LValues' + v*/}
-                                {/*        )*/}
-                                {/*    }*/}
-                                {/*</div>*/}
                             </div>
                         )
                     }
@@ -502,9 +485,9 @@ export default class ChestCTQuestion extends Component {
     }
 
     renderAdditionalQuestion(questionObj, disabled) {
-        const answerObj = this.state.answerValue;
-        if (answerObj[questionObj.id] === undefined) return null;
-        if (answerObj[questionObj.id].value !== undefined && answerObj[questionObj.id].value === 'Yes') {
+        const {answerValue, truthValue} = this.state;
+        if (answerValue[questionObj.id] === undefined) return null;
+        if (answerValue[questionObj.id].value !== undefined && answerValue[questionObj.id].value === 'Yes') {
             if (questionObj.id === 'chestCTQ1') {
                 return this.renderQuestion1Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ2') {
@@ -524,7 +507,8 @@ export default class ChestCTQuestion extends Component {
     }
 
     renderQuestion(questionObj, disabled) {
-        const answerObj = this.state.answerValue;
+        const {answerValue, truthValue} = this.state;
+        const qTruth = truthValue[questionObj.id] !== undefined ? truthValue[questionObj.id].value : '';
         return (
             <div key={questionObj.id} className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
@@ -532,7 +516,7 @@ export default class ChestCTQuestion extends Component {
                     className={'ml-4'}
                     aria-label="position"
                     name="position"
-                    value={answerObj[questionObj.id] ? answerObj[questionObj.id].value : ''}
+                    value={answerValue[questionObj.id] ? answerValue[questionObj.id].value : ''}
                     onChange={(event) => (disabled ? null : this.onChangeQuestion(questionObj.id, event.target.value))}
                     row
                     disabled={disabled}
@@ -544,8 +528,8 @@ export default class ChestCTQuestion extends Component {
                                 value={v}
                                 control={
                                     <QuestionRadio
-                                        icon={<span className={'chest-question-radio-icon'}/>}
-                                        checkedIcon={<span className={'chest-question-radio-icon checked'}/>}
+                                        icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                        checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
                                         disableRipple
                                     />
                                 }

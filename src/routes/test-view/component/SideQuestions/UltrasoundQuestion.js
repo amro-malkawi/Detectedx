@@ -7,7 +7,6 @@ import yellow from "@material-ui/core/colors/yellow";
 import red from "@material-ui/core/colors/red";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 
 const question = [
     {
@@ -95,7 +94,6 @@ export default class UltrasoundQuestion extends Component {
     }
 
     saveChestAnswer() {
-        return;
         if (!this.props.complete) {
             Apis.setAttemptImageQuality(this.props.attempts_id, this.props.test_case_id, this.state.answerValue, this.props.isPostTest).then(resp => {
 
@@ -130,16 +128,6 @@ export default class UltrasoundQuestion extends Component {
         if (checkValues === undefined) checkValues = [];
         const valueIndex = checkValues.indexOf(value);
         if (valueIndex === -1) {
-            // chestQ3a/chestQ3a has to be 0 or R, L
-            if( qId === 'chestQ3a' && (childQId === 'q3cValues' || childQId.indexOf('q3bChest') === 0 || childQId.indexOf('q3cChest') === 0)) {
-                if(value === '0') {
-                    checkValues = [];
-                } else {
-                    const zeroIndex = checkValues.indexOf('0');
-                    if(zeroIndex !== -1) checkValues.splice(zeroIndex, 1);
-                }
-            }
-
             checkValues.push(value);
         } else {
             checkValues.splice(valueIndex, 1);
@@ -254,7 +242,7 @@ export default class UltrasoundQuestion extends Component {
                         row
                     >
                         {
-                            this.renderOptionList(childQuestionObj['a'].options, '', false)
+                            this.renderOptionList(childQuestionObj['a'].options, '', false, qId, 'a')
                         }
                     </RadioGroup>
                 </div>
@@ -271,7 +259,7 @@ export default class UltrasoundQuestion extends Component {
                         row
                     >
                         {
-                            this.renderOptionList(childQuestionObj['b'].options, '', disabled)
+                            this.renderOptionList(childQuestionObj['b'].options, '', disabled, qId, 'b')
                         }
                     </RadioGroup>
 
@@ -302,7 +290,7 @@ export default class UltrasoundQuestion extends Component {
                         row
                     >
                         {
-                            this.renderOptionList(childQuestionObj['c'].options, '', disabled)
+                            this.renderOptionList(childQuestionObj['c'].options, '', disabled, qId, 'c')
                         }
                     </RadioGroup>
                 </div>
@@ -319,10 +307,10 @@ export default class UltrasoundQuestion extends Component {
                         row
                     >
                         <div className={'col d-flex flex-column p-0'}>
-                            {this.renderOptionList(childQuestionObj['d'].options[0], '', disabled)}
+                            {this.renderOptionList(childQuestionObj['d'].options[0], '', disabled, qId, 'd')}
                         </div>
                         <div className={'col d-flex flex-column p-0'}>
-                            {this.renderOptionList(childQuestionObj['d'].options[1], '', disabled)}
+                            {this.renderOptionList(childQuestionObj['d'].options[1], '', disabled, qId, 'd')}
                         </div>
                     </RadioGroup>
                 </div>
@@ -339,10 +327,10 @@ export default class UltrasoundQuestion extends Component {
                         row
                     >
                         <div className={'col d-flex flex-column p-0'}>
-                            {this.renderOptionList(childQuestionObj['e'].options[0], '', disabled)}
+                            {this.renderOptionList(childQuestionObj['e'].options[0], '', disabled, qId, 'e')}
                         </div>
                         <div className={'col d-flex flex-column p-0'}>
-                            {this.renderOptionList(childQuestionObj['e'].options[1], '', disabled)}
+                            {this.renderOptionList(childQuestionObj['e'].options[1], '', disabled, qId, 'e')}
                         </div>
                     </RadioGroup>
                 </div>
@@ -380,7 +368,7 @@ export default class UltrasoundQuestion extends Component {
                         row
                     >
                         {
-                            this.renderOptionList(childQuestionObj.rootOptions, '', disabled)
+                            this.renderOptionList(childQuestionObj.rootOptions, '', disabled, qId, 'root')
                         }
                     </RadioGroup>
                     <div>{childQuestionObj['a'].label}</div>
@@ -431,8 +419,9 @@ export default class UltrasoundQuestion extends Component {
 
     renderQuestion1(disabled) {
         const qId = 'ultrasoundQ1';
-        const answerObj = this.state.answerValue;
+        const {answerValue, truthValue} = this.state;
         const questionObj = question.find((v) => v.id === qId);
+        const qTruth = truthValue[qId] !== undefined ? truthValue[qId].value : '';
         return (
             <div className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
@@ -440,13 +429,13 @@ export default class UltrasoundQuestion extends Component {
                     <Input
                         type="select"
                         className="chest-question-select"
-                        value={answerObj[qId] ? answerObj[qId].value : ''}
+                        value={answerValue[qId] ? answerValue[qId].value : ''}
                         disabled={disabled}
                         onChange={(e) => (disabled ? null : this.onChangeQuestion(qId, e.target.value))}
                     >
                         {
                             Object.keys(questionObj.child).map((v) =>
-                                <option value={v} key={v}>{v}</option>
+                                <option value={v} key={v} className={qTruth === v ? {color: 'red'} : {}}>{v}</option>
                             )
                         }
                     </Input>
@@ -460,8 +449,9 @@ export default class UltrasoundQuestion extends Component {
 
     renderQuestion2(disabled) {
         const qId = 'ultrasoundQ2';
-        const answerObj = this.state.answerValue;
+        const {answerValue, truthValue} = this.state;
         const questionObj = question.find((v) => v.id === qId);
+        const qTruth = truthValue[qId] !== undefined ? truthValue[qId].value : '';
         return (
             <div className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
@@ -469,7 +459,7 @@ export default class UltrasoundQuestion extends Component {
                     disabled
                     aria-label="position"
                     name="position"
-                    value={answerObj[qId] ? answerObj[qId].value : ''}
+                    value={answerValue[qId] ? answerValue[qId].value : ''}
                     onChange={(e) => (disabled ? null : this.onChangeQuestion(qId, e.target.value))}
                     row
                 >
@@ -479,8 +469,8 @@ export default class UltrasoundQuestion extends Component {
                             value={questionObj.options[0][0]}
                             control={
                                 <QuestionRadio
-                                    icon={<span className={'chest-question-radio-icon'}/>}
-                                    checkedIcon={<span className={'chest-question-radio-icon checked'}/>}
+                                    icon={<span className={'chest-question-radio-icon ' + (qTruth === questionObj.options[0][0] ? 'truth-icon' : '')}/>}
+                                    checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === questionObj.options[0][0] ? 'truth-icon' : '')}/>}
                                     disableRipple
                                 />
                             }
@@ -500,8 +490,8 @@ export default class UltrasoundQuestion extends Component {
                                         value={v}
                                         control={
                                             <QuestionRadio
-                                                icon={<span className={'chest-question-radio-icon'}/>}
-                                                checkedIcon={<span className={'chest-question-radio-icon checked'}/>}
+                                                icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                                checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
                                                 disableRipple
                                             />
                                         }
@@ -520,8 +510,9 @@ export default class UltrasoundQuestion extends Component {
 
     renderQuestion3(disabled) {
         const qId = 'ultrasoundQ3';
-        const answerObj = this.state.answerValue;
+        const {answerValue, truthValue} = this.state;
         const questionObj = question.find((v) => v.id === qId);
+        const qTruth = truthValue[qId] !== undefined ? truthValue[qId].value : '';
         return (
             <div className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
@@ -530,15 +521,15 @@ export default class UltrasoundQuestion extends Component {
                     disabled
                     aria-label="position"
                     name="position"
-                    value={answerObj[qId] ? answerObj[qId].value : ''}
+                    value={answerValue[qId] ? answerValue[qId].value : ''}
                     onChange={(e) => (disabled ? null : this.onChangeQuestion(qId, e.target.value))}
                     row
                 >
                     <div className={'col d-flex flex-column p-0'} style={{flex: 2}}>
-                        {this.renderOptionList(questionObj.options[0], '', disabled)}
+                        {this.renderOptionList(questionObj.options[0], '', disabled, qId, 'value')}
                     </div>
                     <div className={'col d-flex flex-column p-0'} style={{flex: 3}}>
-                        {this.renderOptionList(questionObj.options[1], '', disabled)}
+                        {this.renderOptionList(questionObj.options[1], '', disabled, qId, 'value')}
                     </div>
                 </RadioGroup>
             </div>
