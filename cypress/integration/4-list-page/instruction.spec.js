@@ -21,6 +21,7 @@ context('Instruction', () => {
 
         it('should be able to click the instruction button and see instruction text', () => {
             cy.getBySel('modality-tab-item').each(($el, index, $list) => {
+                cy.wait(500)
                 cy.get($el).children().each((value) => {
                     if (value[0]) {
                         const result = value[0].attributes['data-cy']
