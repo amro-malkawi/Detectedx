@@ -64,7 +64,7 @@ context('User Page', () => {
                 .should('have.value', Cypress.env('test_user_page_last_name'))
             onClickUpdateProfile()
         })
-        it('should be able to read and update address', () => {
+        it('should be able to read and update address information', () => {
             const input = {
                 country: Cypress.env('test_user_page_address_country'),
                 address1: Cypress.env('test_user_page_address_line_1'),
@@ -88,12 +88,7 @@ context('User Page', () => {
                 expect(userInfo.suburb).to.equal(input.suburb)
                 expect(userInfo.state).to.equal(input.state)
                 expect(userInfo.postcode).to.equal(input.postcode)
-                cy.intercept({
-                    method: apiUpdateInfo.method,
-                    url: apiUpdateInfo.url,
-                }).as("updateInfo");
-                cy.getBySel('update-profile').click()
-                cy.wait('@updateInfo').its('response.statusCode').should('eq', 200)
+                onClickUpdateProfile()
             })
         })
         it('should be able to read and update additional information', () => {
