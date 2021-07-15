@@ -591,11 +591,14 @@ export const setCaseDensity = (value) => (dispatch, getState) => {
     });
 };
 
-export const changeCurrentTool = (tool) => (dispatch) => {
-    dispatch({
-        type: TEST_VIEW_SET_CURRENT_TOOL,
-        payload: tool
-    });
+export const changeCurrentTool = (tool) => (dispatch, getState) => {
+    const toolList = getState().testView.toolList;
+    if(toolList.indexOf(tool) !== -1) {
+        dispatch({
+            type: TEST_VIEW_SET_CURRENT_TOOL,
+            payload: tool
+        });
+    }
 };
 
 export const changeImageViewGrid = (rowCount, colCount) => (dispatch, getState) => {

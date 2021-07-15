@@ -19,6 +19,12 @@ const Toolbar = (props) => {
         onClose();
     }
 
+    const onResetImageViewer = () => {
+        // call to fix freehand release issue
+        onChangeTool('Pan');
+        setTimeout(() => changeHangingLayout('reset'), 500);
+    }
+
     return (
         <div className={toolContainerClass}>
             <div className={"tool option more-icon"} onClick={() => onClickShowToolModal()}>
@@ -113,7 +119,7 @@ const Toolbar = (props) => {
                         <p><IntlMessages id={"testView.tool.freehand"}/></p>
                     </div> : null
             }
-            <div className={"tool option"} onClick={() => changeHangingLayout('reset')}>
+            <div className={"tool option"} onClick={() => onResetImageViewer()}>
                 <CornerstoneToolIcon name={'Reset'}/>
                 <p><IntlMessages id={"testView.tool.reset"}/></p>
             </div>

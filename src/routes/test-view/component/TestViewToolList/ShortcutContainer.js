@@ -1,9 +1,9 @@
 import React from 'react';
-import { HotKeys} from "react-hotkeys";
+import {HotKeys, GlobalHotKeys} from "react-hotkeys";
 import {connect} from "react-redux";
 import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
 
-const ShortcutContainer = ({className, complete, children, toolList, currentTool, changeHangingLayout, changeCurrentTool}) => {
+const ShortcutContainer = ({className, complete, children, currentTool, changeHangingLayout, changeCurrentTool}) => {
     const keyMap = {
         TOOL_PAN: "p",
         TOOL_ZOOM: "z",
@@ -40,19 +40,15 @@ const ShortcutContainer = ({className, complete, children, toolList, currentTool
 
     const onChangeTool = (selectedTool) => {
         const testToolList = ['Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser', 'Marker', 'MarkerFreehand'];
-        if(toolList.indexOf(selectedTool) !== -1) {
-            if(testToolList.indexOf(selectedTool) !== -1) {
-                if(!complete) changeCurrentTool(selectedTool);
-            } else {
-                changeCurrentTool(selectedTool);
-            }
+        if (!complete || testToolList.indexOf(selectedTool) === -1) {
+            changeCurrentTool(selectedTool);
         }
     }
 
     return (
-        <HotKeys className={className} keyMap={keyMap} handlers={handlers}>
+        <GlobalHotKeys className={className} keyMap={keyMap} handlers={handlers}>
             {children}
-        </HotKeys>
+        </GlobalHotKeys>
     )
 }
 
@@ -60,7 +56,6 @@ const ShortcutContainer = ({className, complete, children, toolList, currentTool
 // map state to props
 const mapStateToProps = (state) => {
     return {
-        toolList: state.testView.toolList,
         currentTool: state.testView.currentTool
     };
 };

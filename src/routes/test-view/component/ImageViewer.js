@@ -398,7 +398,9 @@ class ImageViewer extends Component {
         //     // disable double click when current tool is freehand
         //     this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
         // }
-        if(this.props.index !== '-1_-1') {
+
+        // disable double click when current tool is freehand
+        if(this.props.index !== '-1_-1' && this.props.currentTool !== 'MarkerFreehand') {
             // index="-1_-1" disable focus image feature
             let viewerIndex;
             if (this.props.focusImageViewerIndex === this.props.index) {
@@ -685,6 +687,11 @@ class ImageViewer extends Component {
     }
 
     resetTool(previousName, nextName) {
+        if(previousName === 'MarkerFreehand') {
+            // remove freehand markers
+            const toolForElement = cornerstoneTools.getToolForElement(this.imageElement, 'MarkerFreehand');
+            toolForElement.cancelDrawing(this.imageElement);
+        }
         cornerstoneTools.setToolPassive(previousName);
         //active
         cornerstoneTools.setToolActive(nextName, {
