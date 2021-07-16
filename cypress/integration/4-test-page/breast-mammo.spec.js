@@ -30,7 +30,7 @@ context('Test Page - Breast Mammo', () => {
             cy.visit('/app/test/list')
             cy.waitForReact()
             cy.contains('BreastED - Mammography').click();
-            cy.getBySel('test-countinue-attemp-progress-test-button')
+            cy.getBySel('test-continue-attemp-progress-test-button')
                 .first()
                 .click({ force: true })
             cy.wait(2000)

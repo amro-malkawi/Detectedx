@@ -193,7 +193,7 @@ class List extends Component {
             if (attempt.progress === '' || attempt.progress === 'test') {
                 const path = '/test-view/' + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
                 return (
-                    <Button data-cy="test-countinue-attemp-progress-test-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
+                    <Button data-cy="test-continue-attemp-progress-test-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
                         <IntlMessages id="test.continue"/>
                     </Button>
                 );
