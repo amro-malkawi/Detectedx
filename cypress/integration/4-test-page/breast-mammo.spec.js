@@ -204,7 +204,7 @@ context('Test Page - Breast Mammo', () => {
                 cy.wrap(row[0].childNodes[0]).click();
             })
         })
-        it.only('should be able to use tool of toolbar', () => {
+        it('should be able to use tool of toolbar', () => {
             const verifyTool = (toolName) => {
                 cy.get('.more-icon').click()
                 cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool=${toolName}]`)
