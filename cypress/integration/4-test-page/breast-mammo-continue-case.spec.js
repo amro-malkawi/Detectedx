@@ -10,6 +10,18 @@ function drawFreehand(element) {
         .trigger('mousemove', { clientX: 946, clientY: 1228 })
         .trigger('mouseup', { force: true })
 }
+
+function navigateToTestSet() {
+    cy.get('button').contains('Start').then((button) => {
+        if (button) {
+            return cy.wrap(button).first().click({ force: true })
+        } else {
+            cy.get('button').contains('Continue').then((button) => {
+                return cy.wrap(button).first().click({ force: true })
+            })
+        }
+    })
+}
 context('Test Page - Breast Mammo Continue Case', () => {
     describe('Expect to see breast mammo modality functional', () => {
         beforeEach(() => {
@@ -17,9 +29,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
             cy.visit('/app/test/list')
             cy.waitForReact()
             cy.contains('BreastED - Mammography').click();
-            cy.getBySel('test-continue-attemp-progress-test-button')
-                .first()
-                .click({ force: true })
+            navigateToTestSet()
             cy.wait(2000)
         })
         afterEach(() => {
