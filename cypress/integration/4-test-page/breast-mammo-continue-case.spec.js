@@ -12,15 +12,27 @@ function drawFreehand(element) {
 }
 
 function navigateToTestSet() {
-    cy.get('button').contains('Start').then((button) => {
-        if (button) {
-            return cy.wrap(button).first().click({ force: true })
+    // I will add only checking button type so you have to acheck modality of button
+    cy.get("body").then($body => {
+        if( $body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
+            // found start button;
+            cy.get('button').contains('Start').click({ force: true })
         } else {
-            cy.get('button').contains('Continue').then((button) => {
-                return cy.wrap(button).first().click({ force: true })
-            })
+            if($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
+                // found continue button;
+                cy.get('button').contains('Continue').click({ force: true })
+            }
         }
-    })
+    });
+    // cy.get('button').contains('Start').then((button) => {
+    //     if (button) {
+    //         return cy.wrap(button).first().click({ force: true })
+    //     } else {
+    //         cy.get('button').contains('Continue').then((button) => {
+    //             return cy.wrap(button).first().click({ force: true })
+    //         })
+    //     }
+    // })
 }
 context('Test Page - Breast Mammo Continue Case', () => {
     describe('Expect to see breast mammo modality functional', () => {
