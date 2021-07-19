@@ -172,20 +172,20 @@ class List extends Component {
         if (!test_set_paid || is_test_set_expired) {
             // free test set
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20 test-set-buy-btn" outline color="secondary" size="sm"
+                <Button data-cy="test-start-free-button" className="mr-10 mt-5 mb-5 pl-20 pr-20 test-set-buy-btn" outline color="secondary" size="sm"
                         onClick={() => test_set_point === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
                     {test_set_point === 0 ? <IntlMessages id="test.start"/> : `Buy ${test_set_price.currency_symbol}${test_set_price.price} ${test_set_price.currency}`}
                 </Button>
             );
         } else if (attempt === undefined) {
             return (
-                <Button data-cy="test-start-button" className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <Button data-cy="test-start-paid-button" className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
                     <IntlMessages id="test.start"/>
                 </Button>
             );
         } else if (attempt.complete) {
             return (
-                <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <Button data-cy="test-restart-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
                     <IntlMessages id="test.reStart"/>
                 </Button>
             );
@@ -193,14 +193,14 @@ class List extends Component {
             if (attempt.progress === '' || attempt.progress === 'test') {
                 const path = '/test-view/' + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
                 return (
-                    <Button data-cy="test-continue-attemp-progress-test-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
+                    <Button data-cy="test-continue-attempt-progress-test-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
                         <IntlMessages id="test.continue"/>
                     </Button>
                 );
             } else {
                 const path = '/app/test/attempt/' + attempt.id + '/' + attempt.progress;
                 return (
-                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
+                    <Button data-cy="test-continue-attempt-progress-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
                         <IntlMessages id="test.continue"/>
                     </Button>
                 );
