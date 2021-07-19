@@ -1,16 +1,3 @@
-// const apiHost = Cypress.env('apiUrl')
-const apiHost = 'https://static.detectedx.com'
-const apiImages = {
-    method: 'GET',
-    url: `${apiHost}/images/**`,
-}
-
-function interceptImages() {
-    cy.intercept({
-        method: apiImages.method,
-        url: apiImages.url,
-    }).as("loadImages");
-}
 
 function waitForTransition() {
     const time = 3000
@@ -23,14 +10,14 @@ function drawFreehand(element) {
         .trigger('mousemove', { clientX: 946, clientY: 1228 })
         .trigger('mouseup', { force: true })
 }
-context('Test Page - Breast Mammo', () => {
+context('Test Page - Breast Mammo Start Case', () => {
     describe('Expect to see breast mammo modality functional', () => {
         beforeEach(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             cy.contains('BreastED - Mammography').click();
-            cy.getBySel('test-continue-attemp-progress-test-button')
+            cy.getBySel('test-start-button')
                 .first()
                 .click({ force: true })
             cy.wait(2000)
@@ -41,19 +28,21 @@ context('Test Page - Breast Mammo', () => {
 
         it('should be able to load all images', () => {
             cy.wait(2000)
-            interceptImages()
-            cy.wait('@loadImages').its('response.statusCode').should('eq', 200)
             cy.getReact('TestView').nthNode(2).then((value) => {
                 const { state } = value
                 expect(state.isShowLoadingIndicator).to.be.false
             })
         })
         it('should be able to use grid status', () => {
-            cy.get('.tool-container').click().should('exist')
-            cy.wait(1000)
-            cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > :nth-child(9)')
+            const selectGridTool = () => {
+                cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-cy=grid-tool]')
                 .click()
                 .should('exist')
+            }
+            cy.get('.tool-container').click().should('exist')
+            cy.wait(1000)
+
+            selectGridTool()
             cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
                 .click()
                 .should('exist')
@@ -67,10 +56,8 @@ context('Test Page - Breast Mammo', () => {
             })
             cy.get('.tool-container').click().should('exist')
             cy.wait(1000)
-            cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > :nth-child(9)')
-                .click()
-                .should('exist')
-
+            
+            selectGridTool()
             cy.get('tbody > :nth-child(2) > :nth-child(4)') // 8 grid
                 .click()
                 .should('exist')
@@ -97,6 +84,7 @@ context('Test Page - Breast Mammo', () => {
             }
             const toggleSeriesIcon = () => {
                 cy.get('.series-icon').click()
+                wait()
             }
             const expectIsShowImageBrowserToBe = (boolean) => {
                 cy.getReact('ImageBrowser').nthNode(2).then((value) => {
@@ -105,11 +93,12 @@ context('Test Page - Breast Mammo', () => {
                     wait()
                 })
             }
-            wait()
             toggleSeriesIcon()
             expectIsShowImageBrowserToBe(false)
+            
             toggleSeriesIcon()
             expectIsShowImageBrowserToBe(true)
+
             scrolling()
         })
         it('should be able to use hanging button', () => {

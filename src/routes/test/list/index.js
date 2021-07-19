@@ -179,7 +179,7 @@ class List extends Component {
             );
         } else if (attempt === undefined) {
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <Button data-cy="test-start-button" className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
                     <IntlMessages id="test.start"/>
                 </Button>
             );
