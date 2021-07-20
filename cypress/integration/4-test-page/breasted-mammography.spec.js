@@ -10,16 +10,42 @@ function drawFreehand(element) {
         .trigger('mousemove', { clientX: 946, clientY: 1228 })
         .trigger('mouseup', { force: true })
 }
-context('Test Page - Breast Mammo Start Case', () => {
+
+function getButtonByNameOfCard(name) {
+    cy.getReact('CardBody').then((buttons) => {
+        let target = null;
+        buttons.some(element => {
+            if (element.node.innerText.includes(name)) {
+                target = element.children[0].children[0].children[1].children[0].node;
+                return true;
+            }
+        });
+        cy.get(target).first().click();
+    });
+}
+
+function navigateToTestSet() {
+    const name = 'Mammography'
+    cy.get("body").then($body => {
+        if ($body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
+            // found start button;
+            getButtonByNameOfCard(name)
+        } else {
+            // found continue button;
+            if ($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
+                getButtonByNameOfCard(name)
+            }
+        }
+    });
+}
+context('Test Page - Breast Mammo Continue Case', () => {
     describe('Expect to see breast mammo modality functional', () => {
         beforeEach(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            cy.contains('BreastED - Mammography').click();
-            cy.getBySel('test-start-button')
-                .first()
-                .click({ force: true })
+            cy.contains('BreastED - Mammography').should('be.visible').click();
+            navigateToTestSet()
             cy.wait(2000)
         })
         afterEach(() => {
