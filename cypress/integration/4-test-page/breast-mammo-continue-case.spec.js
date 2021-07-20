@@ -11,28 +11,32 @@ function drawFreehand(element) {
         .trigger('mouseup', { force: true })
 }
 
+function getButtonByNameOfCard(name) {
+    cy.getReact('CardBody').then((buttons) => {
+        let target = null;
+        buttons.some(element => {
+            if (element.node.innerText.includes(name)) {
+                target = element.children[0].children[0].children[1].children[0].node;
+                return true;
+            }
+        });
+        cy.get(target).first().click();
+    });
+}
+
 function navigateToTestSet() {
-    // I will add only checking button type so you have to acheck modality of button
+    const name = 'Mammography'
     cy.get("body").then($body => {
-        if( $body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
+        if ($body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
             // found start button;
-            cy.get('button').contains('Start').click({ force: true })
+            getButtonByNameOfCard(name)
         } else {
-            if($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
-                // found continue button;
-                cy.get('button').contains('Continue').click({ force: true })
+            // found continue button;
+            if ($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
+                getButtonByNameOfCard(name)
             }
         }
     });
-    // cy.get('button').contains('Start').then((button) => {
-    //     if (button) {
-    //         return cy.wrap(button).first().click({ force: true })
-    //     } else {
-    //         cy.get('button').contains('Continue').then((button) => {
-    //             return cy.wrap(button).first().click({ force: true })
-    //         })
-    //     }
-    // })
 }
 context('Test Page - Breast Mammo Continue Case', () => {
     describe('Expect to see breast mammo modality functional', () => {
@@ -40,7 +44,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            cy.contains('BreastED - Mammography').click();
+            cy.contains('BreastED - Mammography').should('be.visible').click();
             navigateToTestSet()
             cy.wait(2000)
         })
@@ -48,7 +52,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
             waitForTransition()
         })
 
-        it('should be able to load all images', () => {
+        it.only('should be able to load all images', () => {
             cy.wait(2000)
             cy.getReact('TestView').nthNode(2).then((value) => {
                 const { state } = value
