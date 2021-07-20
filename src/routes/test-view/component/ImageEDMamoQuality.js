@@ -9,7 +9,6 @@ const ImageEDMamoQuality = ({imagePosition, imageEDBreastQuality}) => {
         const truthQuality = imageEDBreastQuality.truth[viewPosition + '-' + imageLaterality];
         const answerQuality = imageEDBreastQuality.answer[viewPosition + '-' + imageLaterality];
         if (!truthQuality || !answerQuality) return null;
-        console.log('asdfasdfasdf', imagePosition)
         return (
             <div className={'imageed-breast-quality'}>
                 {
