@@ -452,7 +452,10 @@ context('Test Page - Breast Mammo Continue Case', () => {
         it('should be able to use clear symbols feature', () => {
             getTool(TOOL.MARKER)
             const markAction = (image) => {
-                cy.wrap(image).click()
+                const x = 600
+                const y = 300
+                cy.wrap(image).click(x,y).should('be.exist')
+                cy.wait(500)
                 cy.get('.save > .MuiButton-label').should('be.visible').click()
             }
             const clearSymbols = () => {
