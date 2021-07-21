@@ -10,15 +10,8 @@ const TOOL = {
 }
 
 function waitForTransition() {
-    const time = 3000
+    const time = 2000
     cy.wait(time)
-}
-
-function drawFreehand(element) {
-    cy.get(element)
-        .trigger('mousedown', { which: 1 })
-        .trigger('mousemove', { clientX: 946, clientY: 1228 })
-        .trigger('mouseup', { force: true })
 }
 
 function getButtonByNameOfCard(name) {
@@ -70,7 +63,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
         })
 
         it('should be able to load all images', () => {
-            cy.wait(2000)
+            cy.wait(5000)
             cy.getReact('TestView').nthNode(2).then((value) => {
                 const { state } = value
                 expect(state.isShowLoadingIndicator).to.be.false
@@ -456,7 +449,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
                 toggleInvertAction()
             })
         })
-        it.only('should be able to use clear symbols feature', () => {
+        it('should be able to use clear symbols feature', () => {
             getTool(TOOL.MARKER)
             const markAction = (image) => {
                 cy.wrap(image).click()
