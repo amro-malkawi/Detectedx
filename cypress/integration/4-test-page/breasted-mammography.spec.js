@@ -391,43 +391,87 @@ context('Test Page - Breast Mammo Continue Case', () => {
             })
             getTool(TOOL.RESET)
         })
-        // TODO: 6. FreehandMarker
         it('should be able to use FreehandMarker tool', () => {
-            // pageX: 200, pageY: 150
-            // pageX: 250, pageY: 60
-            // pageX: 300, pageY: 120
-            // pageX: 200, pageY: 150
+            getTool(TOOL.MARKER_FREEHAND)
+            const markerFreehandAction = (row) => {
+                const draw = (row) => {
+                    cy.wrap(row[0].childNodes[0])
+                        .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
+                        .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
+                        .trigger('mousemove', { which: 1, pageX: 920, pageY: 520 })
+                        .trigger('mousemove', { which: 1, pageX: 930, pageY: 510 })
+                        .trigger('mousemove', { which: 1, pageX: 940, pageY: 500 })
+                        .trigger('mousemove', { which: 1, pageX: 910, pageY: 440 })
+                        .trigger('mouseup')
+                }
+                draw(row)
+            }
+            cy.get('.image-row').then((row) => {
+                cy.wrap(row[0].childNodes[0]).dblclick()
+                markerFreehandAction(row)
+            })
         })
-        // TODO: 7. Length
         it('should be able to use Length tool', () => {
-            
+            getTool(TOOL.LENGTH)
+            const makeLength = (image) => {
+                cy.wrap(image)
+                    .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
+                    .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
+                    .trigger('mouseup')
+            }
+            cy.get('.image-row').then((row) => {
+                const image = row[0].childNodes[0]
+                cy.wrap(image).dblclick()
+                makeLength(image)
+            })
         })
-        // 
-        // TODO: 8. three icons 
         it('should be able to use hide info feature', () => {
-            // hide info
+            getTool(TOOL.MARKER)
+            const markAction = (image) => {
+                cy.wrap(image).click()
+                cy.get('.save > .MuiButton-label').should('be.visible').click()
+            }
+            const toggleMarkInfo = () => {
+                cy.getBySel('tool-mark-info').should('be.visible').first().click()
+            }
+            cy.get('.image-row').then((row) => {
+                const image = row[0].childNodes[0]
+                cy.wrap(image).dblclick()
+                markAction(image)
+                cy.wait(1000)
+                toggleMarkInfo()
+                cy.wait(3000)
+                toggleMarkInfo()
+            })
         })
         it('should be able to use invert feature', () => {
-            // invert
-        })
-        it('should be able to use delete feature', () => {
-            // delete
-        })
-        it('should be able to use tool of toolbar', () => {
-            const verifyTool = (toolName) => {
-                cy.get('.more-icon').click()
-                cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool=${toolName}]`)
-                    .click()
-                    .should('exist')
-                cy.wait(2000)
-                cy.getReact('Toolbar').then((value) => {
-                    expect(value[1].props.currentTool).to.equal(`${toolName}`)
-                })
+            const toggleInvertAction = () => {
+                cy.getBySel('tool-invert').should('be.visible').first().click();
             }
-            const toolList = ['Pan', 'Zoom', 'Magnify', 'Wwwc', 'Marker', 'MarkerFreehand']
-            toolList.forEach(name => {
-                verifyTool(name)
-            });
+            cy.get('.image-row').then((row) => {
+                const image = row[0].childNodes[0]
+                cy.wrap(image).dblclick()
+                toggleInvertAction()
+                cy.wait(3000)
+                toggleInvertAction()
+            })
+        })
+        it.only('should be able to use clear symbols feature', () => {
+            getTool(TOOL.MARKER)
+            const markAction = (image) => {
+                cy.wrap(image).click()
+                cy.get('.save > .MuiButton-label').should('be.visible').click()
+            }
+            const clearSymbols = () => {
+                cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
+            }
+            cy.get('.image-row').then((row) => {
+                const image = row[0].childNodes[0]
+                cy.wrap(image).dblclick()
+                markAction(image)
+                cy.wait(3000)
+                clearSymbols()
+            })
         })
     })
 })
