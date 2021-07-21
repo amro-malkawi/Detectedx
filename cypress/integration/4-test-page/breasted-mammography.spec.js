@@ -421,7 +421,9 @@ context('Test Page - Breast Mammo Continue Case', () => {
         it('should be able to use hide info feature', () => {
             getTool(TOOL.MARKER)
             const markAction = (image) => {
-                cy.wrap(image).click()
+                const x = 700
+                const y = 200
+                cy.wrap(image).click(x,y)
                 cy.get('.save > .MuiButton-label').should('be.visible').click()
             }
             const toggleMarkInfo = () => {
@@ -429,6 +431,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
             }
             cy.get('.image-row').then((row) => {
                 const image = row[0].childNodes[0]
+                cy.wait(1000)
                 cy.wrap(image).dblclick()
                 markAction(image)
                 cy.wait(1000)
@@ -454,7 +457,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
             const markAction = (image) => {
                 const x = 600
                 const y = 300
-                cy.wrap(image).click(x,y).should('be.exist')
+                cy.wrap(image).click(x,y)
                 cy.wait(500)
                 cy.get('.save > .MuiButton-label').should('be.visible').click()
             }
