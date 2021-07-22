@@ -1,4 +1,4 @@
-import { dropdownKey, dropdownValue } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
+import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -30,8 +30,15 @@ function navigateToScorePage() {
     getButtonByNameOfCard(selector.card, selector.button)
 }
 
-function clickViewButton() {
-    cy.get('button').contains('View').should('exist').click()
+function clickViewButton(index) {
+    cy.get('button').then((buttons) => {
+        cy.wrap(buttons[index])
+            .contains('View')
+            .should('exist')
+            .and('be.visible')
+            .click()
+
+    })
 }
 
 function interceptDropdownRequest() {
@@ -50,52 +57,77 @@ context('Breasted Mammography - Score Page', () => {
             cy.contains('BreastED - Mammography').click();
             navigateToScorePage()
             cy.wait(1000)
+            const index = 2
+            clickViewButton(index)
         })
         afterEach(() => {
             cy.wait(1000)
         })
 
         it('should be able to click on view button and navigate to score page', () => {
-            clickViewButton()
             cy.get('.rct-page').should('be.visible')
             cy.get('.score-circle-container').should('be.visible')
         })
 
-        it.only('should be able to re-select the drop down list on score page', () => {
-            clickViewButton()
+        it('should be able to see score data on score page', () => {
+            cy.get('.normal-score-data')
+                .should('exist')
+                .and('be.visible')
+        })
+
+        it('should be able to download the certificate of completion on score page', () => {
+            cy.get(':nth-child(1) > .extra-button-container > .MuiButtonBase-root')
+                .should('exist')
+                .scrollIntoView()
+                .and('be.visible')
+                .click()
+        })
+
+        it('should be able to see the definition on score page by clicking button', () => {
+            cy.getBySel('test-attempt-definition-button')
+                .should('exist')
+                .scrollIntoView()
+                .and('be.visible')
+                .click()
+                .should('exist')
+            cy.wait(3000)
+            cy.get('#alert-dialog-title > .MuiButtonBase-root').click()
+        })
+
+        it('should be able to re-select the drop down list on score page', () => {
             interceptDropdownRequest()
             const checkAllDropdownListAt = (number) => {
                 const selector = `:nth-child(${number}) > .score-chart-title > .form-control`
                 cy.get(selector)
                     .should('exist')
                     .and('be.visible')
-                    .select(dropdownKey.BreastPhysician)
+                    .select(dropdown.key.BreastPhysician)
                     .invoke('val')
-                    .should('deep.equal', dropdownValue.BreastPhysician)
+                    .should('deep.equal', dropdown.value.BreastPhysician)
                 cy.get(selector)
                     .should('exist')
                     .and('be.visible')
-                    .select(dropdownKey.Radiologist)
+                    .select(dropdown.key.Radiologist)
                     .invoke('val')
-                    .should('deep.equal', dropdownValue.Radiologist)
+                    .should('deep.equal', dropdown.value.Radiologist)
                 cy.get(selector)
                     .should('exist')
                     .and('be.visible')
-                    .select(dropdownKey.Radiographer)
+                    .select(dropdown.key.Radiographer)
                     .invoke('val')
-                    .should('deep.equal', dropdownValue.Radiographer)
+                    .should('deep.equal', dropdown.value.Radiographer)
                 cy.get(selector)
                     .should('exist')
                     .and('be.visible')
-                    .select(dropdownKey.Trainee)
+                    .select(dropdown.key.Trainee)
                     .invoke('val')
-                    .should('deep.equal', dropdownValue.Trainee)
+                    .should('deep.equal', dropdown.value.Trainee)
                 cy.get(selector)
                     .should('exist')
                     .and('be.visible')
-                    .select(dropdownKey.other)
+                    .select(dropdown.key.other)
                     .invoke('val')
-                    .should('deep.equal', dropdownValue.other)
+                    .should('deep.equal', dropdown.value.other)
 
                 cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('eq', 200)
             }
