@@ -13,7 +13,8 @@ import {
     TEST_VIEW_SET_CURRENT_TOOL,
     TEST_VIEW_SET_THICKNESS_TYPE,
     TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-    TEST_VIEW_FOCUS_IMAGEVIEWER
+    TEST_VIEW_FOCUS_IMAGEVIEWER,
+    TEST_VIEW_MODALITY_INFO
 } from 'Actions/types';
 
 const INIT_STATE = {
@@ -34,6 +35,7 @@ const INIT_STATE = {
     currentTool: 'Pan',
     currentThicknessType: 'NOTHICKNESS',
     focusImageViewerIndex: '-1_-1',
+    modalityInfo: {},
 };
 
 export default (state = INIT_STATE, action) => {
@@ -77,6 +79,8 @@ export default (state = INIT_STATE, action) => {
             return {...state, currentThicknessType: action.payload}
         case TEST_VIEW_FOCUS_IMAGEVIEWER:
             return {...state, focusImageViewerIndex: action.payload}
+        case TEST_VIEW_MODALITY_INFO:
+            return {...state, modalityInfo: action.payload}
         default:
             return {...state}
     }

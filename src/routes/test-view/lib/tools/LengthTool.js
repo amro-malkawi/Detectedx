@@ -173,7 +173,7 @@ export default class MyLengthTool extends LengthTool {
                 suffix = ' pixels';
             }
 
-            return `${data.length.toFixed(2)}${suffix}`;
+            return `${data.length.toFixed(0)}${suffix}`;
         }
 
         function textBoxAnchorPoints(handles) {

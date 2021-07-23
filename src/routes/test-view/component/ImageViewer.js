@@ -522,6 +522,7 @@ class ImageViewer extends Component {
     }
 
     handleAddShape(event) {
+        if(this.props.modalityInfo.modality_type === 'imaged_mammo') return;
         this.tempMeasureToolData = null;
         if (event.detail.measurementData.id === undefined) {
             event.detail.measurementData.id = uuidv4();
@@ -835,6 +836,7 @@ const mapStateToProps = (state) => {
         showImageList: state.testView.showImageList,
         initialZoomLevel: state.testView.initialZoomLevel,
         imgMLOMaxRealHeight: state.testView.imgMLOMaxRealHeight,
+        modalityInfo: state.testView.modalityInfo
     };
 };
 

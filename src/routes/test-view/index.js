@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity} from 'Actions';
+import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity, setModalityInfo} from 'Actions';
 import {Button, Switch, Dialog} from '@material-ui/core';
 import SkipPreviousOutlinedIcon from '@material-ui/icons/SkipPreviousOutlined';
 import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
@@ -178,6 +178,8 @@ class TestView extends Component {
             }, () => {
                 Marker.modalityRatings = that.state.test_case.ratings;
             });
+            //
+            that.props.setModalityInfo(testCaseViewInfo.modalities);
 
             // make need images list for loading
             that.needLoadImagePathList = [];
@@ -709,6 +711,7 @@ export default withRouter(connect(mapStateToProps, {
     setShowImageBrowser,
     changeHangingLayout,
     setCaseDensity,
+    setModalityInfo,
 })(TestView));
 
 const AntSwitch = withStyles(theme => ({

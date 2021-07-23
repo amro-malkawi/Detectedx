@@ -15,7 +15,8 @@ import {
     TEST_VIEW_SET_CASE_DENSITY,
     TEST_VIEW_SET_CURRENT_TOOL,
     TEST_VIEW_SET_THICKNESS_TYPE,
-    TEST_VIEW_FOCUS_IMAGEVIEWER
+    TEST_VIEW_FOCUS_IMAGEVIEWER,
+    TEST_VIEW_MODALITY_INFO
 } from 'Actions/types';
 import {isMobile} from 'react-device-detect';
 
@@ -668,4 +669,11 @@ export const focusImageViewer = (viewerIndex) => (dispatch, getState) => {
         type: TEST_VIEW_FOCUS_IMAGEVIEWER,
         payload: viewerIndex
     });
+}
+
+export const setModalityInfo = (modalityInfo) => (dispatch) => {
+    dispatch({
+        type: TEST_VIEW_MODALITY_INFO,
+        payload: modalityInfo
+    })
 }
