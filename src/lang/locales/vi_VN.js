@@ -172,7 +172,6 @@ module.exports = {
     "testView.covidQuestion.doyousee": "Bạn có thấy",
     "testView.covidQuestion.yourJudgement": "Phán quyết của bạn",
     "testView.chestQuestion.ratingTitle": "Tin chắc rằng đối tượng mắc bệnh phổi nghề nghiệp",
-    "testView.imagedChestQuestion.ratingTitle": "Bạn tự tin đến mức nào rằng hình ảnh này nên được chấp nhận?",
     "testView.chestCTQuestion.ratingTitle": "Tin chắc rằng đối tượng mắc bệnh phổi nghề nghiệp",
     "testView.browser.laterality": "Độ trễ:",
     "testView.browser.type": "Loại:",

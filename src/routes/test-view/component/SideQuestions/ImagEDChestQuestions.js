@@ -35,6 +35,11 @@ const question = [
         child: ['Side marker not visible or in the wrong location', 'Poor level of collimation'],
         showChildOptions: ['1', '2']
     },
+    {
+        id: 'imagedChestQ4',
+        label: '4: Should this image be accepted?',
+        options: ['Yes', 'No'],
+    },
 ]
 
 export default class ImagEDChestQuestions extends Component {
@@ -43,8 +48,7 @@ export default class ImagEDChestQuestions extends Component {
         this.state = {
             answerValue: {},  // example: {'Ground-Glass Opacity': {0: 'Upper', 1: 'Anterior'}, 'Consolidation': {}}
             answerRating: -1,
-            truthValue: {},
-            truthRating: -1
+            truthValue: {}
         }
     }
 
@@ -56,9 +60,7 @@ export default class ImagEDChestQuestions extends Component {
         Apis.getAttemptChestAnswer(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then(resp => {
             this.setState({
                 answerValue: resp.chest_answer,
-                answerRating: resp.chest_answer_rating,
                 truthValue: resp.chest_truth,
-                truthRating: resp.chest_truth_rating
             });
         }).catch(error => {
 
@@ -76,12 +78,12 @@ export default class ImagEDChestQuestions extends Component {
     }
 
     checkQuestionValidate() {
-        const {answerRating} = this.state;
-        if (isNaN(answerRating) || Number(answerRating) < 0 || Number(answerRating) > 5) {
-            NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
-            return false;
-        } else {
+        const {answerValue} = this.state;
+        if(question.every((q) =>  answerValue[q.id] !== undefined )) {
             return true;
+        } else {
+            NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
+            return false;
         }
     }
 
@@ -130,12 +132,6 @@ export default class ImagEDChestQuestions extends Component {
         });
     }
 
-    onChangeRating(rating) {
-        this.setState({answerRating: rating}, () => {
-            this.saveChestAnswer();
-        });
-    }
-
     renderCheckList(values, disabled, qId, childQId) {
         const {answerValue, truthValue} = this.state;
         const qTruths = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
@@ -162,9 +158,12 @@ export default class ImagEDChestQuestions extends Component {
         const answerExist = answerValue[questionObj.id] !== undefined && answerValue[questionObj.id].value !== undefined;
         const truthExist = truthValue[questionObj.id] !== undefined && truthValue[questionObj.id].value !== undefined;
 
-        if((answerExist && questionObj.showChildOptions.indexOf(answerValue[questionObj.id].value) !== -1) ||
-            (truthExist && questionObj.showChildOptions.indexOf(truthValue[questionObj.id].value) !== -1))
-        {
+        if (
+            questionObj.showChildOptions && (
+                (answerExist && questionObj.showChildOptions.indexOf(answerValue[questionObj.id].value) !== -1) ||
+                (truthExist && questionObj.showChildOptions.indexOf(truthValue[questionObj.id].value) !== -1)
+            )
+        ) {
             return (
                 <div className={'ml-3'}>
                     <div className={'chest-question-sub-desc'}>{questionObj.desc}</div>
@@ -218,7 +217,6 @@ export default class ImagEDChestQuestions extends Component {
     }
 
     render() {
-        const {answerRating, truthRating} = this.state;
         const disabled = this.props.complete;
         return (
             <div className={'pl-10 covid-question-container chest-data'}>
@@ -227,43 +225,6 @@ export default class ImagEDChestQuestions extends Component {
                         {
                             question.map(v => this.renderQuestion(v, disabled))
                         }
-                    </div>
-                    <div className={'covid-confidence'}>
-                        <p><IntlMessages id={"testView.imagedChestQuestion.ratingTitle"}/></p>
-                        <RadioGroup
-                            disabled
-                            aria-label="position"
-                            name="position"
-                            value={answerRating !== undefined ? answerRating.toString() : ''}
-                            onChange={(event) => this.onChangeRating(event.target.value)}
-                            row
-                            className={'justify-content-center mt-0'}
-                        >
-                            {
-                                [
-                                    {value: 0, tooltip: 'Absolutely not'}, {value: 1, tooltip: 'Probably not'}, {value: 2, tooltip: 'Possibly not'},
-                                    {value: 3, tooltip: 'Possibly yes'}, {value: 4, tooltip: 'Probably yes'}, {value: 5, tooltip: 'Absolutely yes'}
-                                ].map((v, i) => {   // [0, 1, 2, 3...]
-                                    return (
-                                        <CheckboxTooltip title={v.tooltip} key={i}>
-                                            <RatingLabel
-                                                key={i}
-                                                value={v.value.toString()}
-                                                control={
-                                                    <RatingRadio
-                                                        icon={<span className={'chest-question-rating-radio-icon ' + (truthRating === v.value ? 'truth-icon' : '')}/>}
-                                                        checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating === v.value ? 'truth-icon' : '')}/>}
-                                                        disableRipple
-                                                    />
-                                                }
-                                                label={v.value}
-                                                disabled={disabled}
-                                            />
-                                        </CheckboxTooltip>
-                                    )
-                                })
-                            }
-                        </RadioGroup>
                     </div>
                 </div>
             </div>
@@ -321,44 +282,3 @@ const QuestionCheckbox = withStyles(theme => ({
         cursor: 'not-allowed'
     },
 }))(Checkbox);
-
-const RatingRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-
-const RatingLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const CheckboxTooltip = withStyles((theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 11,
-    },
-}))(Tooltip);

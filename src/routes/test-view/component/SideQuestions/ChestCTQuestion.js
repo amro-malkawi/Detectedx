@@ -68,7 +68,7 @@ const question = [
     },
     {
         id: 'chestCTQ5',
-        label: '5. Hoenycombing?',
+        label: '5. Honeycombing?',
         options: ['Yes', 'No'],
         child: {
             aOptions: ['U', 'M', 'L'],

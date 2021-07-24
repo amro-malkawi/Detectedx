@@ -480,7 +480,7 @@ class TestView extends Component {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
-        } else if (this.state.test_case.modalities.modality_type === 'volpara' || this.state.test_case.modalities.modality_type === 'imaged_mammo') {
+        } else if (['volpara', 'imaged_mammo', 'imaged_chest'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
             return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
@@ -488,7 +488,7 @@ class TestView extends Component {
             let resultStr;
             if(this.state.test_case.modalities.modality_type === 'covid') {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>
-            } else if (['chest', 'chest_ct', 'imaged_chest'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
+            } else if (['chest', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.abnormalChest"}/> : <IntlMessages id={"testView.truth.normalChest"}/>
             } else {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
