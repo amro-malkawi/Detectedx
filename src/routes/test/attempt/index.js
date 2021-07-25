@@ -971,125 +971,6 @@ class Attempt extends Component {
         )
     }
 
-    renderImagEDChestScore() {
-        let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
-        const scoresForShow = [];
-        this.state.attemptInfo.scores.forEach((v) => {
-            if (v.metrics.name.indexOf('True Positive') > -1) {
-                truePositives = Number(v.score);
-                return;
-            }
-            if (v.metrics.name.indexOf('False Positive') > -1) {
-                falsePositives = Number(v.score);
-                return;
-            }
-            if (v.metrics.name.indexOf('True Negative') > -1) {
-                trueNegatives = Number(v.score);
-                return;
-            }
-            if (v.metrics.name.indexOf('False Negative') > -1) {
-                falseNegatives = Number(v.score);
-                return;
-            }
-            scoresForShow.push(v);
-            if (v.metrics.name.indexOf('rejected') > -1) {
-                specitifity = Number(v.score);
-            }
-            if (v.metrics.name.indexOf('acceptable') > -1) {
-                sensitivity = Number(v.score);
-            }
-            if (v.metrics.name.indexOf('ROC') > -1) {
-                roc = Number(v.score);
-            }
-        });
-
-        return (
-            <div className={'score-container'}>
-                <div className={'row'}>
-                    <div className={'col-md-6 score-data-container'}>
-                        <div className={'normal-score-data'}>
-                            <div className={'score-circle-container'}>
-                                <div className={'score-circle'}>
-                                    <div className={'score-circle-title text-green'}>Correctly</div>
-                                    <div className={'text-center'}>Identified<br/> Images</div>
-                                    <div className={'mt-10'} style={{fontSize: 20}}>{truePositives + trueNegatives}</div>
-                                </div>
-                                <div className={'score-circle'}>
-                                    <div className={'score-circle-title text-red'}>Incorrectly</div>
-                                    <div className={'text-center'}>Identified<br/> Images</div>
-                                    <div className={'mt-10'} style={{fontSize: 20}}>{falsePositives + falseNegatives}</div>
-                                </div>
-                            </div>
-                            <div className={'score-table'}>
-                                {
-                                    scoresForShow.map((v, i) => (
-                                        <div className={'score-row'} key={i}><span>{v.metrics.name}</span><span>{v.score}</span></div>
-                                    ))
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div className={'col-md-6 score-chart-container'}>
-                        <BoxplotChart
-                            title={'Ability to correctly recognise an acceptable image compared to'}
-                            score_type={'Ability to correctly'}
-                            showUserSelect={true}
-                            attempt_id={this.state.attempts_id}
-                            value={sensitivity}
-                        />
-                        <BoxplotChart
-                            title={'Ability to recognise an image that should be rejected compared to'}
-                            score_type={'Ability to recognise'}
-                            showUserSelect={true}
-                            attempt_id={this.state.attempts_id}
-                            value={specitifity}
-                        />
-                        <BoxplotChart
-                            title={'ROC-Combines the above two parameters in a single figure compared to'}
-                            score_type={'ROC'}
-                            showUserSelect={true}
-                            attempt_id={this.state.attempts_id}
-                            value={roc}
-                        />
-                    </div>
-                </div>
-                <div className={'row score-extra-container'}>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                        {
-                            this.state.attemptInfo.view_answer_time === null ?
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
-                        }
-                        <div className={'extra-button-container'}>
-                            <Button
-                                variant="contained"
-                                size="small"
-                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
-                                onClick={() => this.onGetCertPdf('normal')}
-                                disabled={this.state.attemptInfo.view_answer_time === null}
-                            >
-                                <SchoolIcon className={'mr-10'}/>
-                                <IntlMessages id="test.attempt.volparaCertTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    {this.renderVolparaScorePostBlock()}
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
-                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
-                </div>
-            </div>
-        )
-    }
-
     renderVolparaScorePostBlock() {
         if (!this.state.attemptInfo.test_sets.has_post) return null;
         if (this.state.post_stage === 0) {
@@ -1229,7 +1110,7 @@ class Attempt extends Component {
         )
     }
 
-    renderImagEDMammoScore() {
+    renderImagEDScore() {
         let scoreAverage = 0;
         const scores = this.state.attemptInfo.scores;
         if (scores.length > 0) {
@@ -1270,7 +1151,7 @@ class Attempt extends Component {
                         <div className={'score-chart-container'}>
                             <BoxplotChart
                                 title={<IntlMessages id="test.attempt.imageQualityScoreTitle"/>}
-                                score_type={'imaged_mammo_average'}
+                                score_type={'imaged_average_percentile'}
                                 showUserSelect={false}
                                 attempt_id={this.state.attempts_id}
                                 value={scoreAverage}
@@ -1346,10 +1227,8 @@ class Attempt extends Component {
             case 'score':
                 if (this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
                     return this.renderVolparaScore();
-                } else if (this.state.attemptInfo.test_sets.modalities.modality_type === 'imaged_chest') {
-                    return this.renderImagEDChestScore();
-                } else if (this.state.attemptInfo.test_sets.modalities.modality_type === 'imaged_mammo') {
-                    return this.renderImagEDMammoScore();
+                } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === 0) {
+                    return this.renderImagEDScore();
                 } else {
                     return this.renderNormalScore();
                 }
