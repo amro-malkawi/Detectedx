@@ -39,7 +39,8 @@ const question = [
                 },
                 'f': {
                     label: 'f. Associated features',
-                    options: [['Architectural distortion', 'Duct changes', 'Skin thickening'], ['Vascularity', 'Calcification', 'Simple cyst']]
+                    options: ['nil', 'other'],
+                    dropList: ['Architectural distortion', 'Duct changes', 'Skin thickening', 'Vascularity', 'Calcification', 'Skin retraction', 'Oedema']
                 }
             },
             'Calcification': {
@@ -47,12 +48,18 @@ const question = [
                 rootOptions: ['In a mass', 'Not in a mass', 'Intraductal'],
                 'a': {
                     label: 'a. Associated features',
-                    options: [['Architectural distortion', 'Duct changes', 'Skin thickening'], ['Vascularity', 'Skin retraction', 'Oedema']]
+                    options: ['nil', 'other'],
+                    dropList: ['Architectural distortion', 'Duct changes', 'Vascularity']
                 }
             },
             'Architectual distortion': {
                 label: '1 A. Associated features',
-                options: [['Duct changes', 'Skin thickening', 'Skin retraction', 'Oedema'], ['Vascularity', 'Calcification', 'Focal shadowing']]
+                rootOptions: ['Unifocal', 'Multifocal'],
+                'a': {
+                    label: 'a. Associated features',
+                    options: ['nil', 'other'],
+                    dropList: ['Duct changes', 'Skin thickening', 'Skin retraction', 'Oedema', 'Vascularity', 'Calcification', 'Focal shadowing']
+                }
             }
         }
     },
@@ -63,9 +70,12 @@ const question = [
     },
     {
         id: 'ultrasoundQ3',
-        label: '3. Diagnosis',
-        options: [['Scar', 'Fibroadenoma', 'Fat necrosis', 'Mass in or on skin', 'AVM', 'Mondor disease'],
-            ['Simple cyst', 'Complex cyst', 'Clustered cysts/ fibrocystic change', 'Postsurgical fluid collection', 'Foreign body (including implants)', 'Intramammary lymph node']]
+        label: '3. Provisional Diagnosis',
+        dropList: [
+            'Simple cyst', 'Complex cyst', 'Fibrocystic change', 'Fibroadenoma', 'Fat necrosis', 'Post surgical change / scar / fluid collection',
+            'Inflammatory change / abscess', 'Mass in/on skin', 'Papilloma', 'Normal-benign lymph node', 'Radial scar / Complex sclerosing lesion', 'Phyllodes ',
+            'Invasive carcinoma', 'Suspicious calcifications / DCIS', 'Invasive lobular carcinoma', 'Malignant lymph node', 'Other'
+        ]
     }
 ]
 
@@ -105,13 +115,13 @@ export default class UltrasoundQuestion extends Component {
 
     getAnswerTruth(qId) {
         let questionAnswer, questionTruth;
-        if(this.state.answerValue[qId] === undefined) {
+        if (this.state.answerValue[qId] === undefined) {
             questionAnswer = {};
         } else {
             questionAnswer = this.state.answerValue[qId];
         }
 
-        if(this.state.truthValue[qId] === undefined) {
+        if (this.state.truthValue[qId] === undefined) {
             questionTruth = {};
         } else {
             questionTruth = this.state.truthValue[qId];
@@ -148,7 +158,7 @@ export default class UltrasoundQuestion extends Component {
 
     onChangeQuestion(qId, value) {
         const {answerValue} = this.state;
-        if(answerValue[qId] === undefined || answerValue[qId].value !== value) {
+        if (answerValue[qId] === undefined || answerValue[qId].value !== value) {
             answerValue[qId] = {};
         }
         answerValue[qId].value = value;
@@ -200,7 +210,7 @@ export default class UltrasoundQuestion extends Component {
         })
     }
 
-    renderOptionList(values, optionClass = '', disabled, qId, childQId, iconClass='chest-question-radio-icon') {
+    renderOptionList(values, optionClass = '', disabled, qId, childQId, iconClass = 'chest-question-radio-icon') {
         const {truthValue} = this.state;
         const qTruth = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
         return values.map((v, i) =>
@@ -210,7 +220,7 @@ export default class UltrasoundQuestion extends Component {
                 value={v}
                 control={
                     <QuestionRadio
-                        icon={<span className={ iconClass + ' ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                        icon={<span className={iconClass + ' ' + (qTruth === v ? 'truth-icon' : '')}/>}
                         checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
                         disableRipple
                     />
@@ -262,20 +272,22 @@ export default class UltrasoundQuestion extends Component {
                             this.renderOptionList(childQuestionObj['b'].options, '', disabled, qId, 'b')
                         }
                     </RadioGroup>
-
-                    <div className={'ml-50 mr-30 mb-2'}>
-                        <Input
-                            type="select" className="chest-question-select"
-                            value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
-                            onChange={(e) => (disabled ? null : this.onChangeChildValue(qId, 'b_drop', e.target.value))}
-                            disabled={disabled}>
-                            {
-                                childQuestionObj['b'].dropList.map((v) =>
-                                    <option value={v} key={v}>{v}</option>
-                                )
-                            }
-                        </Input>
-                    </div>
+                    {
+                        childAnswerObj['b'] === childQuestionObj['b'].options[1] &&
+                        <div className={'ml-50 mr-30 mb-2'}>
+                            <Input
+                                type="select" className="chest-question-select"
+                                value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
+                                onChange={(e) => (disabled ? null : this.onChangeChildValue(qId, 'b_drop', e.target.value))}
+                                disabled={disabled}>
+                                {
+                                    childQuestionObj['b'].dropList.map((v) =>
+                                        <option value={v} key={v}>{v}</option>
+                                    )
+                                }
+                            </Input>
+                        </div>
+                    }
                 </div>
                 {/* c */}
                 <div className={'ml-3'}>
@@ -337,21 +349,42 @@ export default class UltrasoundQuestion extends Component {
                 {/* f */}
                 <div className={'ml-3'}>
                     <div>{childQuestionObj['f'].label}</div>
-                    <div className={'d-flex flex-row ml-3 mt-1'}>
-                        <div className={'col d-flex flex-column p-0'} style={{flex: 3}}>
-                            {this.renderCheckList(childQuestionObj['f'].options[0].map((v) => ({label: v, value: v})), '', disabled, qId, 'f')}
+                    <RadioGroup
+                        className={'ml-3 mt-1 flex-column'}
+                        aria-label="position"
+                        name="position"
+                        value={childAnswerObj['f'] ? childAnswerObj['f'] : ''}
+                        onChange={(e) => (disabled ? null : this.onChangeChildValue(qId, 'f', e.target.value))}
+                        disabled
+                        row
+                    >
+                        {
+                            this.renderOptionList(childQuestionObj['f'].options, '', disabled, qId, 'f')
+                        }
+                    </RadioGroup>
+                    {
+                        childAnswerObj['f'] === childQuestionObj['f'].options[1] &&
+                        <div className={'ml-50 mr-30 mb-2'}>
+                            <Input
+                                type="select" className="chest-question-select"
+                                value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
+                                onChange={(e) => (disabled ? null : this.onChangeChildValue(qId, 'b_drop', e.target.value))}
+                                disabled={disabled}>
+                                {
+                                    childQuestionObj['f'].dropList.map((v) =>
+                                        <option value={v} key={v}>{v}</option>
+                                    )
+                                }
+                            </Input>
                         </div>
-                        <div className={'col d-flex flex-column p-0'} style={{flex: 2}}>
-                            {this.renderCheckList(childQuestionObj['f'].options[1].map((v) => ({label: v, value: v})), '', disabled, qId, 'f')}
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         )
     }
 
-    renderQuestion1AdditionalCalc(qId, disabled) {
-        const subChildId = 'Calcification';
+    renderQuestion1AdditionalCalc(qId, disabled, subChildId) {
+        // const subChildId = 'Calcification';
         const childAnswerObj = this.state.answerValue[qId];
         const childQuestionObj = question.find((v) => v.id === qId).child[subChildId];
         return (
@@ -371,33 +404,38 @@ export default class UltrasoundQuestion extends Component {
                             this.renderOptionList(childQuestionObj.rootOptions, '', disabled, qId, 'root')
                         }
                     </RadioGroup>
-                    <div>{childQuestionObj['a'].label}</div>
-                    <div className={'d-flex flex-row ml-3 mt-1'}>
-                        <div className={'col d-flex flex-column p-0'} style={{flex: 3}}>
-                            {this.renderCheckList(childQuestionObj['a'].options[0].map((v) => ({label: v, value: v})), '', disabled, qId, 'a')}
-                        </div>
-                        <div className={'col d-flex flex-column p-0'} style={{flex: 2}}>
-                            {this.renderCheckList(childQuestionObj['a'].options[1].map((v) => ({label: v, value: v})), '', disabled, qId, 'a')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
 
-    renderQuestion1AdditionalArch(qId, disabled) {
-        const subChildId = 'Architectual distortion';
-        const childAnswerObj = this.state.answerValue[qId];
-        const childQuestionObj = question.find((v) => v.id === qId).child[subChildId];
-        return (
-            <div>
-                <div className={'ml-1'}>{childQuestionObj.label}</div>
-                <div className={'d-flex flex-row ml-3 mt-1'}>
-                    <div className={'col d-flex flex-column p-0'}>
-                        {this.renderCheckList(childQuestionObj.options[0].map((v) => ({label: v, value: v})), '', disabled, qId, 'root')}
-                    </div>
-                    <div className={'col d-flex flex-column p-0'}>
-                        {this.renderCheckList(childQuestionObj.options[1].map((v) => ({label: v, value: v})), '', disabled, qId, 'root')}
+                    <div className={'ml-3'}>
+                        <div>{childQuestionObj['a'].label}</div>
+                        <RadioGroup
+                            className={'ml-3 mt-1 flex-column'}
+                            aria-label="position"
+                            name="position"
+                            value={childAnswerObj['a'] ? childAnswerObj['a'] : ''}
+                            onChange={(e) => (disabled ? null : this.onChangeChildValue(qId, 'a', e.target.value))}
+                            disabled
+                            row
+                        >
+                            {
+                                this.renderOptionList(childQuestionObj['a'].options, '', disabled, qId, 'a')
+                            }
+                        </RadioGroup>
+                        {
+                            childAnswerObj['a'] === childQuestionObj['a'].options[1] &&
+                            <div className={'ml-50 mr-30 mb-2'}>
+                                <Input
+                                    type="select" className="chest-question-select"
+                                    value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
+                                    onChange={(e) => (disabled ? null : this.onChangeChildValue(qId, 'b_drop', e.target.value))}
+                                    disabled={disabled}>
+                                    {
+                                        childQuestionObj['a'].dropList.map((v) =>
+                                            <option value={v} key={v}>{v}</option>
+                                        )
+                                    }
+                                </Input>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -406,14 +444,12 @@ export default class UltrasoundQuestion extends Component {
 
     renderQuestion1Additional(qId, disabled) {
         const answerObj = this.state.answerValue;
-        if(!answerObj[qId] || !answerObj[qId].value || answerObj[qId].value === 'Define lesion') {
+        if (!answerObj[qId] || !answerObj[qId].value || answerObj[qId].value === 'Define lesion') {
             return null;
         } else if (answerObj[qId].value === 'Mass') {
             return this.renderQuestion1AdditionalMass(qId, disabled);
-        } else if (answerObj[qId].value === 'Calcification') {
-            return this.renderQuestion1AdditionalCalc(qId, disabled);
-        } else if (answerObj[qId].value === 'Architectual distortion') {
-            return this.renderQuestion1AdditionalArch(qId, disabled);
+        } else if (answerObj[qId].value === 'Calcification' || answerObj[qId].value === 'Architectual distortion') {
+            return this.renderQuestion1AdditionalCalc(qId, disabled, answerObj[qId].value);
         }
     }
 
@@ -516,22 +552,19 @@ export default class UltrasoundQuestion extends Component {
         return (
             <div className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
-                <RadioGroup
-                    className={'ml-3'}
-                    disabled
-                    aria-label="position"
-                    name="position"
-                    value={answerValue[qId] ? answerValue[qId].value : ''}
-                    onChange={(e) => (disabled ? null : this.onChangeQuestion(qId, e.target.value))}
-                    row
-                >
-                    <div className={'col d-flex flex-column p-0'} style={{flex: 2}}>
-                        {this.renderOptionList(questionObj.options[0], '', disabled, qId, 'value')}
-                    </div>
-                    <div className={'col d-flex flex-column p-0'} style={{flex: 3}}>
-                        {this.renderOptionList(questionObj.options[1], '', disabled, qId, 'value')}
-                    </div>
-                </RadioGroup>
+                <div className={'ml-20 mt-10'}>
+                    <Input
+                        type="select" className="chest-question-select"
+                        value={answerValue[qId] ? answerValue[qId].value : ''}
+                        onChange={(e) => (disabled ? null : this.onChangeQuestion(qId, e.target.value))}
+                        disabled={disabled}>
+                        {
+                            questionObj.dropList.map((v) =>
+                                <option value={v} key={v}>{v}</option>
+                            )
+                        }
+                    </Input>
+                </div>
             </div>
         )
     }
@@ -539,13 +572,11 @@ export default class UltrasoundQuestion extends Component {
     render() {
         const disabled = this.props.complete;
         return (
-            <div className={'pl-10 covid-question-container chest-data'}>
-                <div>
-                    <div className={'covid-questions'}>
-                        {this.renderQuestion1(disabled)}
-                        {this.renderQuestion2(disabled)}
-                        {this.renderQuestion3(disabled)}
-                    </div>
+            <div className={'pl-10 pr-20 covid-question-container chest-data'}>
+                <div className={'covid-questions'}>
+                    {this.renderQuestion1(disabled)}
+                    {this.renderQuestion2(disabled)}
+                    {this.renderQuestion3(disabled)}
                 </div>
             </div>
         )
