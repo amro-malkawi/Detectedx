@@ -1227,7 +1227,7 @@ class Attempt extends Component {
             case 'score':
                 if (this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
                     return this.renderVolparaScore();
-                } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === 0) {
+                } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
                     return this.renderImagEDScore();
                 } else {
                     return this.renderNormalScore();
