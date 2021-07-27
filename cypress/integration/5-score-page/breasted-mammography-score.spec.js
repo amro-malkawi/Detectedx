@@ -234,7 +234,6 @@ context('Breasted Mammography - Score Page', () => {
                         answerQuestionnaire()
                     } else {
                         doTheTest()
-                        answerQuestionnaire()
                     }
                 })
 
@@ -283,10 +282,14 @@ context('Breasted Mammography - Score Page', () => {
                     const submitResult = () => {
                         cy.get('.test-previous-finish').click()
                     }
+                    const backToHome = () => {
+                        cy.get('.navbar-right > :nth-child(1) > .MuiButtonBase-root').click()
+                    }
                     selectTheLast()
                     markOnFilm()
                     saveMarkPoint()
                     submitResult()
+                    backToHome()
                 }
             }
             navigateToScoreOrTestPage()
