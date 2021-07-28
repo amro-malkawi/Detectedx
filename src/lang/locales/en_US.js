@@ -272,7 +272,7 @@ module.exports = {
 	"test.attempt.volparaExtraDesc": "Learn more about volumetric reading with these educational videos.",
 	"test.attempt.volparaNext": "Start Video",
 	"test.attempt.imageQualityScoreTitle": "Total Average Score",
-	"test.attempt.imageQualityScoreTitleDesc": "This is calculated using Cohen's Kappa",
+	"test.attempt.imageQualityScoreTitleDesc": "This is  calculated using Percentage agreement",
 	"test.attempt.imageQualityScoreCategory": "Category",
 	"test.attempt.imageQualityScoreAgreeScore": "Agreement Score",
 	"test.attempt.scoreDefinitions": "Score Definitions",

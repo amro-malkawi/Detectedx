@@ -238,7 +238,11 @@ class Attempt extends Component {
                     // } else {
                     //     this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
                     // }
-                    this.setState({post_stage: 2, stepIndex: this.state.steps.findIndex((v) => v === 'score'), postQuestions: postAnswer});
+                    this.setState({
+                        post_stage: 2,
+                        stepIndex: this.state.steps.findIndex((v) => v === 'score'),
+                        postQuestions: postAnswer
+                    });
                 }).catch((e) => {
                     console.warn(e);
                     NotificationManager.error(e.message);
@@ -462,7 +466,8 @@ class Attempt extends Component {
                                         label={
                                             <div className={'row'}>
                                                 <Col sm={6} style={{paddingRight: 0}}>
-                                                    <Label style={{fontSize: 14, marginTop: 9}}>Yes, you can contact me at: </Label>
+                                                    <Label style={{fontSize: 14, marginTop: 9}}>Yes, you can contact me
+                                                        at: </Label>
                                                 </Col>
                                                 <Col sm={6} style={{paddingLeft: 0, paddingRight: 30}}>
                                                     <Input
@@ -703,7 +708,8 @@ class Attempt extends Component {
         const normalStepCount = this.state.steps.filter((v) => v.indexOf('post') === -1).length;
         return (
             <div className={'row ml-0 mr-0 attempt-stepper'}>
-                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'normal-stepper col-12 col-sm-6 pt-40 pr-10'}>
+                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex}
+                         className={'normal-stepper col-12 col-sm-6 pt-40 pr-10'}>
                     {this.state.steps.map((labelIndex, index) => {
                         if (labelIndex.indexOf('post') !== -1) return null;
 
@@ -727,7 +733,8 @@ class Attempt extends Component {
                         stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
                         return (
                             <Step key={label}>
-                                <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)} completed={stepCompleted}>
+                                <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)}
+                                            completed={stepCompleted}>
                                     {label}
                                 </StepButton>
                                 {
@@ -742,7 +749,8 @@ class Attempt extends Component {
                     <div className={'vertical-line'}/>
                 </Stepper>
                 <div className={'col-12 col-sm-6 pl-0 pr-0'}>
-                    <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'post-stepper pt-10 pb-0 pl-0'}>
+                    <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex}
+                             className={'post-stepper pt-10 pb-0 pl-0'}>
                         <div className={'post-stepper-background'}>
                             <span>AMA Credits</span>
                         </div>
@@ -777,7 +785,8 @@ class Attempt extends Component {
                                             <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
                                         </div>
                                     }
-                                    <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)} completed={stepCompleted}>
+                                    <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)}
+                                                completed={stepCompleted}>
                                         {label}
                                     </StepButton>
                                 </Step>
@@ -804,7 +813,9 @@ class Attempt extends Component {
                                 </Button>
                                 {
                                     this.state.isDownCert &&
-                                    <div style={{marginTop: -28, marginLeft: 110}}><CircularProgress size={20} style={{color: 'green'}}/></div>
+                                    <div style={{marginTop: -28, marginLeft: 110}}><CircularProgress size={20}
+                                                                                                     style={{color: 'green'}}/>
+                                    </div>
                                 }
                             </div>
                         </div>
@@ -853,7 +864,8 @@ class Attempt extends Component {
 
 
     renderNormalScore() {
-        let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
+        let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity,
+            roc;
         const scoresForShow = [];
         this.state.attemptInfo.scores.forEach((v) => {
             if (v.metrics.name.indexOf('True Positive') > -1) {
@@ -904,7 +916,8 @@ class Attempt extends Component {
                             <div className={'score-table'}>
                                 {
                                     scoresForShow.map((v, i) => (
-                                        <div className={'score-row'} key={i}><span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                        <div className={'score-row'} key={i}>
+                                            <span>{v.metrics.name}</span><span>{v.score}</span></div>
                                     ))
                                 }
                             </div>
@@ -960,12 +973,15 @@ class Attempt extends Component {
                         <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
                         <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
                         <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
+                            <Button variant="contained" color="primary" size="small" className="text-white"
+                                    onClick={() => this.onTest()}>
                                 <IntlMessages id="test.attempt.volparaAnswerTitle"/>
                             </Button>
                         </div>
                     </div>
-                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
+                    <ExtraInfo
+                        modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
+                    />
                 </div>
             </div>
         )
@@ -994,7 +1010,8 @@ class Attempt extends Component {
                         <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostBeforeTitle"/></p>
                         <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostBeforeDesc"/></p>
                         <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onPostTest()}>
+                            <Button variant="contained" color="primary" size="small" className="text-white"
+                                    onClick={() => this.onPostTest()}>
                                 <IntlMessages id="test.attempt.volparaPostBeforeButton"/>
                             </Button>
                         </div>
@@ -1022,13 +1039,17 @@ class Attempt extends Component {
             return (
                 <div className={'score-extra'}>
                     <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostCompleteTitle"/></p>
-                    <p className={'extra-desc'}><IntlMessages id={"test.attempt.volparaPostCompleteDesc"} values={{score: <span className={'text-primary'}>{postScore}%</span>}}/></p>
+                    <p className={'extra-desc'}><IntlMessages id={"test.attempt.volparaPostCompleteDesc"} values={{
+                        score: <span className={'text-primary'}>{postScore}%</span>
+                    }}/></p>
                     <div className={'extra-button-container'}>
-                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('post_physicians')}>
+                        <Button variant="contained" size="small" className="text-white green-btn"
+                                onClick={() => this.onGetCertPdf('post_physicians')}>
                             <SchoolIcon className={'mr-10'}/>
                             <IntlMessages id="test.attempt.volparaPostCompleteButton1"/>
                         </Button>
-                        <Button variant="contained" size="small" className="text-white green-btn" onClick={() => this.onGetCertPdf('post_other')}>
+                        <Button variant="contained" size="small" className="text-white green-btn"
+                                onClick={() => this.onGetCertPdf('post_other')}>
                             <SchoolIcon className={'mr-10'}/>
                             <IntlMessages id="test.attempt.volparaPostCompleteButton2"/>
                         </Button>
@@ -1099,12 +1120,15 @@ class Attempt extends Component {
                         <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
                         <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
                         <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
+                            <Button variant="contained" color="primary" size="small" className="text-white"
+                                    onClick={() => this.onTest()}>
                                 <IntlMessages id="test.attempt.volparaAnswerTitle"/>
                             </Button>
                         </div>
                     </div>
-                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
+                    <ExtraInfo
+                        modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
+                    />
                 </div>
             </div>
         )
@@ -1131,7 +1155,8 @@ class Attempt extends Component {
                             </div>
                             {
                                 this.state.attemptInfo.scores.map((v, i) => (
-                                    <div className={'quality-score-row'} key={i}><span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                    <div className={'quality-score-row'} key={i}>
+                                        <span>{v.metrics.name}</span><span>{v.score}%</span></div>
                                 ))
                             }
                         </div>
@@ -1144,8 +1169,10 @@ class Attempt extends Component {
                                 </div>
                                 <p className={'score-value'}>
                                     {scoreAverage}
+                                    <span>%</span>
                                 </p>
-                                <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/></p>
+                                <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/>
+                                </p>
                             </div>
                         </div>
                         <div className={'score-chart-container'}>
@@ -1185,12 +1212,15 @@ class Attempt extends Component {
                         <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
                         <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
                         <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onTest()}>
+                            <Button variant="contained" color="primary" size="small" className="text-white"
+                                    onClick={() => this.onTest()}>
                                 <IntlMessages id="test.attempt.volparaAnswerTitle"/>
                             </Button>
                         </div>
                     </div>
-                    <ExtraInfo instruction_type={this.state.attemptInfo.test_sets.modalities.instruction_type}/>
+                    <ExtraInfo
+                        modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
+                    />
                 </div>
             </div>
         )
@@ -1205,9 +1235,11 @@ class Attempt extends Component {
                         <div className={'text-center mt-70'}>
                             {
                                 this.state.stepIndex > 0 ?
-                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
+                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
+                                            onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
                             }
-                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
+                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
+                                    onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
                         </div>
                     </div>
                 );
@@ -1218,9 +1250,11 @@ class Attempt extends Component {
                         <div className={'text-center mt-70'}>
                             {
                                 this.state.stepIndex > 0 ?
-                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
+                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
+                                            onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
                             }
-                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
+                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
+                                    onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
                         </div>
                     </div>
                 );
@@ -1262,7 +1296,8 @@ class Attempt extends Component {
                             >
                                 {
                                     this.state.post_stage === 0 ?
-                                        <IntlMessages id={"test.proceedPostTest"}/> : <IntlMessages id={"test.viewPostTest"}/>
+                                        <IntlMessages id={"test.proceedPostTest"}/> :
+                                        <IntlMessages id={"test.viewPostTest"}/>
                                 }
                             </DisableButton>
                         </div>
@@ -1276,7 +1311,9 @@ class Attempt extends Component {
                     return (
                         <div>
                             <div className={'mt-30 ml-20 mr-20'}>
-                                <IntlMessages id={"test.attempt.postScoreDesc1"} values={{score: <span className={'text-primary'}>{postScore}%</span>}}/><br/>
+                                <IntlMessages id={"test.attempt.postScoreDesc1"} values={{
+                                    score: <span className={'text-primary'}>{postScore}%</span>
+                                }}/><br/>
                                 <IntlMessages id={"test.attempt.postScoreDesc2"}/>
                             </div>
                             <hr className={'mb-0'}/>
@@ -1289,9 +1326,12 @@ class Attempt extends Component {
                             <div className={'text-center mt-70'}>
                                 {
                                     this.state.stepIndex > 0 ?
-                                        <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onBack()}><IntlMessages id={"test.back"}/></Button> : null
+                                        <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
+                                                onClick={() => this.onBack()}><IntlMessages
+                                            id={"test.back"}/></Button> : null
                                 }
-                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}>
+                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
+                                        onClick={() => this.onQuestionsNext()}>
                                     <IntlMessages id={"test.next"}/>
                                 </Button>
                             </div>
@@ -1317,17 +1357,22 @@ class Attempt extends Component {
                                             className={'mr-30'}
                                             disabled={this.state.isDownCert}
                                             onClick={() => this.onGetCertPdf('post_physicians')}>
-                                            <SchoolIcon className={'mr-10'}/><IntlMessages id={"test.certificatePhysicians"}/>
+                                            <SchoolIcon className={'mr-10'}/><IntlMessages
+                                            id={"test.certificatePhysicians"}/>
                                         </Button>
                                         <Button
                                             variant="contained"
                                             color="primary"
                                             disabled={this.state.isDownCert}
                                             onClick={() => this.onGetCertPdf('post_other')}>
-                                            <SchoolIcon className={'mr-10'}/><IntlMessages id={"test.certificateNonPhysicians"}/>
+                                            <SchoolIcon className={'mr-10'}/><IntlMessages
+                                            id={"test.certificateNonPhysicians"}/>
                                         </Button>
                                         {
-                                            this.state.isDownCert && <div style={{marginTop: -28}}><CircularProgress size={20} style={{color: 'green'}}/></div>
+                                            this.state.isDownCert &&
+                                            <div style={{marginTop: -28}}><CircularProgress size={20}
+                                                                                            style={{color: 'green'}}/>
+                                            </div>
                                         }
                                     </div> : null
                             }

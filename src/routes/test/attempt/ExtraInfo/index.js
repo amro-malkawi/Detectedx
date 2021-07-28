@@ -2,14 +2,18 @@ import React from 'react';
 import MammoExtraInfo from "./MammoExtraInfo";
 import CovidExtraInfo from "./CovidExtraInfo";
 import VolparaExtraInfo from "./VolparaExtraInfo";
+import ImagedExtraInfo from "./ImagedExtraInfo";
 
-export default function ({open, onClose, instruction_type}) {
-    console.log(instruction_type, 'isntruction_type')
-    switch (instruction_type) {
-        case "COVID-19":
+export default function ({open, onClose, modality_type}) {
+    console.log(modality_type, '3212341234')
+    switch (modality_type) {
+        case "covid":
             return <CovidExtraInfo open={open} onClose={onClose}/>
-        case "VOLPARA":
+        case "volpara":
             return <VolparaExtraInfo open={open} onClose={onClose}/>
+        case "imaged_mammo":
+        case "imaged_chest":
+            return <ImagedExtraInfo open={open} onClose={onClose}/>
         default:
             return <MammoExtraInfo open={open} onClose={onClose}/>
     }
