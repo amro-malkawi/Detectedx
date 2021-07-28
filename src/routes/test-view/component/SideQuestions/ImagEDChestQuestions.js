@@ -24,7 +24,7 @@ const question = [
         label: '2. Are the lungs unobscured?',
         options: ['1', '2', '3'],
         desc: 'Please highlight any parameter below that is obscuring the lungs:',
-        child: ['The scapulae', 'Then chin', 'Arms', 'Patient rotation', 'Patient movement', 'Quantum mottle', 'Collimation', 'Exposure factors', 'Scattered radiation'],
+        child: ['The scapulae', 'The chin', 'Arms', 'Patient rotation', 'Patient movement', 'Quantum mottle', 'Collimation', 'Exposure factors', 'Scattered radiation'],
         showChildOptions: ['1', '2']
     },
     {
