@@ -1,3 +1,10 @@
+export function getTool(name) {
+    cy.get('.tool-container').should('be.visible').click()
+    cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="${name}"]`)
+        .click()
+        .should('exist')
+}
+
 export function getClickableButtonInCard(cardName) {
     let buttons = [];
     cy.getReact('CardBody').then((cards) => {

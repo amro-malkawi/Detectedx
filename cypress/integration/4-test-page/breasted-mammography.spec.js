@@ -1,31 +1,13 @@
-import { clickExistButtonInCard } from "../../support/common/functions/index"
-import { BUTTON } from "../../support/common/constants/button"
+import { getTool, clickExistButtonInCard } from "../../support/common/functions/index"
+import { BUTTON, TOOL } from "../../support/common/constants/index"
 
 const CURRENT_CARD = {
     MammographyDemo: 'Mammography Demo'    
 }
 
-const TOOL = {
-    PAN: 'Pan',
-    ZOOM: 'Zoom',
-    MAGNIFY: 'Magnify',
-    WINDOW: 'Wwwc',
-    RESET: 'Reset',
-    LENGTH: 'Length',
-    MARKER: 'Marker',
-    MARKER_FREEHAND: 'MarkerFreehand'
-}
-
 function waitForTransition() {
     const time = 2000
     cy.wait(time)
-}
-
-function getTool(name) {
-    cy.get('.tool-container').should('be.visible').click()
-    cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="${name}"]`)
-        .click()
-        .should('exist')
 }
 
 function navigateToTestSet() {

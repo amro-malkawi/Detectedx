@@ -1,5 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { BUTTON } from '../../support/common/constants/button'
+import { BUTTON } from '../../support/common/constants/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
