@@ -1,4 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
+import { BUTTON } from '../../support/common/constants/button'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -9,14 +10,25 @@ const CARD = {
     MammographyDemo: 'Mammography Demo'
 }
 const CURRENT_TEST = {
-    CARD: CARD.MammographyDemo
+    CARD: CARD.MammographyDemo,
+    VIEW_BUTTON_INDEX: 0,
 }
-const BUTTON = {
-    Continue: 'Continue',
-    Restart: 'Re-Start',
-    Scores: 'Scores',
+
+function waitForUserInputQuestionnaire() {
+    return cy.pause()
 }
-const viewButtonIndex = 2
+
+function checkAnswer() {
+    return cy.get('button').contains('Answers').click()
+}
+
+function routeToScorePage() {
+    return cy.get('button').contains('Scores').click()
+}
+
+function downloadCertificate() {
+    return cy.get('button').contains('Certificate of Completion').click()
+}
 
 function getButtonByNameOfCard(card_name, button_name) {
     cy.getReact('CardBody').then((cards) => {
@@ -120,18 +132,30 @@ context('Breasted Mammography - Score Page', () => {
             cy.wait(1000)
         })
 
-        it.only('should be able to submit test or make questionnaire on score page', () => {
+        it('should be able to submit test or make questionnaire on score page', () => {
             clickExistButtonInCard([BUTTON.Continue, BUTTON.Restart])
             cy.wait(2000)
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
-                    cy.pause()
-                    // answerQuestionnaire()
+                    questionnaireFlow()
                 } else {
-                    submitTest()
+                    submitTestFlow()
                 }
             })
+
+            const questionnaireFlow = () => {
+                waitForUserInputQuestionnaire()
+                checkAnswer()
+                routeToScorePage()
+                downloadCertificate()
+            }
+
+            const submitTestFlow = () => {
+                submitTest()
+                questionnaireFlow()
+            }
+
             const submitTest = () => {
                 cy.get('.form-control').then((value) => {
                     const position = (value[0].length - 1).toString()
@@ -151,24 +175,6 @@ context('Breasted Mammography - Score Page', () => {
                 cy.get('.right > .MuiButtonBase-root').click()
                 cy.get('.test-previous-finish').click()
             }
-            const answerQuestionnaire = () => {
-                cy.get(':nth-child(1) > :nth-child(1) > .row > .MuiFormGroup-root > :nth-child(4) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get(':nth-child(1) > .row > .MuiFormGroup-root > :nth-child(5) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get(':nth-child(3) > :nth-child(1) > .row > .MuiFormGroup-root > :nth-child(3) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get(':nth-child(4) > :nth-child(1) > .row > .MuiFormGroup-root > :nth-child(1) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get(':nth-child(1) > .MuiFormGroup-root > #name').type(0)
-                cy.get(':nth-child(1) > :nth-child(2) > .row > .MuiFormGroup-root > :nth-child(3) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get(':nth-child(2) > :nth-child(2) > .MuiFormGroup-root > #name').type(0)
-                cy.get(':nth-child(3) > :nth-child(2) > .MuiFormGroup-root > #name').type(0)
-                cy.get(':nth-child(4) > :nth-child(2) > .row > .MuiFormGroup-root > :nth-child(1) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get(':nth-child(5) > :nth-child(2) > .row > .MuiFormGroup-root > :nth-child(2) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                cy.get('.text-center > .MuiButtonBase-root').click()
-                cy.wait(2000)
-                cy.get(':nth-child(2) > .extra-button-container > .MuiButtonBase-root').click()
-                cy.wait(2000)
-                cy.get('.ml-20 > .MuiButton-label > .test-action-btn-label').click()
-                cy.get(':nth-child(1) > .extra-button-container > .MuiButtonBase-root > .MuiButton-label').click()
-            }
         })
 
         it('should be able to re-select the drop down list on score page', () => {
@@ -186,7 +192,7 @@ context('Breasted Mammography - Score Page', () => {
                 })
             }
             const checkScorePage = () => {
-                clickViewButton(viewButtonIndex)
+                clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
                 interceptDropdownRequest()
                 const checkAllDropdownListAt = (number) => {
                     const selector = `:nth-child(${number}) > .score-chart-title > .form-control`
@@ -232,34 +238,22 @@ context('Breasted Mammography - Score Page', () => {
                 isCurrentAQuestionPage()
                 cy.get('@foundQuestionnairePage').then(({ selector }) => {
                     if (selector.found) {
-                        cy.pause()
-                        // answerQuestionnaire()
+                        questionnaireFlow()
                     } else {
-                        doTheTest()
+                        submitTestFlow()
                     }
                 })
-
-                const answerQuestionnaire = () => {
-                    cy.get(':nth-child(1) > :nth-child(1) > .row > .MuiFormGroup-root > :nth-child(4) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get(':nth-child(1) > .row > .MuiFormGroup-root > :nth-child(5) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get(':nth-child(3) > :nth-child(1) > .row > .MuiFormGroup-root > :nth-child(3) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get(':nth-child(4) > :nth-child(1) > .row > .MuiFormGroup-root > :nth-child(1) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get(':nth-child(1) > .MuiFormGroup-root > #name').type(0)
-                    cy.get(':nth-child(1) > :nth-child(2) > .row > .MuiFormGroup-root > :nth-child(3) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get(':nth-child(2) > :nth-child(2) > .MuiFormGroup-root > #name').type(0)
-                    cy.get(':nth-child(3) > :nth-child(2) > .MuiFormGroup-root > #name').type(0)
-                    cy.get(':nth-child(4) > :nth-child(2) > .row > .MuiFormGroup-root > :nth-child(1) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get(':nth-child(5) > :nth-child(2) > .row > .MuiFormGroup-root > :nth-child(2) > .MuiButtonBase-root > .MuiIconButton-label > .PrivateSwitchBase-input-14').click()
-                    cy.get('.text-center > .MuiButtonBase-root').click() // next button
-
-                    // after click next page will route to score page
-
-                    cy.get(':nth-child(2) > .extra-button-container > .MuiButtonBase-root').click() // answer button
-                    cy.get('.ml-20 > .MuiButton-label > .test-action-btn-label').click() // score button
-                    cy.get(':nth-child(1) > .extra-button-container > .MuiButtonBase-root').click() // get certificate button
+                const questionnaireFlow = () => {
+                    waitForUserInputQuestionnaire()
+                    checkAnswer()
+                    routeToScorePage()
+                    downloadCertificate()
                 }
-
-                const doTheTest = () => {
+                const submitTestFlow = () => {
+                    submitTest()
+                    questionnaireFlow()
+                }
+                const submitTest = () => {
                     const selectTheLast = () => {
                         cy.get('.form-control').then((value) => {
                             const position = (value[0].length - 1).toString()
@@ -295,20 +289,18 @@ context('Breasted Mammography - Score Page', () => {
                 }
             }
             navigateToScoreOrTestPage()
-
         })
-
 
         it('should be able to click on view button and navigate to score page', () => {
             navigateToScorePage()
-            clickViewButton(viewButtonIndex)
+            clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
             cy.get('.rct-page').should('be.visible')
             cy.get('.score-circle-container').should('be.visible')
         })
 
         it('should be able to see score data on score page', () => {
             navigateToScorePage()
-            clickViewButton(viewButtonIndex)
+            clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
             cy.get('.normal-score-data')
                 .should('exist')
                 .and('be.visible')
@@ -316,7 +308,7 @@ context('Breasted Mammography - Score Page', () => {
 
         it('should be able to download the certificate of completion on score page', () => {
             navigateToScorePage()
-            clickViewButton(viewButtonIndex)
+            clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
             cy.get(':nth-child(1) > .extra-button-container > .MuiButtonBase-root')
                 .should('exist')
                 .scrollIntoView()
@@ -326,7 +318,7 @@ context('Breasted Mammography - Score Page', () => {
 
         it('should be able to see the definition on score page by clicking button', () => {
             navigateToScorePage()
-            clickViewButton(viewButtonIndex)
+            clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
             cy.getBySel('test-attempt-definition-button')
                 .should('exist')
                 .scrollIntoView()
