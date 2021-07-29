@@ -120,13 +120,14 @@ context('Breasted Mammography - Score Page', () => {
             cy.wait(1000)
         })
 
-        it('should be able to submit test or make questionnaire on score page', () => {
+        it.only('should be able to submit test or make questionnaire on score page', () => {
             clickExistButtonInCard([BUTTON.Continue, BUTTON.Restart])
             cy.wait(2000)
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
-                    answerQuestionnaire()
+                    cy.pause()
+                    // answerQuestionnaire()
                 } else {
                     submitTest()
                 }
@@ -231,7 +232,8 @@ context('Breasted Mammography - Score Page', () => {
                 isCurrentAQuestionPage()
                 cy.get('@foundQuestionnairePage').then(({ selector }) => {
                     if (selector.found) {
-                        answerQuestionnaire()
+                        cy.pause()
+                        // answerQuestionnaire()
                     } else {
                         doTheTest()
                     }
