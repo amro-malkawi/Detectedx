@@ -1,3 +1,10 @@
+import { clickExistButtonInCard } from "../../support/common/functions/index"
+import { BUTTON } from "../../support/common/constants/button"
+
+const CURRENT_CARD = {
+    MammographyDemo: 'Mammography Demo'    
+}
+
 const TOOL = {
     PAN: 'Pan',
     ZOOM: 'Zoom',
@@ -14,19 +21,6 @@ function waitForTransition() {
     cy.wait(time)
 }
 
-function getButtonByNameOfCard(name) {
-    cy.getReact('CardBody').then((buttons) => {
-        let target = null;
-        buttons.some(element => {
-            if (element.node.innerText.includes(name)) {
-                target = element.children[0].children[0].children[1].children[0].node;
-                return true;
-            }
-        });
-        cy.get(target).first().click();
-    });
-}
-
 function getTool(name) {
     cy.get('.tool-container').should('be.visible').click()
     cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="${name}"]`)
@@ -35,18 +29,9 @@ function getTool(name) {
 }
 
 function navigateToTestSet() {
-    const name = 'Mammography'
-    cy.get("body").then($body => {
-        if ($body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
-            // found start button;
-            getButtonByNameOfCard(name)
-        } else {
-            // found continue button;
-            if ($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
-                getButtonByNameOfCard(name)
-            }
-        }
-    });
+    const cardName = CURRENT_CARD.MammographyDemo
+    const buttonName = [BUTTON.Start, BUTTON.Restart ,BUTTON.Continue]
+    clickExistButtonInCard(cardName, buttonName)
 }
 context('Test Page - Breast Mammo Continue Case', () => {
     describe('Expect to see breast mammo modality functional', () => {
