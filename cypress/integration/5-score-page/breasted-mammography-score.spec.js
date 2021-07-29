@@ -23,7 +23,7 @@ function checkAnswer() {
 }
 
 function routeToScorePage() {
-    return cy.get('button').contains('Scores').click()
+    return cy.get('button').contains('Scores').click({ force: true })
 }
 
 function downloadCertificate() {
