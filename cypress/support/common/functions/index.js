@@ -69,3 +69,11 @@ export function isCurrentAQuestionPage() {
         return cy.get(foundQuestionnairePage).as('foundQuestionnairePage')
     });
 }
+export function isCurrentAnEvaluationFormPage() {
+    cy.get("body").then($body => {
+        const h2 = $body.find('h2')
+        const EvaluationForm = 'Evaluation Form'
+        const foundEvaluationFormPage = h2.length > 0 && h2[0].innerText.includes(EvaluationForm) ? { found: true } : { found: false }
+        return cy.get(foundEvaluationFormPage).as('foundEvaluationFormPage')
+    });
+}
