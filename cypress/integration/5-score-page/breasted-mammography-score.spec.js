@@ -15,6 +15,9 @@ const CURRENT_TEST = {
 }
 
 function waitForUserInputQuestionnaire() {
+    const message = 'After input all questionnaire, please click "Next" button below the questionnaire page. After that to continue the test please click "Resume" button.'
+    cy.log(message)
+    alert(message)
     return cy.pause()
 }
 
