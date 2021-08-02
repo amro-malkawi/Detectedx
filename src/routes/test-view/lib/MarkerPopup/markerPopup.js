@@ -163,13 +163,20 @@ class MarkerPopup extends Component {
         let hasSubLesion;
         let childrenOptions = [];
         let selectedChildrenOption = [];
-        if (selectedLesionObj !== undefined && selectedLesionObj.children !== undefined && selectedLesionObj.children.length > 0) {
-            if (selectedLesionObj.children[0].children !== undefined && selectedLesionObj.children[0].children.length > 0) {
+        let childrenLesionList;
+        if (selectedLesionObj && selectedLesionObj.children && selectedLesionObj.children.length > 0) {
+            childrenLesionList = selectedLesionObj.children;
+            if (childrenLesionList[0].children !== undefined && childrenLesionList[0].children.length > 0) {
+                // breast lesions
                 hasSubLesion = true;
+                // when Present value is not "Present", remove "Associated features" drop list
+                if(selectedLesionList[selectedLesionObj.name]['Present'] !== 'Present') {
+                    childrenLesionList = childrenLesionList.filter((v) => v.name !== 'Associated features');
+                }
             } else {
                 hasSubLesion = false;
-                childrenOptions = selectedLesionObj.children.map((v) => ({value: v.id, label: v.name}));
-                const selectedChildLesionObj = selectedLesionObj.children.find((v) => v.name === selectedLesionList[selectedLesionObj.name]);
+                childrenOptions = childrenLesionList.map((v) => ({value: v.id, label: v.name}));
+                const selectedChildLesionObj = childrenLesionList.find((v) => v.name === selectedLesionList[selectedLesionObj.name]);
                 if (selectedChildLesionObj !== undefined) {
                     selectedChildrenOption = [{value: selectedChildLesionObj.id, label: selectedChildLesionObj.name}];
                 }
@@ -189,7 +196,7 @@ class MarkerPopup extends Component {
                 />
                 {
                     hasSubLesion !== undefined && (hasSubLesion ?
-                        selectedLesionObj.children && selectedLesionObj.children.map((v, i) => this.renderSubLesion(selectedLesionObj.name, v)) :
+                        childrenLesionList && childrenLesionList.map((v, i) => this.renderSubLesion(selectedLesionObj.name, v)) :
                         <Select
                             isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
                             placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> :

@@ -16,7 +16,7 @@ const question = [
         label: '1. Are all relevant anatomic features clearly visible?',
         options: ['1', '2', '3'],
         desc: 'Please highlight any feature below that is displayed in a less than optimal way:',
-        child: ['Costophrenic angles', 'Lung Apices', 'Chest lateral borders', 'A maximum of ten posterior ribs', 'vascular markings of the lungs', '5th-7th anterior ribs'],
+        child: ['Costophrenic angles', 'Lung Apices', 'Chest lateral borders', 'A maximum of ten posterior ribs', 'Vascular markings of the lungs', '5th-7th anterior ribs'],
         showChildOptions: ['1', '2']
     },
     {
@@ -38,9 +38,15 @@ const question = [
     {
         id: 'imagedChestQ4',
         label: '4: Should this image be accepted?',
-        options: ['Yes', 'No'],
+        options: ['No', 'Yes'],
     },
 ]
+
+const questionTooltip = {
+    "1": 'No',
+    '2': 'Partially',
+    '3': 'Yes'
+}
 
 export default class ImagEDChestQuestions extends Component {
     constructor(props) {
@@ -79,7 +85,7 @@ export default class ImagEDChestQuestions extends Component {
 
     checkQuestionValidate() {
         const {answerValue} = this.state;
-        if(question.every((q) =>  answerValue[q.id] !== undefined )) {
+        if (question.every((q) => answerValue[q.id] !== undefined)) {
             return true;
         } else {
             NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
@@ -198,11 +204,19 @@ export default class ImagEDChestQuestions extends Component {
                                 key={v}
                                 value={v}
                                 control={
-                                    <QuestionRadio
-                                        icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                        checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                        disableRipple
-                                    />
+                                    questionTooltip[v] ?
+                                        <Tooltip title={questionTooltip[v]} placement="bottom">
+                                            <QuestionRadio
+                                                icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                                checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                                disableRipple
+                                            />
+                                        </Tooltip> :
+                                        <QuestionRadio
+                                            icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                            checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                            disableRipple
+                                        />
                                 }
                                 label={v}
                                 labelPlacement="end"
