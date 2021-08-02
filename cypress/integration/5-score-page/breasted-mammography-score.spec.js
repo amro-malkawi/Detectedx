@@ -14,11 +14,52 @@ const CURRENT_TEST = {
     VIEW_BUTTON_INDEX: 0,
 }
 
-function waitForUserInputQuestionnaire() {
+function waitForUserInputQuestionnairePage() {
+    isCurrentAQuestionPage()
+    cy.get('@foundQuestionnairePage').then(({ selector }) => {
+        if (selector.found) {
+            alertAndPause()
+        }
+    })
+}
+
+function alertAndPause() {
     const message = 'After input all questionnaire, please click "Next" button below the questionnaire page. After that to continue the test please click "Resume" button.'
     cy.log(message)
     alert(message)
     return cy.pause()
+}
+
+function selectTheLast() {
+    cy.get('.form-control').then((value) => {
+        const position = (value[0].length - 1).toString()
+        cy.wrap(value).select(position)
+    })
+}
+
+function backToHome() {
+    cy.get('.navbar-right > :nth-child(1) > .MuiButtonBase-root').click()
+}
+
+function markOnFilm() {
+    cy.get('.image-row').then((row) => {
+        const image = row[0].childNodes[0]
+        cy.wait(1000)
+        cy.get('.more-icon').click()
+        cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="Marker"]').click()
+        cy.wait(1000)
+        cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
+        cy.wait(2000)
+        cy.wrap(image).click()
+    })
+}
+
+const saveMarkPoint = () => {
+    cy.get('.right > .MuiButtonBase-root').click()
+}
+
+function clickSubmit() {
+    cy.get('button').contains('Submit').should('exist').and('be.visible').click()
 }
 
 function checkAnswer() {
@@ -135,12 +176,13 @@ context('Breasted Mammography - Score Page', () => {
             cy.wait(1000)
         })
 
-        it('should be able to submit test or make questionnaire on score page', () => {
+        it.only('should be able to submit test or make questionnaire on score page', () => {
             clickExistButtonInCard([BUTTON.Continue, BUTTON.Restart])
             cy.wait(2000)
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
+                    alertAndPause()
                     questionnaireFlow()
                 } else {
                     submitTestFlow()
@@ -148,7 +190,6 @@ context('Breasted Mammography - Score Page', () => {
             })
 
             const questionnaireFlow = () => {
-                waitForUserInputQuestionnaire()
                 checkAnswer()
                 routeToScorePage()
                 downloadCertificate()
@@ -156,27 +197,17 @@ context('Breasted Mammography - Score Page', () => {
 
             const submitTestFlow = () => {
                 submitTest()
+                waitForUserInputQuestionnairePage()
                 questionnaireFlow()
             }
 
             const submitTest = () => {
-                cy.get('.form-control').then((value) => {
-                    const position = (value[0].length - 1).toString()
-                    cy.wrap(value).select(position)
-                })
-                cy.get('.image-row').then((row) => {
-                    const image = row[0].childNodes[0]
-                    cy.wait(1000)
-                    cy.get('.more-icon').click()
-                    cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="Marker"]').click()
-                    cy.wait(1000)
-                    cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
-                    cy.wait(2000)
-                    cy.wrap(image).click()
-                })
+                selectTheLast()
+                markOnFilm()
                 cy.wait(1000)
-                cy.get('.right > .MuiButtonBase-root').click()
-                cy.get('.test-previous-finish').click()
+                saveMarkPoint()
+                clickSubmit()
+                cy.wait(2000)
             }
         })
 
@@ -241,13 +272,13 @@ context('Breasted Mammography - Score Page', () => {
                 isCurrentAQuestionPage()
                 cy.get('@foundQuestionnairePage').then(({ selector }) => {
                     if (selector.found) {
+                        alertAndPause()
                         questionnaireFlow()
                     } else {
                         submitTestFlow()
                     }
                 })
                 const questionnaireFlow = () => {
-                    waitForUserInputQuestionnaire()
                     checkAnswer()
                     routeToScorePage()
                     downloadCertificate()
@@ -257,33 +288,7 @@ context('Breasted Mammography - Score Page', () => {
                     questionnaireFlow()
                 }
                 const submitTest = () => {
-                    const selectTheLast = () => {
-                        cy.get('.form-control').then((value) => {
-                            const position = (value[0].length - 1).toString()
-                            cy.wrap(value).select(position)
-                        })
-                    }
-                    const markOnFilm = () => {
-                        cy.get('.image-row').then((row) => {
-                            const image = row[0].childNodes[0]
-                            cy.wait(1000)
-                            cy.get('.more-icon').click()
-                            cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="Marker"]').click()
-                            cy.wait(1000)
-                            cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
-                            cy.wait(2000)
-                            cy.wrap(image).click()
-                        })
-                    }
-                    const saveMarkPoint = () => {
-                        cy.get('.right > .MuiButtonBase-root').click()
-                    }
-                    const submitResult = () => {
-                        cy.get('.test-previous-finish').click()
-                    }
-                    const backToHome = () => {
-                        cy.get('.navbar-right > :nth-child(1) > .MuiButtonBase-root').click()
-                    }
+                    clickSubmit()
                     selectTheLast()
                     markOnFilm()
                     saveMarkPoint()
