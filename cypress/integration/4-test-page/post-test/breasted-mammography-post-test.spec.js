@@ -6,6 +6,10 @@ const CARD = {
 const CURRENT_TEST = {
     CARD: CARD.Mammography60CasesM12020
 }
+const LESION_TYPE = {
+    Asymmetry: "Asymmetry",
+    Calcification: "Calcification",
+}
 const CORRECT_ANSWER = {
     IMAGE_2: {
         POSITION: { A: { which: 1, pageX: 503, pageY: 396 } },
@@ -49,7 +53,6 @@ function waitForUserInputQuestionnairePage() {
         }
     })
 }
-
 function waitForUserInputEvaluationPage() {
     isCurrentAnEvaluationFormPage()
     cy.get('@foundEvaluationFormPage').then(({ selector }) => {
@@ -58,7 +61,21 @@ function waitForUserInputEvaluationPage() {
         }
     })
 }
-
+function selectLesionType(LesionType) {
+    switch (LesionType) {
+        case LESION_TYPE.Asymmetry:
+            cy.get('div').contains('Select lesion type').click().type('{downarrow}{downarrow}{enter}');
+            cy.get('div').contains('Select Lesion').click().type('{downarrow}{downarrow}{enter}');
+            break;
+        case LESION_TYPE.Calcification:
+            cy.get('div').contains('Select lesion type').click().type('{downarrow}{downarrow}{downarrow}{downarrow}{enter}');
+            cy.get('div').contains('Select Appearance').click().type('{downarrow}{downarrow}{downarrow}{downarrow}{enter}');
+            cy.get('div').contains('Select Distribution').click().type('{downarrow}{downarrow}{downarrow}{enter}');
+            break;
+        default:
+            break;
+    }
+}
 function alertAndPause() {
     const message = 'After input all questionnaire, please click "Next" button below the questionnaire page. After that to continue the test please click "Resume" button.'
     cy.log(message)
@@ -100,17 +117,20 @@ function clickReattempt() {
 function clickReviewAnswers() {
     cy.getBySel('review-answers-button').should('exist').and('be.visible').click()
 }
+function clickSave() {
+    cy.get('.save').click()
+}
 function addMarker() {
     cy.get('.image-row').then((row) => {
         const image = row[0].childNodes[0]
-        cy.wait(1000)
+        cy.wait(3000)
         cy.get('.more-icon').click()
         cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="Marker"]').click()
         cy.wait(1000)
         cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
         cy.wait(2000)
         cy.wrap(image).click() // click to mark
-        cy.get('.save').click() // save marker
+        clickSave()
     })
 }
 context('Post Test - Breasted Mammography', () => {
@@ -125,7 +145,7 @@ context('Post Test - Breasted Mammography', () => {
             cy.wait(1000)
         })
 
-        it.only('should be able to do post test', () => {
+        it('should be able to do post test', () => {
             navigateToTestPage()
             cy.wait(1000)
 
@@ -161,13 +181,8 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_2.LEVEL_OF_CONFIDENCE) // check radio element
 
-                    cy.get('.css-16zdvyg-control').click() // click on dropdown lesion type
-                    cy.get('#react-select-3-option-1').click()  // CORRECT_ANSWER.IMAGE_2.LESION_TYPE
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // click on dropdown lesion child
-                    cy.get('#react-select-4-option-1').click() // CORRECT_ANSWER.IMAGE_2.CHILD_LESION
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
+                    selectLesionType(LESION_TYPE.Asymmetry)
+                    clickSave()
                 })
             }
             const markCorrectImage5 = () => {
@@ -179,36 +194,15 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_5.POSITION.A) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_5.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    cy.get('.css-16zdvyg-control').click() // click selector
-                    cy.get('#react-select-6-option-3').click() // click select appearance
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // select dropdown lesion child
-                    cy.get('#react-select-7-option-3').click()  // choose Calcification
-
-                    cy.get(':nth-child(3) > .css-16zdvyg-control').click()
-                    cy.get('#react-select-8-option-2').click()  // choose Calcification
-
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
-
+                    selectLesionType(LESION_TYPE.Calcification)
+                    clickSave()
                     cy.wait(1500)
-
                     cy.wrap(row[0].childNodes[3])
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_5.POSITION.B) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_5.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    cy.get('.css-16zdvyg-control').click() // click selector
-                    cy.get('#react-select-10-option-3').click() // click select appearance
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // click dropdown lesion child
-                    cy.get('#react-select-11-option-3').click()  // choose Calcification
-
-                    cy.get(':nth-child(3) > .css-16zdvyg-control').click()
-                    cy.get('#react-select-12-option-2').click()  // choose Calcification
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
+                    selectLesionType(LESION_TYPE.Calcification)
+                    clickSave()
                 })
             }
             const markCorrectImage6 = () => {
@@ -220,28 +214,15 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_6.POSITION.A) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_6.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    cy.get('.css-16zdvyg-control').click() // click dropdown lesion type
-                    cy.get('#react-select-14-option-1').click()  // select lesion type
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // click dropdown lesion child
-                    cy.get('#react-select-15-option-1').click() // select lesion child
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
-
+                    selectLesionType(LESION_TYPE.Asymmetry)
+                    clickSave()
                     cy.wait(1500)
                     cy.wrap(row[0].childNodes[2])
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_6.POSITION.B) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_6.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    cy.get('.css-16zdvyg-control').click() // select dropdown lesion type
-                    cy.get('#react-select-17-option-1').click()  // select lesion type
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // select dropdown lesion child
-                    cy.get('#react-select-18-option-1').click() // select lesion type
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
+                    selectLesionType(LESION_TYPE.Asymmetry)
+                    clickSave()
                 })
             }
             const markCorrectImage8 = () => {
@@ -254,26 +235,15 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_8.LEVEL_OF_CONFIDENCE) // check radio element
 
-                    cy.get('.css-16zdvyg-control').click() // click dropdown lesion type
-                    cy.get('#react-select-20-option-1').click()  // select lesion type
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // click dropdown lesion child
-                    cy.get('#react-select-21-option-1').click() // select lesion type
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
-
+                    selectLesionType(LESION_TYPE.Asymmetry)
+                    clickSave()
                     cy.wrap(row[0].childNodes[3])
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_8.POSITION.B) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_8.LEVEL_OF_CONFIDENCE) // check radio element
 
-                    cy.get('.css-16zdvyg-control').click() // click dropdown lesion type
-                    cy.get('#react-select-23-option-1').click()  // select lesion type
-
-                    cy.get(':nth-child(2) > .css-16zdvyg-control').click() // click dropdown lesion child
-                    cy.get('#react-select-24-option-1').click() // select lesion type
-
-                    cy.get('.right > .MuiButtonBase-root').click() // save
+                    selectLesionType(LESION_TYPE.Asymmetry)
+                    clickSave()
                 })
             }
 
