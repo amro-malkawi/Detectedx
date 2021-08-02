@@ -41,12 +41,29 @@ const CORRECT_ANSWER = {
         CHILD_LESION: "Focal", // Select lesion
     },
 }
-function waitForUserInputQuestionnaire() {
+function waitForUserInputQuestionnairePage() {
+    isCurrentAQuestionPage()
+    cy.get('@foundQuestionnairePage').then(({ selector }) => {
+        if (selector.found) {
+            alertAndPause()
+        }
+    })
+}
+
+function waitForUserInputEvaluationPage() {
+    isCurrentAnEvaluationFormPage()
+    cy.get('@foundEvaluationFormPage').then(({ selector }) => {
+        if (selector.found) {
+            alertAndPause()
+        }
+    })
+}
+
+function alertAndPause() {
     const message = 'After input all questionnaire, please click "Next" button below the questionnaire page. After that to continue the test please click "Resume" button.'
     cy.log(message)
     alert(message)
     cy.pause()
-    return false;
 }
 function checkAnswer() {
     return cy.get('button').contains('Answers').click()
@@ -75,7 +92,7 @@ function selectLastTest() {
     })
 }
 function clickSubmit() {
-    cy.get('button').contains('Submit').click()
+    cy.get('button').contains('Submit').should('exist').and('be.visible').click()
 }
 function clickReattempt() {
     cy.get('button').contains('Reattempt').should('exist').and('be.visible').click()
@@ -115,6 +132,7 @@ context('Post Test - Breasted Mammography', () => {
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
+                    alertAndPause()
                     questionnaireFlow()
                 } else {
                     submitTestFlow()
@@ -124,11 +142,12 @@ context('Post Test - Breasted Mammography', () => {
                 selectLastTest()
                 addMarker()
                 cy.wait(500)
-                clickSubmit()
+                clickSubmit() // after click Submit will route to Questionnaire Page
+                cy.wait(2000)
+                waitForUserInputQuestionnairePage()
                 questionnaireFlow()
             }
             const questionnaireFlow = () => {
-                waitForUserInputQuestionnaire()
                 startPostTestWithReattempt()
                 startPostTestWithCorrectAnswer()
             }
@@ -274,12 +293,7 @@ context('Post Test - Breasted Mammography', () => {
                 markCorrectImage8()
                 clickSubmit()
                 cy.wait(2000)
-                isCurrentAnEvaluationFormPage()
-                cy.get('@foundEvaluationFormPage').then(({ selector }) => {
-                    if (selector.found) {
-                        waitForUserInputQuestionnaire()
-                    }
-                })
+                waitForUserInputEvaluationPage()
                 checkAnswer()
                 routeToScorePage()
                 downloadCertificate()
