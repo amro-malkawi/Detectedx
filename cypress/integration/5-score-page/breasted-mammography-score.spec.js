@@ -176,7 +176,7 @@ context('Breasted Mammography - Score Page', () => {
             cy.wait(1000)
         })
 
-        it.only('should be able to submit test or make questionnaire on score page', () => {
+        it('should be able to submit test or make questionnaire on score page', () => {
             clickExistButtonInCard([BUTTON.Continue, BUTTON.Restart])
             cy.wait(2000)
             isCurrentAQuestionPage()
