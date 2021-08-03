@@ -109,6 +109,12 @@ export default class MarkerTool extends BaseAnnotationTool {
                         lesionNames.push(rootLesion);
                     }
                 }
+                // replace Nil and Present to "No associated features", "Associated features present"
+                lesionNames.forEach((v, i) => {
+                    if(v === 'Nil') lesionNames[i] = 'No associated features';
+                    if(v === 'Present') lesionNames[i] = 'Associated features present';
+                });
+
                 let colour;
                 let padding;
                 if (mark.isTruth) {

@@ -150,6 +150,12 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                             }
                         }
                     }
+                    // replace Nil and Present to "No associated features", "Associated features present"
+                    lesionNames.forEach((v, i) => {
+                        if(v === 'Nil') lesionNames[i] = 'No associated features';
+                        if(v === 'Present') lesionNames[i] = 'Associated features present';
+                    });
+
                     let textCoords, padding, colour;
                     if (data.isTruth) {
                         textCoords = cornerstone.pixelToCanvas(eventData.element, {

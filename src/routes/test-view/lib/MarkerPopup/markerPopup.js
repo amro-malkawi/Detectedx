@@ -135,11 +135,22 @@ class MarkerPopup extends Component {
         const options = item.children.map((v) => ({value: v.id, label: v.name}));
         const selectedOptionObj = item.children.find((v) => v.name === selectedLesionList[parent][item.name]);
         const selectedOption = selectedOptionObj !== undefined ? [{value: selectedOptionObj.id, label: selectedOptionObj.name}] : [];
+        let placeholder;
+        if (this.state.complete || Number(this.state.selectedRating) < 3) {
+            placeholder = <IntlMessages id={"testView.cannotSelectLesion"}/>;
+        } else {
+            if (item.name === 'Present') {
+                // when drop down is "Present", change placeholder to "Associated features"
+                placeholder = 'Select Associated features';
+            } else {
+                placeholder = 'Select ' + item.name;
+            }
+        }
         return (
             <Select
                 key={item.id}
                 isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : 'Select ' + item.name}
+                placeholder={placeholder}
                 name="lesions"
                 isSearchable={false}
                 options={options}
@@ -154,7 +165,7 @@ class MarkerPopup extends Component {
         // value example {Mass: {Shape: 'Oval', Margin: 'Circumscribed}}
         // value example {Asymmetry: 'Global'}
         const {lesionList, selectedLesionList} = this.state;
-        if(lesionList.length === 0) return;
+        if (lesionList.length === 0) return;
         let options = lesionList.map((v, i) => {
             return {label: v.name, value: v.id}
         });
@@ -170,7 +181,7 @@ class MarkerPopup extends Component {
                 // breast lesions
                 hasSubLesion = true;
                 // when Present value is not "Present", remove "Associated features" drop list
-                if(selectedLesionList[selectedLesionObj.name]['Present'] !== 'Present') {
+                if (selectedLesionList[selectedLesionObj.name]['Present'] !== 'Present') {
                     childrenLesionList = childrenLesionList.filter((v) => v.name !== 'Associated features');
                 }
             } else {
@@ -214,7 +225,7 @@ class MarkerPopup extends Component {
 
     renderRatings() {
         const ratings = [...this.state.ratings];
-        if(this.props.testSetHangingIdList.length > 0 && ratings.length > 0) {
+        if (this.props.testSetHangingIdList.length > 0 && ratings.length > 0) {
             return (
                 <div>
                     <div className={'fs-19 mb-2'}>Bi-RADS Categories:</div>
