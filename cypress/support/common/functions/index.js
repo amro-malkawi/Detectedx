@@ -62,11 +62,18 @@ export function clickExistButtonInCard(cardName, buttonNames) {
 }
 
 export function isCurrentAQuestionPage() {
-    cy.get("body").then($body => {
-        const h2 = $body.find('h2')
-        const Questionnaire = 'Questionnaire'
-        const foundQuestionnairePage = h2.length > 0 && h2[0].innerText.includes(Questionnaire) ? { found: true } : { found: false }
-        return cy.get(foundQuestionnairePage).as('foundQuestionnairePage')
+    const timeout = { timeout: 10000 }
+    cy.get("body", timeout).then(() => {
+        const Questionnaires = 'Questionnaires'
+        cy.get('h2', timeout).then((value) => {
+            let result;
+            if (value[0].innerHTML === Questionnaires) {
+                result = { found: true }
+            } else {
+                result = { found: false }
+            }
+            return cy.get(result, timeout).as('foundQuestionnairePage')
+        })
     });
 }
 export function isCurrentAnEvaluationFormPage() {
