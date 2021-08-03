@@ -9,6 +9,7 @@ const CURRENT_TEST = {
 const LESION_TYPE = {
     Asymmetry: "Asymmetry",
     Calcification: "Calcification",
+    OtherFindings: "Other findings"
 }
 const CORRECT_ANSWER = {
     IMAGE_2: {
@@ -63,6 +64,10 @@ function waitForUserInputEvaluationPage() {
 }
 function selectLesionType(LesionType) {
     switch (LesionType) {
+        case LESION_TYPE.OtherFindings:
+            cy.get('div').contains('Select lesion type').click().type('{uparrow}{enter}');
+            cy.get('div').contains('Select lesion').click().type('{uparrow}{enter}');
+            break;
         case LESION_TYPE.Asymmetry:
             cy.get('div').contains('Select lesion type').click().type('{downarrow}{downarrow}{enter}');
             cy.get('div').contains('Select Lesion').click().type('{downarrow}{downarrow}{enter}');
@@ -181,7 +186,7 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_2.LEVEL_OF_CONFIDENCE) // check radio element
 
-                    selectLesionType(LESION_TYPE.Asymmetry)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                 })
             }
@@ -194,14 +199,14 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_5.POSITION.A) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_5.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.Calcification)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                     cy.wait(1500)
                     cy.wrap(row[0].childNodes[3])
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_5.POSITION.B) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_5.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.Calcification)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                 })
             }
@@ -214,14 +219,14 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_6.POSITION.A) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_6.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.Asymmetry)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                     cy.wait(1500)
                     cy.wrap(row[0].childNodes[2])
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_6.POSITION.B) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_6.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.Asymmetry)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                 })
             }
@@ -235,14 +240,14 @@ context('Post Test - Breasted Mammography', () => {
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_8.LEVEL_OF_CONFIDENCE) // check radio element
 
-                    selectLesionType(LESION_TYPE.Asymmetry)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                     cy.wrap(row[0].childNodes[3])
                         .trigger('mousedown', CORRECT_ANSWER.IMAGE_8.POSITION.B) // mark at correct position
                         .trigger('mouseup')
                     cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_8.LEVEL_OF_CONFIDENCE) // check radio element
 
-                    selectLesionType(LESION_TYPE.Asymmetry)
+                    selectLesionType(LESION_TYPE.OtherFindings)
                     clickSave()
                 })
             }
