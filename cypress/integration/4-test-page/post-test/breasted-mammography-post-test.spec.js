@@ -148,15 +148,20 @@ function clickSave() {
     cy.get('.save').click()
 }
 function waitUntilAllImagesLoaded() {
-    cy.wait(3000) // TODO: the duration should be calculated or referred to...?
-    cy.window().its('store').invoke('getState').then(({ testView }) => {
-        const { showImageList } = testView
-        cy.wrap(showImageList).its('length').should('be.gte', 1)
+    cy.wait('@dicomImagesResponse').its('response.statusCode').should('eq', 200)
+    cy.wait('@dicomImagesResponse').its('response.body').should('be.exist')
+    cy.wait('@dicomImagesResponse').then(({ response }) => {
+        if (response.body) {
+            cy.window().its('store').invoke('getState').then(({ testView }) => {
+                const { showImageList } = testView
+                cy.wrap(showImageList).its('length').should('be.gte', 1)
+            })
+        }
     })
 }
 function markDefaultPostion() {
     cy.getReact("ImageOverlap").then((value) => {
-        cy.wrap(value).should('have.length', 4).then((value) => {
+        cy.wrap(value).its('length').should('be.gte', 1).then(() => {
             clickOnClearSymbol()
             const image = value[0].node.previousSibling.parentElement
             cy.wrap(image).click().should('exist').and('not.be.visible')
@@ -191,13 +196,8 @@ context('Post Test - Breasted Mammography', () => {
         it('should be able to do post test', () => {
             interceptAttemptRequest()
             interceptDicomImages()
-            
             navigateToTestPage()
-
             cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
-            cy.wait('@dicomImagesResponse').its('response.statusCode').should('eq', 200)
-            cy.wait('@dicomImagesResponse').its('response.body').should('be.exist')
-            
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
