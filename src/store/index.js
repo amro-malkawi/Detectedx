@@ -25,6 +25,10 @@ export function configureStore(initialState) {
             store.replaceReducer(nextRootReducer);
         });
     }
+    // expose store when run in Cypress
+    if (window.Cypress) {
+        window.store = store
+    }
     const persistor = persistStore(store);
     return { store, persistor };
 }

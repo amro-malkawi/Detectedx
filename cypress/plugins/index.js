@@ -10,7 +10,9 @@ dotenv.config();
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  
+
+  // default command timeout = 4000
+  // config.defaultCommandTimeout = 138000
   // api url
   config.env.apiUrl = process.env.API_URL
 

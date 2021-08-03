@@ -46,6 +46,28 @@ const CORRECT_ANSWER = {
         CHILD_LESION: "Focal", // Select lesion
     },
 }
+const apiHost = Cypress.env('apiUrl')
+const apiHostImages = 'https://static.detectedx.com'
+const apiAttempt = {
+    method: 'GET',
+    url: `${apiHost}/attempts/**`
+}
+const apiImages = {
+    method: 'GET',
+    url: `${apiHostImages}/images/**`
+}
+function interceptDicomImages() {
+    cy.intercept({
+        method: apiImages.method,
+        url: apiImages.url,
+    }).as("dicomImagesResponse");
+}
+function interceptAttemptRequest() {
+    cy.intercept({
+        method: apiAttempt.method,
+        url: apiAttempt.url,
+    }).as("attemptResponse");
+}
 function waitForUserInputQuestionnairePage() {
     isCurrentAQuestionPage()
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
@@ -125,18 +147,34 @@ function clickReviewAnswers() {
 function clickSave() {
     cy.get('.save').click()
 }
-function addMarker() {
-    cy.get('.image-row').then((row) => {
-        const image = row[0].childNodes[0]
-        cy.wait(3000)
-        cy.get('.more-icon').click()
-        cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="Marker"]').click()
-        cy.wait(1000)
-        cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
-        cy.wait(2000)
-        cy.wrap(image).click() // click to mark
-        clickSave()
+function waitUntilAllImagesLoaded() {
+    cy.wait(3000) // TODO: the duration should be calculated or referred to...?
+    cy.window().its('store').invoke('getState').then(({ testView }) => {
+        const { showImageList } = testView
+        cy.wrap(showImageList).its('length').should('be.gte', 1)
     })
+}
+function markDefaultPostion() {
+    cy.getReact("ImageOverlap").then((value) => {
+        cy.wrap(value).should('have.length', 4).then((value) => {
+            clickOnClearSymbol()
+            const image = value[0].node.previousSibling.parentElement
+            cy.wrap(image).click().should('exist').and('not.be.visible')
+            cy.get('#mark-details').should('exist').and('be.visible')
+            clickSave()
+        })
+    })
+}
+function clickOnClearSymbol() {
+    cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
+}
+
+function addMarker() {
+    getTool(TOOL.MARKER)
+    markDefaultPostion()
+}
+function waitLoading() {
+    cy.location('pathname', {timeout: 10000}).should('include', '/test-view');
 }
 context('Post Test - Breasted Mammography', () => {
     describe('Expect to see Breasted Mammography Post Test', () => {
@@ -151,19 +189,27 @@ context('Post Test - Breasted Mammography', () => {
         })
 
         it('should be able to do post test', () => {
+            interceptAttemptRequest()
+            interceptDicomImages()
+            
             navigateToTestPage()
-            cy.wait(1000)
 
+            cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
+            cy.wait('@dicomImagesResponse').its('response.statusCode').should('eq', 200)
+            cy.wait('@dicomImagesResponse').its('response.body').should('be.exist')
+            
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
                     alertAndPause()
                     questionnaireFlow()
                 } else {
+                    waitLoading()
                     submitTestFlow()
                 }
             })
             const submitTestFlow = () => {
+                waitUntilAllImagesLoaded()
                 selectLastTest()
                 addMarker()
                 cy.wait(500)
@@ -253,7 +299,9 @@ context('Post Test - Breasted Mammography', () => {
             }
 
             const startPostTestWithReattempt = () => {
+                interceptAttemptRequest()
                 cy.get('button').contains('Start').click() // AMA PRA Category 1 Credit(s)™ Start button
+                cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
                 selectLastTest()
                 clickSubmit()
                 cy.wait(2000)
