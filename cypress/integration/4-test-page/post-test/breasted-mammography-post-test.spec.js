@@ -56,6 +56,13 @@ const apiImages = {
     method: 'GET',
     url: `${apiHostImages}/images/**`
 }
+const second = 180
+const duration = second * 1000
+const customTimeout = { timeout: duration }
+let count = {
+    markPosition: 0,
+    checkMarkerPopup: 0,
+}
 function interceptDicomImages() {
     cy.intercept({
         method: apiImages.method,
@@ -78,11 +85,14 @@ function waitForUserInputQuestionnairePage() {
 }
 function waitForUserInputEvaluationPage() {
     isCurrentAnEvaluationFormPage()
-    cy.get('@foundEvaluationFormPage').then(({ selector }) => {
+    cy.get('@foundEvaluationFormPage', customTimeout).then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
         }
     })
+}
+function checkRadioButton(value) {
+    cy.get('[type="radio"]', customTimeout).check(value)
 }
 function selectLesionType(LesionType) {
     switch (LesionType) {
@@ -110,10 +120,10 @@ function alertAndPause() {
     cy.pause()
 }
 function checkAnswer() {
-    return cy.get('button').contains('Answers').click()
+    cy.get('button', customTimeout).contains('Answers').click()
 }
 function routeToScorePage() {
-    return cy.get('button').contains('Scores').click({ force: true })
+    cy.get('button', customTimeout).contains('Scores').click({ force: true })
 }
 function downloadCertificate() {
     cy.get('button').contains('Certificate of Completion').click()
@@ -125,53 +135,122 @@ function navigateToTestPage() {
     clickExistButtonInCard(CURRENT_TEST.CARD, possibleButton)
 }
 function selectDropDownAt(order) {
-    cy.get('.form-control').then((value) => {
-        cy.wrap(value).select((order - 1).toString(), { force: true })
+    cy.get('.form-control', customTimeout).then((value) => {
+        cy.wrap(value, customTimeout).select((order - 1).toString(), { force: true })
     })
 }
 function selectLastTest() {
-    cy.get('.form-control').then((value) => {
+    cy.get('.form-control', customTimeout).then((value) => {
         const position = (value[0].length - 1).toString()
-        cy.wrap(value).select(position, { force: true })
+        cy.wrap(value, customTimeout).select(position, { force: true })
     })
 }
 function clickSubmit() {
-    cy.get('button').contains('Submit').should('exist').and('be.visible').click()
+    cy.get('button').contains('Submit', customTimeout).should('exist').and('be.visible').click()
 }
 function clickReattempt() {
-    cy.get('button').contains('Reattempt').should('exist').and('be.visible').click()
+    cy.get('button').contains('Reattempt', customTimeout).should('exist').and('be.visible').click()
 }
 function clickReviewAnswers() {
-    cy.getBySel('review-answers-button').should('exist').and('be.visible').click()
+    const selector = 'review-answers-button'
+    cy.get(`[data-cy=${selector}]`, customTimeout).should('exist').and('be.visible').click()
 }
 function clickSave() {
-    cy.get('.save').click()
+    cy.get('.save', customTimeout).click()
 }
 function waitUntilAllImagesLoaded() {
+    checkLoadingIndicator()
     cy.wait('@dicomImagesResponse').its('response.statusCode').should('eq', 200)
     cy.wait('@dicomImagesResponse').its('response.body').should('be.exist')
     cy.wait('@dicomImagesResponse').then(({ response }) => {
         if (response.body) {
             cy.window().its('store').invoke('getState').then(({ testView }) => {
                 const { showImageList } = testView
-                cy.wrap(showImageList).its('length').should('be.gte', 1)
+                cy.wrap(showImageList, customTimeout).its('length').should('be.gte', 1)
             })
         }
     })
 }
 function markDefaultPostion() {
-    cy.getReact("ImageOverlap").then((value) => {
+    const index = 0
+    const options = { options: customTimeout }
+    cy.getReact("ImageOverlap", options).then((value) => {
         cy.wrap(value).its('length').should('be.gte', 1).then(() => {
-            clickOnClearSymbol()
-            const image = value[0].node.previousSibling.parentElement
-            cy.wrap(image).click().should('exist').and('not.be.visible')
-            cy.get('#mark-details').should('exist').and('be.visible')
+            clickOnClearSymbol(index)
+            const image = value[index].node.previousSibling.parentElement
+            cy.wrap(image, customTimeout).click().should('exist').and('not.be.visible')
             clickSave()
         })
     })
 }
-function clickOnClearSymbol() {
-    cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
+function clickOnClearSymbol(index) {
+    const selector = 'tool-clear-symbols'
+    cy.get(`[data-cy=${selector}]`, customTimeout).eq(index).should('be.visible').click();
+}
+
+function checkLoadingIndicator() {
+    cy.get('.loading-indicator', customTimeout).should('not.exist')
+}
+
+function checkMarkerPopup() {
+    count.checkMarkerPopup += 1
+    return cy.get('#mark-details')
+}
+function markCorrectPosition(correctPosition, index) {
+    checkLoadingIndicator()
+    waitUntilAllImagesLoaded()
+    clickOnClearSymbol(index)    
+    const mark = $el =>  {
+        count.markPosition += 1
+        cy.wrap($el, customTimeout)
+            .trigger('mousedown', correctPosition)
+            .trigger('mouseup', { force: true })
+    }
+    const promisePipeMarking = (target) => {
+        cy.get(target, customTimeout)
+            .then((value) => {
+                return new Cypress.Promise((resolve, reject) => {
+                    cy.wrap(value)
+                        .pipe(mark)
+                        .pipe(checkMarkerPopup)
+                        .should('exist')
+                        .then(() => {
+                            cy.log(`markPosition ${count.markPosition} time(s)`)
+                            cy.log(`checkMarkerPopup ${count.checkMarkerPopup} time(s)`)
+                        })
+                    resolve(true)
+                })
+        })
+    }
+    const pipeMarking = (target) => {
+        cy.get(target, customTimeout)
+        .pipe(mark)
+        .pipe(checkMarkerPopup)
+        .should('exist')
+        .then(() => {
+            cy.log(`markPosition ${count.markPosition} time(s)`)
+            cy.log(`checkMarkerPopup ${count.checkMarkerPopup} time(s)`)
+        })
+    }
+
+
+    cy.get('.image-row', customTimeout).then((row) => {
+        // const targetTemp = row[0].childNodes[index].childNodes[0]
+        const target = row[0].childNodes[index].childNodes[0].childNodes[0]
+        cy.wrap(target, customTimeout).invoke('width').then(parseFloat).should('be.gt', 0)
+        cy.wrap(target, customTimeout).invoke('height').then(parseFloat).should('be.gt', 0)
+        
+        cy.wait(5000) // or should wait until the dicom images from application is ready to mark.
+        
+        pipeMarking(target)
+        // promisePipeMarking(target)
+        
+        cy.wait(1000) // make sure the marker popup is visible
+        
+        checkRadioButton(CORRECT_ANSWER.IMAGE_2.LEVEL_OF_CONFIDENCE)
+        selectLesionType(LESION_TYPE.OtherFindings)
+        clickSave()
+    })
 }
 
 function addMarker() {
@@ -179,10 +258,15 @@ function addMarker() {
     markDefaultPostion()
 }
 function waitLoading() {
-    cy.location('pathname', {timeout: 10000}).should('include', '/test-view');
+    cy.location('pathname', customTimeout).should('include', '/test-view');
 }
 context('Post Test - Breasted Mammography', () => {
-    describe('Expect to see Breasted Mammography Post Test', () => {
+    describe('Expect to see Breasted Mammography Post Test', {
+        // retries: {
+        //     runMode: 3,
+        //     openMode: 3,
+        // },
+    }, () => {
         beforeEach(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
@@ -197,9 +281,9 @@ context('Post Test - Breasted Mammography', () => {
             interceptAttemptRequest()
             interceptDicomImages()
             navigateToTestPage()
-            cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
+            cy.wait('@attemptResponse', customTimeout).its('response.statusCode').should('eq', 200)
             isCurrentAQuestionPage()
-            cy.get('@foundQuestionnairePage').then(({ selector }) => {
+            cy.get('@foundQuestionnairePage', customTimeout).then(({ selector }) => {
                 if (selector.found) {
                     alertAndPause()
                     questionnaireFlow()
@@ -212,9 +296,7 @@ context('Post Test - Breasted Mammography', () => {
                 waitUntilAllImagesLoaded()
                 selectLastTest()
                 addMarker()
-                cy.wait(500)
-                clickSubmit() // after click Submit will route to Questionnaire Page
-                cy.wait(2000)
+                clickSubmit()
                 waitForUserInputQuestionnairePage()
                 questionnaireFlow()
             }
@@ -226,87 +308,38 @@ context('Post Test - Breasted Mammography', () => {
                 selectDropDownAt(2)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
-                cy.get('.image-row').then((row) => {
-                    cy.wrap(row[0].childNodes[0])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_2.POSITION.A) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_2.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                })
+                cy.wait("@dicomImagesResponse");
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_2.POSITION.A, 0)
             }
             const markCorrectImage5 = () => {
                 selectDropDownAt(5)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
-                cy.get('.image-row').then((row) => {
-                    cy.wrap(row[0].childNodes[1])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_5.POSITION.A) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_5.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                    cy.wait(1500)
-                    cy.wrap(row[0].childNodes[3])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_5.POSITION.B) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_5.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                })
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_5.POSITION.A, 1)
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_5.POSITION.B, 3)
             }
             const markCorrectImage6 = () => {
                 selectDropDownAt(6)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
-                cy.get('.image-row').then((row) => {
-                    cy.wrap(row[0].childNodes[0])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_6.POSITION.A) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_6.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                    cy.wait(1500)
-                    cy.wrap(row[0].childNodes[2])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_6.POSITION.B) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_6.LEVEL_OF_CONFIDENCE) // check radio element
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                })
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_6.POSITION.A, 0)
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_6.POSITION.B, 2)
             }
             const markCorrectImage8 = () => {
                 selectDropDownAt(8)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
-                cy.get('.image-row').then((row) => {
-                    cy.wrap(row[0].childNodes[1])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_8.POSITION.A) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_8.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                    cy.wrap(row[0].childNodes[3])
-                        .trigger('mousedown', CORRECT_ANSWER.IMAGE_8.POSITION.B) // mark at correct position
-                        .trigger('mouseup')
-                    cy.get('[type="radio"]').check(CORRECT_ANSWER.IMAGE_8.LEVEL_OF_CONFIDENCE) // check radio element
-
-                    selectLesionType(LESION_TYPE.OtherFindings)
-                    clickSave()
-                })
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_8.POSITION.A, 1)
+                markCorrectPosition(CORRECT_ANSWER.IMAGE_8.POSITION.B, 3)
             }
 
             const startPostTestWithReattempt = () => {
                 interceptAttemptRequest()
-                cy.get('button').contains('Start').click() // AMA PRA Category 1 Credit(s)™ Start button
-                cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
+                cy.get('button').contains('Start', customTimeout).click() // AMA PRA Category 1 Credit(s)™ Start button
+                cy.wait('@attemptResponse', customTimeout).its('response.statusCode').should('eq', 200)
                 selectLastTest()
                 clickSubmit()
-                cy.wait(2000)
                 clickReviewAnswers()
-                cy.wait(2000)
                 clickReattempt()
             }
             const startPostTestWithCorrectAnswer = () => {
@@ -315,7 +348,6 @@ context('Post Test - Breasted Mammography', () => {
                 markCorrectImage6()
                 markCorrectImage8()
                 clickSubmit()
-                cy.wait(2000)
                 waitForUserInputEvaluationPage()
                 checkAnswer()
                 routeToScorePage()

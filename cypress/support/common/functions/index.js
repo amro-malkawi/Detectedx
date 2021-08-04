@@ -1,8 +1,14 @@
+const second = 180
+const duration = second * 1000
+const customTimeout = { timeout: duration }
 export function getTool(name) {
-    cy.get('.tool-container').should('be.visible').click()
-    cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="${name}"]`)
-        .click()
+    cy.get('.more-icon', customTimeout)
         .should('exist')
+        .and('be.visible').click()
+    cy.get(`.MuiPaper-root > .test-view-toolbar > .tool-container > [data-tool="${name}"]`, customTimeout)
+        .should('exist')
+        .and('be.visible')
+        .click()
 }
 
 export function getClickableButtonInCard(cardName) {
@@ -62,25 +68,30 @@ export function clickExistButtonInCard(cardName, buttonNames) {
 }
 
 export function isCurrentAQuestionPage() {
-    const timeout = { timeout: 10000 }
-    cy.get("body", timeout).then(() => {
+    cy.get("body", customTimeout).then(() => {
         const Questionnaires = 'Questionnaires'
-        cy.get('h2', timeout).then((value) => {
+        cy.get('h2', customTimeout).then((value) => {
             let result;
             if (value[0].innerHTML === Questionnaires) {
                 result = { found: true }
             } else {
                 result = { found: false }
             }
-            return cy.get(result, timeout).as('foundQuestionnairePage')
+            return cy.get(result, customTimeout).as('foundQuestionnairePage')
         })
     });
 }
 export function isCurrentAnEvaluationFormPage() {
-    cy.get("body").then($body => {
-        const h2 = $body.find('h2')
+    cy.get("body", customTimeout).then(() => {
         const EvaluationForm = 'Evaluation Form'
-        const foundEvaluationFormPage = h2.length > 0 && h2[0].innerText.includes(EvaluationForm) ? { found: true } : { found: false }
-        return cy.get(foundEvaluationFormPage).as('foundEvaluationFormPage')
+        cy.get('h2', customTimeout).then((value) => {
+            let result;
+            if (value[0].innerHTML === EvaluationForm) {
+                result = { found: true }
+            } else {
+                result = { found: false }
+            }
+            return cy.get(result, customTimeout).as('foundEvaluationFormPage')
+        })
     });
 }

@@ -19,6 +19,9 @@ import './commands'
 // Import cypress-react-selector
 import 'cypress-react-selector'
 
+// Import cypress-pipe
+import 'cypress-pipe'
+
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
