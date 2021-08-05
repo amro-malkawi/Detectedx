@@ -10,7 +10,7 @@ const ImageEDMamoQuality = ({imagePosition, imageEDBreastQuality}) => {
         const answerQuality = imageEDBreastQuality.answer[viewPosition + '-' + imageLaterality];
         if (!truthQuality || !answerQuality) return null;
         return (
-            <div className={'imageed-breast-quality'}>
+            <div className={'imageed-mammo-quality'}>
                 {
                     ['P', 'G', 'M', 'I'].map((v) => (
                         <div key={v}>

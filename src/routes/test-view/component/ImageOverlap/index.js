@@ -9,8 +9,9 @@ import {isMobile} from "react-device-detect";
 import GEThicknessSwitch from "./GEThicknessSwitch";
 import ImageScrollBar, {adjustSlideSize} from "./ImageScrollBar";
 import ImageEDMamoQuality from "../ImageEDMamoQuality";
+import {connect} from "react-redux";
 
-export default class ImageOverlap extends Component {
+class ImageOverlap extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -176,7 +177,10 @@ export default class ImageOverlap extends Component {
                                 </a>
                             }
                         </div>
-                        <ImageEDMamoQuality imagePosition={imagePosition}/>
+                        {
+                            this.props.modalityInfo.modality_type === 'imaged_mammo' &&
+                            <ImageEDMamoQuality imagePosition={imagePosition}/>
+                        }
                         <GEThicknessSwitch
                             age={age}
                             metaData={imageMetaData}
@@ -217,3 +221,13 @@ export default class ImageOverlap extends Component {
         )
     }
 }
+
+
+// map state to props
+const mapStateToProps = (state) => {
+    return {
+        modalityInfo: state.testView.modalityInfo
+    };
+};
+
+export default connect(mapStateToProps)(ImageOverlap);
