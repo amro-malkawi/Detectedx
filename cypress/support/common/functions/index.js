@@ -1,6 +1,8 @@
 const second = 180
 const duration = second * 1000
 const customTimeout = { timeout: duration }
+import { apiHostStatic } from '../constants/index'
+
 export function getTool(name) {
     cy.get('.more-icon', customTimeout)
         .should('exist')
@@ -94,4 +96,15 @@ export function isCurrentAnEvaluationFormPage() {
             return cy.get(result, customTimeout).as('foundEvaluationFormPage')
         })
     });
+}
+
+export function interceptDicomImages() {
+    const apiImages = {
+        method: 'GET',
+        url: `${apiHostStatic}/images/**`
+    }
+    cy.intercept({
+        method: apiImages.method,
+        url: apiImages.url,
+    }).as("dicomImagesResponse");
 }

@@ -11,8 +11,10 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
-  // default command timeout = 4000
-  config.defaultCommandTimeout = 138000
+  
+  config.defaultCommandTimeout = 138000 // defaultCommandTimeout = 4000
+  config.requestTimeout = 60000 // default requestTimeout = 5000
+  config.responseTimeout = 60000 // default responseTimeout = 30000
   // api url
   config.env.apiUrl = process.env.API_URL
 
