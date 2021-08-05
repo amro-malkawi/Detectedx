@@ -1,5 +1,5 @@
-import { BUTTON, TOOL } from "../../../support/common/constants/index"
-import { getTool, clickExistButtonInCard, isCurrentAQuestionPage, isCurrentAnEvaluationFormPage } from "../../../support/common/functions/index"
+import { BUTTON, TOOL } from "../../support/common/constants/index"
+import { getTool, clickExistButtonInCard, isCurrentAQuestionPage, isCurrentAnEvaluationFormPage } from "../../support/common/functions/index"
 const CARD = {
     Mammography60CasesM12020: 'Mammography 60 Cases (M1 2020) Earn 6 Credits'
 }
