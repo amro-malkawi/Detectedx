@@ -97,7 +97,7 @@ function checkRadioButton(value) {
 function selectLesionType(LesionType) {
     switch (LesionType) {
         case LESION_TYPE.OtherFindings:
-            cy.get('div').contains('Select lesion type').click().type('{uparrow}{enter}');
+            cy.get('div').contains('Select lesion type').click().type('{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{enter}');
             cy.get('div').contains('Select lesion').click().type('{uparrow}{enter}');
             break;
         case LESION_TYPE.Asymmetry:
@@ -315,6 +315,7 @@ context('Post Test - Breasted Mammography', () => {
                 selectDropDownAt(5)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
+                cy.wait("@dicomImagesResponse");
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_5.POSITION.A, 1)
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_5.POSITION.B, 3)
             }
@@ -322,6 +323,7 @@ context('Post Test - Breasted Mammography', () => {
                 selectDropDownAt(6)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
+                cy.wait("@dicomImagesResponse");
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_6.POSITION.A, 0)
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_6.POSITION.B, 2)
             }
@@ -329,6 +331,7 @@ context('Post Test - Breasted Mammography', () => {
                 selectDropDownAt(8)
                 cy.wait(3500)
                 getTool(TOOL.MARKER)
+                cy.wait("@dicomImagesResponse");
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_8.POSITION.A, 1)
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_8.POSITION.B, 3)
             }
