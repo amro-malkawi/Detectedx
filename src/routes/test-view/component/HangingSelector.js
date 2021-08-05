@@ -44,6 +44,7 @@ class HangingSelector extends Component{
     }
 
     onChangeHanging(index) {
+        console.log(this.props.testSetHangingIdList[index])
         this.setState({ selectedIndex: index, type: null });
         this.props.changeHangingLayout(this.props.testSetHangingIdList[index]);
     }

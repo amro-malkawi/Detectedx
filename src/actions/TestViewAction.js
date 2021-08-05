@@ -264,7 +264,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                     if (isShowImageBrowser) {
                         canvasWidth = canvasWidth - 300;
                     }
-                    if (testSetHangingType === 'volparaHangings') {
+                    if (testSetHangingType === 'volparaHangings' || totalImageObjList.some((v) => v.type === 'volpara')) {
                         canvasWidth = canvasWidth / 2
                     }
                     canvasHeight = ($(window).height() - 80) / imageRow;
@@ -324,19 +324,21 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
     });
 
     // check for existing all images
-    if (idList.length < typeArray.length && isForce) {
+    if(type === '') {
+        idList = images.map(v => v.id).slice(0, defaultImagesNumber);
+    } else if (idList.length < typeArray.length && isForce) {
         images.forEach((v) => {
             if (idList.length < typeArray.length && idList.indexOf(v.id) === -1) idList.push(v.id);
         });
         idList = idList.slice(0, defaultImagesNumber);
     }
-    if (typeArray.length > 4) {
-        // two line grid
-        const firstRowIds = idList.splice(0, 4);
-        return [firstRowIds, idList];
-    } else if (type === 'VOLPARA_MLO-R_MLO-L_CC-R_CC-L') {
+    if (type === 'VOLPARA_MLO-R_MLO-L_CC-R_CC-L') {
         // volpara image grid
         const firstRowIds = idList.splice(0, 2);
+        return [firstRowIds, idList];
+    } else if (typeArray.length > 4) {
+        // two line grid
+        const firstRowIds = idList.splice(0, 4);
         return [firstRowIds, idList];
     } else {
         return [idList]  // 1 row x 0 column
