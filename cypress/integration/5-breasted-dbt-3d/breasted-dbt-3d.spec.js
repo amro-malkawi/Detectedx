@@ -27,7 +27,6 @@ context('Test Page - Breasted DBT 3D', () => {
             navigateToTestSet()
             waitLoading()
             checkLoadingIndicator()
-            cy.wait('@dicomImagesResponse')
         })
 
         it('should be able to load all images', () => {
@@ -79,16 +78,9 @@ context('Test Page - Breasted DBT 3D', () => {
             const toggleSeriesIcon = () => {
                 cy.get('.series-icon').click()
             }
-            const expectIsShowImageBrowserToBe = (boolean) => {
-                cy.getReact('ImageBrowser').nthNode(2).then((value) => {
-                    const { props } = value
-                    expect(props.isShowImageBrowser).to.be[boolean]
-                })
-            }
             toggleSeriesIcon()
-            expectIsShowImageBrowserToBe(false)
+            cy.wait(1000)
             toggleSeriesIcon()
-            expectIsShowImageBrowserToBe(true)
             scrolling()
         })
         it('should be able to use hanging button', () => {
@@ -217,14 +209,35 @@ context('Test Page - Breasted DBT 3D', () => {
                 zoomAction(row)
             })
         })
-        it('should be able to use Scrolling tool', () => {
-            cy.wait(3000)
+        it('should be able to scroll', () => {
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype,
+                'value'
+            ).set
+            const changeRangeInputValue = $range => value => {
+                nativeInputValueSetter.call($range[0], value)
+                $range[0].dispatchEvent(new Event('change', { value, bubbles: true }))
+            }
+            cy.wait(5000)
             const scrolling = () => {
                 cy.getBySel('stack-scrollbar-range').then((stackScrollbar) => {
-                    for (let index = 0; index < stackScrollbar.length; index++) {
-                        const element = stackScrollbar[index];
-                        for (let j = 0; j < 30; j++) {
-                            cy.wrap(element).invoke('val', j).trigger('change')
+                    for (let i = 0; i < stackScrollbar.length; i++) {
+                        let element = stackScrollbar[i];
+                        let max = stackScrollbar[i].max
+                        let min = stackScrollbar[i].min
+                        for (let j = min; j <= max; j++) {
+                            cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                            cy.wait(1)
+                        }
+                    }
+                    cy.wait(1000)
+                    for (let i = 0; i < stackScrollbar.length; i++) {
+                        let element = stackScrollbar[i];
+                        let max = stackScrollbar[i].max
+                        let min = stackScrollbar[i].min
+                        for (let j = max; j >= min; j--) {
+                            cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                            cy.wait(1)
                         }
                     }
                 })
@@ -362,20 +375,6 @@ context('Test Page - Breasted DBT 3D', () => {
                 cy.wrap(row[0].childNodes[0]).dblclick()
                 getTool(TOOL.MARKER_FREEHAND)
                 markerFreehandAction(row)
-            })
-        })
-        it.skip('should be able to use Length tool', () => {
-            getTool(TOOL.LENGTH)
-            const makeLength = (image) => {
-                cy.wrap(image)
-                    .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
-                    .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
-                    .trigger('mouseup')
-            }
-            cy.get('.image-row').then((row) => {
-                const image = row[0].childNodes[0]
-                cy.wrap(image).dblclick()
-                makeLength(image)
             })
         })
         it('should be able to use hide info feature', () => {
