@@ -8,11 +8,6 @@ import PropTypes from "prop-types";
 import {Dialog, withStyles} from "@material-ui/core";
 
 export default class instruction extends Component {
-
-    static propTypes = {
-        type: PropTypes.oneOf(['Mammo', 'DBT', 'CT', 'COVID-19', 'LUNGED', 'PCT', 'VOLPARA', 'DENTALED', 'all', 'GE-CESM']),
-    };
-
     static defaultProps = {
     };
 

@@ -10,7 +10,7 @@ import InstructionLungED from "./InstructionLungED";
 import InstructionPCT from "./InstructionPCT";
 import InstructionVolpara from "./InstructionVolpara";
 import InstructionDentalED from "./InstructionDentalED";
-import InstructionQuality from "./InstructionQuality";
+import InstructionImagEDMammo from "./InstructionImagEDMammo";
 import InstructionGECESM from "./InstructionGECESM";
 import InstructionCHEST from "./InstructionCHEST";
 import {withRouter} from "react-router-dom";
@@ -43,8 +43,8 @@ class Content extends Component {
             return <InstructionVolpara instructionLocale={this.props.locale} />
         } else if (type === 'DENTALED') {
             return <InstructionDentalED instructionLocale={this.props.locale} />
-        } else if (type === 'QUALITY') {
-            return <InstructionQuality instructionLocale={this.props.locale} />
+        } else if (type === 'IMAGEDMAMMO') {
+            return <InstructionImagEDMammo instructionLocale={this.props.locale} />
         } else if (type === 'GE-CESM') {
             return <InstructionGECESM instructionLocale={this.props.locale} />
         } else if (type === 'CHEST') {
