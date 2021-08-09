@@ -1,4 +1,4 @@
-import { getTool, interceptDicomImages } from "../../support/common/functions/index"
+import { getTool } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 function navigateToTestSet() {
@@ -25,16 +25,12 @@ context('Test Page - Breasted DBT 3D', () => {
             cy.visit('/app/test/list')
             cy.waitForReact()
             cy.contains('BreastED - DBT 3D').should('be.visible').click();
-            interceptDicomImages()
             navigateToTestSet()
             waitLoading()
-            checkLoadingIndicator()
         })
 
         it('should be able to load all images', () => {
-            interceptDicomImages()
             checkLoadingIndicator()
-            cy.wait('@dicomImagesResponse')
         })
         it('should be able to use grid status', () => {
             const selectGridTool = () => {
