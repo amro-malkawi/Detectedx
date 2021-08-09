@@ -1,14 +1,16 @@
-import { getTool, clickExistButtonInCard, interceptDicomImages } from "../../support/common/functions/index"
-import { BUTTON, TOOL } from "../../support/common/constants/index"
-
-const CURRENT_CARD = {
-    DBT30Cases: 'DBT 30 Cases (DBT1)'
-}
+import { getTool, interceptDicomImages } from "../../support/common/functions/index"
+import { TOOL } from "../../support/common/constants/index"
 
 function navigateToTestSet() {
-    const cardName = CURRENT_CARD.DBT30Cases
-    const buttonName = [BUTTON.Start, BUTTON.Restart ,BUTTON.Continue]
-    clickExistButtonInCard(cardName, buttonName)
+    cy.get("body").then($body => {
+        if( $body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
+            cy.get('button').contains('Start').click({ force: true })
+        } else {
+            if($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
+                cy.get('button').contains('Continue').click({ force: true })
+            }
+        }
+    });
 }
 function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')

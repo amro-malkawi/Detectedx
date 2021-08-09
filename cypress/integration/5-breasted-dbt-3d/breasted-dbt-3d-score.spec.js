@@ -73,11 +73,11 @@ function downloadCertificate() {
     return cy.get('button').contains('Certificate of Completion').click()
 }
 function navigateToScorePage() {
-    const selector = {
-        card: CURRENT_TEST.CARD,
-        button: BUTTON.Scores
-    }
-    getButtonByNameOfCard(selector.card, selector.button)
+    cy.get("body").then($body => {
+        if($body.find("button:contains('Scores')").length > 0) {
+            cy.get('button').contains('Scores').click({ force: true })
+        }
+    });
 }
 
 function clickViewButton(index) {
