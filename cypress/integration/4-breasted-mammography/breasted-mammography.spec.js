@@ -1,4 +1,4 @@
-import { getTool, clickExistButtonInCard, interceptDicomImages } from "../../support/common/functions/index"
+import { getTool, clickExistButtonInCard } from "../../support/common/functions/index"
 import { BUTTON, TOOL } from "../../support/common/constants/index"
 
 const CURRENT_CARD = {
@@ -34,9 +34,7 @@ context('Test Page - Breast Mammo Continue Case', () => {
         })
 
         it('should be able to load all images', () => {
-            interceptDicomImages()
             checkLoadingIndicator()
-            cy.wait('@dicomImagesResponse')
         })
         it('should be able to use grid status', () => {
             const selectGridTool = () => {
