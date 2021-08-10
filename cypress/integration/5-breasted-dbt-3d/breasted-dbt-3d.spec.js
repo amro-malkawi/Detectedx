@@ -1,17 +1,21 @@
 import { getTool } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
+const modality_name = 'BreastED - DBT 3D'
 function navigateToTestSet() {
-    cy.get("body").then($body => {
-        if( $body.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
-            cy.get('button').contains('Start').click({ force: true })
-        } else {
-            if($body.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
-                cy.get('button').contains('Continue').click({ force: true })
+    cy.getBySel(`"${modality_name}"`).then((modality_info) => {
+        cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
+            if (test_set.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
+                cy.wrap(test_set).contains('Start').click({ force: true })
+            } else {
+                if(test_set.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
+                    cy.wrap(test_set).contains('Continue').click({ force: true })
+                }
             }
-        }
-    });
+        })
+    })
 }
+
 function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
 }
@@ -24,7 +28,7 @@ context('Test Page - Breasted DBT 3D', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            cy.contains('BreastED - DBT 3D').should('be.visible').click();
+            cy.contains(modality_name).should('be.visible').click();
             navigateToTestSet()
             waitLoading()
         })

@@ -283,7 +283,7 @@ class List extends Component {
         }
     ) {
         return (
-            <div className={'m-0'} key={modality_info.id}>
+            <div className={'m-0'} key={modality_info.id} data-cy={modality_info.name}>
                 {
                     this.renderModalityDesc(modality_info)
                 }
