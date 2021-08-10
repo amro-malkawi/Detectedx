@@ -68,36 +68,34 @@ export function clickExistButtonInCard(cardName, buttonNames) {
         cy.get(target).click();
     });
 }
-
 export function isCurrentAQuestionPage() {
-    cy.get("body", customTimeout).then(() => {
+    cy.get("body", customTimeout).then((body) => {
         const Questionnaires = 'Questionnaires'
-        cy.get('h2', customTimeout).then((value) => {
-            let result;
-            if (value[0].innerHTML === Questionnaires) {
-                result = { found: true }
-            } else {
-                result = { found: false }
-            }
-            return cy.get(result, customTimeout).as('foundQuestionnairePage')
-        })
+        if (body.find('h2').length > 0) {
+            cy.get('h2').then((value) => {
+                if (value[0].innerHTML === Questionnaires) {
+                    return cy.get({ found: true }).as('foundQuestionnairePage')
+                }
+            })
+        } else {
+            return cy.get({ found: false }).as('foundQuestionnairePage')
+        }
     });
 }
 export function isCurrentAnEvaluationFormPage() {
-    cy.get("body", customTimeout).then(() => {
+    cy.get("body", customTimeout).then((body) => {
         const EvaluationForm = 'Evaluation Form'
-        cy.get('h2', customTimeout).then((value) => {
-            let result;
-            if (value[0].innerHTML === EvaluationForm) {
-                result = { found: true }
-            } else {
-                result = { found: false }
-            }
-            return cy.get(result, customTimeout).as('foundEvaluationFormPage')
-        })
+        if (body.find('h2').length > 0) {
+            cy.get('h2').then((value) => {
+                if (value[0].innerHTML === EvaluationForm) {
+                    return cy.get({ found: true }).as('foundEvaluationFormPage')
+                }
+            })
+        } else {
+            return cy.get({ found: false }).as('foundEvaluationFormPage')
+        }
     });
 }
-
 export function interceptDicomImages() {
     const apiImages = {
         method: 'GET',
@@ -107,4 +105,15 @@ export function interceptDicomImages() {
         method: apiImages.method,
         url: apiImages.url,
     }).as("dicomImagesResponse");
+}
+export function pauseIfVideoModalExist() {
+    cy.wait(3000)
+    cy.get('body').then((value) => {
+        if (value.find('video').length > 0) {
+            const message = 'After finish watching video please click "X" (Close) button \nand Click "Resume" to continue the test.'
+            cy.log(message)
+            alert(message)
+            cy.pause()
+        }
+    })
 }

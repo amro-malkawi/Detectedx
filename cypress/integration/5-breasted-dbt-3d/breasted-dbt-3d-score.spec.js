@@ -1,6 +1,5 @@
-import { BUTTON } from '../../support/common/constants/index'
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { clickExistButtonInCard, getButtonByNameOfCard, getClickableButtonInCard, isCurrentAQuestionPage } from '../../support/common/functions/index'
+import { isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -14,9 +13,11 @@ const CURRENT_TEST = {
     CARD: CARD.DBT30Cases,
     VIEW_BUTTON_INDEX: 0,
 }
+const modality_name = 'BreastED - DBT 3D'
 
 function waitForUserInputQuestionnairePage() {
     isCurrentAQuestionPage()
+    cy.wait(1000)
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
@@ -72,14 +73,26 @@ function routeToScorePage() {
 function downloadCertificate() {
     return cy.get('button').contains('Certificate of Completion').click()
 }
-function navigateToScorePage() {
-    cy.get("body").then($body => {
-        if($body.find("button:contains('Scores')").length > 0) {
-            cy.get('button').contains('Scores').click({ force: true })
-        }
-    });
+function navigateToTestPage () {
+    cy.getBySel(`"${modality_name}"`).then((modality_info) => {
+        cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
+            if (test_set.find("button:contains('Start')").length > 0) {
+                cy.get('button').contains('Start').click({ force: true })
+            } else {
+                cy.get('button').contains('Continue').click({ force: true })
+            }
+        })
+    })
 }
-
+function navigateToScorePage() {
+    cy.getBySel(`"${modality_name}"`).then((modality_info) => {
+        cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
+            if(test_set.find("button:contains('Scores')").length > 0) {
+                cy.get('button').contains('Scores').click({ force: true })
+            }
+        })
+    })
+}
 function clickViewButton(index) {
     cy.get('button').then((buttons) => {
         cy.wrap(buttons[index])
@@ -89,7 +102,6 @@ function clickViewButton(index) {
             .click()
     })
 }
-
 function interceptDropdownRequest() {
     cy.intercept({
         method: apiSelectDrownDownList.method,
@@ -107,8 +119,10 @@ context('Breasted Mammography - Score Page', () => {
         })
 
         it('should be able to submit test or make questionnaire on score page', () => {
-            clickExistButtonInCard(CURRENT_TEST.CARD, [BUTTON.Continue, BUTTON.Restart])
+            navigateToTestPage()
+            pauseIfVideoModalExist()
             isCurrentAQuestionPage()
+            cy.wait(1000)
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
                     alertAndPause()
@@ -135,21 +149,25 @@ context('Breasted Mammography - Score Page', () => {
                 markOnFilm()
                 saveMarkPoint()
                 clickSubmit()
+                cy.wait(3000)
             }
         })
 
         it('should be able to re-select the drop down list on score page', () => {
             const navigateToScoreOrTestPage = () => {
-                getClickableButtonInCard(CURRENT_TEST.CARD)
-                cy.get('@clickableButtons').then(({ selector }) => {
-                    const buttons = selector
-                    if (buttons.includes(BUTTON.Scores)) {
-                        clickExistButtonInCard(CURRENT_TEST.CARD, BUTTON.Scores)
-                        checkScorePage()
-                    } else {
-                        clickExistButtonInCard(CURRENT_TEST.CARD, buttons)
-                        checkTestPage()
-                    }
+                cy.getBySel(`"${modality_name}"`).then((modality_info) => {
+                    cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
+                        if(test_set.find("button:contains('Scores')").length > 0) {
+                            cy.get('button').contains('Scores').click({ force: true })
+                            checkScorePage()
+                        } else if (test_set.find("button:contains('Start')").length > 0) {
+                            cy.get('button').contains('Start').click({ force: true })
+                            checkTestPage()
+                        } else {
+                            cy.get('button').contains('Continue').click({ force: true })
+                            checkTestPage()
+                        }
+                    })
                 })
             }
             const checkScorePage = () => {
@@ -196,6 +214,7 @@ context('Breasted Mammography - Score Page', () => {
             }
             const checkTestPage = () => {
                 isCurrentAQuestionPage()
+                cy.wait(1000)
                 cy.get('@foundQuestionnairePage').then(({ selector }) => {
                     if (selector.found) {
                         alertAndPause()
@@ -218,7 +237,6 @@ context('Breasted Mammography - Score Page', () => {
                     selectTheLast()
                     markOnFilm()
                     saveMarkPoint()
-                    submitResult()
                     backToHome()
                 }
             }

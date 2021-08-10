@@ -1,4 +1,4 @@
-import { getTool } from "../../support/common/functions/index"
+import { getTool, pauseIfVideoModalExist } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'BreastED - DBT 3D'
@@ -15,7 +15,6 @@ function navigateToTestSet() {
         })
     })
 }
-
 function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
 }
@@ -31,6 +30,7 @@ context('Test Page - Breasted DBT 3D', () => {
             cy.contains(modality_name).should('be.visible').click();
             navigateToTestSet()
             waitLoading()
+            pauseIfVideoModalExist()
         })
 
         it('should be able to load all images', () => {
