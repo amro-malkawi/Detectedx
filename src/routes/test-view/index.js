@@ -572,6 +572,7 @@ class TestView extends Component {
                 />
                 <div className="tool">
                     <AntSwitch
+                        data-cy="synchronizer-switch"
                         defaultChecked={this.synchronizer.enabled}
                         onChange={(e) => (this.synchronizer.enabled = e.target.checked)}
                         value="checkedB"

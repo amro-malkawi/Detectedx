@@ -117,3 +117,16 @@ export function pauseIfVideoModalExist() {
         }
     })
 }
+export function navigateToTestSet(modality_name) {
+    cy.getBySel(`"${modality_name}"`).then((modality_info) => {
+        cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
+            if (test_set.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
+                cy.wrap(test_set).contains('Start').click({ force: true })
+            } else {
+                if(test_set.find("[data-cy=test-continue-button]:contains('Continue')").length > 0) {
+                    cy.wrap(test_set).contains('Continue').click({ force: true })
+                }
+            }
+        })
+    })
+}
