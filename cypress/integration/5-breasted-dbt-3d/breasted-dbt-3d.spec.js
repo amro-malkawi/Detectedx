@@ -21,6 +21,16 @@ function checkLoadingIndicator() {
 function waitLoading() {
     cy.location('pathname').should('include', '/test-view');
 }
+function waitLinearProgressBar() {
+    cy.getBySel('linear-progress').then((value) => {
+        if (value.length > 0) {
+            for (let index = 0; index < value.length; index++) {
+                const element = value[index];
+                cy.wrap(element).should('not.exist')
+            }
+        }
+    })
+}
 context('Test Page - Breasted DBT 3D', () => {
     describe('Expect to see Breasted DBT 3D modality functional', () => {
         beforeEach(() => {
@@ -137,6 +147,7 @@ context('Test Page - Breasted DBT 3D', () => {
                 .should('have.value', Number(testCaseValue))
         })
         it('should be able to use Mark tool', () => {
+            waitLinearProgressBar()
             cy.get('.image-row').then((row) => {
                 cy.wrap(row[0].childNodes[0]).dblclick()
             })
@@ -149,6 +160,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to use Pan tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.PAN)
             const panAction = (row) => {
                 const pageX = 600
@@ -181,6 +193,7 @@ context('Test Page - Breasted DBT 3D', () => {
         })
 
         it('should be able to use Zoom tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
@@ -212,6 +225,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to scroll', () => {
+            waitLinearProgressBar()
             const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
                 window.HTMLInputElement.prototype,
                 'value'
@@ -247,6 +261,7 @@ context('Test Page - Breasted DBT 3D', () => {
             scrolling()
         })
         it('should be able to use Magnify tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.MAGNIFY)
             const pageX = 482
             const pageY = 296
@@ -274,6 +289,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to use Window tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.WINDOW)
             const windowAction = (row) => {
                 const element = row[0].childNodes[0]
@@ -333,6 +349,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to use Reset tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
@@ -362,6 +379,7 @@ context('Test Page - Breasted DBT 3D', () => {
             getTool(TOOL.RESET)
         })
         it('should be able to use FreehandMarker tool', () => {
+            waitLinearProgressBar()
             const markerFreehandAction = (row) => {
                 const draw = (row) => {
                     cy.wrap(row[0].childNodes[0])
@@ -380,6 +398,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to use hide info feature', () => {
+            waitLinearProgressBar()
             getTool(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 700
@@ -399,6 +418,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to use invert feature', () => {
+            waitLinearProgressBar()
             const toggleInvertAction = () => {
                 cy.getBySel('tool-invert').should('be.visible').first().click();
             }
@@ -410,6 +430,7 @@ context('Test Page - Breasted DBT 3D', () => {
             })
         })
         it('should be able to use clear symbols feature', () => {
+            waitLinearProgressBar()
             getTool(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 600
