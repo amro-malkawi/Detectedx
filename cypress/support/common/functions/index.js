@@ -76,6 +76,7 @@ export function isCurrentAQuestionPage() {
                 if (value[0].innerHTML === Questionnaires) {
                     return cy.get({ found: true }).as('foundQuestionnairePage')
                 }
+                return cy.get({ found: false }).as('foundQuestionnairePage')
             })
         } else {
             return cy.get({ found: false }).as('foundQuestionnairePage')
@@ -90,6 +91,7 @@ export function isCurrentAnEvaluationFormPage() {
                 if (value[0].innerHTML === EvaluationForm) {
                     return cy.get({ found: true }).as('foundEvaluationFormPage')
                 }
+                return cy.get({ found: false }).as('foundEvaluationFormPage')
             })
         } else {
             return cy.get({ found: false }).as('foundEvaluationFormPage')
