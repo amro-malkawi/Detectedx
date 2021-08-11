@@ -11,6 +11,13 @@ function checkLoadingIndicator() {
 function waitLoading() {
     cy.location('pathname').should('include', '/test-view');
 }
+function selectConfidence(level) {
+    cy.getBySel('confidence-position').then((value) => {
+        const choiceIndex = level
+        const element = value[0].children[choiceIndex].childNodes[0]
+        cy.wrap(element).click()
+    })
+}
 context('Test Page - Chest', () => {
     describe('Expect to see Chest modality functional', () => {
         beforeEach(() => {
@@ -129,11 +136,9 @@ context('Test Page - Chest', () => {
             cy.get('select')
                 .should('have.value', testCaseValue)
             
-            cy.getBySel('confidence-position').then((value) => {
-                const choiceIndex = 3
-                const element = value[0].children[choiceIndex].childNodes[0]
-                cy.wrap(element).click()
-            })
+            cy.wait(1000)
+            selectConfidence(3)
+            cy.wait(1000)
 
             cy.get('button')
                 .contains('Next')
