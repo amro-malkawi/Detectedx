@@ -1,5 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
+import { selectConfidence, isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -102,13 +102,6 @@ function interceptDropdownRequest() {
         url: apiSelectDrownDownList.url,
     }).as("scoresAttemptPercentile");
 }
-function selectConfidence(level) {
-    cy.getBySel('confidence-position').then((value) => {
-        const choiceIndex = level
-        const element = value[0].children[choiceIndex].childNodes[0]
-        cy.wrap(element).click()
-    })
-}
 
 context('Chest - Score Page', () => {
     describe('Expect to see Chest score page functional', () => {
@@ -147,9 +140,7 @@ context('Chest - Score Page', () => {
 
             const submitTest = () => {
                 selectTheLast()
-                cy.wait(1000)
                 selectConfidence(3)
-                cy.wait(1000)
                 clickSubmit()
                 cy.wait(3000)
             }

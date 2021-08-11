@@ -132,3 +132,21 @@ export function navigateToTestSet(modality_name) {
         })
     })
 }
+export function selectConfidence(level) {
+    let count = 0
+    const click = $el => {
+        count += 1
+        return $el.click()
+    }
+    cy.getBySel('confidence-position').then((value) => {
+        const choiceIndex = level
+        const element = value[0].children[choiceIndex].childNodes[0]
+        cy.wrap(element)
+            .pipe(click)
+            .should($el => {
+                expect($el).to.be.visible
+            }).then(() => {
+                cy.log(`clicked ${count} time(s)`)
+            })
+    })
+}

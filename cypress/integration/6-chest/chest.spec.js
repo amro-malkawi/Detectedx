@@ -1,4 +1,4 @@
-import { navigateToTestSet } from "../../support/common/functions/index"
+import { selectConfidence, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'CHEST'
@@ -8,16 +8,6 @@ function getTool(toolName) {
 function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
 }
-function waitLoading() {
-    cy.location('pathname').should('include', '/test-view');
-}
-function selectConfidence(level) {
-    cy.getBySel('confidence-position').then((value) => {
-        const choiceIndex = level
-        const element = value[0].children[choiceIndex].childNodes[0]
-        cy.wrap(element).click()
-    })
-}
 context('Test Page - Chest', () => {
     describe('Expect to see Chest modality functional', () => {
         beforeEach(() => {
@@ -26,7 +16,6 @@ context('Test Page - Chest', () => {
             cy.waitForReact()
             cy.contains(modality_name).should('be.visible').click();
             navigateToTestSet(modality_name)
-            waitLoading()
         })
 
         it('should be able to load all images', () => {
@@ -136,9 +125,7 @@ context('Test Page - Chest', () => {
             cy.get('select')
                 .should('have.value', testCaseValue)
             
-            cy.wait(1000)
             selectConfidence(3)
-            cy.wait(1000)
 
             cy.get('button')
                 .contains('Next')
