@@ -7,6 +7,7 @@ import LearningVolparaModal from "./LearningVolparaModal";
 import LearningVolparaPostModal from "./LearningVolparaPostModal";
 import LearningDeltalEDModal from "./LearningDeltalEDModal";
 import LearningLungEDModal from "./LearningLungEDModal";
+import LearningImagEDChestModal from "./LearningImagEDChestModal";
 
 export default ({open, type, name, postTestCount, credit, onClose}) => {
     if(!open) return null;
@@ -26,6 +27,8 @@ export default ({open, type, name, postTestCount, credit, onClose}) => {
         return <LearningDeltalEDModal open={open} onClose={onClose} />
     } else if( type === 'LUNGED') {
         return <LearningLungEDModal open={open} onClose={onClose} />
+    }else if( type === 'IMAGED_CHEST') {
+        return <LearningImagEDChestModal open={open} onClose={onClose} />
     } else {
         return null;
     }

@@ -2,9 +2,7 @@ import React, {Component} from 'react'
 import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
 import green from '@material-ui/core/colors/green';
 import {fade, withStyles} from '@material-ui/core/styles';
-import yellow from "@material-ui/core/colors/yellow";
 import red from "@material-ui/core/colors/red";
-import {Input} from "reactstrap";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
@@ -13,31 +11,31 @@ import IntlMessages from "Util/IntlMessages";
 const question = [
     {
         id: 'imagedChestQ1',
-        label: '1. Are all relevant anatomic features clearly visible?',
-        options: ['1', '2', '3'],
+        label: 'Are all relevant anatomic features clearly visible?',
+        options: ['No', 'Yes'],
         desc: 'Please highlight any feature below that is displayed in a less than optimal way:',
         child: ['Costophrenic angles', 'Lung Apices', 'Chest lateral borders', 'A maximum of ten posterior ribs', 'Vascular markings of the lungs', '5th-7th anterior ribs'],
-        showChildOptions: ['1', '2']
+        showChildOptions: ['No']
     },
     {
         id: 'imagedChestQ2',
-        label: '2. Are the lungs unobscured?',
-        options: ['1', '2', '3'],
+        label: 'Is the lung clearly presented without any obscuring features?',
+        options: ['No', 'Yes'],
         desc: 'Please highlight any parameter below that is obscuring the lungs:',
-        child: ['The scapulae', 'The chin', 'Arms', 'Patient rotation', 'Patient movement', 'Quantum mottle', 'Collimation', 'Exposure factors', 'Scattered radiation'],
-        showChildOptions: ['1', '2']
+        child: ['The scapulae', 'The chin', 'Arms', 'Patient rotation', 'Patient movement', 'Lordosis', 'Quantum mottle', 'Collimation', 'Exposure factors', 'Scattered radiation'],
+        showChildOptions: ['No']
     },
     {
         id: 'imagedChestQ3',
-        label: '3. Are all important technical requirements adhered to?',
-        options: ['1', '2', '3'],
+        label: 'Are all important technical requirements adhered to?',
+        options: ['No', 'Yes'],
         desc: 'Please highlight any requirement that isn’t adhered to',
-        child: ['Side marker not visible or in the wrong location', 'Poor level of collimation'],
-        showChildOptions: ['1', '2']
+        child: ['Side marker not visible or in the wrong location', 'Poor level of collimation', 'Side marker is back to front'],
+        showChildOptions: ['No']
     },
     {
         id: 'imagedChestQ4',
-        label: '4: Should this image be accepted?',
+        label: 'Should this image be accepted?',
         options: ['No', 'Yes'],
     },
 ]
@@ -183,12 +181,14 @@ export default class ImagEDChestQuestions extends Component {
         }
     }
 
-    renderQuestion(questionObj, disabled) {
+    renderQuestion(questionObj, index, disabled) {
         const {answerValue, truthValue} = this.state;
         const qTruth = truthValue[questionObj.id] !== undefined ? truthValue[questionObj.id].value : '';
         return (
             <div key={questionObj.id} className={'chest-question'}>
-                <div className={'chest-question-title'}>{questionObj.label}</div>
+                <div className={'chest-question-title d-flex'}>
+                    <span className={'mr-1'}>{index}.</span><span style={{flex: 1}}>{questionObj.label}</span>
+                </div>
                 <RadioGroup
                     className={'ml-4'}
                     aria-label="position"
@@ -237,7 +237,7 @@ export default class ImagEDChestQuestions extends Component {
                 <div>
                     <div className={'covid-questions'}>
                         {
-                            question.map(v => this.renderQuestion(v, disabled))
+                            question.map((v, i) => this.renderQuestion(v, i + 1, disabled))
                         }
                     </div>
                 </div>

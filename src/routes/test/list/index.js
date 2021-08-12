@@ -52,9 +52,10 @@ class List extends Component {
         });
     }
 
-    onLearningModal(modality_name, instruction_type, test_set) {
+    onLearningModal(modalityInfo, test_set) {
+        const {name, instruction_type, modality_type} = modalityInfo
         let type;
-        if (modality_name === 'DentalED') {
+        if (name === 'DentalED') {
             type = 'dentalED';
         } else if (instruction_type === 'COVID-19') {
             type = test_set.has_post ? 'has_post_covid' : 'covid';
@@ -62,6 +63,8 @@ class List extends Component {
             type = test_set.has_post ? 'has_post_volpara' : 'volpara';
         } else if (instruction_type === 'LUNGED') {
             type = 'LUNGED';
+        } else if (modality_type === 'imaged_chest') {
+            type = 'IMAGED_CHEST'
         } else {
             type = test_set.has_post ? 'has_post' : 'normal';
         }
@@ -123,7 +126,7 @@ class List extends Component {
             return null;
         } else {
             return (
-                <NavLink to='#' className={'learning-objective'} onClick={() => this.onLearningModal(modality_info.name, modality_info.instruction_type, test_set_item)}>
+                <NavLink to='#' className={'learning-objective'} onClick={() => this.onLearningModal(modality_info, test_set_item)}>
                     <IntlMessages id="test.learningObjectives"/>
                 </NavLink>
             )
