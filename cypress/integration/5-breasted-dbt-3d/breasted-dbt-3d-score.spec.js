@@ -84,6 +84,16 @@ function navigateToTestPage () {
         })
     })
 }
+function waitLinearProgressBar() {
+    cy.getBySel('linear-progress').then((value) => {
+        if (value.length > 0) {
+            for (let index = 0; index < value.length; index++) {
+                const element = value[index];
+                cy.wrap(element).should('not.exist')
+            }
+        }
+    })
+}
 function navigateToScorePage() {
     cy.getBySel(`"${modality_name}"`).then((modality_info) => {
         cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
@@ -146,6 +156,7 @@ context('Breasted Mammography - Score Page', () => {
 
             const submitTest = () => {
                 selectTheLast()
+                waitLinearProgressBar()
                 markOnFilm()
                 saveMarkPoint()
                 clickSubmit()
@@ -235,6 +246,7 @@ context('Breasted Mammography - Score Page', () => {
                 const submitTest = () => {
                     clickSubmit()
                     selectTheLast()
+                    waitLinearProgressBar()
                     markOnFilm()
                     saveMarkPoint()
                     backToHome()
