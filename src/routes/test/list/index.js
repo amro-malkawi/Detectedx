@@ -65,6 +65,8 @@ class List extends Component {
             type = 'LUNGED';
         } else if (modality_type === 'imaged_chest') {
             type = 'IMAGED_CHEST'
+        } else if (modality_type === 'imaged_mammo') {
+            type = 'IMAGED_MAMMO'
         } else {
             type = test_set.has_post ? 'has_post' : 'normal';
         }
@@ -122,7 +124,7 @@ class List extends Component {
     }
 
     renderLearningButton(test_set_item, modality_info) {
-        if (modality_info.modality_type === 'imaged_mammo' || modality_info.instruction_type === "PCT") {
+        if (modality_info.instruction_type === "PCT") {
             return null;
         } else {
             return (
