@@ -168,3 +168,13 @@ export function selectConfidence(level) {
             })
     })
 }
+export function waitLinearProgressBar() {
+    cy.getBySel('linear-progress').then((value) => {
+        if (value.length > 0) {
+            for (let index = 0; index < value.length; index++) {
+                const element = value[index];
+                cy.wrap(element).should('not.exist')
+            }
+        }
+    })
+}
