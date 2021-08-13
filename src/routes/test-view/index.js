@@ -532,7 +532,7 @@ class TestView extends Component {
                                 <div className={'quality-icon quality-none-icon'}/> :
                                 <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
                         }
-                        <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
+                        <span data-cy="density-icon" className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
                     </div>
                 )
             } else {

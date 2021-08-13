@@ -132,6 +132,14 @@ export function navigateToTestSet(modality_name) {
         })
     })
 }
+
+export function selectDensity(text) {
+    cy.getBySel('density-icon').click()
+    cy.getBySel('quality-button-container').within((value) => {
+        cy.wrap(value).find('div').contains(text).click()
+    })
+}
+
 export function selectCovidConfidence(level) {
     let count = 0
     const click = $el => {
