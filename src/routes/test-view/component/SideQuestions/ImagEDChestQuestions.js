@@ -6,9 +6,10 @@ import red from "@material-ui/core/colors/red";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
+import {connect} from "react-redux";
 
 
-const question = [
+const chestQuestion = [
     {
         id: 'imagedChestQ1',
         label: 'Are all relevant anatomic features clearly visible?',
@@ -40,19 +41,54 @@ const question = [
     },
 ]
 
-const questionTooltip = {
-    "1": 'No',
-    '2': 'Partially',
-    '3': 'Yes'
-}
+const chestLateralQuestion = [
+    {
+        id: 'imagedChestQ1',
+        label: 'Are all relevant anatomic features clearly visible?',
+        options: ['No', 'Yes'],
+        desc: 'Please highlight any feature below that is displayed in a less than optimal way:',
+        child: ['Costophrenic angles', 'Anterior border of chest', 'Posterior border of chest', 'Vascular markings of the lungs', '10 posterior ribs shown above diaphragm'],
+        showChildOptions: ['No']
+    },
+    {
+        id: 'imagedChestQ2',
+        label: 'Is the lung clearly presented without any obscuring features?',
+        options: ['No', 'Yes'],
+        desc: 'Please highlight any parameter below that is obscuring the lungs:',
+        child: [
+            'The arms', 'The chin', 'Patient laterally leaning from side to side (so anterior ribs/posterio costophrenic angles are not superimposed)',
+            'Patient rotation (sternum in profile/ribs not superimposed posteriorly)', 'Patient movement', 'Collimation', 'Exposure factors'],
+        showChildOptions: ['No']
+    },
+    {
+        id: 'imagedChestQ3',
+        label: 'Are all important technical requirements adhered to?',
+        options: ['No', 'Yes'],
+        desc: 'Please highlight any requirement that isn’t adhered to',
+        child: ['Side marker not visible or in the wrong location', 'Side marker is back to front', 'Poor level of collimation'],
+        showChildOptions: ['No']
+    },
+    {
+        id: 'imagedChestQ4',
+        label: 'Should this image be accepted?',
+        options: ['No', 'Yes'],
+    },
+]
 
-export default class ImagEDChestQuestions extends Component {
+class ImagEDChestQuestions extends Component {
     constructor(props) {
         super(props);
         this.state = {
             answerValue: {},  // example: {'Ground-Glass Opacity': {0: 'Upper', 1: 'Anterior'}, 'Consolidation': {}}
             answerRating: -1,
             truthValue: {}
+        }
+        if(props.modalityInfo.name.indexOf('Lateral') === -1) {
+            // ImagED - Chest Question
+            this.question = chestQuestion;
+        } else {
+            // ImagED - Chest Lateral Question
+            this.question = chestLateralQuestion;
         }
     }
 
@@ -83,7 +119,7 @@ export default class ImagEDChestQuestions extends Component {
 
     checkQuestionValidate() {
         const {answerValue} = this.state;
-        if (question.every((q) => answerValue[q.id] !== undefined)) {
+        if (this.question.every((q) => answerValue[q.id] !== undefined)) {
             return true;
         } else {
             NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
@@ -204,19 +240,11 @@ export default class ImagEDChestQuestions extends Component {
                                 key={v}
                                 value={v}
                                 control={
-                                    questionTooltip[v] ?
-                                        <Tooltip title={questionTooltip[v]} placement="bottom">
-                                            <QuestionRadio
-                                                icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                                checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                                disableRipple
-                                            />
-                                        </Tooltip> :
-                                        <QuestionRadio
-                                            icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                            checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                            disableRipple
-                                        />
+                                    <QuestionRadio
+                                        icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                        checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                        disableRipple
+                                    />
                                 }
                                 label={v}
                                 labelPlacement="end"
@@ -237,7 +265,7 @@ export default class ImagEDChestQuestions extends Component {
                 <div>
                     <div className={'covid-questions'}>
                         {
-                            question.map((v, i) => this.renderQuestion(v, i + 1, disabled))
+                            this.question.map((v, i) => this.renderQuestion(v, i + 1, disabled))
                         }
                     </div>
                 </div>
@@ -245,6 +273,15 @@ export default class ImagEDChestQuestions extends Component {
         )
     }
 }
+
+// map state to props
+const mapStateToProps = (state) => {
+    return {
+        modalityInfo: state.testView.modalityInfo
+    };
+};
+
+export default connect(mapStateToProps, null, null, {forwardRef: true})(ImagEDChestQuestions);
 
 
 const QuestionLabel = withStyles(theme => ({

@@ -161,6 +161,7 @@ class TestView extends Component {
             }
             that.synchronizer.enabled = ( testCaseViewInfo.images.every((v) => v.stack_count === 1) && ['chest', 'ultrasound'].indexOf(testCaseViewInfo.modalities.modality_type) === -1) ;
 
+            that.props.setModalityInfo(testCaseViewInfo.modalities);
             const testCaseIndex = testSetsCases.findIndex((v) => v.test_case_id === that.state.test_cases_id);
             that.setState({
                 test_case: testCaseViewInfo,
@@ -178,8 +179,6 @@ class TestView extends Component {
             }, () => {
                 Marker.modalityRatings = that.state.test_case.ratings;
             });
-            //
-            that.props.setModalityInfo(testCaseViewInfo.modalities);
 
             // make need images list for loading
             that.needLoadImagePathList = [];
