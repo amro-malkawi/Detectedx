@@ -83,7 +83,7 @@ class ImagEDChestQuestions extends Component {
             answerRating: -1,
             truthValue: {}
         }
-        if(props.modalityInfo.name.indexOf('Lateral') === -1) {
+        if (props.modalityInfo.name.indexOf('Lateral') === -1) {
             // ImagED - Chest Question
             this.question = chestQuestion;
         } else {
@@ -187,7 +187,7 @@ class ImagEDChestQuestions extends Component {
                     onChange={() => this.onChangeCheck(qId, childQId, v.value)}
                     name={childQId}
                 />
-            } label={v.label}
+            } label={v.label} className={'align-items-start'}
             />
         ));
     }

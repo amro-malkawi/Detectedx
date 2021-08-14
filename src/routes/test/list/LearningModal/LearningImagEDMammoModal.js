@@ -7,24 +7,24 @@ export default function ({ open, onClose, onNext }) {
         <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title" maxWidth='md' fullWidth>
             <div style={{ padding: 30 }}>
                 <CustomDialogTitle id="alert-dialog-title" onClose={onClose}>
-                    <span className={'fs-23'}>LEARNING OBJECTIVES FOR:</span>
+                    <span className={'fs-23'}>Learning Objectives ImagED Mammography:</span>
                 </CustomDialogTitle>
                 <DialogContent>
                     <div>
-                        <span className="fs-17">Upon completion of the educational activity, participants should be able to:</span>
+                        <span className="fs-17">At the end of this learning experience, the individual should be able to:</span>
                     </div>
                     <ol>
                         <li>
-                            <span className="fs-17 mr-10">Interrogate anatomical features to evaluate image quality.</span>
+                            <span className="fs-17 mr-10">Interrogate anatomical features to evaluate image quality</span>
                         </li>
                         <li>
-                            <span className="fs-17 mr-10">Identify if the breast is presented in the best way, and if not, why not;</span>
-                        </li>
-                        <li>
-                            <span className="fs-17 mr-10">Evaluate important technical features of a mammogram.</span>
+                            <span className="fs-17 mr-10">Identify if the breast is positioned in the best way, and if not, why not.</span>
                         </li>
                         <li>
                             <span className="fs-17 mr-10">Understand more fully when an image needs to be rejected.</span>
+                        </li>
+                        <li>
+                            <span className="fs-17 mr-10">Recognise positioning errors and know how to address them.</span>
                         </li>
                         <li>
                             <span className="fs-17 mr-10">Be familiar working with anatomy relevant to optimum mammographic positioning</span>
