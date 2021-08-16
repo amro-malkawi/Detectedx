@@ -1,4 +1,4 @@
-import { selectCovidConfidence, navigateToTestSet } from "../../support/common/functions/index"
+import { waitLinearProgressBar, selectCovidConfidence, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'CovED - COVID-19'
@@ -20,6 +20,7 @@ context('Test Page - Covid-19', () => {
 
         it('should be able to load all images', () => {
             checkLoadingIndicator()
+            waitLinearProgressBar()
         })
         it('should be able to use series feature', () => {
             const toggleSeriesIcon = () => {
@@ -44,6 +45,7 @@ context('Test Page - Covid-19', () => {
                 .should('not.exist')
         })
         it('should be able to use Slices feature', () => {
+            waitLinearProgressBar()
             const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
                 window.HTMLInputElement.prototype,
                 'value'
@@ -82,6 +84,8 @@ context('Test Page - Covid-19', () => {
             const testCaseValue = String(1)
             cy.get('select')
                 .select(testCaseValue)
+            waitLinearProgressBar()
+            
             cy.get('select')
                 .should('have.value', testCaseValue)
             
@@ -90,15 +94,21 @@ context('Test Page - Covid-19', () => {
             cy.get('button')
                 .contains('Next')
                 .click()
+            waitLinearProgressBar()
+
             cy.get('select')
                 .should('have.value', Number(testCaseValue) + 1)
+
             cy.get('button')
                 .contains('Previous')
                 .click()
+            waitLinearProgressBar()
+
             cy.get('select')
                 .should('have.value', Number(testCaseValue))
         })
         it('should be able to use Pan tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.PAN)
             const panAction = (row) => {
                 const pageX = 600
@@ -131,6 +141,7 @@ context('Test Page - Covid-19', () => {
         })
 
         it('should be able to use Zoom tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
@@ -162,6 +173,7 @@ context('Test Page - Covid-19', () => {
             })
         })
         it('should be able to use Window tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.WINDOW)
             const windowAction = (row) => {
                 const element = row[0].childNodes[0]
@@ -221,6 +233,7 @@ context('Test Page - Covid-19', () => {
             })
         })
         it('should be able to use Reset tool', () => {
+            waitLinearProgressBar()
             getTool(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
@@ -250,6 +263,7 @@ context('Test Page - Covid-19', () => {
             getTool(TOOL.RESET)
         })
         it('should be able to use invert feature', () => {
+            waitLinearProgressBar()
             const toggleInvertAction = () => {
                 cy.getBySel('tool-invert').should('be.visible').first().click();
             }
