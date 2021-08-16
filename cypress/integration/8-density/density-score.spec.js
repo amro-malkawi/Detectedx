@@ -1,5 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { selectDensity, isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
+import { selectDensity, isCurrentAQuestionPage, pauseIfVideoModalExist, clickNextModalityTab } from '../../support/common/functions/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -27,7 +27,7 @@ function alertAndPause() {
 }
 
 function selectTheLast() {
-    cy.get('.form-control').then((value) => {
+    cy.get('.form-control').should('exist').and('be.visible').then((value) => {
         const position = (value[0].length - 1).toString()
         cy.wrap(value).select(position)
     })
@@ -109,6 +109,7 @@ context('DensityED - Score Page', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
+            clickNextModalityTab()
             cy.contains(modality_name).should('be.visible').click();
         })
 
@@ -116,7 +117,6 @@ context('DensityED - Score Page', () => {
             navigateToTestPage()
             pauseIfVideoModalExist()
             isCurrentAQuestionPage()
-            cy.wait(1000)
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
                     alertAndPause()

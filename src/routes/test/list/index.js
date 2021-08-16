@@ -332,6 +332,7 @@ class List extends Component {
                 </div>
                 <AppBar position="static" color="default">
                     <ModalityTabs
+                        data-cy="modality-tabs"
                         value={this.state.tabIndex}
                         onChange={(e, value) => this.setState({tabIndex: value})}
                         variant="scrollable"

@@ -3,6 +3,10 @@ const duration = second * 1000
 const customTimeout = { timeout: duration }
 import { apiHostStatic } from '../constants/index'
 
+export function checkLoadingIndicator() {
+    cy.get('.loading-indicator').should('not.exist')
+}
+
 export function getTool(name) {
     cy.get('.more-icon', customTimeout)
         .should('exist')
@@ -69,34 +73,39 @@ export function clickExistButtonInCard(cardName, buttonNames) {
     });
 }
 export function isCurrentAQuestionPage() {
-    cy.get("body", customTimeout).then((body) => {
-        const Questionnaires = 'Questionnaires'
-        if (body.find('h2').length > 0) {
-            cy.get('h2').then((value) => {
-                if (value[0].innerHTML === Questionnaires) {
-                    return cy.get({ found: true }).as('foundQuestionnairePage')
+    cy.url().then((url) => {
+        const mainQuestions = 'mainQuestions'
+        if (url.includes(mainQuestions)) {
+            checkLoadingIndicator()
+            cy.get("body", customTimeout).then((body) => {
+                const Questionnaires = 'Questionnaires'
+                if (body.find('h2').length > 0) {
+                    cy.get('h2').then((value) => {
+                        if (value[0].innerHTML === Questionnaires) {
+                            return cy.get({ found: true }).as('foundQuestionnairePage')
+                        } else {
+                            return cy.get({ found: false }).as('foundQuestionnairePage')
+                        }
+                    })
+                } else {
+                    return cy.get({ found: false }).as('foundQuestionnairePage')
                 }
-                return cy.get({ found: false }).as('foundQuestionnairePage')
-            })
+            });
         } else {
             return cy.get({ found: false }).as('foundQuestionnairePage')
         }
-    });
+    })
 }
 export function isCurrentAnEvaluationFormPage() {
-    cy.get("body", customTimeout).then((body) => {
-        const EvaluationForm = 'Evaluation Form'
-        if (body.find('h2').length > 0) {
-            cy.get('h2').then((value) => {
-                if (value[0].innerHTML === EvaluationForm) {
-                    return cy.get({ found: true }).as('foundEvaluationFormPage')
-                }
-                return cy.get({ found: false }).as('foundEvaluationFormPage')
-            })
+    cy.url().then((url) => {
+        const postQuestions = 'postQuestions'
+        if (url.includes(postQuestions)) {
+            checkLoadingIndicator()
+            return cy.get({ found: true }).as('foundEvaluationFormPage')
         } else {
             return cy.get({ found: false }).as('foundEvaluationFormPage')
         }
-    });
+    })
 }
 export function interceptDicomImages() {
     const apiImages = {
@@ -184,5 +193,12 @@ export function waitLinearProgressBar() {
                 cy.wrap(element).should('not.exist')
             }
         }
+    })
+}
+export function clickNextModalityTab() {
+    cy.getBySel('modality-tabs').then((value) => {
+        cy.wrap(value).children()
+        .should(($lis) => { expect($lis, 'modality tabs element length ').to.have.length(4) })
+        .eq(3).should('exist').click()
     })
 }

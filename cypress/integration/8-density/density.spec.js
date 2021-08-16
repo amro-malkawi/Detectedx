@@ -1,4 +1,4 @@
-import { selectDensity, navigateToTestSet } from "../../support/common/functions/index"
+import { clickNextModalityTab, selectDensity, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'DensityED'
@@ -14,6 +14,7 @@ context('Test Page - DensityED', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
+            clickNextModalityTab()
             cy.contains(modality_name).should('be.visible').click();
             navigateToTestSet(modality_name)
         })
