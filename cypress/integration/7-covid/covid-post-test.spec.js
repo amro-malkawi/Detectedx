@@ -29,6 +29,7 @@ function interceptAttemptRequest() {
     }).as("attemptResponse");
 }
 function waitForUserInputQuestionnairePage() {
+    cy.wait(1500)
     isCurrentAQuestionPage()
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
         if (selector.found) {
@@ -37,6 +38,7 @@ function waitForUserInputQuestionnairePage() {
     })
 }
 function waitForUserInputEvaluationPage() {
+    cy.wait(1500)
     isCurrentAnEvaluationFormPage()
     cy.get('@foundEvaluationFormPage').then(({ selector }) => {
         if (selector.found) {
@@ -138,7 +140,7 @@ context('Post Test - Covid-19', () => {
             interceptDicomImages()
             navigateToTestPage()
             cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
-            cy.wait(1000)
+            cy.wait(1500)
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
@@ -174,7 +176,6 @@ context('Post Test - Covid-19', () => {
             }
             const startPostTestWithCorrectAnswer = () => {
                 makeCorrectAnswer()
-                cy.wait(3000)
                 waitForUserInputEvaluationPage()
                 checkAnswer()
                 routeToScorePage()
