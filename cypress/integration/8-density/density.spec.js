@@ -14,7 +14,7 @@ context('Test Page - DensityED', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            clickNextModalityTab()
+            clickNextModalityTab(1)
             cy.contains(modality_name).should('be.visible').click();
             navigateToTestSet(modality_name)
         })
