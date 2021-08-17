@@ -1,4 +1,4 @@
-import { clickNextModalityTab, selectDensity, navigateToTestSet } from "../../support/common/functions/index"
+import { clickOnModalityTab, selectDensity, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'DensityED'
@@ -14,12 +14,11 @@ context('Test Page - DensityED', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            clickNextModalityTab(1)
-            cy.contains(modality_name).should('be.visible').click();
+            clickOnModalityTab(modality_name)
             navigateToTestSet(modality_name)
         })
 
-        it('should be able to load all images', () => {
+        it.only('should be able to load all images', () => {
             checkLoadingIndicator()
         })
         it('should be able to use series feature', () => {

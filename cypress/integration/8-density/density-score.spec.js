@@ -1,5 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { selectDensity, isCurrentAQuestionPage, pauseIfVideoModalExist, clickNextModalityTab } from '../../support/common/functions/index'
+import { selectDensity, isCurrentAQuestionPage, pauseIfVideoModalExist, clickOnModalityTab } from '../../support/common/functions/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -109,8 +109,7 @@ context('DensityED - Score Page', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            clickNextModalityTab()
-            cy.contains(modality_name).should('be.visible').click();
+            clickOnModalityTab(modality_name)
         })
 
         it('should be able to submit test or make questionnaire on score page', () => {

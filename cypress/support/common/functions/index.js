@@ -195,12 +195,11 @@ export function waitLinearProgressBar() {
         }
     })
 }
-export function clickNextModalityTab(time) {
-    cy.getBySel('modality-tabs').then((value) => {
-        for (let i = 0; i < time; i++) {
-            cy.wrap(value).children()
-            .should(($lis) => { expect($lis, 'modality tabs element length ').to.have.length(4) })
-            .eq(3).should('exist').click()
+
+export function clickOnModalityTab(modality_name) {
+    cy.getBySel('modality-tab-item').then((value) => {
+        if (value[3].innerText.includes(modality_name)) {
+            cy.contains(modality_name).should('be.visible').click();        
         }
     })
 }
