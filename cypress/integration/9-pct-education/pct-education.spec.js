@@ -1,4 +1,4 @@
-import { getTool, clickNextModalityTab, navigateToTestSet } from "../../support/common/functions/index"
+import { getTool, clickOnModalityTab, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'PCT Education'
@@ -14,8 +14,7 @@ context(`Test Page - ${modality_name}`, () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            clickNextModalityTab(2)
-            cy.contains(modality_name).should('be.visible').click();
+            clickOnModalityTab(modality_name)
             navigateToTestSet(modality_name)
         })
 
