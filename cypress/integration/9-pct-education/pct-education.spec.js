@@ -1,13 +1,16 @@
-import { getTool, clickOnModalityTab, navigateToTestSet } from "../../support/common/functions/index"
+import { 
+    checkLoadingIndicator, 
+    clearSymbols, 
+    clickOnModalityTab, 
+    getToolWithMoreIcon, 
+    navigateToTestSet,
+    toggleSeriesIcon,
+    validateNextButton, 
+    validatePreviousButton
+ } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'PCT Education'
-function checkLoadingIndicator() {
-    cy.get('.loading-indicator').should('not.exist')
-}
-function clearSymbols () {
-    cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
-}
 context(`Test Page - ${modality_name}`, () => {
     describe(`Expect to see ${modality_name} modality functional`, () => {
         beforeEach(() => {
@@ -22,9 +25,6 @@ context(`Test Page - ${modality_name}`, () => {
             checkLoadingIndicator()
         })
         it('should be able to use Series feature', () => {
-            const toggleSeriesIcon = () => {
-                cy.get('.series-icon').click()
-            }
             cy.get('.image-browser').should('exist').and('be.visible')
             toggleSeriesIcon()
             cy.get('.image-browser').should('not.be.visible')
@@ -46,26 +46,14 @@ context(`Test Page - ${modality_name}`, () => {
                 .should('not.exist')
         })
         it('should be able to use Next, Previous test case feature', () => {
-            const testCaseValue = String(1)
-            cy.get('select')
-                .select(testCaseValue)
-            cy.get('select')
-                .should('have.value', testCaseValue)
-            
-            cy.get('button')
-                .contains('Next')
-                .click()
-
-            cy.get('select')
-                .should('have.value', Number(testCaseValue) + 1)
-            cy.get('button')
-                .contains('Previous')
-                .click()
-            cy.get('select')
-                .should('have.value', Number(testCaseValue))
+            const testCaseValue = String(0)
+            cy.get('select').select(testCaseValue)
+            cy.get('select').should('have.value', testCaseValue)
+            validateNextButton(testCaseValue)
+            validatePreviousButton(testCaseValue)
         })
         it('should be able to use Pan tool', () => {
-            getTool(TOOL.PAN)
+            getToolWithMoreIcon(TOOL.PAN)
             const panAction = (row) => {
                 const pageX = 600
                 const move = (row, i) => {
@@ -97,7 +85,7 @@ context(`Test Page - ${modality_name}`, () => {
         })
 
         it('should be able to use Zoom tool', () => {
-            getTool(TOOL.ZOOM)
+            getToolWithMoreIcon(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
                 const move = (row, i) => {
@@ -128,7 +116,7 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Window tool', () => {
-            getTool(TOOL.WINDOW)
+            getToolWithMoreIcon(TOOL.WINDOW)
             const windowAction = (row) => {
                 const element = row[0].childNodes[0]
                 const pageX = 0
@@ -187,7 +175,7 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Length tool', () => {
-            getTool(TOOL.LENGTH)
+            getToolWithMoreIcon(TOOL.LENGTH)
             clearSymbols()
             const makeLength = (image) => {
                 cy.wrap(image)
@@ -203,11 +191,8 @@ context(`Test Page - ${modality_name}`, () => {
             clearSymbols()
         })
         it('should be able to use Mark tool', () => {
-            getTool(TOOL.MARKER)
+            getToolWithMoreIcon(TOOL.MARKER)
             clearSymbols()
-            cy.getReact('Toolbar').then((value) => {
-                expect(value[1].props.currentTool).to.equal('Marker')
-            })
             cy.get('.image-row').then((row) => {
                 cy.wrap(row[0].childNodes[0])
                     .trigger('mousedown', { which: 1, pageX: 557, pageY: 212 })
@@ -227,7 +212,7 @@ context(`Test Page - ${modality_name}`, () => {
                 draw(row)
             }
             cy.get('.image-row').then((row) => {
-                getTool(TOOL.MARKER_FREEHAND)
+                getToolWithMoreIcon(TOOL.MARKER_FREEHAND)
                 markerFreehandAction(row)
             })
         })
@@ -269,7 +254,7 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Reset tool', () => {
-            getTool(TOOL.ZOOM)
+            getToolWithMoreIcon(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
                 const move = (row, i) => {
@@ -295,10 +280,10 @@ context(`Test Page - ${modality_name}`, () => {
             cy.get('.image-row').then((row) => {
                 zoomAction(row)
             })
-            getTool(TOOL.RESET)
+            getToolWithMoreIcon(TOOL.RESET)
         })
         it('should be able to use Hide info feature', () => {
-            getTool(TOOL.MARKER)
+            getToolWithMoreIcon(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 250
                 const y = 180
@@ -326,7 +311,7 @@ context(`Test Page - ${modality_name}`, () => {
             toggleInvertAction()
         })
         it('should be able to use Clear symbols feature', () => {
-            getTool(TOOL.MARKER)
+            getToolWithMoreIcon(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 600
                 const y = 300

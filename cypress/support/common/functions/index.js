@@ -18,6 +18,9 @@ export function downloadCertificate() {
 export function toggleInvertAction () {
     cy.getBySel('tool-invert').should('be.visible').first().click();
 }
+export function toggleSeriesIcon () {
+    cy.get('.series-icon').click()
+}
 export function isButtonExist(name) {
     cy.get('button').then(($button) => {
         if ($button.text().includes(name)) {
