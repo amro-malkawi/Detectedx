@@ -13,6 +13,7 @@ import InstructionDentalED from "./InstructionDentalED";
 import InstructionImagEDMammo from "./InstructionImagEDMammo";
 import InstructionGECESM from "./InstructionGECESM";
 import InstructionCHEST from "./InstructionCHEST";
+import InstructionImagEDChest from "./InstructionImagEDChest";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
@@ -49,6 +50,8 @@ class Content extends Component {
             return <InstructionGECESM instructionLocale={this.props.locale} />
         } else if (type === 'CHEST') {
             return <InstructionCHEST instructionLocale={this.props.locale} />
+        } else if (type === 'IMAGED-CHEST') {
+            return <InstructionImagEDChest instructionLocale={this.props.locale} />
         } else if (type === 'all') {
             if (this.state.activeIndex === 1) {
                 return <InstructionMammo instructionLocale={this.props.locale} />
