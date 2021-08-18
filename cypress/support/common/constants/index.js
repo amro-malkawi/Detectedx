@@ -1,5 +1,5 @@
 export const apiHostStatic = 'https://static.detectedx.com'
-
+export const MORE_ICON = { MORE_ICON: true }
 export const TOOL = {
     PAN: 'Pan',
     ZOOM: 'Zoom',
@@ -10,7 +10,6 @@ export const TOOL = {
     MARKER: 'Marker',
     MARKER_FREEHAND: 'MarkerFreehand'
 }
-
 export const BUTTON = {
     Start: 'Start',
     Continue: 'Continue',

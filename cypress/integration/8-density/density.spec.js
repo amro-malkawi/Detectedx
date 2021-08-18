@@ -1,13 +1,7 @@
-import { clickOnModalityTab, selectDensity, navigateToTestSet } from "../../support/common/functions/index"
+import { toggleInvertAction, getTool, checkLoadingIndicator, clickOnModalityTab, selectDensity, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'DensityED'
-function getTool(toolName) {
-    cy.get(`[data-tool="${toolName}"]`).should('exist').and('be.visible').click()
-}
-function checkLoadingIndicator() {
-    cy.get('.loading-indicator').should('not.exist')
-}
 context('Test Page - DensityED', () => {
     describe('Expect to see DensityED modality functional', () => {
         beforeEach(() => {
@@ -18,7 +12,7 @@ context('Test Page - DensityED', () => {
             navigateToTestSet(modality_name)
         })
 
-        it.only('should be able to load all images', () => {
+        it('should be able to load all images', () => {
             checkLoadingIndicator()
         })
         it('should be able to use series feature', () => {
@@ -53,6 +47,7 @@ context('Test Page - DensityED', () => {
                 .should('have.value', testCaseValue)
             
             selectDensity('a')
+            cy.wait(1000)
 
             cy.get('select')
                 .should('have.value', Number(testCaseValue) + 1)
@@ -184,73 +179,6 @@ context('Test Page - DensityED', () => {
                 windowAction(row)
             })
         })
-        it('should be able to use hanging button', () => {
-            const selectFirst = () => {
-                cy.get('.hanging-type-container').click().should('exist')
-                cy.get('.MuiList-root > :nth-child(1)').click()
-                cy.get('.image-row').then((row) => {
-                    expect(row.length).to.eq(1)
-                    expect(row[0].childElementCount).to.eq(4)
-                })
-            }
-            const selectSecond = () => {
-                cy.get('.hanging-type-container').click().should('exist')
-                cy.get('.MuiList-root > :nth-child(2)').click().should('exist')
-                cy.get('.image-row').then((row) => {
-                    expect(row.length).to.eq(1)
-                    expect(row[0].childElementCount).to.eq(2)
-                })
-            }
-            selectSecond()
-            cy.wait(2000)
-            selectFirst()
-        })
-        it('should be able to use Sync function', () => {
-            const toggleSyncSwitch = () => {
-                cy.getBySel('synchronizer-switch').click()
-            }
-            const selectSecondCase = () => {
-                cy.get('.hanging-type-container').click().should('exist')
-                cy.get('.MuiList-root > :nth-child(2)').click().should('exist')
-                cy.get('.image-row').then((row) => {
-                    expect(row.length).to.eq(1)
-                    expect(row[0].childElementCount).to.eq(2)
-                })
-            }
-            toggleSyncSwitch()
-            toggleSyncSwitch()
-            selectSecondCase()
-            getTool(TOOL.ZOOM)
-            const zoomAction = (row) => {
-                const pageX = 178
-                const move = (row, i) => {
-                    cy.wrap(row[0].childNodes[0])
-                        .trigger('mousedown', { which: 1, pageX: pageX, pageY: i })
-                        .trigger('mousemove', { which: 1, pageX: pageX, pageY: i })
-                }
-                const smooth = 0.8;
-                const zoom = {
-                    in: {
-                        start: 500,
-                        end: 520
-                    },
-                    out: {
-                        start: 520,
-                        end: 512
-                    }
-                }
-                for (let i = zoom.in.start; i < zoom.in.end; i = i + smooth) {
-                    move(row, i)
-                }
-                for (let i = zoom.out.start; i >= zoom.out.end; i = i - smooth) {
-                    move(row, i)
-                }
-            }
-            cy.wait(3000)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
-        })
         it('should be able to use Reset tool', () => {
             getTool(TOOL.ZOOM)
             const zoomAction = (row) => {
@@ -281,9 +209,6 @@ context('Test Page - DensityED', () => {
             getTool(TOOL.RESET)
         })
         it('should be able to use invert feature', () => {
-            const toggleInvertAction = () => {
-                cy.getBySel('tool-invert').should('be.visible').first().click();
-            }
             cy.get('.image-row').then((row) => {
                 const image = row[0].childNodes[0]
                 cy.wrap(image).dblclick()

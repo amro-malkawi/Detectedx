@@ -15,6 +15,9 @@ export function checkAnswer() {
 export function downloadCertificate() {
     return cy.get('button').contains('Certificate of Completion').click()
 }
+export function toggleInvertAction () {
+    cy.getBySel('tool-invert').should('be.visible').first().click();
+}
 export function isButtonExist(name) {
     cy.get('button').then(($button) => {
         if ($button.text().includes(name)) {
@@ -75,7 +78,7 @@ export function clickViewButton(index) {
     })
 }
 export function getTool(name, opts) {
-    if (opts.MORE_ICON) {
+    if (opts && opts.MORE_ICON) {
         cy.get('.more-icon')
             .should('exist')
             .and('be.visible').click()
