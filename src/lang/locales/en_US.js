@@ -210,7 +210,7 @@ module.exports = {
 	"user.signup.password": "Password *",
 	"user.signup.confirmPassword": "Confirm Password *",
 	"user.signup.agreeTerm": "I have read and agree to the ",
-	"user.signup.term": "terms of conditions",
+	"user.signup.term": "terms and conditions",
 	"user.signup.consentStatements": "consent statements",
 	"user.signup.firstName": "First Name *",
 	"user.signup.lastName": "Last Name *",

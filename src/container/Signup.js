@@ -473,7 +473,7 @@ class Signup extends Component {
                         label={
                             <span>
                                 <IntlMessages id={"user.signup.agreeTerm"}/>
-                                <Link to='/terms'><IntlMessages id={"user.signup.term"}/></Link>&nbsp;and&nbsp;
+                                <Link to='/terms' target="_blank"><IntlMessages id={"user.signup.term"}/></Link>&nbsp;and&nbsp;
                                 <Link to="#" onClick={() => this.setState({showConsentModal: true})}><IntlMessages id={"user.signup.consentStatements"}/></Link>
                                 &nbsp;*
                             </span>

@@ -209,7 +209,7 @@ module.exports = {
     "user.signup.password": "Contraseña *",
     "user.signup.confirmPassword": "Confirmar contraseña *",
     "user.signup.agreeTerm": "He leído y acepto el",
-    "user.signup.term": "términos de condiciones",
+    "user.signup.term": "términos y condiciones",
     "user.signup.consentStatements": "declaraciones de consentimiento",
     "user.signup.firstName": "Nombre *",
     "user.signup.lastName": "Apellido *",
