@@ -7,13 +7,18 @@ export function clearSymbols() {
     cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
 }
 export function routeToScorePage() {
-    return cy.get('button').contains('Scores').click({ force: true })
+    cy.get('button').contains('Scores').click({ force: true })
 }
 export function checkAnswer() {
-    return cy.get('button').contains('Answers').click()
+    cy.get('button').contains('Answers').click()
 }
 export function downloadCertificate() {
-    return cy.get('button').contains('Certificate of Completion').click()
+    cy.get('button').contains('Certificate of Completion').click()
+}
+export function downloadCertificates() {
+    cy.get('button').contains('Certificate of Completion').click()
+    cy.get('button').contains('Physicians').click()
+    cy.get('button').contains('Non Physicians').click()
 }
 export function toggleInvertAction () {
     cy.getBySel('tool-invert').should('be.visible').first().click();
@@ -184,6 +189,17 @@ export function isCurrentAnEvaluationFormPage() {
         }
     })
 }
+export function interceptAttemptRequest() {
+    const apiHost = Cypress.env('apiUrl')
+    const apiAttempt = {
+        method: 'GET',
+        url: `${apiHost}/attempts/**`
+    }
+    cy.intercept({
+        method: apiAttempt.method,
+        url: apiAttempt.url,
+    }).as("attemptResponse");
+}
 export function interceptDicomImages() {
     const apiImages = {
         method: 'GET',
@@ -205,11 +221,24 @@ export function pauseIfVideoModalExist() {
         }
     })
 }
+export function waitLoadingToTestView() {
+    cy.location('pathname').should('include', '/test-view');
+}
 export function waitForUserInputQuestionnairePage() {
-    cy.wait(2000)
+    cy.wait(1500)
     isCurrentAQuestionPage()
     cy.wait(1000)
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
+        if (selector.found) {
+            alertAndPause()
+        }
+    })
+}
+export function waitForUserInputEvaluationPage() {
+    cy.wait(1500)
+    isCurrentAnEvaluationFormPage()
+    cy.wait(1000)
+    cy.get('@foundEvaluationFormPage').then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
         }
@@ -280,7 +309,12 @@ export function selectConfidence(level) {
 export function selectTheLast() {
     cy.get('.form-control').should('exist').and('be.visible').then((value) => {
         const position = (value[0].length - 1).toString()
-        cy.wrap(value).select(position)
+        cy.wrap(value[0]).select(position)
+    })
+}
+export function selectDropDownAt(order) {
+    cy.get('.form-control').then((value) => {
+        cy.wrap(value[0]).select((order - 1).toString(), { force: true })
     })
 }
 export function waitLinearProgressBar() {
@@ -297,6 +331,30 @@ export function clickOnModalityTab(modality_name) {
     cy.getBySel('modality-tab-item').then((value) => {
         if (value[3].innerText.includes(modality_name)) {
             cy.contains(modality_name).should('be.visible').click();
+        }
+    })
+}
+// ---------------- post-test ----------------
+export function clickSubmit() {
+    cy.get('button').contains('Submit').should('exist').and('be.visible').click()
+}
+export function clickReattempt() {
+    cy.get('button').contains('Reattempt').should('exist').and('be.visible').click()
+}
+export function clickReviewAnswers() {
+    const selector = 'review-answers-button'
+    cy.get(`[data-cy=${selector}]`).should('exist').and('be.visible').click()
+}
+export function waitUntilAllImagesLoaded() {
+    checkLoadingIndicator()
+    cy.wait('@dicomImagesResponse').its('response.statusCode').should('eq', 200)
+    cy.wait('@dicomImagesResponse').its('response.body').should('be.exist')
+    cy.wait('@dicomImagesResponse').then(({ response }) => {
+        if (response.body) {
+            cy.window().its('store').invoke('getState').then(({ testView }) => {
+                const { showImageList } = testView
+                cy.wrap(showImageList).its('length').should('be.gte', 1)
+            })
         }
     })
 }
