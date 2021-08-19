@@ -17,5 +17,6 @@ export const BUTTON = {
     Scores: 'Scores',
 }
 export const MODALITY_NAME = {
-    DensityED: 'DensityED'
+    DensityED: 'DensityED',
+    PCTEducation: 'PCT Education'
 }

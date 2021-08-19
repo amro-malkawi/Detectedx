@@ -4,55 +4,42 @@ import {
     clickOnModalityTab, 
     getToolWithMoreIcon, 
     navigateToTestSet,
-    toggleSeriesIcon,
-    validateNextButton, 
-    validatePreviousButton
+    validateSeriesFeature,
+    validateInstructionFeature,
+    validateNextPreviousFeature,
+    validateGridFeature,
+    validateInvertFeature,
+    waitLinearProgressBar,
  } from "../../support/common/functions/index"
-import { TOOL } from "../../support/common/constants/index"
 
-const modality_name = 'PCT Education'
-context(`Test Page - ${modality_name}`, () => {
-    describe(`Expect to see ${modality_name} modality functional`, () => {
+ import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
+
+context(`Test Page - ${MODALITY_NAME.PCTEducation}`, () => {
+    describe(`Expect to see ${MODALITY_NAME.PCTEducation} modality functional`, () => {
         beforeEach(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            clickOnModalityTab(modality_name)
-            navigateToTestSet(modality_name)
+            clickOnModalityTab(MODALITY_NAME.PCTEducation)
+            navigateToTestSet(MODALITY_NAME.PCTEducation)
         })
 
         it('should be able to load all images', () => {
             checkLoadingIndicator()
+            waitLinearProgressBar()
         })
         it('should be able to use Series feature', () => {
-            cy.get('.image-browser').should('exist').and('be.visible')
-            toggleSeriesIcon()
-            cy.get('.image-browser').should('not.be.visible')
-            toggleSeriesIcon()
-            cy.get('.image-browser').should('exist').and('be.visible')
+            validateSeriesFeature()
         })
         it('should be able to use Instruction', () => {
-            cy.get('button')
-                .contains('Instruction')
-                .click()
-                .should('exist')
-            cy.get('.MuiDialogContent-root')
-                .scrollTo('bottom', { duration: 3000 })
-            cy.get('.MuiDialogContent-root')
-                .scrollTo('top', { duration: 3000 })
-            cy.get('button')
-                .contains('Close')
-                .click()
-                .should('not.exist')
+            validateInstructionFeature()
         })
         it('should be able to use Next, Previous test case feature', () => {
-            const testCaseValue = String(0)
-            cy.get('select').select(testCaseValue)
-            cy.get('select').should('have.value', testCaseValue)
-            validateNextButton(testCaseValue)
-            validatePreviousButton(testCaseValue)
+            validateNextPreviousFeature()
+            waitLinearProgressBar()
         })
         it('should be able to use Pan tool', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.PAN)
             const panAction = (row) => {
                 const pageX = 600
@@ -85,6 +72,7 @@ context(`Test Page - ${modality_name}`, () => {
         })
 
         it('should be able to use Zoom tool', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
@@ -116,6 +104,7 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Window tool', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.WINDOW)
             const windowAction = (row) => {
                 const element = row[0].childNodes[0]
@@ -175,6 +164,7 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Length tool', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.LENGTH)
             clearSymbols()
             const makeLength = (image) => {
@@ -191,6 +181,7 @@ context(`Test Page - ${modality_name}`, () => {
             clearSymbols()
         })
         it('should be able to use Mark tool', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.MARKER)
             clearSymbols()
             cy.get('.image-row').then((row) => {
@@ -200,6 +191,7 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use FreehandMarker tool', () => {
+            waitLinearProgressBar()
             const markerFreehandAction = (row) => {
                 const draw = (row) => {
                     cy.wrap(row[0].childNodes[0])
@@ -217,43 +209,11 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Grid status', () => {
-            const selectGridTool = () => {
-                cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-cy=grid-tool]')
-                .click()
-                .should('exist')
-            }
-            cy.get('.tool-container').click().should('exist')
-            cy.wait(1000)
-
-            selectGridTool()
-            cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
-                .click()
-                .should('exist')
-            cy.get('.MuiDialog-container')
-                .click()
-                .should('not.exist')
-            cy.get('.image-row').then((row) => {
-                expect(row.length).to.eq(2)
-                expect(row[0].childElementCount).to.eq(2)
-                expect(row[1].childElementCount).to.eq(2)
-            })
-            cy.get('.tool-container').click().should('exist')
-            cy.wait(1000)
-            
-            selectGridTool()
-            cy.get('tbody > :nth-child(2) > :nth-child(4)') // 8 grid
-                .click()
-                .should('exist')
-            cy.get('.MuiDialog-container')
-                .click()
-                .should('not.exist')
-            cy.get('.image-row').then((row) => {
-                expect(row.length).to.eq(2)
-                expect(row[0].childElementCount).to.eq(4)
-                expect(row[1].childElementCount).to.eq(4)
-            })
+            waitLinearProgressBar()
+            validateGridFeature()
         })
         it('should be able to use Reset tool', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
@@ -283,6 +243,7 @@ context(`Test Page - ${modality_name}`, () => {
             getToolWithMoreIcon(TOOL.RESET)
         })
         it('should be able to use Hide info feature', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 250
@@ -304,13 +265,11 @@ context(`Test Page - ${modality_name}`, () => {
             })
         })
         it('should be able to use Invert feature', () => {
-            const toggleInvertAction = () => {
-                cy.getBySel('tool-invert').should('be.visible').first().click();
-            }
-            toggleInvertAction()
-            toggleInvertAction()
+            waitLinearProgressBar()
+            validateInvertFeature()
         })
         it('should be able to use Clear symbols feature', () => {
+            waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 600

@@ -20,11 +20,11 @@ export function downloadCertificates() {
     cy.get('button').contains('Physicians').click()
     cy.get('button').contains('Non Physicians').click()
 }
-export function toggleInvertAction () {
+export function toggleInvertAction() {
     cy.getBySel('tool-invert').should('be.visible').first().click();
 }
-export function toggleSeriesIcon () {
-    cy.get('.series-icon').click()
+export function toggleSeriesIcon() {
+    cy.get('.series-icon').should('be.visible').click()
 }
 export function isButtonExist(name) {
     cy.get('button').then(($button) => {
@@ -33,7 +33,7 @@ export function isButtonExist(name) {
         } else {
             return cy.get({ found: false }).as(`found${name}Button`)
         }
-      })
+    })
 }
 export function validateNextButton(testCaseValue) {
     const name = 'Next'
@@ -55,6 +55,75 @@ export function validatePreviousButton(testCaseValue) {
             cy.get('select').should('have.value', Number(testCaseValue))
         }
     })
+}
+export function validateSeriesFeature() {
+    cy.wait(3000)
+    cy.window().its('store').invoke('getState').then((state) => {
+        const imageBrowser = state.testView.isShowImageBrowser
+        if (imageBrowser) {
+            cy.get('.image-browser').should('be.visible')
+            toggleSeriesIcon()
+            cy.get('.image-browser').should('not.be.visible')
+        } else {
+            cy.get('.image-browser').should('not.be.visible')
+            toggleSeriesIcon()
+            cy.get('.image-browser').should('be.visible')
+        }
+    })
+}
+export function validateInstructionFeature() {
+    cy.get('button').contains('Instruction').should('exist').click()
+    cy.get('.MuiDialogContent-root').scrollTo('bottom', { duration: 3000 })
+    cy.get('.MuiDialogContent-root').scrollTo('top', { duration: 3000 })
+    cy.get('button').contains('Close').click().should('not.exist')
+}
+export function validateNextPreviousFeature() {
+    const testCaseValue = String(0)
+    cy.get('select').select(testCaseValue)
+    cy.get('select').should('have.value', testCaseValue)
+    validateNextButton(testCaseValue)
+    validatePreviousButton(testCaseValue)
+}
+export function validateGridFeature() {
+    const selectGridTool = () => {
+        cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-cy=grid-tool]')
+            .click()
+            .should('exist')
+    }
+    cy.get('.tool-container').click().should('exist')
+    cy.wait(1000)
+
+    selectGridTool()
+    cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
+        .click()
+        .should('exist')
+    cy.get('.MuiDialog-container')
+        .click()
+        .should('not.exist')
+    cy.get('.image-row').then((row) => {
+        expect(row.length).to.eq(2)
+        expect(row[0].childElementCount).to.eq(2)
+        expect(row[1].childElementCount).to.eq(2)
+    })
+    cy.get('.tool-container').click().should('exist')
+    cy.wait(1000)
+
+    selectGridTool()
+    cy.get('tbody > :nth-child(2) > :nth-child(4)') // 8 grid
+        .click()
+        .should('exist')
+    cy.get('.MuiDialog-container')
+        .click()
+        .should('not.exist')
+    cy.get('.image-row').then((row) => {
+        expect(row.length).to.eq(2)
+        expect(row[0].childElementCount).to.eq(4)
+        expect(row[1].childElementCount).to.eq(4)
+    })
+}
+export function validateInvertFeature() {
+    toggleInvertAction()
+    toggleInvertAction()
 }
 export function navigateToSpecificTestPage(cardName) {
     const possibleButton = [BUTTON.Continue, BUTTON.Restart]
@@ -149,7 +218,10 @@ export function clickExistButtonInCard(cardName, buttonNames) {
                 const intersect = existingFoundButtons.filter(value => buttonNames.includes(value));
                 array.forEach(button => {
                     if (button.innerText.includes(intersect.toString())) {
-                        target = button
+                        if (button.parentNode.parentNode.innerText === `${cardName}\n${intersect.toString()}`) {
+                            target = button
+                        }
+                        // target = button
                         return true;
                     }
                 });
@@ -322,14 +394,21 @@ export function selectDropDownAt(order) {
     })
 }
 export function waitLinearProgressBar() {
-    cy.getBySel('linear-progress').then((value) => {
-        if (value.length > 0) {
-            for (let index = 0; index < value.length; index++) {
-                const element = value[index];
-                cy.wrap(element).should('not.exist')
-            }
+    cy.wait(1000)
+    cy.get("body").then($body => {
+        if ($body.find(`[data-cy=linear-progress]`).length > 0) {
+            cy.getBySel('linear-progress').then($elment => {
+                if ($elment.is(':visible')) {
+                    if ($elment.length > 0) {
+                        for (let index = 0; index < $elment.length; index++) {
+                            const element = $elment[index];
+                            cy.wrap(element).should('not.exist')
+                        }
+                    }
+                }
+            });
         }
-    })
+    });
 }
 export function clickOnModalityTab(modality_name) {
     cy.getBySel('modality-tab-item').then((value) => {
