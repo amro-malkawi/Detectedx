@@ -1,4 +1,6 @@
-import { apiHostStatic, BUTTON, MORE_ICON } from '../constants/index'
+import { apiHostStatic, BUTTON, MORE_ICON, TOOL } from '../constants/index'
+import { dropdown } from '../../../support/breasted-mammography/breasted-mammography-dropdown-list'
+const apiHost = Cypress.env('apiUrl')
 
 export function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
@@ -269,7 +271,6 @@ export function isCurrentAnEvaluationFormPage() {
     })
 }
 export function interceptAttemptRequest() {
-    const apiHost = Cypress.env('apiUrl')
     const apiAttempt = {
         method: 'GET',
         url: `${apiHost}/attempts/**`
@@ -278,6 +279,16 @@ export function interceptAttemptRequest() {
         method: apiAttempt.method,
         url: apiAttempt.url,
     }).as("attemptResponse");
+}
+export function interceptDropdownRequest() {
+    const apiSelectDrownDownList = {
+        method: 'GET',
+        url: `${apiHost}/scores/attempt_percentile**`
+    }
+    cy.intercept({
+        method: apiSelectDrownDownList.method,
+        url: apiSelectDrownDownList.url,
+    }).as("scoresAttemptPercentile");
 }
 export function interceptDicomImages() {
     const apiImages = {
@@ -446,4 +457,63 @@ export function waitUntilAllImagesLoaded() {
             })
         }
     })
+}
+
+// ---------------- score-spec -------------------
+export function checkAllDropdownListAt(number) {
+    interceptDropdownRequest()
+    const selector = `:nth-child(${number}) > .score-chart-title > .form-control`
+    cy.get(selector)
+        .should('exist')
+        .and('be.visible')
+        .select(dropdown.key.BreastPhysician)
+        .invoke('val')
+        .should('deep.equal', dropdown.value.BreastPhysician)
+    cy.get(selector)
+        .should('exist')
+        .and('be.visible')
+        .select(dropdown.key.Radiologist)
+        .invoke('val')
+        .should('deep.equal', dropdown.value.Radiologist)
+    cy.get(selector)
+        .should('exist')
+        .and('be.visible')
+        .select(dropdown.key.Radiographer)
+        .invoke('val')
+        .should('deep.equal', dropdown.value.Radiographer)
+    cy.get(selector)
+        .should('exist')
+        .and('be.visible')
+        .select(dropdown.key.Trainee)
+        .invoke('val')
+        .should('deep.equal', dropdown.value.Trainee)
+    cy.get(selector)
+        .should('exist')
+        .and('be.visible')
+        .select(dropdown.key.other)
+        .invoke('val')
+        .should('deep.equal', dropdown.value.other)
+
+    cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('eq', 200)
+}
+export function markOnFilm() {
+    cy.get('.image-row').then((row) => {
+        const image = row[0].childNodes[0]
+        getToolWithMoreIcon(TOOL.MARKER)
+        clearSymbols()
+        cy.wrap(image).click()
+    })
+}
+export function saveMarkPoint() {
+    cy.get('.right > .MuiButtonBase-root').should('exist').click()
+}
+export function backToHome() {
+    cy.get('.navbar-right > :nth-child(1) > .MuiButtonBase-root').should('exist').click()
+}
+export function clickDefinitionButton() {
+    cy.get('button').contains('Definitions')
+        .should('exist')
+        .scrollIntoView()
+        .and('be.visible')
+        .click()
 }
