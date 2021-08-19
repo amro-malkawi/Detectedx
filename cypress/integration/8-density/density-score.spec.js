@@ -32,6 +32,7 @@ context('DensityED - Score Page', () => {
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
+                    alertAndPause()
                     questionnaireFlow()
                 } else {
                     submitTestFlow()
@@ -39,7 +40,6 @@ context('DensityED - Score Page', () => {
             })
 
             const questionnaireFlow = () => {
-                alertAndPause()
                 checkAnswer()
                 routeToScorePage()
                 downloadCertificate()
