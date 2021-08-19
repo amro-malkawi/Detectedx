@@ -1,35 +1,30 @@
-import { BUTTON } from "../../support/common/constants/index"
 import { 
     alertAndPause,
     checkAnswer,
     checkLoadingIndicator,
-    clickExistButtonInCard,
+    clickOnModalityTab,
     clickReattempt,
     clickReviewAnswers,
+    clickStartPostTest,
     downloadCertificates,
     interceptAttemptRequest,
     interceptDicomImages,
     isCurrentAQuestionPage,
+    navigateToSpecificTestPage,
     routeToScorePage,
     selectDropDownAt,
     selectTheLast,
     selectDensity,
+    waitLoadingToTestView,
     waitForUserInputQuestionnairePage,
     waitForUserInputEvaluationPage,
     waitUntilAllImagesLoaded,
  } from "../../support/common/functions/index"
 
-const CARD = {
-    POST_TEST: 'Density 60 Cases (D1)'
-}
-const modality_name = 'DensityED'
-const CURRENT_TEST = {
-    CARD: CARD.POST_TEST
-}
-function navigateToTestPage() {
-    const possibleButton = [BUTTON.Continue, BUTTON.Restart]
-    clickExistButtonInCard(CURRENT_TEST.CARD, possibleButton)
-}
+ import { MODALITY_NAME } from "../../support/common/constants"
+ 
+ const POST_TEST_CARD = 'Density 60 Cases (D1)'
+
 function makeCorrectAnswer() {
     checkLoadingIndicator()
     waitUntilAllImagesLoaded()
@@ -41,14 +36,14 @@ function makeCorrectAnswer() {
         cy.wait(3000)
     }
 }
-context(`Post Test - ${modality_name}`, () => {
-    describe(`Expect to see ${modality_name} Post Test`, {
+context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
+    describe(`Expect to see ${MODALITY_NAME.DensityED} Post Test`, {
     }, () => {
         beforeEach(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            cy.contains('BreastED - Mammography').should('be.visible').click();
+            clickOnModalityTab(MODALITY_NAME.DensityED)
         })
         afterEach(() => {
             cy.wait(1000)
@@ -57,7 +52,7 @@ context(`Post Test - ${modality_name}`, () => {
         it('should be able to do post test', () => {
             interceptAttemptRequest()
             interceptDicomImages()
-            navigateToTestPage()
+            navigateToSpecificTestPage(POST_TEST_CARD)
             cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
             cy.wait(1500)
             isCurrentAQuestionPage()
@@ -85,7 +80,7 @@ context(`Post Test - ${modality_name}`, () => {
             const startPostTestWithReattempt = () => {
                 interceptAttemptRequest()
                 waitForUserInputQuestionnairePage()
-                cy.get('button').contains('Start').click() // AMA PRA Category 1 Credit(s)™ Start button
+                clickStartPostTest()
                 cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
                 selectTheLast()
                 selectDensity('a')

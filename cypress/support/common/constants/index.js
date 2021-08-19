@@ -16,3 +16,6 @@ export const BUTTON = {
     Restart: 'Re-Start',
     Scores: 'Scores',
 }
+export const MODALITY_NAME = {
+    DensityED: 'DensityED'
+}

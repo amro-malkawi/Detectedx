@@ -1,4 +1,4 @@
-import { apiHostStatic, MORE_ICON } from '../constants/index'
+import { apiHostStatic, BUTTON, MORE_ICON } from '../constants/index'
 
 export function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
@@ -55,6 +55,10 @@ export function validatePreviousButton(testCaseValue) {
             cy.get('select').should('have.value', Number(testCaseValue))
         }
     })
+}
+export function navigateToSpecificTestPage(cardName) {
+    const possibleButton = [BUTTON.Continue, BUTTON.Restart]
+    clickExistButtonInCard(cardName, possibleButton)
 }
 export function navigateToTestPage(modality_name) {
     cy.getBySel(`"${modality_name}"`).then((modality_info) => {
@@ -335,6 +339,9 @@ export function clickOnModalityTab(modality_name) {
     })
 }
 // ---------------- post-test ----------------
+export function clickStartPostTest() {
+    cy.get('button').contains('Start').should('exist').and('be.visible').click()
+}
 export function clickSubmit() {
     cy.get('button').contains('Submit').should('exist').and('be.visible').click()
 }
