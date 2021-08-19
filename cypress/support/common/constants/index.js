@@ -18,5 +18,6 @@ export const BUTTON = {
 }
 export const MODALITY_NAME = {
     DensityED: 'DensityED',
-    PCTEducation: 'PCT Education'
+    PCTEducation: 'PCT Education',
+    DentalED: 'DentalED'
 }

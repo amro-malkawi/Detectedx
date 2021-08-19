@@ -26,6 +26,9 @@ export function toggleInvertAction() {
 export function toggleSeriesIcon() {
     cy.get('.series-icon').should('be.visible').click()
 }
+export function toggleMarkInfo() {
+    cy.getBySel('tool-mark-info').should('be.visible').first().click()
+}
 export function isButtonExist(name) {
     cy.get('button').then(($button) => {
         if ($button.text().includes(name)) {
