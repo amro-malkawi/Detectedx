@@ -12,6 +12,7 @@ import {
     selectDensity,
     selectTheLast,
     waitForUserInputQuestionnairePage,
+    validateScoreContainer,
 } from '../../support/common/functions/index'
 const CURRENT_TEST = {
     VIEW_BUTTON_INDEX: 0,
@@ -59,14 +60,12 @@ context('DensityED - Score Page', () => {
         it('should be able to click on view button and navigate to score page', () => {
             navigateToScorePage(modality_name)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-            cy.get('.rct-page').should('be.visible')
-            cy.get('.volpara-score-data').should('be.visible')
         })
 
         it('should be able to see score data on score page', () => {
             navigateToScorePage(modality_name)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-            cy.get('.volpara-score-data').should('be.visible').should('exist').and('be.visible')
+            validateScoreContainer()
         })
 
         it('should be able to download the certificate of completion on score page', () => {

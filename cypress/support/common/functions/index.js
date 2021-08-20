@@ -459,6 +459,9 @@ export function waitUntilAllImagesLoaded() {
 }
 
 // ---------------- score-spec -------------------
+export function validateScoreContainer() {
+    cy.get('.score-container').should('exist').and('be.visible')
+}
 export function checkAllDropdownListAt(number) {
     interceptDropdownRequest()
     const selector = `:nth-child(${number}) > .score-chart-title > .form-control`
