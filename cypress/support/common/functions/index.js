@@ -462,6 +462,96 @@ export function waitUntilAllImagesLoaded() {
 export function validateScoreContainer() {
     cy.get('.score-container').should('exist').and('be.visible')
 }
+export function validateReSelectDropdownList(modality_name, view_button_index) {
+    const navigateToScoreOrTestPage = () => {
+        cy.getBySel(`"${modality_name}"`).then((modality_info) => {
+            cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
+                if(test_set.find("button:contains('Scores')").length > 0) {
+                    cy.wrap(test_set).find('button').contains('Scores').click({ force: true })
+                    checkScorePage()
+                } else if (test_set.find("button:contains('Start')").length > 0) {
+                    cy.wrap(test_set).find('button').contains('Start').click({ force: true })
+                    checkTestPage()
+                } else {
+                    cy.wrap(test_set).find('button').contains('Continue').click({ force: true })
+                    checkTestPage()
+                }
+            })
+        })
+    }
+    const checkScorePage = () => {
+        clickViewButton(view_button_index ? view_button_index : 0)
+        interceptDropdownRequest()
+        const checkAllDropdownListAt = (number) => {
+            const selector = `:nth-child(${number}) > .score-chart-title > .form-control`
+            cy.get(selector)
+                .should('exist')
+                .and('be.visible')
+                .select(dropdown.key.BreastPhysician)
+                .invoke('val')
+                .should('deep.equal', dropdown.value.BreastPhysician)
+            cy.get(selector)
+                .should('exist')
+                .and('be.visible')
+                .select(dropdown.key.Radiologist)
+                .invoke('val')
+                .should('deep.equal', dropdown.value.Radiologist)
+            cy.get(selector)
+                .should('exist')
+                .and('be.visible')
+                .select(dropdown.key.Radiographer)
+                .invoke('val')
+                .should('deep.equal', dropdown.value.Radiographer)
+            cy.get(selector)
+                .should('exist')
+                .and('be.visible')
+                .select(dropdown.key.Trainee)
+                .invoke('val')
+                .should('deep.equal', dropdown.value.Trainee)
+            cy.get(selector)
+                .should('exist')
+                .and('be.visible')
+                .select(dropdown.key.other)
+                .invoke('val')
+                .should('deep.equal', dropdown.value.other)
+
+            cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('eq', 200)
+        }
+        checkAllDropdownListAt(1)
+        checkAllDropdownListAt(2)
+        checkAllDropdownListAt(3)
+    }
+    const checkTestPage = () => {
+        isCurrentAQuestionPage()
+        cy.wait(1000)
+        cy.get('@foundQuestionnairePage').then(({ selector }) => {
+            if (selector.found) {
+                alertAndPause()
+                questionnaireFlow()
+            } else {
+                submitTestFlow()
+            }
+        })
+        const questionnaireFlow = () => {
+            checkAnswer()
+            routeToScorePage()
+            downloadCertificate()
+        }
+        const submitTestFlow = () => {
+            submitTest()
+            questionnaireFlow()
+        }
+        const submitTest = () => {
+            clickSubmit()
+            selectTheLast()
+            waitLinearProgressBar()
+            markOnFilm()
+            saveMarkPoint()
+            backToHome()
+        }
+    }
+    navigateToScoreOrTestPage()
+}
 export function checkAllDropdownListAt(number) {
     interceptDropdownRequest()
     const selector = `:nth-child(${number}) > .score-chart-title > .form-control`
@@ -518,4 +608,8 @@ export function clickDefinitionButton() {
         .scrollIntoView()
         .and('be.visible')
         .click()
+    cy.wait(3000)
+}
+export function closeDefinition() {
+    cy.get('#alert-dialog-title > .MuiButtonBase-root').click()
 }

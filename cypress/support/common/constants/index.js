@@ -17,6 +17,7 @@ export const BUTTON = {
     Scores: 'Scores',
 }
 export const MODALITY_NAME = {
+    BreastED_DBT_3D: 'BreastED - DBT 3D',
     DensityED: 'DensityED',
     PCTEducation: 'PCT Education',
     DentalED: 'DentalED'
