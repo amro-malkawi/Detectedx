@@ -14,6 +14,7 @@ import {
     selectTheLast,
     waitForUserInputQuestionnairePage,
     validateScoreContainer,
+    closeDefinition,
 } from '../../support/common/functions/index'
 
 import { MODALITY_NAME } from '../../support/common/constants'
@@ -75,19 +76,14 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
         it('should be able to download the certificate of completion on score page', () => {
             navigateToScorePage(CURRENT_TEST.MODALITY_NAME)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-            cy.get(':nth-child(1) > .extra-button-container > .MuiButtonBase-root')
-                .should('exist')
-                .scrollIntoView()
-                .and('be.visible')
-                .click()
+            downloadCertificate()
         })
 
         it('should be able to see the definition on score page by clicking button', () => {
             navigateToScorePage(CURRENT_TEST.MODALITY_NAME)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
             clickDefinitionButton()
-            cy.wait(3000)
-            cy.get('#alert-dialog-title > .MuiButtonBase-root').click()
+            closeDefinition()
         })
     })
 })
