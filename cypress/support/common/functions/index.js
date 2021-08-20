@@ -223,11 +223,10 @@ export function clickExistButtonInCard(cardName, buttonNames) {
                 const intersect = existingFoundButtons.filter(value => buttonNames.includes(value));
                 array.forEach(button => {
                     if (button.innerText.includes(intersect.toString())) {
-                        if (button.parentNode.parentNode.innerText === `${cardName}\n${intersect.toString()}`) {
-                            target = button
-                        }
-                        // target = button
-                        return true;
+                        target = button
+                        // if (button.parentNode.parentNode.innerText === `${cardName}\n${intersect.toString()}`) {
+                        //     target = button
+                        // }
                     }
                 });
             }
