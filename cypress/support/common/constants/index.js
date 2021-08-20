@@ -20,5 +20,6 @@ export const MODALITY_NAME = {
     BreastED_DBT_3D: 'BreastED - DBT 3D',
     DensityED: 'DensityED',
     PCTEducation: 'PCT Education',
-    DentalED: 'DentalED'
+    DentalED: 'DentalED',
+    GE_CESM: 'GE - CESM ',
 }

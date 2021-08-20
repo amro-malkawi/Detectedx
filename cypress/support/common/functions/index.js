@@ -83,11 +83,55 @@ export function validateInstructionFeature() {
     cy.get('button').contains('Close').click().should('not.exist')
 }
 export function validateNextPreviousFeature() {
+    const testCaseSelector = 'Test Case Selector'
     const testCaseValue = String(0)
-    cy.get('select').select(testCaseValue)
-    cy.get('select').should('have.value', testCaseValue)
-    validateNextButton(testCaseValue)
-    validatePreviousButton(testCaseValue)
+    const button = {
+        next: 'Next',
+        previous: 'Previous'
+    }
+    cy.get("body").then($body => {
+        const isNextButtonExist = $body.find(`button:contains(${button.next})`).length > 0
+        if (isNextButtonExist) {
+            cy.wrap($body).find('button').contains(`${button.next}`).then(() => {
+                assert.isOk(`${button.next} found `);
+            })
+        } else {
+            assert.isOk(`${button.next} not found `);
+        }
+        const isPreviousButtonExist = $body.find(`button:contains(${button.previous})`).length > 0
+        if (isPreviousButtonExist) {
+            cy.wrap($body).find('button').contains(`${button.previous}`).then(() => {
+                assert.isOk(`${button.previous} found `);
+            })
+        } else {
+            assert.isOk(`${button.previous} not found `);
+        }
+
+        if ($body.find(`[data-cy=test-case-selector]`).length > 0) {
+            //exist
+            cy.getBySel('test-case-selector').then($elment => {
+                if ($elment.is(':visible')) {
+                    // exist and visible
+                    cy.wrap($elment).should('exist').and('be.visible')
+                    if ($elment && $elment[0].length > 1) {
+                        assert.isOk(`${testCaseSelector} have length greather than 1`);
+                        cy.getBySel('test-case-selector').select(testCaseValue)
+                        cy.getBySel('test-case-selector').should('have.value', testCaseValue)
+                        validateNextButton(testCaseValue)
+                        validatePreviousButton(testCaseValue)
+                    } else {
+                        assert.isOk(`${testCaseSelector} have length less than 1`);
+                    }
+                } else {
+                    // exist but not visible
+                    assert.isOk(`${testCaseSelector} is not visible`);
+                }
+            });
+        } else {
+            // not exist
+            assert.isOk(`${testCaseSelector} not exist ','everything is OK`);
+        }
+    });
 }
 export function validateGridFeature() {
     const selectGridTool = () => {

@@ -426,7 +426,7 @@ class TestView extends Component {
     renderHeaderNumber() {
         return (
             <h1 className={'test-view-header-number'}>
-                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
+                <Input data-cy="test-case-selector" disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
                     {
                         this.state.test_set_cases.map((v, i) =>
                             <option value={i} key={i}>{i + 1}</option>
