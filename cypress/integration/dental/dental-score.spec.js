@@ -3,6 +3,8 @@ import {
     checkAnswer,
     clickViewButton,
     clickOnModalityTab,
+    clickSubmit,
+    clickDefinitionButton,
     downloadCertificate,
     isCurrentAQuestionPage,
     navigateToTestPage,
@@ -11,12 +13,7 @@ import {
     routeToScorePage,
     selectTheLast,
     waitForUserInputQuestionnairePage,
-    clickSubmit,
-    checkAllDropdownListAt,
-    markOnFilm,
-    saveMarkPoint,
-    backToHome,
-    clickDefinitionButton,
+    validateScoreContainer,
 } from '../../support/common/functions/index'
 
 import { MODALITY_NAME } from '../../support/common/constants'
@@ -64,71 +61,15 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
                 clickSubmit()
             }
         })
-        it('should be able to re-select the drop down list on score page', () => {
-            const navigateToScoreOrTestPage = () => {
-                cy.getBySel(`"${CURRENT_TEST.MODALITY_NAME}"`).then((modality_info) => {
-                    cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
-                        if(test_set.find("button:contains('Scores')").length > 0) {
-                            cy.get('button').contains('Scores').click({ force: true })
-                            checkScorePage()
-                        } else if (test_set.find("button:contains('Start')").length > 0) {
-                            cy.get('button').contains('Start').click({ force: true })
-                            checkTestPage()
-                        } else {
-                            cy.get('button').contains('Continue').click({ force: true })
-                            checkTestPage()
-                        }
-                    })
-                })
-            }
-            const checkScorePage = () => {
-                clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-                checkAllDropdownListAt(1)
-                checkAllDropdownListAt(2)
-                checkAllDropdownListAt(3)
-            }
-            const checkTestPage = () => {
-                cy.wait(2000)
-                isCurrentAQuestionPage()
-                cy.get('@foundQuestionnairePage').then(({ selector }) => {
-                    if (selector.found) {
-                        alertAndPause()
-                        questionnaireFlow()
-                    } else {
-                        submitTestFlow()
-                    }
-                })
-                const questionnaireFlow = () => {
-                    checkAnswer()
-                    routeToScorePage()
-                    downloadCertificate()
-                }
-                const submitTestFlow = () => {
-                    submitTest()
-                    questionnaireFlow()
-                }
-                const submitTest = () => {
-                    clickSubmit()
-                    selectTheLast()
-                    markOnFilm()
-                    saveMarkPoint()
-                    clickSubmit()
-                    backToHome()
-                }
-            }
-            navigateToScoreOrTestPage()
-        })
         it('should be able to click on view button and navigate to score page', () => {
             navigateToScorePage(CURRENT_TEST.MODALITY_NAME)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-            cy.get('.rct-page').should('be.visible')
-            cy.get('.score-circle-container').should('be.visible')
         })
 
         it('should be able to see score data on score page', () => {
             navigateToScorePage(CURRENT_TEST.MODALITY_NAME)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-            cy.get('.normal-score-data').should('be.visible')
+            validateScoreContainer()
         })
 
         it('should be able to download the certificate of completion on score page', () => {
