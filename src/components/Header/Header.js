@@ -60,9 +60,9 @@ class Header extends Component {
                 <Toolbar className="d-flex justify-content-between w-100 pl-0 main-header">
                     <div className="d-flex align-items-center">
                         <div className="site-logo">
-                            <Link to="/" className="logo-mini">
+                            <a href="https://www.detectedx.com" className="logo-mini">
                                 <img src={require('Assets/img/white-logo.png')} className="mr-15" alt="site logo" width="115" height="35"/>
-                            </Link>
+                            </a>
                         </div>
                     </div>
                     <ul className="navbar-right list-inline mb-0">

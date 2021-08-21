@@ -47,9 +47,9 @@ export default class ForgotPassword extends Component {
                             <div className="container">
                                 <div className="d-flex justify-content-between">
                                     <div className="session-logo">
-                                        <Link to="/">
+                                        <a href="https://www.detectedx.com">
                                             <img src={AppConfig.appLogo} alt="session-logo" width="120" height="29"/>
-                                        </Link>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
