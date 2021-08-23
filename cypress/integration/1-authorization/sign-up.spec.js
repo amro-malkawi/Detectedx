@@ -43,7 +43,7 @@ describe('Sign-Up', () => {
             .parent()
             .find('input[type=checkbox]')
             .check()
-        cy.contains('I have read and agree to the terms of conditions and consent statements *')
+        cy.contains('I have read and agree')
             .parent()
             .find('input[type=checkbox]')
             .check()
