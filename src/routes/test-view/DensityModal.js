@@ -24,7 +24,7 @@ export default class QualityModal extends Component {
                         <span className={'quality-title'}><IntlMessages id={"testView.modal.selectBreastDensity"}/></span>
                     </CustomDialogTitle>
                     <DialogContent>
-                        <div className={'quality-button-container'}>
+                        <div data-cy="quality-button-container" className={'quality-button-container'}>
                             <div className={'density-button ' + (this.state.quality === 0 ? 'active' : '')} onClick={() => this.onConfirm(0)}>
                                 <div>a</div>
                             </div>

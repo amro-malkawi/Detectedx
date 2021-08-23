@@ -20,7 +20,7 @@ export default ({totalCount, downCount}) => {
         return null;
     } else {
         return (
-            <div className={classes.root}>
+            <div className={classes.root} data-cy="linear-progress">
                 <LinearProgress variant="determinate" value={Math.round((downCount * 100) / totalCount)} style={{height: 2}}/>
                 <span>{`Loading... (${downCount} / ${totalCount})`}</span>
             </div>

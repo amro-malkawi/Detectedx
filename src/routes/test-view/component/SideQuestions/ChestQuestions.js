@@ -940,6 +940,7 @@ export default class ChestQuestions extends Component {
                     <div className={'covid-confidence'}>
                         <p><IntlMessages id={"testView.chestQuestion.ratingTitle"}/></p>
                         <RadioGroup
+                            data-cy="confidence-position"
                             disabled
                             aria-label="position"
                             name="position"

@@ -407,7 +407,7 @@ class TestView extends Component {
     renderHeaderNumber() {
         return (
             <h1 className={'test-view-header-number'}>
-                <Input disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
+                <Input data-cy="test-case-selector" disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
                     {
                         this.state.test_set_cases.map((v, i) =>
                             <option value={i} key={i}>{i + 1}</option>
@@ -513,7 +513,7 @@ class TestView extends Component {
                                 <div className={'quality-icon quality-none-icon'}/> :
                                 <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
                         }
-                        <span className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
+                        <span data-cy="density-icon" className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
                     </div>
                 )
             } else {
@@ -553,6 +553,7 @@ class TestView extends Component {
                 />
                 <div className="tool">
                     <AntSwitch
+                        data-cy="synchronizer-switch"
                         defaultChecked={this.synchronizer.enabled}
                         onChange={(e) => (this.synchronizer.enabled = e.target.checked)}
                         value="checkedB"

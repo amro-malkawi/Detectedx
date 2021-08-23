@@ -228,7 +228,7 @@ const ImageScrollBar = ({imageId, imageElement, imageList}) => {
                         <i className="zmdi zmdi-minus"/>
                     </IconButton>
                     <div className="stack-scrollbar">
-                        <input type="range" min={1} max={imageLength} value={currentStackIndex + 1} onChange={onStackSlide}/>
+                        <input data-cy="stack-scrollbar-range" type="range" min={1} max={imageLength} value={currentStackIndex + 1} onChange={onStackSlide}/>
                     </div>
                     <IconButton className={'change-btn'} onClick={() => onStepSlide(1)}>
                         <i className="zmdi zmdi-plus"/>
