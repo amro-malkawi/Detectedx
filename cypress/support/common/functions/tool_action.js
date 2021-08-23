@@ -100,13 +100,21 @@ export function windowAction(row) {
 }
 
 export function markAction(row, pageX, pageY) {
-    cy.wrap(row[0].childNodes[0])
-        .trigger('mousedown', { which: 1, pageX: pageX, pageY: pageY })
-        .trigger('mouseup', { which: 1, pageX: pageY, pageY: pageY })
+    if (pageX && pageY) {
+        cy.wrap(row[0].childNodes[0])
+            .trigger('mousedown', { which: 1, pageX: pageX, pageY: pageY })
+            .trigger('mouseup', { which: 1, pageX: pageY, pageY: pageY })
+    } else {
+        cy.wrap(row[0].childNodes[0]).click()
+    }
 }
 
 export function markWithSaveAction(row, x, y) {
-    cy.wrap(row).click(x,y)
+    if (x && y) {
+        cy.wrap(row).click(x,y)
+    } else {
+        cy.wrap(row).click()
+    }
     cy.get('.save > .MuiButton-label').should('be.visible').click()
 }
 

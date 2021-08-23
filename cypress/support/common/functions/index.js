@@ -1,7 +1,11 @@
-import { apiHostStatic, BUTTON, MORE_ICON, TOOL } from '../constants/index'
+import { apiHostStatic, BUTTON, MODALITY_NAME, MORE_ICON, TOOL } from '../constants/index'
 import { dropdown } from '../../../support/breasted-mammography/breasted-mammography-dropdown-list'
 const apiHost = Cypress.env('apiUrl')
 
+export function waitLoadingResources() {
+    checkLoadingIndicator()
+    waitLinearProgressBar()
+}
 export function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
 }
@@ -82,7 +86,8 @@ export function validateInstructionFeature() {
     cy.get('.MuiDialogContent-root').scrollTo('top', { duration: 3000 })
     cy.get('button').contains('Close').click().should('not.exist')
 }
-export function validateNextPreviousFeature() {
+export function validateNextPreviousFeature(opts) {
+    waitLoadingResources()
     const testCaseSelector = 'Test Case Selector'
     const testCaseValue = String(0)
     const button = {
@@ -116,7 +121,22 @@ export function validateNextPreviousFeature() {
                     if ($elment && $elment[0].length > 1) {
                         assert.isOk(`${testCaseSelector} have length greather than 1`);
                         cy.getBySel('test-case-selector').select(testCaseValue)
-                        cy.getBySel('test-case-selector').should('have.value', testCaseValue)
+                        cy.getBySel('test-case-selector').should('have.value', testCaseValue).and('exist').and('be.visible')
+                        if (opts && opts.selectConfidence) {
+                            switch (opts.modality_name) {
+                                case MODALITY_NAME.Chest:
+                                    selectChestConfidence(opts.confidenceLevel)
+                                    break;
+                                case MODALITY_NAME.ChestCT:
+                                    selectChestCTConfidence(opts.confidenceLevel)
+                                    break;
+                                case MODALITY_NAME.Covid:
+                                    selectCovidConfidence(opts.confidenceLevel)
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                         validateNextButton(testCaseValue)
                         validatePreviousButton(testCaseValue)
                     } else {
@@ -133,46 +153,45 @@ export function validateNextPreviousFeature() {
         }
     });
 }
-export function validateGridFeature() {
-    const selectGridTool = () => {
-        cy.get('.MuiPaper-root > .test-view-toolbar > .tool-container > [data-cy=grid-tool]')
-            .click()
-            .should('exist')
-    }
-    cy.get('.tool-container').click().should('exist')
-    cy.wait(1000)
-
-    selectGridTool()
-    cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
-        .click()
-        .should('exist')
-    cy.get('.MuiDialog-container')
-        .click()
-        .should('not.exist')
-    cy.get('.image-row').then((row) => {
-        expect(row.length).to.eq(2)
-        expect(row[0].childElementCount).to.eq(2)
-        expect(row[1].childElementCount).to.eq(2)
-    })
-    cy.get('.tool-container').click().should('exist')
-    cy.wait(1000)
-
-    selectGridTool()
-    cy.get('tbody > :nth-child(2) > :nth-child(4)') // 8 grid
-        .click()
-        .should('exist')
-    cy.get('.MuiDialog-container')
-        .click()
-        .should('not.exist')
-    cy.get('.image-row').then((row) => {
-        expect(row.length).to.eq(2)
-        expect(row[0].childElementCount).to.eq(4)
-        expect(row[1].childElementCount).to.eq(4)
-    })
-}
 export function validateInvertFeature() {
     toggleInvertAction()
     toggleInvertAction()
+}
+export function validateSlicesFeature() {
+    waitLoadingResources()
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+    ).set
+    const changeRangeInputValue = $range => value => {
+        nativeInputValueSetter.call($range[0], value)
+        $range[0].dispatchEvent(new Event('change', { value, bubbles: true }))
+    }
+    cy.wait(3000)
+    const slice = () => {
+        cy.getBySel('stack-scrollbar-range').then((stackScrollbar) => {
+            for (let i = 0; i < stackScrollbar.length; i++) {
+                let element = stackScrollbar[i];
+                let max = stackScrollbar[i].max/2
+                let min = stackScrollbar[i].min
+                for (let j = min; j <= max; j++) {
+                    cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                    cy.wait(350)
+                }
+            }
+            cy.wait(1000)
+            for (let i = 0; i < stackScrollbar.length; i++) {
+                let element = stackScrollbar[i];
+                let max = stackScrollbar[i].max/2
+                let min = stackScrollbar[i].min
+                for (let j = max; j >= min; j--) {
+                    cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                    cy.wait(350)
+                }
+            }
+        })
+    }
+    slice()
 }
 export function navigateToSpecificTestPage(cardName) {
     const possibleButton = [BUTTON.Continue, BUTTON.Restart]
@@ -402,14 +421,13 @@ export function selectDensity(text) {
         cy.wrap(value).find('div').contains(text).click()
     })
 }
-
-export function selectCovidConfidence(level) {
+export function selectConfidenceBySelector(level, selector) {
     let count = 0
     const click = $el => {
         count += 1
         return $el.click()
     }
-    cy.getBySel('covid-confidence-position').then((value) => {
+    cy.getBySel(`${selector}`).then((value) => {
         const choiceIndex = level
         const element = value[0].children[choiceIndex].childNodes[0]
         cy.wrap(element)
@@ -421,23 +439,14 @@ export function selectCovidConfidence(level) {
             })
     })
 }
-export function selectConfidence(level) {
-    let count = 0
-    const click = $el => {
-        count += 1
-        return $el.click()
-    }
-    cy.getBySel('confidence-position').then((value) => {
-        const choiceIndex = level
-        const element = value[0].children[choiceIndex].childNodes[0]
-        cy.wrap(element)
-            .pipe(click)
-            .should($el => {
-                expect($el).to.be.visible
-            }).then(() => {
-                cy.log(`clicked ${count} time(s)`)
-            })
-    })
+export function selectChestCTConfidence(level) {
+    selectConfidenceBySelector(level, 'chest-ct-confidence-position')
+}
+export function selectCovidConfidence(level) {
+    selectConfidenceBySelector(level, 'covid-confidence-position')
+}
+export function selectChestConfidence(level) {
+    selectConfidenceBySelector(level, 'chest-confidence-position')
 }
 export function selectTheLast() {
     cy.get('.form-control').should('exist').and('be.visible').then((value) => {
@@ -451,7 +460,7 @@ export function selectDropDownAt(order) {
     })
 }
 export function waitLinearProgressBar() {
-    cy.wait(1000)
+    cy.wait(3000)
     cy.get("body").then($body => {
         if ($body.find(`[data-cy=linear-progress]`).length > 0) {
             cy.getBySel('linear-progress').then($elment => {

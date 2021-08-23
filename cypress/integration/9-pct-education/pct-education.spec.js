@@ -7,12 +7,14 @@ import {
     validateSeriesFeature,
     validateInstructionFeature,
     validateNextPreviousFeature,
-    validateGridFeature,
     validateInvertFeature,
     waitLinearProgressBar,
+    toggleMarkInfo,
  } from "../../support/common/functions/index"
 
- import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
+import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
+import { validateGridFeature } from "../../support/pct-education/utils"
+import { markWithSaveAction } from "../../support/common/functions/tool_action"
 
 context(`Test Page - ${MODALITY_NAME.PCTEducation}`, () => {
     describe(`Expect to see ${MODALITY_NAME.PCTEducation} modality functional`, () => {
@@ -35,8 +37,8 @@ context(`Test Page - ${MODALITY_NAME.PCTEducation}`, () => {
             validateInstructionFeature()
         })
         it('should be able to use Next, Previous test case feature', () => {
-            validateNextPreviousFeature()
             waitLinearProgressBar()
+            validateNextPreviousFeature()
         })
         it('should be able to use Pan tool', () => {
             waitLinearProgressBar()
@@ -245,19 +247,10 @@ context(`Test Page - ${MODALITY_NAME.PCTEducation}`, () => {
         it('should be able to use Hide info feature', () => {
             waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.MARKER)
-            const markAction = (image) => {
-                const x = 250
-                const y = 180
-                cy.wrap(image).click(x,y)
-                cy.get('.save > .MuiButton-label').should('be.visible').click()
-            }
-            const toggleMarkInfo = () => {
-                cy.getBySel('tool-mark-info').should('be.visible').first().click()
-            }
             cy.get('.image-row').then((row) => {
                 const image = row[0].childNodes[0]
                 cy.wait(1000)
-                markAction(image)
+                markWithSaveAction(image)
                 cy.wait(1000)
                 toggleMarkInfo()
                 cy.wait(3000)
@@ -271,16 +264,9 @@ context(`Test Page - ${MODALITY_NAME.PCTEducation}`, () => {
         it('should be able to use Clear symbols feature', () => {
             waitLinearProgressBar()
             getToolWithMoreIcon(TOOL.MARKER)
-            const markAction = (image) => {
-                const x = 600
-                const y = 300
-                cy.wrap(image).click(x,y)
-                cy.wait(500)
-                cy.get('.save > .MuiButton-label').should('be.visible').click()
-            }
             cy.get('.image-row').then((row) => {
                 const image = row[0].childNodes[0]
-                markAction(image)
+                markWithSaveAction(image)
                 cy.wait(3000)
                 clearSymbols()
             })
