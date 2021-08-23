@@ -559,6 +559,7 @@ export default class ChestCTQuestion extends Component {
                     <div className={'covid-confidence'}>
                         <p><IntlMessages id={"testView.chestCTQuestion.ratingTitle"}/></p>
                         <RadioGroup
+                            data-cy="chest-ct-confidence-position"
                             disabled
                             aria-label="position"
                             name="position"

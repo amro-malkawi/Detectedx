@@ -119,7 +119,7 @@ const Toolbar = (props) => {
                         <p><IntlMessages id={"testView.tool.freehand"}/></p>
                     </div> : null
             }
-            <div className={"tool option"} onClick={() => onResetImageViewer()}>
+            <div className={"tool option"} data-tool="Reset" onClick={() => onResetImageViewer()}>
                 <CornerstoneToolIcon name={'Reset'}/>
                 <p><IntlMessages id={"testView.tool.reset"}/></p>
             </div>

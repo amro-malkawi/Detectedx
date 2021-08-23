@@ -22,4 +22,7 @@ export const MODALITY_NAME = {
     PCTEducation: 'PCT Education',
     DentalED: 'DentalED',
     GE_CESM: 'GE - CESM ',
+    ChestCT: 'CHEST CT',
+    Chest: 'CHEST',
+    Covid: 'CovED - COVID-19'
 }
