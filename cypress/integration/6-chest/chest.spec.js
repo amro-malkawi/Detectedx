@@ -1,4 +1,4 @@
-import { selectConfidence, navigateToTestSet } from "../../support/common/functions/index"
+import { selectChestConfidence, navigateToTestSet } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'CHEST'
@@ -123,9 +123,9 @@ context('Test Page - Chest', () => {
             cy.get('select')
                 .select(testCaseValue)
             cy.get('select')
-                .should('have.value', testCaseValue)
+                .should('have.value', testCaseValue).and('exist').and('be.visible')
             
-            selectConfidence(3)
+            selectChestConfidence(3)
 
             cy.get('button')
                 .contains('Next')

@@ -1,5 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { selectConfidence, isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
+import { selectChestConfidence, isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -140,7 +140,7 @@ context('Chest - Score Page', () => {
 
             const submitTest = () => {
                 selectTheLast()
-                selectConfidence(3)
+                selectChestConfidence(3)
                 clickSubmit()
                 cy.wait(3000)
             }
