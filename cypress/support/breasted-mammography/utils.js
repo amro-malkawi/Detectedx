@@ -12,7 +12,7 @@ export function validateHangingButtonFeature() {
         selectHangingType('second')
         cy.get('.image-row').then((row) => {
             expect(row.length).to.eq(1)
-            expect(row[0].childElementCount).to.eq(2)
+            expect(row[0].childElementCount).to.eq(4)
         })
     }
     const validateLast = () => {

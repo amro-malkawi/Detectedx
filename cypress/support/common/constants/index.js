@@ -17,6 +17,7 @@ export const BUTTON = {
     Scores: 'Scores',
 }
 export const MODALITY_NAME = {
+    BreastED_Mammography: 'BreastED - Mammography',
     BreastED_DBT_3D: 'BreastED - DBT 3D',
     DensityED: 'DensityED',
     PCTEducation: 'PCT Education',

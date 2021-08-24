@@ -1,9 +1,10 @@
-import { BUTTON } from "../../support/common/constants/index"
-import { waitLinearProgressBar, clickExistButtonInCard, isCurrentAQuestionPage, isCurrentAnEvaluationFormPage, selectCovidConfidence } from "../../support/common/functions/index"
+import { MODALITY_NAME } from "../../support/common/constants/index"
+import { waitLinearProgressBar, isCurrentAQuestionPage, isCurrentAnEvaluationFormPage, selectCovidConfidence, clickOnModalityTab, navigateToSpecificTestPage } from "../../support/common/functions/index"
 const CARD = {
     COVID_POST_TEST: 'CovED I with Post Test'
 }
 const CURRENT_TEST = {
+    MODALITY_NAME: MODALITY_NAME.Covid,
     CARD: CARD.COVID_POST_TEST
 }
 const apiHost = Cypress.env('apiUrl')
@@ -62,10 +63,6 @@ function downloadCertificate() {
     cy.get('button').contains('Certificate of Completion').click()
     cy.get('button').contains('Physicians').click()
     cy.get('button').contains('Non Physicians').click()
-}
-function navigateToTestPage() {
-    const possibleButton = [BUTTON.Continue, BUTTON.Restart]
-    clickExistButtonInCard(CURRENT_TEST.CARD, possibleButton)
 }
 function selectDropDownAt(order) {
     cy.get('.form-control').then((value) => {
@@ -129,16 +126,13 @@ context('Post Test - Covid-19', () => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            cy.contains('BreastED - Mammography').should('be.visible').click();
-        })
-        afterEach(() => {
-            cy.wait(1000)
+            clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
         })
 
         it('should be able to do post test', () => {
             interceptAttemptRequest()
             interceptDicomImages()
-            navigateToTestPage()
+            navigateToSpecificTestPage(CURRENT_TEST.CARD)
             cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
             cy.wait(1500)
             isCurrentAQuestionPage()

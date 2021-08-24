@@ -5,12 +5,17 @@ import {
     getToolWithMoreIcon,
     navigateToTestSet,
     toggleMarkInfo,
+    waitLinearProgressBar,
+} from "../../support/common/functions/index"
+
+import { 
     validateSeriesFeature,
     validateInstructionFeature,
     validateNextPreviousFeature,
     validateInvertFeature,
-    waitLinearProgressBar,
-} from "../../support/common/functions/index"
+ } from "../../support/common/functions/validation"
+
+import { validateHangingButtonFeature } from "../../support/ge-cesm/utils"
 
 import {
     magnifyAction,
@@ -23,7 +28,6 @@ import {
 } from "../../support/common/functions/tool_action"
 
 import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
-import { validateHangingButtonFeature } from "../../support/ge-cesm/utils"
 
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.GE_CESM

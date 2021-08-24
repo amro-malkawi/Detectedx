@@ -46,6 +46,7 @@ context('Test Page - DensityED', () => {
             cy.get('select')
                 .should('have.value', testCaseValue)
             
+            cy.wait(1000)
             selectDensity('a')
             cy.wait(1000)
 

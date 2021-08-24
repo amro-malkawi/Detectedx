@@ -12,7 +12,7 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
 
   
-  config.defaultCommandTimeout = 138000 // defaultCommandTimeout = 4000
+  config.defaultCommandTimeout = 120000 // defaultCommandTimeout = 4000
   config.requestTimeout = 60000 // default requestTimeout = 5000
   config.responseTimeout = 60000 // default responseTimeout = 30000
   // api url

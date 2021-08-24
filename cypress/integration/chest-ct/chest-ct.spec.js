@@ -3,11 +3,7 @@ import {
     clickOnModalityTab,
     getTool,
     navigateToTestSet,
-    validateSeriesFeature,
-    validateNextPreviousFeature,
-    validateInvertFeature,
     waitLinearProgressBar,
-    validateSlicesFeature,
 } from "../../support/common/functions/index"
 
 import {
@@ -17,6 +13,12 @@ import {
 
 import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
 import { validateGridFeature } from "../../support/chest-ct/utils"
+import { 
+    validateInvertFeature, 
+    validateNextPreviousFeature, 
+    validateSeriesFeature, 
+    validateSlicesFeature 
+} from "../../support/common/functions/validation"
 
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.ChestCT

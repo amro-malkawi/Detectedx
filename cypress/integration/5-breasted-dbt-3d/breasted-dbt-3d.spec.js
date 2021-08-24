@@ -1,4 +1,4 @@
-import { getTool, pauseIfVideoModalExist } from "../../support/common/functions/index"
+import { getToolWithMoreIcon, pauseIfVideoModalExist, waitLinearProgressBar } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'BreastED - DBT 3D'
@@ -20,16 +20,6 @@ function checkLoadingIndicator() {
 }
 function waitLoading() {
     cy.location('pathname').should('include', '/test-view');
-}
-function waitLinearProgressBar() {
-    cy.getBySel('linear-progress').then((value) => {
-        if (value.length > 0) {
-            for (let index = 0; index < value.length; index++) {
-                const element = value[index];
-                cy.wrap(element).should('not.exist')
-            }
-        }
-    })
 }
 context('Test Page - Breasted DBT 3D', () => {
     describe('Expect to see Breasted DBT 3D modality functional', () => {
@@ -151,7 +141,7 @@ context('Test Page - Breasted DBT 3D', () => {
             cy.get('.image-row').then((row) => {
                 cy.wrap(row[0].childNodes[0]).dblclick()
             })
-            getTool(TOOL.MARKER)
+            getToolWithMoreIcon(TOOL.MARKER)
             cy.getReact('Toolbar').then((value) => {
                 expect(value[1].props.currentTool).to.equal('Marker')
             })
@@ -161,7 +151,7 @@ context('Test Page - Breasted DBT 3D', () => {
         })
         it('should be able to use Pan tool', () => {
             waitLinearProgressBar()
-            getTool(TOOL.PAN)
+            getToolWithMoreIcon(TOOL.PAN)
             const panAction = (row) => {
                 const pageX = 600
                 const move = (row, i) => {
@@ -194,7 +184,7 @@ context('Test Page - Breasted DBT 3D', () => {
 
         it('should be able to use Zoom tool', () => {
             waitLinearProgressBar()
-            getTool(TOOL.ZOOM)
+            getToolWithMoreIcon(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
                 const move = (row, i) => {
@@ -236,33 +226,39 @@ context('Test Page - Breasted DBT 3D', () => {
             }
             cy.wait(5000)
             const scrolling = () => {
-                cy.getBySel('stack-scrollbar-range').then((stackScrollbar) => {
-                    for (let i = 0; i < stackScrollbar.length; i++) {
-                        let element = stackScrollbar[i];
-                        let max = stackScrollbar[i].max
-                        let min = stackScrollbar[i].min
-                        for (let j = min; j <= max; j++) {
-                            cy.wrap(element).then(input => changeRangeInputValue(input)(j))
-                            cy.wait(1)
-                        }
+                cy.get("body").then($body => {
+                    if ($body.find(`[data-cy=stack-scrollbar-range]`).length > 0) {
+                        cy.getBySel('stack-scrollbar-range').then((stackScrollbar) => {
+                            for (let i = 0; i < stackScrollbar.length; i++) {
+                                let element = stackScrollbar[i];
+                                let max = stackScrollbar[i].max
+                                let min = stackScrollbar[i].min
+                                for (let j = min; j <= max; j++) {
+                                    cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                                    cy.wait(1)
+                                }
+                            }
+                            cy.wait(1000)
+                            for (let i = 0; i < stackScrollbar.length; i++) {
+                                let element = stackScrollbar[i];
+                                let max = stackScrollbar[i].max
+                                let min = stackScrollbar[i].min
+                                for (let j = max; j >= min; j--) {
+                                    cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                                    cy.wait(1)
+                                }
+                            }
+                        })
+                    } else {
+                        assert.isOk('stackScrollbar not found');
                     }
-                    cy.wait(1000)
-                    for (let i = 0; i < stackScrollbar.length; i++) {
-                        let element = stackScrollbar[i];
-                        let max = stackScrollbar[i].max
-                        let min = stackScrollbar[i].min
-                        for (let j = max; j >= min; j--) {
-                            cy.wrap(element).then(input => changeRangeInputValue(input)(j))
-                            cy.wait(1)
-                        }
-                    }
-                })
+                });
             }
             scrolling()
         })
         it('should be able to use Magnify tool', () => {
             waitLinearProgressBar()
-            getTool(TOOL.MAGNIFY)
+            getToolWithMoreIcon(TOOL.MAGNIFY)
             const pageX = 482
             const pageY = 296
             const movemouse = (row, i) => {
@@ -290,7 +286,7 @@ context('Test Page - Breasted DBT 3D', () => {
         })
         it('should be able to use Window tool', () => {
             waitLinearProgressBar()
-            getTool(TOOL.WINDOW)
+            getToolWithMoreIcon(TOOL.WINDOW)
             const windowAction = (row) => {
                 const element = row[0].childNodes[0]
                 const pageX = 0
@@ -350,7 +346,7 @@ context('Test Page - Breasted DBT 3D', () => {
         })
         it('should be able to use Reset tool', () => {
             waitLinearProgressBar()
-            getTool(TOOL.ZOOM)
+            getToolWithMoreIcon(TOOL.ZOOM)
             const zoomAction = (row) => {
                 const pageX = 450
                 const move = (row, i) => {
@@ -376,7 +372,7 @@ context('Test Page - Breasted DBT 3D', () => {
             cy.get('.image-row').then((row) => {
                 zoomAction(row)
             })
-            getTool(TOOL.RESET)
+            getToolWithMoreIcon(TOOL.RESET)
         })
         it('should be able to use FreehandMarker tool', () => {
             waitLinearProgressBar()
@@ -393,13 +389,13 @@ context('Test Page - Breasted DBT 3D', () => {
             }
             cy.get('.image-row').then((row) => {
                 cy.wrap(row[0].childNodes[0]).dblclick()
-                getTool(TOOL.MARKER_FREEHAND)
+                getToolWithMoreIcon(TOOL.MARKER_FREEHAND)
                 markerFreehandAction(row)
             })
         })
         it('should be able to use hide info feature', () => {
             waitLinearProgressBar()
-            getTool(TOOL.MARKER)
+            getToolWithMoreIcon(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 700
                 const y = 200
@@ -431,7 +427,7 @@ context('Test Page - Breasted DBT 3D', () => {
         })
         it('should be able to use clear symbols feature', () => {
             waitLinearProgressBar()
-            getTool(TOOL.MARKER)
+            getToolWithMoreIcon(TOOL.MARKER)
             const markAction = (image) => {
                 const x = 600
                 const y = 300

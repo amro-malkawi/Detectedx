@@ -4,26 +4,33 @@ import {
     clickOnModalityTab, 
     getToolWithMoreIcon, 
     navigateToTestSet,
-    validateSeriesFeature,
-    validateInstructionFeature,
-    validateNextPreviousFeature,
-    validateInvertFeature,
     waitLinearProgressBar,
     toggleMarkInfo,
  } from "../../support/common/functions/index"
+
+import { 
+    validateSeriesFeature,
+    validateInstructionFeature,
+    validateNextPreviousFeature,
+    validateInvertFeature 
+} from "../../support/common/functions/validation"
 
 import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
 import { validateGridFeature } from "../../support/pct-education/utils"
 import { markWithSaveAction } from "../../support/common/functions/tool_action"
 
-context(`Test Page - ${MODALITY_NAME.PCTEducation}`, () => {
-    describe(`Expect to see ${MODALITY_NAME.PCTEducation} modality functional`, () => {
+const CURRENT_TEST = {
+    MODALITY_NAME: MODALITY_NAME.PCTEducation
+}
+
+context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
+    describe(`Expect to see ${CURRENT_TEST.MODALITY_NAME} modality functional`, () => {
         beforeEach(() => {
             cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            clickOnModalityTab(MODALITY_NAME.PCTEducation)
-            navigateToTestSet(MODALITY_NAME.PCTEducation)
+            clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
+            navigateToTestSet(CURRENT_TEST.MODALITY_NAME)
         })
 
         it('should be able to load all images', () => {

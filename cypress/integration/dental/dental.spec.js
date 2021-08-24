@@ -5,10 +5,6 @@ import {
     getToolWithMoreIcon,
     navigateToTestSet,
     toggleMarkInfo,
-    validateSeriesFeature,
-    validateInstructionFeature,
-    validateNextPreviousFeature,
-    validateInvertFeature,
     waitLinearProgressBar,
 } from "../../support/common/functions/index"
 
@@ -23,6 +19,12 @@ import {
 } from "../../support/common/functions/tool_action"
 
 import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
+import { 
+    validateInstructionFeature, 
+    validateInvertFeature, 
+    validateNextPreviousFeature, 
+    validateSeriesFeature 
+} from "../../support/common/functions/validation"
 
 context(`Test Page - ${MODALITY_NAME.DentalED}`, () => {
     describe(`Expect to see ${MODALITY_NAME.DentalED} modality functional`, () => {

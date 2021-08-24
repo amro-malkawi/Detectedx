@@ -14,11 +14,10 @@ import {
     routeToScorePage, 
     saveMarkPoint, 
     selectTheLast, 
-    validateReSelectDropdownList, 
-    validateScoreContainer, 
     waitForUserInputQuestionnairePage,
     waitLinearProgressBar
 } from '../../support/common/functions/index'
+import { validateScoreContainer, validateReSelectDropdownList } from '../../support/common/functions/validation'
 import { MODALITY_NAME } from '../../support/common/constants'
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.BreastED_DBT_3D,
@@ -61,6 +60,7 @@ context('Breasted Mammography - Score Page', () => {
 
             const submitTest = () => {
                 selectTheLast()
+                cy.wait(3000)
                 waitLinearProgressBar()
                 markOnFilm()
                 saveMarkPoint()

@@ -13,13 +13,12 @@ import {
     routeToScorePage,
     selectTheLast,
     waitForUserInputQuestionnairePage,
-    validateScoreContainer,
     closeDefinition,
-    validateReSelectDropdownList,
     selectChestCTConfidence,
 } from '../../support/common/functions/index'
 
 import { MODALITY_NAME } from '../../support/common/constants'
+import { validateReSelectDropdownList, validateScoreContainer } from '../../support/common/functions/validation'
 
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.ChestCT,

@@ -24,6 +24,8 @@ export function panAction(row) {
     }
 }
 export function magnifyAction(row, startPageX, startPageY) {
+    startPageX = startPageX ? startPageX : 610
+    startPageY = startPageY ? startPageY : 200
     const pageX = startPageX
     const pageY = startPageY
     const smooth = 1;
@@ -148,4 +150,10 @@ export function zoomAction(row) {
     for (let i = zoom.in.start; i < zoom.in.end; i = i + smooth) {
         move(row, i)
     }
+}
+export function lengthAction(row) {
+    cy.wrap(row)
+        .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
+        .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
+        .trigger('mouseup')
 }

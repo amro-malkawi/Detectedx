@@ -11,9 +11,9 @@ import {
     routeToScorePage,
     selectDensity,
     selectTheLast,
-    waitForUserInputQuestionnairePage,
-    validateScoreContainer,
+    waitForUserInputQuestionnairePage
 } from '../../support/common/functions/index'
+import { validateScoreContainer } from '../../support/common/functions/validation'
 const CURRENT_TEST = {
     VIEW_BUTTON_INDEX: 0,
 }
@@ -68,14 +68,10 @@ context('DensityED - Score Page', () => {
             validateScoreContainer()
         })
 
-        it('should be able to download the certificate of completion on score page', () => {
+        it.only('should be able to download the certificate of completion on score page', () => {
             navigateToScorePage(modality_name)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
-            cy.get(':nth-child(1) > .extra-button-container > .MuiButtonBase-root')
-                .should('exist')
-                .scrollIntoView()
-                .and('be.visible')
-                .click()
+            downloadCertificate()
         })
 
         it('should be able to see the extra information on score page by clicking button', () => {
