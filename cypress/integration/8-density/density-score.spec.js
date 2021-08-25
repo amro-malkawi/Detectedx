@@ -68,7 +68,7 @@ context('DensityED - Score Page', () => {
             validateScoreContainer()
         })
 
-        it.only('should be able to download the certificate of completion on score page', () => {
+        it('should be able to download the certificate of completion on score page', () => {
             navigateToScorePage(modality_name)
             clickViewButton(CURRENT_TEST.VIEW_BUTTON_INDEX)
             downloadCertificate()

@@ -2,6 +2,7 @@ import { MODALITY_NAME } from '../../support/common/constants'
 import { 
     alertAndPause,
     checkAnswer, 
+    checkLoadingIndicator, 
     clickDefinitionButton, 
     clickOnModalityTab, 
     clickSubmit, 
@@ -60,6 +61,7 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
 
             const submitTest = () => {
                 selectTheLast()
+                checkLoadingIndicator()
                 cy.wait(3000)
                 markOnFilm()
                 cy.wait(1000)

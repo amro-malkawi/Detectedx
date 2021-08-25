@@ -177,7 +177,7 @@ export function clickExistButtonInCard(cardName, buttonNames) {
     });
 }
 export function isCurrentAQuestionPage() {
-    cy.wait(2000)
+    cy.wait(3000)
     cy.url().then((url) => {
         const mainQuestions = 'mainQuestions'
         if (url.includes(mainQuestions)) {
@@ -202,7 +202,7 @@ export function isCurrentAQuestionPage() {
     })
 }
 export function isCurrentAnEvaluationFormPage() {
-    cy.wait(2000)
+    cy.wait(3000)
     cy.url().then((url) => {
         const postQuestions = 'postQuestions'
         if (url.includes(postQuestions)) {
