@@ -1,5 +1,7 @@
 import { 
     alertAndPause, 
+    answerQuestionImagEDChest, 
+    answerQuestionImagEDMammography, 
     backToHome, 
     clickSubmit, 
     clickViewButton, 
@@ -101,19 +103,32 @@ export function validateNextPreviousFeature(opts) {
                         assert.isOk(`${testCaseSelector} have length greather than 1`);
                         cy.getBySel('test-case-selector').select(testCaseValue)
                         cy.getBySel('test-case-selector').should('have.value', testCaseValue).and('exist').and('be.visible')
-                        if (opts && opts.selectConfidence) {
-                            switch (opts.modality_name) {
-                                case MODALITY_NAME.Chest:
-                                    selectChestConfidence(opts.confidenceLevel)
-                                    break;
-                                case MODALITY_NAME.ChestCT:
-                                    selectChestCTConfidence(opts.confidenceLevel)
-                                    break;
-                                case MODALITY_NAME.Covid:
-                                    selectCovidConfidence(opts.confidenceLevel)
-                                    break;
-                                default:
-                                    break;
+                        if (opts) {
+                            if (opts.selectConfidence) {
+                                switch (opts.modality_name) {
+                                    case MODALITY_NAME.Chest:
+                                        selectChestConfidence(opts.confidenceLevel)
+                                        break;
+                                    case MODALITY_NAME.ChestCT:
+                                        selectChestCTConfidence(opts.confidenceLevel)
+                                        break;
+                                    case MODALITY_NAME.Covid:
+                                        selectCovidConfidence(opts.confidenceLevel)
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else if (opts.answerQuestion) {
+                                switch (opts.modality_name) {
+                                    case MODALITY_NAME.ImagED_Chest:
+                                        answerQuestionImagEDChest()
+                                        break;
+                                    case MODALITY_NAME.ImagED_Mammography:
+                                        answerQuestionImagEDMammography()
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
                         validateNextButton(testCaseValue)

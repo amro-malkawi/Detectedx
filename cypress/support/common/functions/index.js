@@ -118,6 +118,23 @@ export function getTool(name, opts) {
         cy.get(`[data-tool="${name}"]`).should('exist').and('be.visible').click()
     }
 }
+export function selectTool(name) {
+    cy.get('.test-view-toolbar').should('exist').and('be.visible')
+    cy.get('body').then($body => {
+        if ($body.find('.more-icon').length > 0) {
+            if ($body.find('.more-icon').is(':visible')) {
+                // more icon is visible
+                getToolWithMoreIcon(name)
+            } else {
+                // more icon is exist but not visible
+                getTool(name)
+            }
+        } else {
+            // more icon is not exist
+            getTool(name)
+        }
+    });
+}
 export function getToolWithMoreIcon(name) {
     getTool(name, MORE_ICON)
 }
@@ -360,6 +377,25 @@ export function clickOnModalityTab(modality_name) {
         if (value[3].innerText.includes(modality_name)) {
             cy.contains(modality_name).should('be.visible').click();
         }
+    })
+}
+export function answerQuestionImagEDChest() {
+    cy.get('.covid-questions').then((value) => {
+        cy.wrap(value).find('input[type=radio]').check('Yes').should('exist')
+        cy.wrap(value).find('input[type=radio]').check('Yes').should('exist')
+    })
+}
+export function answerQuestionImagEDMammography() {
+    cy.get('.quality-question-container').then((questionContainer) => {
+        cy.wrap(questionContainer).find('.question-title').each((questionTitle) => {
+            const forwardIcon = questionTitle[0].children[0].childNodes[0].outerHTML
+            if (forwardIcon.includes('rotate-90')) {
+                cy.wrap(questionTitle).click().should('exist')
+            }
+        })
+        cy.wrap(questionContainer).find('.question-number').each((questionNumber) => {
+            cy.wrap(questionNumber).click().should('exist')  
+        })
     })
 }
 // ---------------- post-test ----------------

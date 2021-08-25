@@ -25,5 +25,7 @@ export const MODALITY_NAME = {
     GE_CESM: 'GE - CESM ',
     ChestCT: 'CHEST CT',
     Chest: 'CHEST',
-    Covid: 'CovED - COVID-19'
+    Covid: 'CovED - COVID-19',
+    ImagED_Chest: 'ImagED - Chest',
+    ImagED_Mammography: 'ImagED - Mammography'
 }
