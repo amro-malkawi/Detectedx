@@ -17,7 +17,7 @@ import {
     interceptAttemptRequest, 
     interceptDicomImages, 
     routeToScorePage, 
-    selectDropDownAt,
+    selectTestCaseAt,
     getToolWithMoreIcon,
     navigateToSpecificTestPage,
     waitUntilAllImagesLoaded, 
@@ -176,14 +176,14 @@ context(`Post Test - ${CURRENT_TEST.MODALITY_NAME}`, () => {
                 startPostTestWithCorrectAnswer()
             }
             const markCorrectImage2 = () => {
-                selectDropDownAt(2)
+                selectTestCaseAt(2)
                 cy.wait(3500)
                 getToolWithMoreIcon(TOOL.MARKER)
                 cy.wait("@dicomImagesResponse");
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_2.POSITION.A, 0)
             }
             const markCorrectImage5 = () => {
-                selectDropDownAt(5)
+                selectTestCaseAt(5)
                 cy.wait(3500)
                 getToolWithMoreIcon(TOOL.MARKER)
                 cy.wait("@dicomImagesResponse");
@@ -191,7 +191,7 @@ context(`Post Test - ${CURRENT_TEST.MODALITY_NAME}`, () => {
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_5.POSITION.B, 3)
             }
             const markCorrectImage6 = () => {
-                selectDropDownAt(6)
+                selectTestCaseAt(6)
                 cy.wait(3500)
                 getToolWithMoreIcon(TOOL.MARKER)
                 cy.wait("@dicomImagesResponse");
@@ -199,7 +199,7 @@ context(`Post Test - ${CURRENT_TEST.MODALITY_NAME}`, () => {
                 markCorrectPosition(CORRECT_ANSWER.IMAGE_6.POSITION.B, 2)
             }
             const markCorrectImage8 = () => {
-                selectDropDownAt(8)
+                selectTestCaseAt(8)
                 cy.wait(3500)
                 getToolWithMoreIcon(TOOL.MARKER)
                 cy.wait("@dicomImagesResponse");

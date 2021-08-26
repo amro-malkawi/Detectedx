@@ -12,7 +12,7 @@ import {
     isCurrentAQuestionPage,
     navigateToSpecificTestPage,
     routeToScorePage,
-    selectDropDownAt,
+    selectTestCaseAt,
     selectTheLast,
     selectDensity,
     waitLoadingToTestView,
@@ -31,7 +31,7 @@ function makeCorrectAnswer() {
     const correctAnswer = ['a', 'b', 'b', 'c', 'd', 'd', 'a', 'c']
     for (let index = 0; index < correctAnswer.length; index++) {
         const element = correctAnswer[index];
-        selectDropDownAt(index + 1)
+        selectTestCaseAt(index + 1)
         selectDensity(element)
         cy.wait(3000)
     }

@@ -64,7 +64,7 @@ function downloadCertificate() {
     cy.get('button').contains('Physicians').click()
     cy.get('button').contains('Non Physicians').click()
 }
-function selectDropDownAt(order) {
+function selectTestCaseAt(order) {
     cy.get('.form-control').then((value) => {
         cy.wrap(value).select((order - 1).toString(), { force: true })
     })
@@ -107,7 +107,7 @@ function makeCorrectAnswer() {
     const positiveCovid19Cases = [2,4,5,8]
     for (let index = 0; index < positiveCovid19Cases.length; index++) {
         const element = positiveCovid19Cases[index];
-        selectDropDownAt(element)
+        selectTestCaseAt(element)
         waitLinearProgressBar()
         selectCovidConfidence(5)
         cy.wait(3000)

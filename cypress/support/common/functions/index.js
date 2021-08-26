@@ -15,7 +15,7 @@ export function checkLoadingIndicator() {
     cy.get('.MuiCircularProgress-svg').should('not.exist')
 }
 export function clearSymbols() {
-    cy.getBySel('tool-clear-symbols').should('be.visible').first().click();
+    cy.getBySel('tool-clear-symbols').first().should('be.visible').click();
 }
 export function clearSymbolsAt(index) {
     cy.getBySel('tool-clear-symbols').eq(index).should('be.visible').click();
@@ -349,13 +349,13 @@ export function selectChestConfidence(level) {
     selectConfidenceBySelector(level, 'chest-confidence-position')
 }
 export function selectTheLast() {
-    cy.get('.form-control').should('exist').and('be.visible').then((value) => {
+    cy.getBySel('test-case-selector').should('exist').and('be.visible').then((value) => {
         const position = (value[0].length - 1).toString()
         cy.wrap(value[0]).select(position)
     })
 }
-export function selectDropDownAt(order) {
-    cy.get('.form-control').then((value) => {
+export function selectTestCaseAt(order) {
+    cy.getBySel('test-case-selector').should('exist').and('be.visible').then((value) => {
         cy.wrap(value[0]).select((order - 1).toString(), { force: true })
     })
 }
