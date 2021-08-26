@@ -276,7 +276,7 @@ export function waitLoadingToTestView() {
 }
 export function waitForUserInputQuestionnairePage() {
     isCurrentAQuestionPage()
-    cy.wait(1000)
+    cy.wait(3000)
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
@@ -285,7 +285,7 @@ export function waitForUserInputQuestionnairePage() {
 }
 export function waitForUserInputEvaluationPage() {
     isCurrentAnEvaluationFormPage()
-    cy.wait(1000)
+    cy.wait(3000)
     cy.get('@foundEvaluationFormPage').then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
