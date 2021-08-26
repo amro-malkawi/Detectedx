@@ -3,12 +3,16 @@ import { dropdown } from '../../../support/breasted-mammography/breasted-mammogr
 const apiHost = Cypress.env('apiUrl')
 
 export function waitLoadingResources() {
-    cy.wait(3000)
+    checkPageLoader()
     checkLoadingIndicator()
     waitLinearProgressBar()
 }
+export function checkPageLoader() {
+    cy.get('.page-loader').should('not.exist')
+}
 export function checkLoadingIndicator() {
     cy.get('.loading-indicator').should('not.exist')
+    cy.get('.MuiCircularProgress-svg').should('not.exist')
 }
 export function clearSymbols() {
     cy.getBySel('tool-clear-symbols').should('be.visible').first().click();

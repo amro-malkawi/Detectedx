@@ -1,9 +1,9 @@
 import {
-    checkLoadingIndicator,
     clickOnModalityTab,
     getToolWithMoreIcon,
     navigateToTestSet,
     waitLinearProgressBar,
+    waitLoadingResources,
 } from "../../support/common/functions/index"
 
 import { 
@@ -36,8 +36,7 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
         })
 
         it('should be able to load all images', () => {
-            checkLoadingIndicator()
-            waitLinearProgressBar()
+            waitLoadingResources()
         })
         it('should be able to use Series feature', () => {
             validateSeriesFeature()

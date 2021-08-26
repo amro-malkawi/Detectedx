@@ -47,18 +47,21 @@ export function validatePreviousButton(testCaseValue) {
     })
 }
 export function validateSeriesFeature() {
-    cy.wait(3000)
+    waitLoadingResources()
     cy.window().its('store').invoke('getState').then((state) => {
-        const imageBrowser = state.testView.isShowImageBrowser
-        if (imageBrowser) {
-            cy.get('.image-browser').should('be.visible')
-            toggleSeriesIcon()
-            cy.get('.image-browser').should('not.be.visible')
-        } else {
-            cy.get('.image-browser').should('not.be.visible')
-            toggleSeriesIcon()
-            cy.get('.image-browser').should('be.visible')
-        }
+        expect(state).to.exist
+        cy.get('.series-icon').then((seriesIcon) => {
+            expect(seriesIcon).to.exist
+            if (seriesIcon[0].outerHTML.includes('active')) {
+                cy.get('.image-browser').should('be.visible')
+                toggleSeriesIcon()
+                cy.get('.image-browser').should('not.be.visible')
+            } else {
+                cy.get('.image-browser').should('not.be.visible')
+                toggleSeriesIcon()
+                cy.get('.image-browser').should('be.visible')
+            }
+        })
     })
 }
 export function validateInstructionFeature() {
@@ -148,6 +151,7 @@ export function validateNextPreviousFeature(opts) {
     });
 }
 export function validateInvertFeature() {
+    waitLoadingResources()
     toggleInvertAction()
     toggleInvertAction()
 }
@@ -189,6 +193,7 @@ export function validateSlicesFeature() {
 }
 
 export function validateGridFeature(opts) {
+    waitLoadingResources()
     let selectGridTool = null
     let dismissSelection = null
     if (opts && opts.selectMoreIcon) {
@@ -247,9 +252,11 @@ export function validateGridFeature(opts) {
 
 // ----------------- score-spec ------------------------------
 export function validateScoreContainer() {
+    waitLoadingResources()
     cy.get('.score-container').should('exist').and('be.visible')
 }
 export function validateReSelectDropdownList(modality_name, view_button_index) {
+    waitLoadingResources()
     const navigateToScoreOrTestPage = () => {
         cy.getBySel(`"${modality_name}"`).then((modality_info) => {
             cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
