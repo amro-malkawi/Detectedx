@@ -61,10 +61,11 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
 
             const submitTest = () => {
                 selectTheLast()
+                cy.wait(3000)
                 checkLoadingIndicator()
                 cy.wait(3000)
                 markOnFilm()
-                cy.wait(1000)
+                cy.wait(3000)
                 saveMarkPoint()
                 clickSubmit()
                 cy.wait(2000)
