@@ -3,6 +3,7 @@ import {
     answerQuestionImagEDChest, 
     answerQuestionImagEDMammography, 
     backToHome, 
+    clearSymbols, 
     clickSubmit, 
     clickViewButton, 
     interceptDropdownRequest, 
@@ -14,7 +15,9 @@ import {
     selectChestCTConfidence, 
     selectCovidConfidence, 
     selectTheLast, 
+    selectTool, 
     toggleInvertAction, 
+    toggleMarkInfo, 
     toggleSeriesIcon, 
     waitLinearProgressBar, 
     waitLoadingResources 
@@ -22,7 +25,8 @@ import {
 
 import { dropdown } from "../../breasted-mammography/breasted-mammography-dropdown-list"
 
-import { MODALITY_NAME } from "../constants"
+import { MODALITY_NAME, TOOL } from "../constants"
+import { lengthAction, magnifyAction, markAction, markerFreehandAction, markWithSaveAction, panAction, resetAction, windowAction, zoomAction } from "./tool_action"
 
 // ---------------- test spec ----------------------
 export function validateNextButton(testCaseValue) {
@@ -155,6 +159,28 @@ export function validateInvertFeature() {
     toggleInvertAction()
     toggleInvertAction()
 }
+export function validateHideInfoFeature() {
+    waitLoadingResources()
+    selectTool(TOOL.MARKER)
+    cy.get('.image-row').then((row) => {
+        const image = row[0].childNodes[0]
+        markWithSaveAction(image)
+    })
+    toggleMarkInfo()
+    cy.wait(1000)
+    toggleMarkInfo()
+
+}
+export function validateClearSymbols() {
+    waitLoadingResources()
+    selectTool(TOOL.MARKER)
+    cy.get('.image-row').then((row) => {
+        const image = row[0].childNodes[0]
+        markWithSaveAction(image)
+    })
+    cy.wait(1000)
+    clearSymbols()
+}
 export function validateSlicesFeature() {
     waitLoadingResources()
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -192,61 +218,112 @@ export function validateSlicesFeature() {
     slice()
 }
 
-export function validateGridFeature(opts) {
+export function validateGridFeature() {
     waitLoadingResources()
     let selectGridTool = null
     let dismissSelection = null
-    if (opts && opts.selectMoreIcon) {
-        selectGridTool = () => {
-            cy.get('.more-icon').should('exist').and('be.visible').click()
-            cy.getBySel('grid-tool').should('exist').and('be.visible').last().click()
+    cy.get('.test-view-toolbar').should('exist').and('be.visible')
+    cy.get('body').then($body => {
+        if ($body.find('.more-icon').length > 0) {
+            if ($body.find('.more-icon').is(':visible')) {
+                selectGridTool = () => {
+                    cy.get('.more-icon').should('exist').and('be.visible').click()
+                    cy.getBySel('grid-tool').should('exist').and('be.visible').last().click()
+                }
+                dismissSelection = () => {
+                    cy.get('.MuiDialog-container').click().should('not.exist')
+                }
+            } else {
+                selectGridTool = () => {
+                    cy.getBySel('grid-tool').should('exist').and('be.visible').click()
+                }
+                dismissSelection = () => { }
+            }
+        } else {
+            selectGridTool = () => {
+                cy.getBySel('grid-tool').should('exist').and('be.visible').click()
+            }
+            dismissSelection = () => { }
         }
-        dismissSelection = () => {
-            cy.get('.MuiDialog-container').click().should('not.exist')
+        selectGridTool()
+        cy.get('tbody > :nth-child(2) > :nth-child(4)') // 8 grid
+            .should('exist').and('be.visible').click()
+
+        dismissSelection()
+
+        cy.get('.image-row').then((row) => {
+            expect(row.length).to.eq(2)
+            expect(row[0].childElementCount).to.eq(4)
+            expect(row[1].childElementCount).to.eq(4)
+        })
+
+        cy.wait(2000)
+
+        selectGridTool()
+        cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
+            .should('exist').and('be.visible').click()
+
+        dismissSelection()
+
+        cy.get('.image-row').then((row) => {
+            expect(row.length).to.eq(2)
+            expect(row[0].childElementCount).to.eq(2)
+            expect(row[1].childElementCount).to.eq(2)
+        })
+
+        cy.wait(2000)
+
+        selectGridTool()
+        cy.get('tbody > :nth-child(1) > :nth-child(1)') // 1 grid
+            .should('exist').and('be.visible').click()
+
+        dismissSelection()
+
+        cy.get('.image-row').then((row) => {
+            expect(row.length).to.eq(1)
+            expect(row[0].childElementCount).to.eq(1)
+        })
+    });
+}
+
+// ----------------- tool validation -------------------------
+export function validateTool(name) {
+    waitLoadingResources()
+    selectTool(name)
+    clearSymbols()
+    actionTool(name)
+}
+
+export function actionTool(tool_name) {
+    cy.get('.image-row').then((row) => {
+        switch (tool_name) {
+            case TOOL.PAN:
+                panAction(row);
+                break;
+            case TOOL.ZOOM:
+                zoomAction(row);
+                break;
+            case TOOL.MAGNIFY:
+                magnifyAction(row);
+                break;
+            case TOOL.WINDOW:
+                windowAction(row);
+                break;
+            case TOOL.LENGTH:
+                lengthAction(row);
+                break;
+            case TOOL.MARKER:
+                markAction(row);
+                break;
+            case TOOL.MARKER_FREEHAND:
+                markerFreehandAction(row);
+                break;
+            case TOOL.RESET:
+                resetAction()
+                break;
+            default:
+                break;
         }
-    } else {
-        selectGridTool = () => {
-            cy.getBySel('grid-tool').should('exist').and('be.visible').click()
-        }
-        dismissSelection = () => {}
-    }
-    selectGridTool()
-    cy.get('tbody > :nth-child(2) > :nth-child(4)') // 8 grid
-        .should('exist').and('be.visible').click()
-
-    dismissSelection()
-
-    cy.get('.image-row').then((row) => {
-        expect(row.length).to.eq(2)
-        expect(row[0].childElementCount).to.eq(4)
-        expect(row[1].childElementCount).to.eq(4)
-    })
-
-    cy.wait(2000)
-
-    selectGridTool()
-    cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
-        .should('exist').and('be.visible').click()
-
-    dismissSelection()
-
-    cy.get('.image-row').then((row) => {
-        expect(row.length).to.eq(2)
-        expect(row[0].childElementCount).to.eq(2)
-        expect(row[1].childElementCount).to.eq(2)
-    })
-
-    cy.wait(2000)
-
-    selectGridTool()
-    cy.get('tbody > :nth-child(1) > :nth-child(1)') // 1 grid
-        .should('exist').and('be.visible').click()
-
-    dismissSelection()
-
-    cy.get('.image-row').then((row) => {
-        expect(row.length).to.eq(1)
-        expect(row[0].childElementCount).to.eq(1)
     })
 }
 

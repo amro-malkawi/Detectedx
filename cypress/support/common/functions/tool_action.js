@@ -1,3 +1,5 @@
+import { selectTool } from ".";
+import { TOOL } from "../constants";
 export function panAction(row) {
     const pageX = 600
     const move = (row, i) => {
@@ -156,4 +158,11 @@ export function lengthAction(row) {
         .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
         .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
         .trigger('mouseup')
+}
+export function resetAction() {
+    selectTool(TOOL.ZOOM)
+    cy.get('.image-row').then((row) => {
+        zoomAction(row)
+    })
+    selectTool(TOOL.RESET)
 }

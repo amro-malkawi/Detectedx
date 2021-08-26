@@ -46,7 +46,7 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
             checkLoadingIndicator()
         })
         it('should be able to use Grid feature', () => {
-            validateGridFeature({ selectMoreIcon: true })
+            validateGridFeature()
         })
         it('should be able to use Series feature', () => {
             validateSeriesFeature()
