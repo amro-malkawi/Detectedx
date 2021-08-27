@@ -1,4 +1,4 @@
-import { selectTool } from ".";
+import { clearSymbols, selectTool } from ".";
 import { TOOL } from "../constants";
 export function panAction(row) {
     const pageX = 600
@@ -154,10 +154,14 @@ export function zoomAction(row) {
     }
 }
 export function lengthAction(row) {
-    cy.wrap(row)
+    cy.wrap(row[0].childNodes[0])
+        .dblclick()
         .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
         .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
         .trigger('mouseup')
+    cy.wait(2000)
+    clearSymbols()
+
 }
 export function resetAction() {
     selectTool(TOOL.ZOOM)

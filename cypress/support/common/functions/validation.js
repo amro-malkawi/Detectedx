@@ -20,7 +20,8 @@ import {
     toggleMarkInfo, 
     toggleSeriesIcon, 
     waitLinearProgressBar, 
-    waitLoadingResources 
+    waitLoadingResources, 
+    waitUntilCanvasIsReady
 } from "."
 
 import { dropdown } from "../../breasted-mammography/breasted-mammography-dropdown-list"
@@ -156,11 +157,13 @@ export function validateNextPreviousFeature(opts) {
 }
 export function validateInvertFeature() {
     waitLoadingResources()
+    waitUntilCanvasIsReady()
     toggleInvertAction()
     toggleInvertAction()
 }
 export function validateHideInfoFeature() {
     waitLoadingResources()
+    waitUntilCanvasIsReady()
     selectTool(TOOL.MARKER)
     cy.get('.image-row').then((row) => {
         const image = row[0].childNodes[0]
@@ -173,6 +176,7 @@ export function validateHideInfoFeature() {
 }
 export function validateClearSymbols() {
     waitLoadingResources()
+    waitUntilCanvasIsReady()
     selectTool(TOOL.MARKER)
     cy.get('.image-row').then((row) => {
         const image = row[0].childNodes[0]
@@ -183,6 +187,7 @@ export function validateClearSymbols() {
 }
 export function validateSlicesFeature() {
     waitLoadingResources()
+    waitUntilCanvasIsReady()
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
         'value'
@@ -289,6 +294,7 @@ export function validateGridFeature() {
 // ----------------- tool validation -------------------------
 export function validateTool(name) {
     waitLoadingResources()
+    waitUntilCanvasIsReady()
     selectTool(name)
     clearSymbols()
     actionTool(name)

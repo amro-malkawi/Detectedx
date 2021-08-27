@@ -7,18 +7,75 @@ export function waitLoadingResources() {
     checkLoadingIndicator()
     waitLinearProgressBar()
 }
+export function waitUntilOptionsBuilder(errorMsg, timeout, interval) {
+    return {
+        errorMsg: errorMsg ? errorMsg : null,
+        timeout: timeout ? timeout : 60 * 1000,
+        interval: interval ? interval : 500
+    }
+}
 export function checkPageLoader() {
-    cy.get('.page-loader').should('not.exist')
+    cy.get('body').then($body => {
+        if ($body.find('.page-loader').length > 0) {
+            if ($body.find('.page-loader').is(':visible')) {
+                const errorMsg = 'Failed waiting page loader to disappear (timeout)'
+                const opts = waitUntilOptionsBuilder(errorMsg)
+                cy.waitUntil(() => cy.get('.page-loader').then((pageLoader) => {
+                    cy.wrap(pageLoader).should('not.exist')
+                }), opts);
+
+            } else {
+                assert.isOk(`page loader exist but not visible`);
+            }
+        } else {
+            assert.isOk(`page loader not exist`);
+        }
+    });
 }
 export function checkLoadingIndicator() {
-    cy.get('.loading-indicator').should('not.exist')
-    cy.get('.MuiCircularProgress-svg').should('not.exist')
+    cy.get('body').then($body => {
+        if ($body.find('.page-loader').length > 0) {
+            if ($body.find('.page-loader').is(':visible')) {
+                const errorMsg = 'Failed waiting load indicator to disappear (timeout)'
+                const opts = waitUntilOptionsBuilder(errorMsg)
+                cy.waitUntil(() => cy.get('.loading-indicator').then((loadingIndicator) => {
+                    cy.wrap(loadingIndicator).should('not.exist')
+                }), opts);
+            } else {
+                assert.isOk(`loading indicator exist but not visible`);
+            }
+        } else {
+            assert.isOk(`loading indicator not exist`);
+        }
+    });
+}
+export function isCanvasBlank(canvas) {
+    return !canvas.getContext('2d')
+        .getImageData(0, 0, canvas.width, canvas.height).data
+        .some(channel => channel !== 0);
+}
+export function waitUntilCanvasIsReady(canvas) {
+    const errorMsg = 'Image loading failed (timeout)'
+    const opts = waitUntilOptionsBuilder(errorMsg)
+    if (canvas) {
+        cy.waitUntil(() => isCanvasBlank(canvas) === false, opts);
+    } else {
+        cy.get('.image-row').then((row) => {
+            const firstCanvas = row[0].childNodes[0].childNodes[0].childNodes[0]
+            cy.waitUntil(() => isCanvasBlank(firstCanvas) === false, opts);
+        })
+    }
+    cy.log('Image is now ready to interact.')
 }
 export function clearSymbols() {
-    cy.getBySel('tool-clear-symbols').first().should('be.visible').click();
+    interceptClearSymbols()
+    cy.getBySel('tool-clear-symbols').first().should('exist').and('be.visible').click();
+    cy.wait('@deleteShapesResponse').its('response.statusCode').should('eq', 200)
 }
 export function clearSymbolsAt(index) {
-    cy.getBySel('tool-clear-symbols').eq(index).should('be.visible').click();
+    interceptClearSymbols()
+    cy.getBySel('tool-clear-symbols').eq(index).should('exist').and('be.visible').click();
+    cy.wait('@deleteShapesResponse').its('response.statusCode').should('eq', 200)
 }
 export function routeToScorePage() {
     cy.get('button').contains('Scores').click({ force: true })
@@ -254,6 +311,16 @@ export function interceptDropdownRequest() {
         url: apiSelectDrownDownList.url,
     }).as("scoresAttemptPercentile");
 }
+export function interceptClearSymbols() {
+    const apiDeleteShapes = {
+        method: 'POST',
+        url: `${apiHost}/**/delete_all**`
+    }
+    cy.intercept({
+        method: apiDeleteShapes.method,
+        url: apiDeleteShapes.url,
+    }).as("deleteShapesResponse");
+}
 export function interceptDicomImages() {
     const apiImages = {
         method: 'GET',
@@ -477,8 +544,10 @@ export function checkAllDropdownListAt(number) {
 }
 export function markOnFilm() {
     cy.get('.image-row').then((row) => {
+        const canvas = row[0].childNodes[0].childNodes[0].childNodes[0]
+        waitUntilCanvasIsReady(canvas)
         const image = row[0].childNodes[0]
-        getToolWithMoreIcon(TOOL.MARKER)
+        selectTool(TOOL.MARKER)
         clearSymbols()
         cy.wrap(image).click()
     })

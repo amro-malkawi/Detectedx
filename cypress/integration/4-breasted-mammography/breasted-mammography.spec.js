@@ -1,10 +1,7 @@
 import {
-    getToolWithMoreIcon,
     navigateToTestSet,
     clickOnModalityTab,
     checkLoadingIndicator,
-    clearSymbols,
-    toggleMarkInfo,
 } from "../../support/common/functions/index"
 import { MODALITY_NAME, TOOL } from "../../support/common/constants/index"
 
@@ -13,20 +10,13 @@ import {
     validateInstructionFeature,
     validateNextPreviousFeature,
     validateInvertFeature,
-    validateGridFeature
+    validateGridFeature,
+    validateTool,
+    validateHideInfoFeature,
+    validateClearSymbols
 } from "../../support/common/functions/validation"
 
 import { validateHangingButtonFeature } from "../../support/breasted-mammography/utils"
-import {
-    lengthAction,
-    magnifyAction,
-    markAction,
-    markerFreehandAction,
-    markWithSaveAction,
-    panAction,
-    windowAction,
-    zoomAction
-} from "../../support/common/functions/tool_action"
 
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.BreastED_Mammography
@@ -61,82 +51,37 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
             validateNextPreviousFeature()
         })
         it('should be able to use Mark tool', () => {
-            getToolWithMoreIcon(TOOL.MARKER)
-            clearSymbols()
-            cy.get('.image-row').then((row) => {
-                markAction(row)
-            })
+            validateTool(TOOL.MARKER)
         })
         it('should be able to use Pan tool', () => {
-            getToolWithMoreIcon(TOOL.PAN)
-            cy.get('.image-row').then((row) => {
-                panAction(row)
-            })
+            validateTool(TOOL.PAN)
         })
-
         it('should be able to use Zoom tool', () => {
-            getToolWithMoreIcon(TOOL.ZOOM)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
+            validateTool(TOOL.ZOOM)
         })
         it('should be able to use Magnify tool', () => {
-            getToolWithMoreIcon(TOOL.MAGNIFY)
-            cy.get('.image-row').then((row) => {
-                magnifyAction(row)
-            })
+            validateTool(TOOL.MAGNIFY)
         })
         it('should be able to use Window tool', () => {
-            getToolWithMoreIcon(TOOL.WINDOW)
-            cy.get('.image-row').then((row) => {
-                windowAction(row)
-            })
+            validateTool(TOOL.WINDOW)
         })
         it('should be able to use Reset tool', () => {
-            getToolWithMoreIcon(TOOL.ZOOM)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
-            getToolWithMoreIcon(TOOL.RESET)
+            validateTool(TOOL.RESET)
         })
         it('should be able to use FreehandMarker tool', () => {
-            getToolWithMoreIcon(TOOL.MARKER_FREEHAND)
-            cy.get('.image-row').then((row) => {
-                markerFreehandAction(row)
-            })
+            validateTool(TOOL.MARKER_FREEHAND)
         })
         it('should be able to use Length tool', () => {
-            getToolWithMoreIcon(TOOL.LENGTH)
-            clearSymbols()
-            cy.get('.image-row').then((row) => {
-                const image = row[0].childNodes[0]
-                cy.wrap(image).dblclick()
-                lengthAction(image)
-            })
+            validateTool(TOOL.LENGTH)
         })
         it('should be able to use Hide info feature', () => {
-            getToolWithMoreIcon(TOOL.MARKER)
-            cy.get('.image-row').then((row) => {
-                clearSymbols()
-                const image = row[0].childNodes[0]
-                cy.wrap(image).dblclick()
-                markWithSaveAction(image, 700, 200)
-                toggleMarkInfo()
-                cy.wait(1000)
-                toggleMarkInfo()
-            })
+            validateHideInfoFeature()
         })
         it('should be able to use Invert feature', () => {
             validateInvertFeature()
         })
         it('should be able to use Clear symbols feature', () => {
-            getToolWithMoreIcon(TOOL.MARKER)
-            cy.get('.image-row').then((row) => {
-                const image = row[0].childNodes[0]
-                markWithSaveAction(image, 200, 140)
-                cy.wait(3000)
-                clearSymbols()
-            })
+            validateClearSymbols()
         })
     })
 })

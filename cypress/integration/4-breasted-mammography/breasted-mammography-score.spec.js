@@ -16,7 +16,7 @@ import {
     routeToScorePage, 
     saveMarkPoint, 
     selectTheLast, 
-    waitForUserInputQuestionnairePage 
+    waitForUserInputQuestionnairePage,
 } from '../../support/common/functions'
 
 import { validateReSelectDropdownList, validateScoreContainer } from '../../support/common/functions/validation'
@@ -61,14 +61,10 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
 
             const submitTest = () => {
                 selectTheLast()
-                cy.wait(3000)
                 checkLoadingIndicator()
-                cy.wait(3000)
                 markOnFilm()
-                cy.wait(3000)
                 saveMarkPoint()
                 clickSubmit()
-                cy.wait(2000)
             }
         })
 
