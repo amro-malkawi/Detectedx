@@ -1,8 +1,15 @@
-import { apiHostStatic, BUTTON, MORE_ICON, TOOL } from '../constants/index'
+import { apiAttempt, apiDeleteShapes, apiImages, apiSelectDrownDownList, BUTTON, MORE_ICON, TOOL } from '../constants/index'
 import { dropdown } from '../../../support/breasted-mammography/breasted-mammography-dropdown-list'
-const apiHost = Cypress.env('apiUrl')
 
+export function loginWithEmailPasswordWithCookiesPreserved() {
+    cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'))
+    const preserveOptions = {
+        preserve: ['AUTHID', 'user_id', 'user_email' ,'user_name', 'access_token'],
+    }
+    Cypress.Cookies.defaults(preserveOptions)
+}
 export function waitLoadingResources() {
+    cy.wait(2000)
     checkPageLoader()
     checkLoadingIndicator()
     waitLinearProgressBar()
@@ -34,13 +41,14 @@ export function checkPageLoader() {
 }
 export function checkLoadingIndicator() {
     cy.get('body').then($body => {
-        if ($body.find('.page-loader').length > 0) {
-            if ($body.find('.page-loader').is(':visible')) {
+        if ($body.find('.loading-indicator').length > 0) {
+            if ($body.find('.loading-indicator').is(':visible')) {
                 const errorMsg = 'Failed waiting load indicator to disappear (timeout)'
                 const opts = waitUntilOptionsBuilder(errorMsg)
                 cy.waitUntil(() => cy.get('.loading-indicator').then((loadingIndicator) => {
                     cy.wrap(loadingIndicator).should('not.exist')
                 }), opts);
+                waitUntilCanvasIsReady()
             } else {
                 assert.isOk(`loading indicator exist but not visible`);
             }
@@ -58,18 +66,40 @@ export function waitUntilCanvasIsReady(canvas) {
     const errorMsg = 'Image loading failed (timeout)'
     const opts = waitUntilOptionsBuilder(errorMsg)
     if (canvas) {
+        // Check for specific canvas
         cy.waitUntil(() => isCanvasBlank(canvas) === false, opts);
+        cy.log('Image is now ready to interact.')
     } else {
-        cy.get('.image-row').then((row) => {
-            const firstCanvas = row[0].childNodes[0].childNodes[0].childNodes[0]
-            cy.waitUntil(() => isCanvasBlank(firstCanvas) === false, opts);
-        })
+        // Check for all canvases
+        cy.get('body').then($body => {
+            if ($body.find('.image-row').length > 0) {
+                if ($body.find('.image-row').is(':visible')) {
+                    cy.get('.image-row').then((row) => {
+                        if (row.length > 0) {
+                            for (let index = 0; index < row.length; index++) {
+                                const gridRow = row[index];
+                                const imageLength = gridRow.childNodes.length
+                                for (let j = 0; j < imageLength; j++) {
+                                    const canvas = gridRow.childNodes[j].childNodes[0].childNodes[0];
+                                    cy.waitUntil(() => isCanvasBlank(canvas) === false, opts);
+                                }
+                            }
+                            cy.log('All images is now ready to interact.')
+                        }
+                    })
+                } else {
+                    assert.isOk(`image row exist but not visible`);
+                }
+            } else {
+                assert.isOk(`image row not exist`);
+            }
+        });
     }
-    cy.log('Image is now ready to interact.')
+    
 }
 export function clearSymbols() {
     interceptClearSymbols()
-    cy.getBySel('tool-clear-symbols').first().should('exist').and('be.visible').click();
+    cy.getBySel('tool-clear-symbols').eq(0).should('exist').and('be.visible').click();
     cy.wait('@deleteShapesResponse').its('response.statusCode').should('eq', 200)
 }
 export function clearSymbolsAt(index) {
@@ -259,7 +289,7 @@ export function isCurrentAQuestionPage() {
     cy.url().then((url) => {
         const mainQuestions = 'mainQuestions'
         if (url.includes(mainQuestions)) {
-            checkLoadingIndicator()
+            waitLoadingResources()
             cy.get("body").then((body) => {
                 const Questionnaires = 'Questionnaires'
                 if (body.find('h2').length > 0) {
@@ -284,7 +314,7 @@ export function isCurrentAnEvaluationFormPage() {
     cy.url().then((url) => {
         const postQuestions = 'postQuestions'
         if (url.includes(postQuestions)) {
-            checkLoadingIndicator()
+            waitLoadingResources()
             return cy.get({ found: true }).as('foundEvaluationFormPage')
         } else {
             return cy.get({ found: false }).as('foundEvaluationFormPage')
@@ -292,40 +322,24 @@ export function isCurrentAnEvaluationFormPage() {
     })
 }
 export function interceptAttemptRequest() {
-    const apiAttempt = {
-        method: 'GET',
-        url: `${apiHost}/attempts/**`
-    }
     cy.intercept({
         method: apiAttempt.method,
         url: apiAttempt.url,
     }).as("attemptResponse");
 }
 export function interceptDropdownRequest() {
-    const apiSelectDrownDownList = {
-        method: 'GET',
-        url: `${apiHost}/scores/attempt_percentile**`
-    }
     cy.intercept({
         method: apiSelectDrownDownList.method,
         url: apiSelectDrownDownList.url,
     }).as("scoresAttemptPercentile");
 }
 export function interceptClearSymbols() {
-    const apiDeleteShapes = {
-        method: 'POST',
-        url: `${apiHost}/**/delete_all**`
-    }
     cy.intercept({
         method: apiDeleteShapes.method,
         url: apiDeleteShapes.url,
     }).as("deleteShapesResponse");
 }
 export function interceptDicomImages() {
-    const apiImages = {
-        method: 'GET',
-        url: `${apiHostStatic}/images/**`
-    }
     cy.intercept({
         method: apiImages.method,
         url: apiImages.url,
@@ -346,8 +360,8 @@ export function waitLoadingToTestView() {
     cy.location('pathname').should('include', '/test-view');
 }
 export function waitForUserInputQuestionnairePage() {
-    isCurrentAQuestionPage()
     cy.wait(3000)
+    isCurrentAQuestionPage()
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
@@ -355,8 +369,8 @@ export function waitForUserInputQuestionnairePage() {
     })
 }
 export function waitForUserInputEvaluationPage() {
-    isCurrentAnEvaluationFormPage()
     cy.wait(3000)
+    isCurrentAnEvaluationFormPage()
     cy.get('@foundEvaluationFormPage').then(({ selector }) => {
         if (selector.found) {
             alertAndPause()
@@ -478,10 +492,10 @@ export function clickStartPostTest() {
 }
 export function clickSubmit() {
     cy.get('button').contains('Submit').should('exist').and('be.visible').click()
+    cy.wait(2000)
 }
 export function clickSave() {
     cy.get('button').contains('Save').should('exist').and('be.visible').click()
-    // cy.get('.save').click()
 }
 export function clickReattempt() {
     cy.get('button').contains('Reattempt').should('exist').and('be.visible').click()
@@ -540,7 +554,7 @@ export function checkAllDropdownListAt(number) {
         .invoke('val')
         .should('deep.equal', dropdown.value.other)
 
-    cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('eq', 200)
+    cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('be.oneOf', [200, 304])
 }
 export function markOnFilm() {
     cy.get('.image-row').then((row) => {

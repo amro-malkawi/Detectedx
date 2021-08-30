@@ -20,8 +20,7 @@ import {
     toggleMarkInfo, 
     toggleSeriesIcon, 
     waitLinearProgressBar, 
-    waitLoadingResources, 
-    waitUntilCanvasIsReady
+    waitLoadingResources
 } from "."
 
 import { dropdown } from "../../breasted-mammography/breasted-mammography-dropdown-list"
@@ -140,6 +139,7 @@ export function validateNextPreviousFeature(opts) {
                             }
                         }
                         validateNextButton(testCaseValue)
+                        cy.wait(1000)
                         validatePreviousButton(testCaseValue)
                     } else {
                         assert.isOk(`${testCaseSelector} have length less than 1`);
@@ -157,13 +157,11 @@ export function validateNextPreviousFeature(opts) {
 }
 export function validateInvertFeature() {
     waitLoadingResources()
-    waitUntilCanvasIsReady()
     toggleInvertAction()
     toggleInvertAction()
 }
 export function validateHideInfoFeature() {
     waitLoadingResources()
-    waitUntilCanvasIsReady()
     selectTool(TOOL.MARKER)
     cy.get('.image-row').then((row) => {
         const image = row[0].childNodes[0]
@@ -176,7 +174,6 @@ export function validateHideInfoFeature() {
 }
 export function validateClearSymbols() {
     waitLoadingResources()
-    waitUntilCanvasIsReady()
     selectTool(TOOL.MARKER)
     cy.get('.image-row').then((row) => {
         const image = row[0].childNodes[0]
@@ -187,7 +184,6 @@ export function validateClearSymbols() {
 }
 export function validateSlicesFeature() {
     waitLoadingResources()
-    waitUntilCanvasIsReady()
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
         'value'
@@ -198,27 +194,33 @@ export function validateSlicesFeature() {
     }
     cy.wait(3000)
     const slice = () => {
-        cy.getBySel('stack-scrollbar-range').then((stackScrollbar) => {
-            for (let i = 0; i < stackScrollbar.length; i++) {
-                let element = stackScrollbar[i];
-                let max = stackScrollbar[i].max/2
-                let min = stackScrollbar[i].min
-                for (let j = min; j <= max; j++) {
-                    cy.wrap(element).then(input => changeRangeInputValue(input)(j))
-                    cy.wait(350)
-                }
+        cy.get("body").then($body => {
+            if ($body.find(`[data-cy=stack-scrollbar-range]`).length > 0) {
+                cy.getBySel('stack-scrollbar-range').then((stackScrollbar) => {
+                    for (let i = 0; i < stackScrollbar.length; i++) {
+                        let element = stackScrollbar[i];
+                        let max = stackScrollbar[i].max / 2
+                        let min = stackScrollbar[i].min
+                        for (let j = min; j <= max; j = j + 5) {
+                            cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                            cy.wait(350)
+                        }
+                    }
+                    cy.wait(1000)
+                    for (let i = 0; i < stackScrollbar.length; i++) {
+                        let element = stackScrollbar[i];
+                        let max = stackScrollbar[i].max / 2
+                        let min = stackScrollbar[i].min
+                        for (let j = max; j >= min; j = j - 5) {
+                            cy.wrap(element).then(input => changeRangeInputValue(input)(j))
+                            cy.wait(350)
+                        }
+                    }
+                })
+            } else {
+                assert.isOk('stackScrollbar not exist');
             }
-            cy.wait(1000)
-            for (let i = 0; i < stackScrollbar.length; i++) {
-                let element = stackScrollbar[i];
-                let max = stackScrollbar[i].max/2
-                let min = stackScrollbar[i].min
-                for (let j = max; j >= min; j--) {
-                    cy.wrap(element).then(input => changeRangeInputValue(input)(j))
-                    cy.wait(350)
-                }
-            }
-        })
+        });
     }
     slice()
 }
@@ -294,7 +296,6 @@ export function validateGridFeature() {
 // ----------------- tool validation -------------------------
 export function validateTool(name) {
     waitLoadingResources()
-    waitUntilCanvasIsReady()
     selectTool(name)
     clearSymbols()
     actionTool(name)
@@ -391,8 +392,8 @@ export function validateReSelectDropdownList(modality_name, view_button_index) {
                 .select(dropdown.key.other)
                 .invoke('val')
                 .should('deep.equal', dropdown.value.other)
-
-            cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('eq', 200)
+            
+            cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('be.oneOf', [200, 304])
         }
         checkAllDropdownListAt(1)
         checkAllDropdownListAt(2)

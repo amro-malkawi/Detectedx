@@ -68,20 +68,20 @@ export function windowAction(row) {
         y: {
             in: {
                 start: 1,
-                end: 80
+                end: 50
             },
             out: {
-                start: 80,
+                start: 50,
                 end: 1
             }
         },
         x: {
             in: {
                 start: 1,
-                end: 80
+                end: 50
             },
             out: {
-                start: 80,
+                start: 50,
                 end: 1
             }
         }

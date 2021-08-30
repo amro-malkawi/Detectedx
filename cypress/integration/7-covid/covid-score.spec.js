@@ -199,7 +199,7 @@ context('Coivd-19 - Score Page', () => {
                         .invoke('val')
                         .should('deep.equal', dropdown.value.other)
 
-                    cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('eq', 200)
+                    cy.wait('@scoresAttemptPercentile').its('response.statusCode').should('be.oneOf', [200, 304])
                 }
                 checkAllDropdownListAt(1)
                 checkAllDropdownListAt(2)

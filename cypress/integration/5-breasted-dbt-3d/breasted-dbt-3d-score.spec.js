@@ -1,4 +1,5 @@
 import { 
+    alertAndPause,
     checkAnswer,
     clickDefinitionButton,
     clickOnModalityTab, 
@@ -7,6 +8,7 @@ import {
     closeDefinition, 
     downloadCertificate, 
     isCurrentAQuestionPage, 
+    loginWithEmailPasswordWithCookiesPreserved, 
     markOnFilm, 
     navigateToScorePage, 
     navigateToTestPage, 
@@ -15,7 +17,7 @@ import {
     saveMarkPoint, 
     selectTheLast, 
     waitForUserInputQuestionnairePage,
-    waitLinearProgressBar
+    waitLoadingResources
 } from '../../support/common/functions/index'
 import { validateScoreContainer, validateReSelectDropdownList } from '../../support/common/functions/validation'
 import { MODALITY_NAME } from '../../support/common/constants'
@@ -25,8 +27,10 @@ const CURRENT_TEST = {
 }
 context('Breasted Mammography - Score Page', () => {
     describe('Expect to see Breasted DBT 3D score page functional', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
@@ -36,7 +40,6 @@ context('Breasted Mammography - Score Page', () => {
             navigateToTestPage(CURRENT_TEST.MODALITY_NAME)
             pauseIfVideoModalExist()
             isCurrentAQuestionPage()
-            cy.wait(1000)
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
                     alertAndPause()
@@ -60,12 +63,10 @@ context('Breasted Mammography - Score Page', () => {
 
             const submitTest = () => {
                 selectTheLast()
-                cy.wait(3000)
-                waitLinearProgressBar()
+                waitLoadingResources()
                 markOnFilm()
                 saveMarkPoint()
                 clickSubmit()
-                cy.wait(3000)
             }
         })
 

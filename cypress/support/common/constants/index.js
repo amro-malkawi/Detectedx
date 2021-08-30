@@ -28,5 +28,40 @@ export const MODALITY_NAME = {
     Covid: 'CovED - COVID-19',
     ImagED_Chest: 'ImagED - Chest',
     ImagED_Mammography: 'ImagED - Mammography',
-    GE_3D :'GE 3D '
+    GE_3D : 'GE 3D ',
+    LungED: 'LungED'
+}
+// --------------------- [ API list ] --------------------- 
+const apiHost = Cypress.env('apiUrl')
+export const apiLogin = {
+    method: 'POST',
+    url: `${apiHost}/users/login`
+}
+export const apiAttempt = {
+    method: 'GET',
+    url: `${apiHost}/attempts/**`
+}
+export const apiCouponInfo = {
+    method: 'GET',
+    url: `${apiHost}/coupons/**`,
+}
+export const apiUpdateInfo = {
+    method: 'POST',
+    url: `${apiHost}/users/**`,
+}
+export const apiChangePassword = {
+    method: 'POST',
+    url: `${apiHost}/users/change-password*`,
+}
+export const apiSelectDrownDownList = {
+    method: 'GET',
+    url: `${apiHost}/scores/attempt_percentile**`
+}
+export const apiDeleteShapes = {
+    method: 'POST',
+    url: `${apiHost}/**/delete_all**`
+}
+export const apiImages = {
+    method: 'GET',
+    url: `${apiHostStatic}/images/**`
 }
