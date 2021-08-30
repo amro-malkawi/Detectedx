@@ -213,13 +213,8 @@ export function selectTool(name) {
     cy.get('.test-view-toolbar').should('exist').and('be.visible')
     cy.get('body').then($body => {
         if ($body.find('.more-icon').length > 0) {
-            if ($body.find('.more-icon').is(':visible')) {
-                // more icon is visible
-                getToolWithMoreIcon(name)
-            } else {
-                // more icon is exist but not visible
-                getTool(name)
-            }
+            // more icon is exist
+            getToolWithMoreIcon(name)
         } else {
             // more icon is not exist
             getTool(name)
@@ -567,7 +562,7 @@ export function markOnFilm() {
     })
 }
 export function saveMarkPoint() {
-    cy.get('.right > .MuiButtonBase-root').should('exist').click()
+    clickSave()
 }
 export function backToHome() {
     cy.get('.navbar-right > :nth-child(1) > .MuiButtonBase-root').should('exist').click()

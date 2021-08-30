@@ -1,4 +1,4 @@
-import { clearSymbols, selectTool } from ".";
+import { clearSymbols, clickSave, selectTool } from ".";
 import { TOOL } from "../constants";
 export function panAction(row) {
     const pageX = 600
@@ -119,7 +119,7 @@ export function markWithSaveAction(row, x, y) {
     } else {
         cy.wrap(row).click()
     }
-    cy.get('.save > .MuiButton-label').should('be.visible').click()
+    clickSave()
 }
 
 export function markerFreehandAction(row) {
