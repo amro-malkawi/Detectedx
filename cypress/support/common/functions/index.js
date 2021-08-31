@@ -9,7 +9,7 @@ export function loginWithEmailPasswordWithCookiesPreserved() {
     Cypress.Cookies.defaults(preserveOptions)
 }
 export function waitLoadingResources() {
-    cy.wait(2000)
+    waitUntilCircularProgressDismiss()
     checkPageLoader()
     checkLoadingIndicator()
     waitLinearProgressBar()
@@ -181,10 +181,14 @@ export function selectHangingType(type) {
 }
 
 export function navigateToSpecificTestPage(cardName) {
+    interceptAttemptRequest()
     const possibleButton = [BUTTON.Continue, BUTTON.Restart]
     clickExistButtonInCard(cardName, possibleButton)
+    cy.wait('@attemptResponse').its('response.statusCode').should('be.oneOf', [200, 304])
+    waitUntilCircularProgressDismiss()
 }
 export function navigateToTestPage(modality_name) {
+    interceptAttemptRequest()
     cy.getBySel(`"${modality_name}"`).then((modality_info) => {
         cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
             if (test_set.find("button:contains('Start')").length > 0) {
@@ -194,7 +198,7 @@ export function navigateToTestPage(modality_name) {
             }
         })
     })
-    cy.wait(2000)
+    cy.wait('@attemptResponse').its('response.statusCode').should('be.oneOf', [200, 304])
 }
 export function navigateToScorePage(modality_name) {
     cy.getBySel(`"${modality_name}"`).then((modality_info) => {
@@ -287,9 +291,6 @@ export function clickExistButtonInCard(cardName, buttonNames) {
                 array.forEach(button => {
                     if (button.innerText.includes(intersect.toString())) {
                         target = button
-                        // if (button.parentNode.parentNode.innerText === `${cardName}\n${intersect.toString()}`) {
-                        //     target = button
-                        // }
                     }
                 });
             }
@@ -297,12 +298,28 @@ export function clickExistButtonInCard(cardName, buttonNames) {
         cy.get(target).click();
     });
 }
+export function waitUntilCircularProgressDismiss() {
+    const element = 'MuiCircularProgress-svg'
+    const currentSelector = `.${element}`
+    isElementExist(element, currentSelector)
+    cy.get(`@found-${element}`).then(({ selector }) => {
+        if (selector.found) {
+            const errorMsg = 'Failed waiting circular progress to disappear (timeout)'
+                const opts = waitUntilOptionsBuilder(errorMsg)
+                cy.waitUntil(() => cy.get(currentSelector).then((selector) => {
+                    cy.wrap(selector).should('not.exist')
+                }), opts);
+        } else {
+            assert.isOk(`${element} not exist`);
+        }
+    })
+}
 export function isCurrentAQuestionPage() {
-    cy.wait(3000)
     cy.url().then((url) => {
         const mainQuestions = 'mainQuestions'
         if (url.includes(mainQuestions)) {
             waitLoadingResources()
+            waitUntilCircularProgressDismiss()
             cy.get("body").then((body) => {
                 const Questionnaires = 'Questionnaires'
                 if (body.find('h2').length > 0) {
@@ -323,11 +340,11 @@ export function isCurrentAQuestionPage() {
     })
 }
 export function isCurrentAnEvaluationFormPage() {
-    cy.wait(3000)
     cy.url().then((url) => {
         const postQuestions = 'postQuestions'
         if (url.includes(postQuestions)) {
             waitLoadingResources()
+            waitUntilCircularProgressDismiss()
             return cy.get({ found: true }).as('foundEvaluationFormPage')
         } else {
             return cy.get({ found: false }).as('foundEvaluationFormPage')
@@ -359,7 +376,7 @@ export function interceptDicomImages() {
     }).as("dicomImagesResponse");
 }
 export function pauseIfVideoModalExist() {
-    cy.wait(3000)
+    waitUntilCircularProgressDismiss()
     cy.get('body').then((value) => {
         if (value.find('video').length > 0) {
             const message = 'After finish watching video please click "X" (Close) button \nand Click "Resume" to continue the test.'
@@ -373,7 +390,6 @@ export function waitLoadingToTestView() {
     cy.location('pathname').should('include', '/test-view');
 }
 export function waitForUserInputQuestionnairePage() {
-    cy.wait(3000)
     isCurrentAQuestionPage()
     cy.get('@foundQuestionnairePage').then(({ selector }) => {
         if (selector.found) {
@@ -382,7 +398,6 @@ export function waitForUserInputQuestionnairePage() {
     })
 }
 export function waitForUserInputEvaluationPage() {
-    cy.wait(3000)
     isCurrentAnEvaluationFormPage()
     cy.get('@foundEvaluationFormPage').then(({ selector }) => {
         if (selector.found) {
@@ -397,6 +412,7 @@ export function alertAndPause() {
     return cy.pause()
 }
 export function navigateToTestSet(modality_name) {
+    interceptAttemptRequest()
     cy.getBySel(`"${modality_name}"`).then((modality_info) => {
         cy.wrap(modality_info).find(`[data-cy="test-set"]`).then((test_set) => {
             if (test_set.find("[data-cy=test-start-button]:contains('Start')").length > 0) {
@@ -408,6 +424,7 @@ export function navigateToTestSet(modality_name) {
             }
         })
     })
+    cy.wait('@attemptResponse').its('response.statusCode').should('be.oneOf', [200, 304])
 }
 export function selectDensity(text) {
     cy.getBySel('density-icon').click()
@@ -416,21 +433,15 @@ export function selectDensity(text) {
     })
 }
 export function selectConfidenceBySelector(level, selector) {
-    let count = 0
-    const click = $el => {
-        count += 1
-        return $el.click()
-    }
     cy.getBySel(`${selector}`).then((value) => {
         const choiceIndex = level
         const element = value[0].children[choiceIndex].childNodes[0]
-        cy.wrap(element)
-            .pipe(click)
-            .should($el => {
-                expect($el).to.be.visible
-            }).then(() => {
-                cy.log(`clicked ${count} time(s)`)
-            })
+        const errorMsg = 'Failed select confidence by selector (timeout)'
+        const opts = waitUntilOptionsBuilder(errorMsg)
+        cy.waitUntil(() => cy.wrap(element).then((element) => {
+            cy.wrap(element).should('exist')
+        }), opts);
+        cy.wrap(element).click()
     })
 }
 export function selectChestCTConfidence(level) {
@@ -454,7 +465,7 @@ export function selectTestCaseAt(order) {
     })
 }
 export function waitLinearProgressBar() {
-    cy.wait(3000)
+    waitUntilCircularProgressDismiss()
     cy.get("body").then($body => {
         if ($body.find(`[data-cy=linear-progress]`).length > 0) {
             cy.getBySel('linear-progress').then($elment => {
@@ -501,11 +512,15 @@ export function checkRadioButton(value) {
     cy.get('[type="radio"]').check(value)
 }
 export function clickStartPostTest() {
-    cy.get('button').contains('Start').should('exist').and('be.visible').click()
+    interceptAttemptRequest()
+    cy.get('button').contains('Start').should('exist').scrollIntoView().and('be.visible').click()
+    cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
 }
 export function clickSubmit() {
+    interceptAttemptRequest()
     cy.get('button').contains('Submit').should('exist').and('be.visible').click()
-    cy.wait(2000)
+    cy.wait('@attemptResponse').its('response.statusCode').should('be.oneOf', [200, 304])
+    waitUntilCircularProgressDismiss()
 }
 export function clickSave() {
     cy.get('button').contains('Save').should('exist').and('be.visible').click()
@@ -591,8 +606,8 @@ export function clickDefinitionButton() {
         .scrollIntoView()
         .and('be.visible')
         .click()
-    cy.wait(3000)
-}
-export function closeDefinition() {
+    }
+    export function closeDefinition() {
+    cy.wait(2000) // this wait was intended to let tester see the content of the definition at the moment before dismissed.
     cy.get('#alert-dialog-title > .MuiButtonBase-root').click()
 }

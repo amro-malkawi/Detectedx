@@ -45,7 +45,7 @@ context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            
+            cy.waitForReact()
             clickOnModalityTab(MODALITY_NAME.DensityED)
         })
         it('should be able to do post test', () => {
