@@ -26,7 +26,6 @@ context('DensityED - Score Page', () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
             clickOnModalityTab(modality_name)
         })
 

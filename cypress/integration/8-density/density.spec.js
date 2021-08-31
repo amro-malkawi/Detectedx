@@ -9,7 +9,6 @@ context('Test Page - DensityED', () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
             clickOnModalityTab(modality_name)
             navigateToTestSet(modality_name)
         })

@@ -127,7 +127,6 @@ context('Post Test - Covid-19', () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
         })
 

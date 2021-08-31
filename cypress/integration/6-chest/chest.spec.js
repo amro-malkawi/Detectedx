@@ -12,7 +12,7 @@ context('Test Page - Chest', () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
+            
             cy.contains(modality_name).should('be.visible').click();
             navigateToTestSet(modality_name)
         })

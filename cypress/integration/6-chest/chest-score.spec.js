@@ -110,7 +110,7 @@ context('Chest - Score Page', () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
+            
             cy.contains(modality_name).should('be.visible').click();
         })
 

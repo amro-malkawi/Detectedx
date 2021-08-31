@@ -34,7 +34,6 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
         })
 

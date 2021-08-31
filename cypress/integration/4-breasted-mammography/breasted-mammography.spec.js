@@ -30,7 +30,6 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
         })
         beforeEach(() => {
             cy.visit('/app/test/list')
-            cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
             navigateToTestSet(CURRENT_TEST.MODALITY_NAME)
         })
