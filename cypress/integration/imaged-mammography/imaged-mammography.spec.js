@@ -1,8 +1,6 @@
 import {
     clickOnModalityTab,
-    selectTool,
     navigateToTestSet,
-    waitLinearProgressBar,
     waitLoadingResources,
     loginWithEmailPasswordWithCookiesPreserved,
 } from "../../support/common/functions/index"
@@ -12,13 +10,8 @@ import {
     validateInstructionFeature,
     validateNextPreviousFeature,
     validateInvertFeature,
+    validateTool,
  } from "../../support/common/functions/validation"
-
-import {
-    panAction,
-    windowAction,
-    zoomAction
-} from "../../support/common/functions/tool_action"
 
 import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
 
@@ -55,37 +48,19 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
             validateNextPreviousFeature(options)
         })
         it('should be able to use Pan tool', () => {
-            waitLinearProgressBar()
-            selectTool(TOOL.PAN)
-            cy.get('.image-row').then((row) => {
-                panAction(row)
-            })
+            validateTool(TOOL.PAN)
         })
 
         it('should be able to use Zoom tool', () => {
-            waitLinearProgressBar()
-            selectTool(TOOL.ZOOM)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
+            validateTool(TOOL.ZOOM)
         })
         it('should be able to use Window tool', () => {
-            waitLinearProgressBar()
-            selectTool(TOOL.WINDOW)
-            cy.get('.image-row').then((row) => {
-                windowAction(row)
-            })
+            validateTool(TOOL.WINDOW)
         })
         it('should be able to use Reset tool', () => {
-            waitLinearProgressBar()
-            selectTool(TOOL.ZOOM)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
-            selectTool(TOOL.RESET)
+            validateTool(TOOL.RESET)
         })
         it('should be able to use Invert feature', () => {
-            waitLinearProgressBar()
             validateInvertFeature()
         })
     })

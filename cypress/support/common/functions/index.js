@@ -97,10 +97,28 @@ export function waitUntilCanvasIsReady(canvas) {
     }
     
 }
+export function isElementExist(element, selector) {
+    cy.get('body').then($body => {
+        if ($body.find(selector).length > 0) {
+            return cy.get({ found: true }).as(`found-${element}`)
+        } else {
+            return cy.get({ found: false }).as(`found-${element}`)
+        }
+    });
+}
 export function clearSymbols() {
     interceptClearSymbols()
-    cy.getBySel('tool-clear-symbols').eq(0).should('exist').and('be.visible').click();
-    cy.wait('@deleteShapesResponse').its('response.statusCode').should('eq', 200)
+    const element = 'tool-clear-symbols'
+    const selector = `[data-cy="${element}"]`
+    isElementExist(element, selector)
+    cy.get(`@found-${element}`).then(({ selector }) => {
+        if (selector.found) {
+            cy.getBySel('tool-clear-symbols').eq(0).should('exist').and('be.visible').click();
+            cy.wait('@deleteShapesResponse').its('response.statusCode').should('eq', 200)
+        } else {
+            assert.isOk(`${element} not exist`);
+        }
+    })
 }
 export function clearSymbolsAt(index) {
     interceptClearSymbols()
