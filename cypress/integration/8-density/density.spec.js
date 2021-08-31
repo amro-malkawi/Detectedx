@@ -1,11 +1,13 @@
-import { toggleInvertAction, getTool, checkLoadingIndicator, clickOnModalityTab, selectDensity, navigateToTestSet } from "../../support/common/functions/index"
+import { toggleInvertAction, getTool, clickOnModalityTab, selectDensity, navigateToTestSet, loginWithEmailPasswordWithCookiesPreserved, waitLoadingResources } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'DensityED'
 context('Test Page - DensityED', () => {
     describe('Expect to see DensityED modality functional', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(modality_name)
@@ -13,7 +15,7 @@ context('Test Page - DensityED', () => {
         })
 
         it('should be able to load all images', () => {
-            checkLoadingIndicator()
+            waitLoadingResources()
         })
         it('should be able to use series feature', () => {
             const toggleSeriesIcon = () => {

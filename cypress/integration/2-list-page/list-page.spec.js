@@ -3,10 +3,13 @@ const apiCouponInfo = {
     method: 'GET',
     url: `${apiHost}/coupons/**`,
 }
+import { loginWithEmailPasswordWithCookiesPreserved } from '../../support/common/functions/index'
 context('List Page', () => {
     describe('Expect to see the list page functional', () => {
         before(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
+        before(() => {
             cy.visit('/app/test/list')
             cy.waitForReact();
         })
@@ -62,8 +65,10 @@ context('List Page', () => {
 
 context('Test Set Coupon', () => {
     describe('Expect to get response of invalid code', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
         })
         it('can popup modal, and allow user to add test set coupon', () => {
@@ -84,8 +89,10 @@ context('Test Set Coupon', () => {
         })
     })
     describe('Expect to get response of valid code', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
         })
         it('can popup modal, and allow user to add test set coupon', () => {

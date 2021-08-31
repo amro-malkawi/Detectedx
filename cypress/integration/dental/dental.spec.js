@@ -1,11 +1,12 @@
 import {
-    checkLoadingIndicator,
     clearSymbols,
     clickOnModalityTab,
     getToolWithMoreIcon,
+    loginWithEmailPasswordWithCookiesPreserved,
     navigateToTestSet,
     toggleMarkInfo,
     waitLinearProgressBar,
+    waitLoadingResources,
 } from "../../support/common/functions/index"
 
 import {
@@ -28,8 +29,10 @@ import {
 
 context(`Test Page - ${MODALITY_NAME.DentalED}`, () => {
     describe(`Expect to see ${MODALITY_NAME.DentalED} modality functional`, () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(MODALITY_NAME.DentalED)
@@ -37,8 +40,7 @@ context(`Test Page - ${MODALITY_NAME.DentalED}`, () => {
         })
 
         it('should be able to load all images', () => {
-            checkLoadingIndicator()
-            waitLinearProgressBar()
+            waitLoadingResources()
         })
         it('should be able to use Series feature', () => {
             validateSeriesFeature()

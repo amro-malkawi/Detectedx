@@ -1,5 +1,6 @@
 import {
     clickOnModalityTab,
+    loginWithEmailPasswordWithCookiesPreserved,
     navigateToTestSet,
     pauseIfVideoModalExist,
     waitLoadingResources,
@@ -24,8 +25,10 @@ const CURRENT_TEST = {
 
 context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
     describe(`Expect to see ${CURRENT_TEST.MODALITY_NAME} modality functional`, () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)

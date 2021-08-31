@@ -1,5 +1,5 @@
 import { dropdown } from '../../support/breasted-mammography/breasted-mammography-dropdown-list'
-import { selectCovidConfidence, isCurrentAQuestionPage, pauseIfVideoModalExist } from '../../support/common/functions/index'
+import { selectCovidConfidence, isCurrentAQuestionPage, pauseIfVideoModalExist, loginWithEmailPasswordWithCookiesPreserved } from '../../support/common/functions/index'
 const apiHost = Cypress.env('apiUrl')
 const apiSelectDrownDownList = {
     method: 'GET',
@@ -105,8 +105,10 @@ function interceptDropdownRequest() {
 
 context('Coivd-19 - Score Page', () => {
     describe('Expect to see Coivd-19 score page functional', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             cy.contains(modality_name).should('be.visible').click();

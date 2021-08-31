@@ -19,6 +19,7 @@ import {
     waitForUserInputQuestionnairePage,
     waitForUserInputEvaluationPage,
     waitUntilAllImagesLoaded,
+    loginWithEmailPasswordWithCookiesPreserved,
  } from "../../support/common/functions/index"
 
  import { MODALITY_NAME } from "../../support/common/constants"
@@ -39,16 +40,14 @@ function makeCorrectAnswer() {
 context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
     describe(`Expect to see ${MODALITY_NAME.DensityED} Post Test`, {
     }, () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(MODALITY_NAME.DensityED)
         })
-        afterEach(() => {
-            cy.wait(1000)
-        })
-
         it('should be able to do post test', () => {
             interceptAttemptRequest()
             interceptDicomImages()

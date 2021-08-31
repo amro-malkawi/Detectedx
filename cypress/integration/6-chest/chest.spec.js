@@ -1,17 +1,16 @@
-import { selectChestConfidence, navigateToTestSet } from "../../support/common/functions/index"
+import { selectChestConfidence, navigateToTestSet, loginWithEmailPasswordWithCookiesPreserved, waitLoadingResources } from "../../support/common/functions/index"
 import { TOOL } from "../../support/common/constants/index"
 
 const modality_name = 'CHEST'
 function getTool(toolName) {
     cy.get(`[data-tool="${toolName}"]`).should('exist').and('be.visible').click()
 }
-function checkLoadingIndicator() {
-    cy.get('.loading-indicator').should('not.exist')
-}
 context('Test Page - Chest', () => {
     describe('Expect to see Chest modality functional', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             cy.contains(modality_name).should('be.visible').click();
@@ -19,7 +18,7 @@ context('Test Page - Chest', () => {
         })
 
         it('should be able to load all images', () => {
-            checkLoadingIndicator()
+            waitLoadingResources()
         })
         it('should be able to use series feature', () => {
             const defaultTime = 2000

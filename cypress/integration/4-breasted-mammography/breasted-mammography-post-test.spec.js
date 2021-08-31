@@ -22,7 +22,8 @@ import {
     navigateToSpecificTestPage,
     waitUntilAllImagesLoaded, 
     waitForUserInputEvaluationPage, 
-    waitForUserInputQuestionnairePage, 
+    waitForUserInputQuestionnairePage,
+    loginWithEmailPasswordWithCookiesPreserved, 
 } from "../../support/common/functions/index"
 
 const POST_TEST_CARD = 'Mammography 60 Cases (M1 2020) Earn 6 Credits'
@@ -142,8 +143,10 @@ function markCorrectPosition(correctPosition, index) {
 }
 context(`Post Test - ${CURRENT_TEST.MODALITY_NAME}`, () => {
     describe(`Expect to see ${CURRENT_TEST.MODALITY_NAME} Post Test`, {}, () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)

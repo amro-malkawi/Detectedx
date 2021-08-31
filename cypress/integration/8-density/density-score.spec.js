@@ -11,7 +11,8 @@ import {
     routeToScorePage,
     selectDensity,
     selectTheLast,
-    waitForUserInputQuestionnairePage
+    waitForUserInputQuestionnairePage,
+    loginWithEmailPasswordWithCookiesPreserved
 } from '../../support/common/functions/index'
 import { validateScoreContainer } from '../../support/common/functions/validation'
 const CURRENT_TEST = {
@@ -20,8 +21,10 @@ const CURRENT_TEST = {
 const modality_name = 'DensityED'
 context('DensityED - Score Page', () => {
     describe('Expect to see DensityED score page functional', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(modality_name)

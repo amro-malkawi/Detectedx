@@ -1,5 +1,5 @@
 import { MODALITY_NAME } from "../../support/common/constants/index"
-import { waitLinearProgressBar, isCurrentAQuestionPage, isCurrentAnEvaluationFormPage, selectCovidConfidence, clickOnModalityTab, navigateToSpecificTestPage } from "../../support/common/functions/index"
+import { waitLinearProgressBar, isCurrentAQuestionPage, isCurrentAnEvaluationFormPage, selectCovidConfidence, clickOnModalityTab, navigateToSpecificTestPage, loginWithEmailPasswordWithCookiesPreserved } from "../../support/common/functions/index"
 const CARD = {
     COVID_POST_TEST: 'CovED I with Post Test'
 }
@@ -122,8 +122,10 @@ function waitLoading() {
 context('Post Test - Covid-19', () => {
     describe('Expect to see Covid-19 Post Test', {
     }, () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)

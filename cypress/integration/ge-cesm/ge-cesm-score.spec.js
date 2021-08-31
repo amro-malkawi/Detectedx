@@ -14,6 +14,7 @@ import {
     selectTheLast,
     waitForUserInputQuestionnairePage,
     closeDefinition,
+    loginWithEmailPasswordWithCookiesPreserved,
 } from '../../support/common/functions/index'
 
 import { MODALITY_NAME } from '../../support/common/constants'
@@ -25,8 +26,10 @@ const CURRENT_TEST = {
 }
 context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
     describe(`Expect to see ${CURRENT_TEST.MODALITY_NAME} score page functional`, () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)

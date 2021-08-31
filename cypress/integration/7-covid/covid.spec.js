@@ -1,26 +1,23 @@
-import { waitLinearProgressBar, selectCovidConfidence, navigateToTestSet } from "../../support/common/functions/index"
-import { TOOL } from "../../support/common/constants/index"
+import { waitLinearProgressBar, selectCovidConfidence, navigateToTestSet, waitLoadingResources, loginWithEmailPasswordWithCookiesPreserved, clickOnModalityTab, getTool } from "../../support/common/functions/index"
+import { MODALITY_NAME, TOOL } from "../../support/common/constants/index"
 
-const modality_name = 'CovED - COVID-19'
-function getTool(toolName) {
-    cy.get(`[data-tool="${toolName}"]`).should('exist').and('be.visible').click()
-}
-function checkLoadingIndicator() {
-    cy.get('.loading-indicator').should('not.exist')
+const CURRENT_TEST = {
+    MODALITY_NAME: MODALITY_NAME.Covid
 }
 context('Test Page - Covid-19', () => {
     describe('Expect to see Covid-19 modality functional', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/list')
             cy.waitForReact()
-            cy.contains(modality_name).should('be.visible').click();
-            navigateToTestSet(modality_name)
+            clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
+            navigateToTestSet(CURRENT_TEST.MODALITY_NAME)
         })
 
         it('should be able to load all images', () => {
-            checkLoadingIndicator()
-            waitLinearProgressBar()
+            waitLoadingResources()
         })
         it('should be able to use series feature', () => {
             const toggleSeriesIcon = () => {

@@ -1,3 +1,5 @@
+import { loginWithEmailPasswordWithCookiesPreserved } from "../../support/common/functions"
+
 const apiHost = Cypress.env('apiUrl')
 const apiUpdateInfo = {
     method: 'POST',
@@ -33,8 +35,10 @@ function onClickUpdateProfile() {
 
 context('User Page', () => {
     describe('Expect to see personal information', () => {
+        before(() => {
+            loginWithEmailPasswordWithCookiesPreserved()
+        })
         beforeEach(() => {
-            cy.loginWithEmailPassword(Cypress.env('test_username'), Cypress.env('test_password'));
             cy.visit('/app/test/profile')
             cy.waitForReact()
         })
