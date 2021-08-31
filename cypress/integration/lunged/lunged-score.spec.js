@@ -10,6 +10,7 @@ import {
     closeDefinition, 
     downloadCertificate, 
     isCurrentAQuestionPage, 
+    loginWithEmailPasswordWithCookiesPreserved, 
     markOnFilm, 
     navigateToScorePage, 
     navigateToTestPage, 
