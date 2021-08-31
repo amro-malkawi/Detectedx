@@ -8,8 +8,6 @@ context('List Page', () => {
     describe('Expect to see the list page functional', () => {
         before(() => {
             loginWithEmailPasswordWithCookiesPreserved()
-        })
-        before(() => {
             cy.visit('/app/test/list')
             cy.waitForReact();
         })
