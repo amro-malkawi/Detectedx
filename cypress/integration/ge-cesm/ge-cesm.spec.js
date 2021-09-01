@@ -1,40 +1,23 @@
 import {
-    checkLoadingIndicator,
-    clearSymbols,
     clickOnModalityTab,
-    getToolWithMoreIcon,
     loginWithEmailPasswordWithCookiesPreserved,
     navigateToTestSet,
-    toggleMarkInfo,
-    waitLinearProgressBar,
     waitLoadingResources,
 } from "../../support/common/functions/index"
-
 import { 
     validateSeriesFeature,
     validateInstructionFeature,
     validateNextPreviousFeature,
     validateInvertFeature,
+    validateTool,
+    validateHideInfoFeature,
+    validateClearSymbols,
  } from "../../support/common/functions/validation"
-
 import { validateHangingButtonFeature } from "../../support/ge-cesm/utils"
-
-import {
-    magnifyAction,
-    markAction,
-    markerFreehandAction,
-    markWithSaveAction,
-    panAction,
-    windowAction,
-    zoomAction
-} from "../../support/common/functions/tool_action"
-
 import { TOOL, MODALITY_NAME } from "../../support/common/constants/index"
-
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.GE_CESM
 }
-
 context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
     describe(`Expect to see ${CURRENT_TEST.MODALITY_NAME} modality functional`, () => {
         before(() => {
@@ -45,7 +28,6 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
             navigateToTestSet(CURRENT_TEST.MODALITY_NAME)
         })
-
         it('should be able to load all images', () => {
             waitLoadingResources()
         })
@@ -59,88 +41,37 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
             validateInstructionFeature()
         })
         it('should be able to use Next, Previous test case feature', () => {
-            waitLinearProgressBar()
-            checkLoadingIndicator()
             validateNextPreviousFeature()
         })
         it('should be able to use Pan tool', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.PAN)
-            cy.get('.image-row').then((row) => {
-                panAction(row)
-            })
+            validateTool(TOOL.PAN)
         })
-
         it('should be able to use Zoom tool', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.ZOOM)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
+            validateTool(TOOL.ZOOM)
         })
         it('should be able to use Magnify tool', () => {
-            getToolWithMoreIcon(TOOL.MAGNIFY)
-            cy.get('.image-row').then((row) => {
-                magnifyAction(row, 610, 200)
-            })
+            validateTool(TOOL.MAGNIFY)
         })
         it('should be able to use Window tool', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.WINDOW)
-            cy.get('.image-row').then((row) => {
-                windowAction(row)
-            })
+            validateTool(TOOL.WINDOW)
         })
         it('should be able to use Mark tool', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.MARKER)
-            clearSymbols()
-            cy.get('.image-row').then((row) => {
-                markAction(row, 500, 200)
-            })
+            validateTool(TOOL.MARKER)
         })
         it('should be able to use FreehandMarker tool', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.MARKER_FREEHAND)
-            cy.get('.image-row').then((row) => {
-                markerFreehandAction(row)
-            })
+            validateTool(TOOL.MARKER_FREEHAND)
         })
         it('should be able to use Reset tool', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.ZOOM)
-            cy.get('.image-row').then((row) => {
-                zoomAction(row)
-            })
-            getToolWithMoreIcon(TOOL.RESET)
+            validateTool(TOOL.RESET)
         })
         it('should be able to use Hide info feature', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.MARKER)
-            cy.get('.image-row').then((row) => {
-                const image = row[0].childNodes[0]
-                cy.wait(1000)
-                clearSymbols()
-                markWithSaveAction(image, 200, 200)
-                cy.wait(1000)
-                toggleMarkInfo()
-                cy.wait(3000)
-                toggleMarkInfo()
-            })
+            validateHideInfoFeature()
         })
         it('should be able to use Invert feature', () => {
-            waitLinearProgressBar()
             validateInvertFeature()
         })
         it('should be able to use Clear symbols feature', () => {
-            waitLinearProgressBar()
-            getToolWithMoreIcon(TOOL.MARKER)
-            cy.get('.image-row').then((row) => {
-                const image = row[0].childNodes[0]
-                markWithSaveAction(image, 200, 140)
-                cy.wait(3000)
-                clearSymbols()
-            })
+            validateClearSymbols()
         })
     })
 })
