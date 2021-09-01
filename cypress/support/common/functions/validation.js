@@ -147,7 +147,7 @@ export function validateNextPreviousFeature(opts) {
                                 }
                             }
                         }
-                        if (opts.modalityName !== MODALITY_NAME.DensityED) {
+                        if (opts && opts.modalityName !== MODALITY_NAME.DensityED) {
                             validateNextButton(testCaseValue)
                             cy.wait(1000)
                         }
