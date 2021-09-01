@@ -41,7 +41,7 @@ context(`Test Page - ${CURRENT_TEST.MODALITY_NAME}`, () => {
         it('should be able to use Next, Previous test case feature', () => {
             const options = {
                 selectConfidence: true,
-                modality_name: CURRENT_TEST.MODALITY_NAME,
+                modalityName: CURRENT_TEST.MODALITY_NAME,
             }
             validateNextPreviousFeature(options)
         })

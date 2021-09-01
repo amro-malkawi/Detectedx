@@ -14,6 +14,7 @@ import {
     selectChestConfidence, 
     selectChestCTConfidence, 
     selectCovidConfidence, 
+    selectDensity, 
     selectTheLast, 
     selectTool, 
     toggleInvertAction, 
@@ -112,7 +113,7 @@ export function validateNextPreviousFeature(opts) {
                         cy.getBySel('test-case-selector').should('have.value', testCaseValue).and('exist').and('be.visible')
                         if (opts) {
                             if (opts.selectConfidence) {
-                                switch (opts.modality_name) {
+                                switch (opts.modalityName) {
                                     case MODALITY_NAME.Chest:
                                         selectChestConfidence(opts.confidenceLevel)
                                         break;
@@ -126,7 +127,7 @@ export function validateNextPreviousFeature(opts) {
                                         break;
                                 }
                             } else if (opts.answerQuestion) {
-                                switch (opts.modality_name) {
+                                switch (opts.modalityName) {
                                     case MODALITY_NAME.ImagED_Chest:
                                         answerQuestionImagEDChest()
                                         break;
@@ -136,10 +137,20 @@ export function validateNextPreviousFeature(opts) {
                                     default:
                                         break;
                                 }
+                            } else if (opts.selectDensity) {
+                                switch (opts.modalityName) {
+                                    case MODALITY_NAME.DensityED:
+                                        selectDensity(opts.text)
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
-                        validateNextButton(testCaseValue)
-                        cy.wait(1000)
+                        if (opts.modalityName !== MODALITY_NAME.DensityED) {
+                            validateNextButton(testCaseValue)
+                            cy.wait(1000)
+                        }
                         validatePreviousButton(testCaseValue)
                     } else {
                         assert.isOk(`${testCaseSelector} have length less than 1`);
