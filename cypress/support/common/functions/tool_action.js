@@ -155,18 +155,13 @@ export function zoomAction(row) {
 }
 export function lengthAction(row) {
     cy.wrap(row[0].childNodes[0])
-        .dblclick()
         .trigger('mousedown', { which: 1, pageX: 900, pageY: 500 })
         .trigger('mousemove', { which: 1, pageX: 910, pageY: 510 })
         .trigger('mouseup')
-    cy.wait(2000)
+    cy.wait(1000)
     clearSymbols()
 
 }
 export function resetAction() {
-    selectTool(TOOL.ZOOM)
-    cy.get('.image-row').then((row) => {
-        zoomAction(row)
-    })
     selectTool(TOOL.RESET)
 }

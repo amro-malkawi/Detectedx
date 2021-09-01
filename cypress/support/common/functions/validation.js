@@ -294,13 +294,21 @@ export function validateGridFeature() {
 }
 
 // ----------------- tool validation -------------------------
+function focusFirstImage() {
+    selectTool(TOOL.PAN)
+    cy.get('.image-row').then((row) => {
+        cy.wrap(row[0].childNodes[0]).dblclick()
+    })
+}
 export function validateTool(name) {
     waitLoadingResources()
-    selectTool(name)
-    clearSymbols()
+    if (name != TOOL.RESET) {
+        focusFirstImage()
+        selectTool(name)
+        clearSymbols()
+    }
     actionTool(name)
 }
-
 export function actionTool(tool_name) {
     cy.get('.image-row').then((row) => {
         switch (tool_name) {
@@ -333,7 +341,6 @@ export function actionTool(tool_name) {
         }
     })
 }
-
 // ----------------- score-spec ------------------------------
 export function validateScoreContainer() {
     waitLoadingResources()

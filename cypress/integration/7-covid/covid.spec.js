@@ -14,7 +14,6 @@ context('Test Page - Covid-19', () => {
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
             navigateToTestSet(CURRENT_TEST.MODALITY_NAME)
         })
-
         it('should be able to load all images', () => {
             waitLoadingResources()
         })
@@ -37,7 +36,6 @@ context('Test Page - Covid-19', () => {
         it('should be able to use Pan tool', () => {
             validateTool(TOOL.PAN)
         })
-        
         it('should be able to use Zoom tool', () => {
             validateTool(TOOL.ZOOM)
         })

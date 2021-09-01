@@ -628,6 +628,6 @@ export function clickDefinitionButton() {
         .click()
     }
     export function closeDefinition() {
-    cy.wait(2000) // this wait was intended to let tester see the content of the definition at the moment before dismissed.
+    cy.wait(1000) // this wait was intended to let tester see the content of the definition at the moment before dismissed.
     cy.get('#alert-dialog-title > .MuiButtonBase-root').click()
 }
