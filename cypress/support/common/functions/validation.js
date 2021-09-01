@@ -264,7 +264,7 @@ export function validateGridFeature() {
             expect(row[1].childElementCount).to.eq(4)
         })
 
-        cy.wait(2000)
+        cy.wait(1000)
 
         selectGridTool()
         cy.get('tbody > :nth-child(2) > :nth-child(2)') // 4 grid
@@ -278,7 +278,7 @@ export function validateGridFeature() {
             expect(row[1].childElementCount).to.eq(2)
         })
 
-        cy.wait(2000)
+        cy.wait(1000)
 
         selectGridTool()
         cy.get('tbody > :nth-child(1) > :nth-child(1)') // 1 grid
