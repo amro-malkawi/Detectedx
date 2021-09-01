@@ -34,7 +34,6 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
             cy.visit('/app/test/list')
             clickOnModalityTab(CURRENT_TEST.MODALITY_NAME)
         })
-
         it('should be able to submit test or make questionnaire on score page', () => {
             navigateToTestPage(CURRENT_TEST.MODALITY_NAME)
             pauseIfVideoModalExist()
@@ -47,22 +46,19 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
                     submitTestFlow()
                 }
             })
-
             const questionnaireFlow = () => {
                 checkAnswer()
                 routeToScorePage()
                 downloadCertificate()
             }
-
             const submitTestFlow = () => {
                 submitTest()
                 waitForUserInputQuestionnairePage()
                 questionnaireFlow()
             }
-
             const submitTest = () => {
                 selectTheLast()
-                selectChestCTConfidence(5)
+                selectChestCTConfidence()
                 clickSubmit()
             }
         })
