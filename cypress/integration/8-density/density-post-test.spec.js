@@ -20,6 +20,8 @@ import {
     waitForUserInputEvaluationPage,
     waitUntilAllImagesLoaded,
     loginWithEmailPasswordWithCookiesPreserved,
+    waitUntilQuestionnaireIsReady,
+    waitUntilEvaluationFormIsReady,
  } from "../../support/common/functions/index"
 
  import { MODALITY_NAME } from "../../support/common/constants"
@@ -34,7 +36,6 @@ function makeCorrectAnswer() {
         const element = correctAnswer[index];
         selectTestCaseAt(index + 1)
         selectDensity(element)
-        cy.wait(3000)
     }
 }
 context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
@@ -53,7 +54,6 @@ context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
             interceptDicomImages()
             navigateToSpecificTestPage(POST_TEST_CARD)
             cy.wait('@attemptResponse').its('response.statusCode').should('eq', 200)
-            cy.wait(1500)
             isCurrentAQuestionPage()
             cy.get('@foundQuestionnairePage').then(({ selector }) => {
                 if (selector.found) {
@@ -68,7 +68,7 @@ context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
                 waitUntilAllImagesLoaded()
                 selectTheLast()
                 selectDensity('a')
-                cy.wait(1000)
+                waitUntilQuestionnaireIsReady()
                 waitForUserInputQuestionnairePage()
                 questionnaireFlow()
             }
@@ -88,6 +88,7 @@ context(`Post Test - ${MODALITY_NAME.DensityED}`, () => {
             }
             const startPostTestWithCorrectAnswer = () => {
                 makeCorrectAnswer()
+                waitUntilEvaluationFormIsReady()
                 waitForUserInputEvaluationPage()
                 checkAnswer()
                 routeToScorePage()

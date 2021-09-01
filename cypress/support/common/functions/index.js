@@ -322,6 +322,26 @@ export function waitUntilCircularProgressDismiss() {
         }
     })
 }
+export function waitUntilEvaluationFormIsReady() {
+    const errorMsg = 'Failed to wait questionnaire page (timeout)'
+    const opts = waitUntilOptionsBuilder(errorMsg, 3000, 1000)
+    cy.waitUntil(() => cy.get('body').then((body) => {
+        cy.wrap(body).find('h2').then((h2) => {
+            const EvaluationForm = 'Evaluation Form'
+            cy.wrap(h2).should('have.text', EvaluationForm)
+        })
+    }), opts);
+}
+export function waitUntilQuestionnaireIsReady() {
+    const errorMsg = 'Failed to wait questionnaire page (timeout)'
+    const opts = waitUntilOptionsBuilder(errorMsg, 3000, 1000)
+    cy.waitUntil(() => cy.get('body').then((body) => {
+        cy.wrap(body).find('h2').then((h2) => {
+            const Questionnaires = 'Questionnaires'
+            cy.wrap(h2).should('have.text', Questionnaires)
+        })
+    }), opts);
+}
 export function isCurrentAQuestionPage() {
     cy.url().then((url) => {
         const mainQuestions = 'mainQuestions'
