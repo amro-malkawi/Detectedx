@@ -15,9 +15,10 @@ import {
     downloadCertificates, 
     alertAndPause, 
     checkAnswer, 
-    routeToScorePage 
+    routeToScorePage, 
+    selectCovidConfidence
 } from "../../support/common/functions/index"
-import { makeCorrectAnswer, selectCovidConfidences } from "../../support/covid/utils"
+import { makeCorrectAnswer } from "../../support/covid/utils"
 const CARD = {
     COVID_POST_TEST: 'CovED I with Post Test'
 }
@@ -51,7 +52,7 @@ context('Post Test - Covid-19', () => {
             const submitTestFlow = () => {
                 selectTheLast()
                 waitLinearProgressBar()
-                selectCovidConfidences()
+                selectCovidConfidence()
                 clickSubmit()
                 waitForUserInputQuestionnairePage()
                 questionnaireFlow()
@@ -65,7 +66,7 @@ context('Post Test - Covid-19', () => {
                 clickStartPostTest()
                 selectTheLast()
                 waitLinearProgressBar()
-                selectCovidConfidences()
+                selectCovidConfidence()
                 clickSubmit()
                 clickReviewAnswers()
                 clickReattempt()

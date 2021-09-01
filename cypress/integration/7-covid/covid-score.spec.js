@@ -15,10 +15,10 @@ import {
     waitForUserInputQuestionnairePage,
     clickOnModalityTab,
     navigateToTestPage,
-    clickSubmit
+    clickSubmit,
+    selectCovidConfidence
 } from '../../support/common/functions/index'
 import { validateReSelectDropdownList, validateScoreContainer } from '../../support/common/functions/validation'
-import { selectCovidConfidences } from '../../support/covid/utils'
 const CURRENT_TEST = {
     MODALITY_NAME: MODALITY_NAME.Covid,
     VIEW_BUTTON_INDEX: 0,
@@ -56,7 +56,7 @@ context(`${CURRENT_TEST.MODALITY_NAME} - Score Page`, () => {
             }
             const submitTest = () => {
                 selectTheLast()
-                selectCovidConfidences()
+                selectCovidConfidence()
                 clickSubmit()
             }
         })

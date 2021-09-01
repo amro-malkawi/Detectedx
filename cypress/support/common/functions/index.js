@@ -236,7 +236,15 @@ export function selectTool(name) {
     cy.get('body').then($body => {
         if ($body.find('.more-icon').length > 0) {
             // more icon is exist
-            getToolWithMoreIcon(name)
+            cy.get('.more-icon').then((element) => {
+                if (element.is(':visible')) {
+                    // more icon is exist and visible
+                    getToolWithMoreIcon(name)
+                } else {
+                    // more icon is exist but not be visible
+                    getTool(name)
+                }
+            })
         } else {
             // more icon is not exist
             getTool(name)
@@ -433,15 +441,27 @@ export function selectDensity(text) {
     })
 }
 export function selectConfidenceBySelector(level, selector) {
-    cy.getBySel(`${selector}`).then((value) => {
-        const choiceIndex = level
-        const element = value[0].children[choiceIndex].childNodes[0]
+    const selectChoices = (element) => {
         const errorMsg = 'Failed select confidence by selector (timeout)'
         const opts = waitUntilOptionsBuilder(errorMsg)
         cy.waitUntil(() => cy.wrap(element).then((element) => {
-            cy.wrap(element).should('exist')
+            cy.wrap(element).should('exist').and('be.visible')
         }), opts);
         cy.wrap(element).click()
+    }
+    cy.getBySel(`${selector}`).then((value) => {
+        if (level) {
+            // Check for specific level
+            const element = value[0].childNodes[level].childNodes[0]
+            selectChoices(element)
+        } else {
+            // Check for all level
+            const optionLength = value[0].childNodes.length
+            for (let index = 0; index < optionLength; index++) {
+                const element = value[0].childNodes[index].childNodes[0]
+                selectChoices(element)
+            }
+        }
     })
 }
 export function selectChestCTConfidence(level) {
