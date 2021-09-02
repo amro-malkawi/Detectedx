@@ -607,7 +607,7 @@ class TestView extends Component {
                                     onShowPopup={this.handleShowPopup.bind(this)}
                                 />
                                 <SideQuestions
-                                    modality_type={this.state.test_case.modalities.modality_type}
+                                    modalityInfo={this.state.test_case.modalities}
                                     ref={this.sideQuestionRef}
                                     attempts_id={this.state.attempts_id}
                                     test_case_id={this.state.test_cases_id}

@@ -174,6 +174,8 @@ module.exports = {
 	"testView.covidQuestion.yourJudgement": "Your judgement",
 	"testView.chestQuestion.ratingTitle": "Confidence that the subject has Occupational Lung Disease",
 	"testView.chestCTQuestion.ratingTitle": "Confidence that the subject has Occupational Lung Disease",
+	"testView.LinEDQuestion.ratingTitle": "This line is in the correct position:",
+	"testView.LinEDQuestion.ratingDesc": "Completely Disagree to Completely Agree",
 	"testView.browser.laterality": "Laterality:",
 	"testView.browser.type": "Type:",
 	"testView.viewer.slice": "Slice",

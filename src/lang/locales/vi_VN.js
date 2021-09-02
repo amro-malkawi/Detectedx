@@ -173,6 +173,8 @@ module.exports = {
     "testView.covidQuestion.yourJudgement": "Phán quyết của bạn",
     "testView.chestQuestion.ratingTitle": "Tin chắc rằng đối tượng mắc bệnh phổi nghề nghiệp",
     "testView.chestCTQuestion.ratingTitle": "Tin chắc rằng đối tượng mắc bệnh phổi nghề nghiệp",
+    "testView.LinEDQuestion.ratingTitle": "Dòng này ở đúng vị trí:",
+    "testView.LinEDQuestion.ratingDesc": "Hoàn toàn không đồng ý đến hoàn toàn đồng ý",
     "testView.browser.laterality": "Độ trễ:",
     "testView.browser.type": "Loại:",
     "testView.viewer.slice": "Lát",
