@@ -530,6 +530,7 @@ class Attempt extends Component {
                             name="position"
                             value={item.answer}
                             row
+                            className={'ml-30'}
                         >
                             {
                                 options.map((v, i) => {
@@ -572,7 +573,7 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
-                    <FormGroup row>
+                    <FormGroup row className={'ml-30'}>
                         {
                             options.map((v, i) => {
                                 return (
@@ -613,6 +614,7 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
+                    <div className={'ml-30 mb-2'}>
                     <Input
                         disabled={commponentDisable}
                         type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
@@ -622,6 +624,7 @@ class Attempt extends Component {
                         value={item.answer}
                         onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value)}
                     />
+                    </div>
                 </FormGroup>
             );
         } else if (item.questionnaire.type === 3) {   // multiple select
@@ -689,14 +692,24 @@ class Attempt extends Component {
         } else {
             return null;
         }
-        for (let i = 0; i < questions.length; i += 2) {
+        // for (let i = 0; i < questions.length; i += 2) {
+        //     result.push(
+        //         <div className={'row m-0'} key={i}>
+        //             <Col sm={6}>
+        //                 {this.renderQuestionnaireItem(questions[i], i, isDisable)}
+        //             </Col>
+        //             <Col sm={6}>
+        //                 {this.renderQuestionnaireItem(questions[i + 1], i + 1, isDisable)}
+        //             </Col>
+        //         </div>
+        //     )
+        // }
+
+        for (let i = 0; i < questions.length; i++) {
             result.push(
                 <div className={'row m-0'} key={i}>
-                    <Col sm={6}>
+                    <Col sm={12}>
                         {this.renderQuestionnaireItem(questions[i], i, isDisable)}
-                    </Col>
-                    <Col sm={6}>
-                        {this.renderQuestionnaireItem(questions[i + 1], i + 1, isDisable)}
                     </Col>
                 </div>
             )
