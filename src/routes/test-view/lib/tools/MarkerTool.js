@@ -17,6 +17,7 @@ export default class MarkerTool extends BaseAnnotationTool {
             supportedInteractionTypes: ['Mouse', 'Touch'],
             configuration: {
                 truthColour: 'red',
+                notCancerColour: '#8CFF29',
                 answerColour: 'yellow'
             }
         };
@@ -118,7 +119,7 @@ export default class MarkerTool extends BaseAnnotationTool {
                 let colour;
                 let padding;
                 if (mark.isTruth) {
-                    colour = this.configuration.truthColour;
+                    colour = mark.isCancerMarker ? this.configuration.truthColour : this.configuration.notCancerColour;
                     padding = -15 - (lesionNames.length * 15) - radius;
                 }
                 else {

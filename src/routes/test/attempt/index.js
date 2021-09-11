@@ -614,16 +614,16 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
-                    <div className={'ml-30 mb-2'}>
-                    <Input
-                        disabled={commponentDisable}
-                        type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
-                        name="name"
-                        id="name"
-                        placeholder=""
-                        value={item.answer}
-                        onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value)}
-                    />
+                    <div className={'ml-30 mb-2'} style={{maxWidth: 250}}>
+                        <Input
+                            disabled={commponentDisable}
+                            type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
+                            name="name"
+                            id="name"
+                            placeholder=""
+                            value={item.answer}
+                            onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value)}
+                        />
                     </div>
                 </FormGroup>
             );
