@@ -47,7 +47,6 @@ class List extends Component {
 
     getData() {
         Apis.currentTestSets().then((modalityList) => {
-            console.log('asdfasdf', modalityList)
             this.setState({modalityList: modalityList});
         });
     }
@@ -81,12 +80,8 @@ class List extends Component {
         if (this.state.selectedId.indexOf !== undefined && this.state.selectedId.indexOf('/app/test/attempt/') === 0) {
             this.props.history.push(this.state.selectedId)
         } else {
-            let newData = {
-                test_set_id: this.state.selectedId,
-            };
-            Apis.attemptsAdd(newData).then(resp => {
+            Apis.attemptsAdd(this.state.selectedId).then(resp => {
                 let path = '/test-view/' + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
-                // let path = '/app/test/attempt/' + resp.id;
                 this.props.history.push(path);
             });
         }

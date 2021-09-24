@@ -198,9 +198,11 @@ export function currentTestSets() {
  * attempt operation
  */
 
-export function attemptsAdd(data) {
-    const url = '/attempts?access_token=' + getAccessToken();
-    return instance.post(url, data).then((response) => response.data);
+export function attemptsAdd(test_set_id) {
+    // const url = '/attempts?access_token=' + getAccessToken();
+    // return instance.post(url, data).then((response) => response.data);
+    const url = '/attempts/start?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }
 
 export function attemptsMoveTestCase(id, testCaseId) {

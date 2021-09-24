@@ -46,28 +46,23 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        // if(browserName !== 'Chrome' && browserName !== 'Firefox') {
-        //     return (<Route component={ChromeError}/>);
-        // }
+        if(browserName !== 'Chrome' && browserName !== 'Firefox') {
+            return (<Route component={ChromeError}/>);
+        }
         const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
-            if (!isLogin) {
-                return (<Redirect to={'/signin'}/>);
-                // return (<Redirect to={'/site/home'}/>);
-            } else {
-                return (<Redirect to={'/app/test/list'}/>);
-                // return (<Redirect to={'/site/home'}/>);
-            }
+            return (<Redirect to={'/app/test/list'}/>);
+            // if (!isLogin) {
+            //     return (<Redirect to={'/signin'}/>);
+            // } else {
+            //     return (<Redirect to={'/app/test/list'}/>);
+            // }
         }
         return (
             <RctThemeProvider>
                 <NotificationContainer/>
                 <Switch>
-                    <PrivateRoute
-                        path={`${match.url}app`}
-                        authUser={isLogin}
-                        component={RctDefaultLayout}
-                    />
+                    <Route path={`${match.url}app`} component={RctDefaultLayout} />
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
