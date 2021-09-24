@@ -133,25 +133,25 @@ class Signin extends Component {
                                                 <Link to="/forgot-password"><IntlMessages id={"user.forgotPassword"}/></Link>
                                             </div>
                                         </Form>
-                                        <div className={'d-flex flex-column'}>
-                                            <div className={'d-flex align-items-center mt-2'}>
-                                                <div className={'signin-sso-bar'}/>
-                                                <span>or</span>
-                                                <div className={'signin-sso-bar'}/>
-                                            </div>
-                                            <div className={'d-flex sso-button justify-content-center mt-2'}>
-                                                <a onClick={() => window.location.href="/sso/siemens_login"}>
-                                                    <img src={require('Assets/img/sso/siemens_healthineers_logo.png')} className="" alt=""/>
-                                                    <span>Sign in with Siemens</span>
-                                                </a>
-                                            </div>
-                                            <div className={'d-flex sso-button justify-content-center mt-2'}>
-                                                <a onClick={() => window.location.href="/sso/ge_login"}>
-                                                    <img src={require('Assets/img/sso/ge_healthineers_logo.png')} className="" alt=""/>
-                                                    <span>Sign in with GE Healthcare</span>
-                                                </a>
-                                            </div>
-                                        </div>
+                                        {/*<div className={'d-flex flex-column'}>*/}
+                                        {/*    <div className={'d-flex align-items-center mt-2'}>*/}
+                                        {/*        <div className={'signin-sso-bar'}/>*/}
+                                        {/*        <span>or</span>*/}
+                                        {/*        <div className={'signin-sso-bar'}/>*/}
+                                        {/*    </div>*/}
+                                        {/*    <div className={'d-flex sso-button justify-content-center mt-2'}>*/}
+                                        {/*        <a onClick={() => window.location.href="/sso/siemens_login"}>*/}
+                                        {/*            <img src={require('Assets/img/sso/siemens_healthineers_logo.png')} className="" alt=""/>*/}
+                                        {/*            <span>Sign in with Siemens</span>*/}
+                                        {/*        </a>*/}
+                                        {/*    </div>*/}
+                                        {/*    <div className={'d-flex sso-button justify-content-center mt-2'}>*/}
+                                        {/*        <a onClick={() => window.location.href="/sso/ge_login"}>*/}
+                                        {/*            <img src={require('Assets/img/sso/ge_healthineers_logo.png')} className="" alt=""/>*/}
+                                        {/*            <span>Sign in with GE Healthcare</span>*/}
+                                        {/*        </a>*/}
+                                        {/*    </div>*/}
+                                        {/*</div>*/}
                                     </div>
                                 </div>
                             </div>

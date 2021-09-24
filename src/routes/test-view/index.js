@@ -587,6 +587,7 @@ class TestView extends Component {
                                         modality_type={this.state.test_case.modalities.modality_type}
                                         modality_name={this.state.test_case.modalities.name}
                                         complete={this.state.complete}
+                                        isPostTest={this.state.isPostTest}
                                     />
                                 }
                                 {

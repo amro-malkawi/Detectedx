@@ -50,7 +50,7 @@ class CommentInfo extends Component {
     }
 
     getComment() {
-        Apis.attemptGetTestCaseComment(this.props.attempts_id, this.props.test_case_id).then((resp) => {
+        Apis.attemptGetTestCaseComment(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then((resp) => {
             this.setState({
                 commentText: resp,
                 loading: false

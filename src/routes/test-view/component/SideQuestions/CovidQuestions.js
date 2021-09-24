@@ -306,6 +306,7 @@ export default class CovidQuestions extends Component {
                             modality_type={'covid'}
                             complete={this.props.complete}
                             modality_name={'Covid'}
+                            isPostTest={this.props.isPostTest}
                         />
                     }
                     <div className={'covid-questions'}>

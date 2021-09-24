@@ -295,8 +295,8 @@ export function attepmtsGetCovidTruth(id, test_case_id) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function attemptGetTestCaseComment(id, test_case_id) {
-    let url = '/attempts/' + id + '/get_test_case_comment?test_case_id=' + test_case_id + '&access_token=' + getAccessToken();
+export function attemptGetTestCaseComment(id, test_case_id, is_post_test) {
+    let url = '/attempts/' + id + '/get_test_case_comment?test_case_id=' + test_case_id + '&is_post_test=' + is_post_test + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
