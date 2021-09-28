@@ -12,7 +12,7 @@ import IntlMessages from "Util/IntlMessages";
 const question = [
     {
         id: 'chestCTQ1',
-        label: '1. Well defined rounded opacities?',
+        label: 'Well defined rounded opacities? Diffuse well rounded opacities?',
         options: ['Yes', 'No'],
         child: {
             q1Sub1: {
@@ -28,7 +28,7 @@ const question = [
     },
     {
         id: 'chestCTQ2',
-        label: '2. Irregular and/or linear opacities?',
+        label: 'Irregular and/or linear opacities? Diffuse irregular and/or linear opacities?',
         options: ['Yes', 'No'],
         child: {
             q2Sub1: {
@@ -44,7 +44,7 @@ const question = [
     },
     {
         id: 'chestCTQ3',
-        label: '3. Large opacities?',
+        label: 'Large opacities? Large Opacities consistent with progressive massive fibrosis?',
         options: ['Yes', 'No'],
         child: {
             q3Sub1: {
@@ -58,7 +58,7 @@ const question = [
     },
     {
         id: 'chestCTQ4',
-        label: '4. Ground glass opacity? Grade?',
+        label: 'Ground glass opacity? Grade?',
         options: ['Yes', 'No'],
         child: {
             aOptions: ['U', 'M', 'L'],
@@ -68,7 +68,7 @@ const question = [
     },
     {
         id: 'chestCTQ5',
-        label: '5. Honeycombing?',
+        label: 'Honeycombing? Grade?',
         options: ['Yes', 'No'],
         child: {
             aOptions: ['U', 'M', 'L'],
@@ -78,7 +78,7 @@ const question = [
     },
     {
         id: 'chestCTQ6',
-        label: '6. Emphysema?',
+        label: 'Emphysema? Grade? ',
         options: ['Yes', 'No'],
         child: {
             aOptions: ['U', 'M', 'L'],
@@ -88,7 +88,7 @@ const question = [
     },
     {
         id: 'chestCTQ7',
-        label: '7. Mosaic Attenuation?',
+        label: 'Mosaic Attenuation?',
         options: ['Yes', 'No'],
         child: {
             aOptions: ['U', 'M', 'L'],
@@ -98,39 +98,49 @@ const question = [
     },
     {
         id: 'chestCTQ8',
-        label: '8. Predominant Parenchymal Abnormality?',
-        options: ['RO', 'IR', 'GGO', 'HC', 'EM', 'LO'],
+        label: 'Predominant Parenchymal Abnormality?',
+        options: [
+            {value: 'RO', tooltip: 'Rounded Opacities'},
+            {value: 'IR', tooltip: 'Irregular Opacities'},
+            {value: 'GGO', tooltip: 'Ground Glass Opacities'},
+            {value: 'HC', tooltip: 'Honeycombing'},
+            {value: 'EM', tooltip: 'Emphysema'},
+            {value: 'LO', tooltip: 'Large Opacities'},
+        ]
     },
     {
         id: 'chestCTQ9',
-        label: '9. CT findings of Pleural Disease?',
+        label: 'CT findings of Pleural Disease?',
         options: ['Yes', 'No'],
         child: ['Plaque', 'Calcification', 'Fluid']
     },
     {
-        id: 'chestCTQ10',
-        label: '10. Significant solid nodules?',
-        options: ['Yes', 'No'],
-        child: {
-            aOptions: ['U', 'M', 'L'],
-            bOptions: ['R', 'L']
-        }
-    },
-    {
-        id: 'chestCTQ11',
-        label: '11. Significant subsolid nodules?',
-        options: ['Yes', 'No'],
-        child: {
-            aOptions: ['U', 'M', 'L'],
-            bOptions: ['R', 'L']
-        }
-    },
-    {
         id: 'chestCTQ12',
-        label: '12. Lymph nodes?',
+        label: 'Lymph nodes?',
         options: ['Yes', 'No'],
-        child: ['Englarged > 10mm short axis', 'Hiatal Hernia']
+        child: ['Englarged > 10mm short axis', 'Lymph Node Calcification']
     },
+]
+
+const ratings = [
+    {value: 0, tooltip: 'Normal'},
+    {value: 1, tooltip: <span>Shows abnormalities for which occupational disease is not a differential <br/>eg. Pneumonia, CCF</span>},
+    {
+        value: 2,
+        tooltip: <span>Abnormalities are present that may occur with occupational lung disease, however this would not become the key differential, even with a history of occupational exposure. <br/>eg. Sparse or isolated granulomas, focal postinfectious scarring, pleural effusions, enlarged noncalcified mediastinal lymph nodes</span>
+    },
+    {
+        value: 3,
+        tooltip: <span>Abnormalities are present that will occur with occupational lung disease, but are not highly specific. A suggestive exposure history would support the diagnosis in the appropriate setting, although other differential considerations would remain. <br/>eg. Nonspecific pulmonary fibrosis, emphysema, bronchitis, bronchiolitis/small airways disease, bronchogenic malignancy</span>
+    },
+    {
+        value: 4,
+        tooltip: <span>Abnormalities are present that would be typical of occupational lung disease, which would be the first differential in the appropriate clinical setting. <br/>eg. Classical silicosis, Coal Workers’ Pneumoconiosis</span>
+    },
+    {
+        value: 5,
+        tooltip: <span>Features present which are highly specific for occupational lung disease, which would be the key differential even without available history. <br/>eg Typical asbestos plaques with or without fibrosis. Classical silicosis with eggshell calcification of lymph nodes, Complicated silicosis or CWP with PMF. Mesothelioma.</span>
+    }
 ]
 
 export default class ChestCTQuestion extends Component {
@@ -245,7 +255,7 @@ export default class ChestCTQuestion extends Component {
     renderCheckGroup(qId, childQId, disabled, aOptions, bOptions, cOptions) {
         const {answerValue, truthValue} = this.state;
         const getTruthIconClass = (childQId, aOption, bOption, value) => {
-            if(
+            if (
                 !truthValue[qId] ||
                 !truthValue[qId][childQId + aOption + bOption] ||
                 truthValue[qId][childQId + aOption + bOption] !== value
@@ -506,12 +516,15 @@ export default class ChestCTQuestion extends Component {
         }
     }
 
-    renderQuestion(questionObj, disabled) {
+    renderQuestion(questionObj, index, disabled) {
         const {answerValue, truthValue} = this.state;
         const qTruth = truthValue[questionObj.id] !== undefined ? truthValue[questionObj.id].value : '';
         return (
             <div key={questionObj.id} className={'chest-question'}>
-                <div className={'chest-question-title'}>{questionObj.label}</div>
+                <div className={'chest-question-title'}>
+                    <span className={'mr-1'}>{index + 1}.</span>
+                    <span>{questionObj.label}</span>
+                </div>
                 <RadioGroup
                     className={'ml-4'}
                     aria-label="position"
@@ -522,22 +535,39 @@ export default class ChestCTQuestion extends Component {
                     disabled={disabled}
                 >
                     {
-                        questionObj.options.map((v) => (
-                            <QuestionLabel
-                                key={v}
-                                value={v}
-                                control={
-                                    <QuestionRadio
-                                        icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                        checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                        disableRipple
+                        questionObj.options.map((v, i) => {
+                            return !v.tooltip ?
+                                <QuestionLabel
+                                    key={v}
+                                    value={v}
+                                    control={
+                                        <QuestionRadio
+                                            icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                            checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                            disableRipple
+                                        />
+                                    }
+                                    label={v}
+                                    labelPlacement="end"
+                                    disabled={disabled}
+                                /> :
+                                <CheckboxTooltip title={v.tooltip} key={i}>
+                                    <QuestionLabel
+                                        key={v.value}
+                                        value={v.value}
+                                        control={
+                                            <QuestionRadio
+                                                icon={<span className={'chest-question-radio-icon ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                                checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                                disableRipple
+                                            />
+                                        }
+                                        label={v.value}
+                                        labelPlacement="end"
+                                        disabled={disabled}
                                     />
-                                }
-                                label={v}
-                                labelPlacement="end"
-                                disabled={disabled}
-                            />
-                        ))
+                                </CheckboxTooltip>
+                        })
                     }
                 </RadioGroup>
                 {this.renderAdditionalQuestion(questionObj, disabled)}
@@ -553,7 +583,7 @@ export default class ChestCTQuestion extends Component {
                 <div>
                     <div className={'covid-questions'}>
                         {
-                            question.map(v => this.renderQuestion(v, disabled))
+                            question.map((v, i) => this.renderQuestion(v, i, disabled))
                         }
                     </div>
                     <div className={'covid-confidence'}>
@@ -568,10 +598,7 @@ export default class ChestCTQuestion extends Component {
                             className={'justify-content-center mt-0'}
                         >
                             {
-                                [
-                                    {value: 0, tooltip: 'Absolutely not'}, {value: 1, tooltip: 'Probably not'}, {value: 2, tooltip: 'Possibly not'},
-                                    {value: 3, tooltip: 'Possibly yes'}, {value: 4, tooltip: 'Probably yes'}, {value: 5, tooltip: 'Absolutely yes'}
-                                ].map((v, i) => {   // [0, 1, 2, 3...]
+                                ratings.map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
                                         <CheckboxTooltip title={v.tooltip} key={i}>
                                             <RatingLabel
