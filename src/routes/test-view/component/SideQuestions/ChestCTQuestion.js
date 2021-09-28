@@ -89,12 +89,7 @@ const question = [
     {
         id: 'chestCTQ7',
         label: '7. Mosaic Attenuation?',
-        options: ['Yes', 'No'],
-        child: {
-            aOptions: ['U', 'M', 'L'],
-            bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
-        }
+        options: ['Yes', 'No']
     },
     {
         id: 'chestCTQ8',
@@ -494,7 +489,7 @@ export default class ChestCTQuestion extends Component {
                 return this.renderQuestion2Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ3') {
                 return this.renderQuestion3Additional(questionObj, disabled);
-            } else if (questionObj.id === 'chestCTQ4' || questionObj.id === 'chestCTQ5' || questionObj.id === 'chestCTQ6' || questionObj.id === 'chestCTQ7') {
+            } else if (questionObj.id === 'chestCTQ4' || questionObj.id === 'chestCTQ5' || questionObj.id === 'chestCTQ6') {
                 return this.renderQuestion4Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ9') {
                 return this.renderQuestion9Additional(questionObj, disabled);
