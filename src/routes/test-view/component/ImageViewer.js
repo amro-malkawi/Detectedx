@@ -633,6 +633,7 @@ class ImageViewer extends Component {
                         imageId: this.props.imageInfo.id,
                         isTruth: mark.isTruth,
                         lesionNumber: mark.number,
+                        isCancerMarker: mark.is_cancer_marker,
                         rating: mark.rating,
                         radius: this.props.radius,
                         lesionList: mark.lesionList,

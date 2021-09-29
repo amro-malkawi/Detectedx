@@ -157,6 +157,7 @@ class MarkerPopup extends Component {
                 value={selectedOption}
                 styles={selectStyles}
                 onChange={(option) => this.onChangeLesionList(parent, item.name, option)}
+                defaultMenuIsOpen={selectedOption.length === 0}
             />
         )
     }
@@ -184,6 +185,16 @@ class MarkerPopup extends Component {
                 if (selectedLesionList[selectedLesionObj.name]['Present'] !== 'Present') {
                     childrenLesionList = childrenLesionList.filter((v) => v.name !== 'Associated features');
                 }
+
+                // step by step select feature
+                const temp = childrenLesionList.filter((v) => selectedLesionList[selectedLesionObj.name][v.name] !== undefined);
+                if(temp.length < childrenLesionList.length) {
+                    // add select what did not set value
+                    temp.push(childrenLesionList[temp.length]);
+                }
+                childrenLesionList = temp;
+
+
             } else {
                 hasSubLesion = false;
                 childrenOptions = childrenLesionList.map((v) => ({value: v.id, label: v.name}));
@@ -193,6 +204,8 @@ class MarkerPopup extends Component {
                 }
             }
         }
+
+
         return (
             <div>
                 <Select
@@ -204,6 +217,7 @@ class MarkerPopup extends Component {
                     value={selectedOption}
                     styles={selectStyles}
                     onChange={(option) => this.onChangeLesionList('root', '', option)}
+                    defaultMenuIsOpen={selectedOption.length === 0}
                 />
                 {
                     hasSubLesion !== undefined && (hasSubLesion ?
@@ -217,6 +231,7 @@ class MarkerPopup extends Component {
                             value={selectedChildrenOption}
                             styles={selectStyles}
                             onChange={(option) => this.onChangeLesionList(selectedLesionObj.name, '', option)}
+                            defaultMenuIsOpen={selectedChildrenOption.length === 0}
                         />)
                 }
             </div>
@@ -311,11 +326,11 @@ class MarkerPopup extends Component {
                     <form>
                         {this.renderRatings()}
                         {
-                            lesionList.length > 0 &&
-                            <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
-                        }
-                        {
-                            this.renderLesion()
+                            (lesionList.length > 0 && Number(this.state.selectedRating) > 2) &&
+                                <div>
+                                    <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
+                                    {this.renderLesion()}
+                                </div>
                         }
 
                         <div className="actions">

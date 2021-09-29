@@ -52,6 +52,7 @@ const hangingIdList = {
         'MLO-L-P_MLO-L_CC-L-P_CC-L'
     ],
     breastCESMHangings: [
+        'MLO-R_MLO-L_CC-R_CC-L',
         'MLO-R_MLO-L_CC-R_CC-L_MLO-R-CESM_MLO-L-CESM_CC-R-CESM_CC-L-CESM',
         'MLO-R_MLO-R-CESM',
         'MLO-L_MLO-L-CESM',

@@ -15,7 +15,7 @@ export default function ({ open, onClose, onNext }) {
                     </div>
                     <ol>
                         <li>
-                            <span className="fs-17 mr-10">Interrogate anatomical features to evaluate image quality</span>
+                            <span className="fs-17 mr-10">Investigate anatomical features to evaluate image quality</span>
                         </li>
                         <li>
                             <span className="fs-17 mr-10">Identify if the lung is presented in an unobscured way and if not what the causal agent is;</span>

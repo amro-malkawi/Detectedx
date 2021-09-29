@@ -5,13 +5,15 @@ import ImagEDMammoQuestions from "./ImagEDMammoQuestions";
 import ImagEDChestQuestions from "./ImagEDChestQuestions";
 import UltrasoundQuestion from './UltrasoundQuestion';
 import ChestCTQuestions from "./ChestCTQuestion";
+import LinEDQuestions from "./LinEDQuestions";
 
 const SideQuestions = React.forwardRef((props, ref) => {
-    switch (props.modality_type) {
+    const {modality_type, name} = props.modalityInfo;
+    switch (modality_type) {
         case 'covid':
             return <CovidQuestions ref={ref} {...props} />
         case 'chest':
-            return <ChestQuestions ref={ref} {...props} />
+            return name !== 'LinED' ? <ChestQuestions ref={ref} {...props} /> : <LinEDQuestions ref={ref} {...props} />
         case 'imaged_mammo':
             return <ImagEDMammoQuestions ref={ref} {...props} />
         case 'imaged_chest':

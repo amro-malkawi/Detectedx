@@ -17,6 +17,7 @@ const style = {
     invalidColor: '',
     fillColor: 'transparent',
     truthColour: 'red',
+    notCancerColour: '#8CFF29',
     answerColour: 'yellow'
 };
 
@@ -55,7 +56,8 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
             }
 
             draw(context, context => {
-                let color = data.isTruth === undefined ? style.defaultColor : (data.isTruth ? style.truthColour : style.answerColour);
+                let color = data.isTruth === undefined ? style.defaultColor :
+                    (!data.isTruth ? style.answerColour : (data.isCancerMarker ? style.truthColour : style.notCancerColour));
                 let fillColor;
 
                 if (data.active) {
@@ -63,7 +65,7 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                         color = config.invalidColor;
                         fillColor = config.invalidColor;
                     } else {
-                        color = data.isTruth === undefined ? style.defaultColor : (data.isTruth ? style.truthColour : style.answerColour);
+                        // color = data.isTruth === undefined ? style.defaultColor : (data.isTruth ? style.truthColour : style.answerColour);
                         fillColor = style.fillColor;
                     }
                 } else {
@@ -162,7 +164,7 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                             x: data.polyBoundingBox.left + data.polyBoundingBox.width / 2,
                             y: data.polyBoundingBox.top
                         });
-                        colour = style.truthColour;
+                        colour = data.isCancerMarker ? style.truthColour : style.notCancerColour;
                         padding = -15 - (lesionNames.length * 15);
                     }
                     else {

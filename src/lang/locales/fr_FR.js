@@ -173,6 +173,8 @@ module.exports = {
 	"testView.covidQuestion.yourJudgement": "Votre jugement",
 	"testView.chestQuestion.ratingTitle": "Confiance que le sujet a une maladie pulmonaire professionnelle",
 	"testView.chestCTQuestion.ratingTitle": "Confiance que le sujet a une maladie pulmonaire professionnelle",
+	"testView.LinEDQuestion.ratingTitle": "Cette ligne est à la bonne position:",
+	"testView.LinEDQuestion.ratingDesc": "Pas du tout d'accord à tout à fait d'accord",
 	"testView.browser.laterality": "Latéralité:",
 	"testView.browser.type": "Type:",
 	"testView.viewer.slice": "Slice",

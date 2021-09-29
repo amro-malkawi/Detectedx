@@ -15,7 +15,7 @@ class ImageOverlap extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cursorPosition: {x: 0, y: 0},
+            // cursorPosition: {x: 0, y: 0},
             imageZoomLevel: 0,
             imageWW: props.ww ? props.ww : 255,
             imageWL: props.wc ? props.wc : 128,
@@ -63,17 +63,17 @@ class ImageOverlap extends Component {
     }
 
     initEvent() {
-        this.props.imageElement.addEventListener('cornerstonetoolsmousemove', _.throttle(this.handleMousemoveEvent.bind(this), 100));
+        // this.props.imageElement.addEventListener('cornerstonetoolsmousemove', _.throttle(this.handleMousemoveEvent.bind(this), 100));
 
         this.props.imageElement.addEventListener('cornerstoneimagerendered', _.throttle(this.handleImageRenderEvent.bind(this), 100));
     }
 
-    handleMousemoveEvent(event) {
-        let point = event.detail.currentPoints.image;
-        const x = point.x.toFixed(0);
-        const y = point.y.toFixed(0);
-        this.setState({cursorPosition: {x, y}});
-    }
+    // handleMousemoveEvent(event) {
+    //     let point = event.detail.currentPoints.image;
+    //     const x = point.x.toFixed(0);
+    //     const y = point.y.toFixed(0);
+    //     this.setState({cursorPosition: {x, y}});
+    // }
 
     handleImageRenderEvent(event) {
         const eventData = event.detail;
@@ -129,7 +129,7 @@ class ImageOverlap extends Component {
 
     render() {
         const {canDrawMarker, onClearSymbols, age, imageMetaData, imagePosition} = this.props;
-        const {cursorPosition, imageZoomLevel, imageWW, imageWL} = this.state;
+        const {imageZoomLevel, imageWW, imageWL} = this.state;
         // const isRightBrestImage = (this.props.stackCount > 1 && imagePosition !== undefined && imagePosition.imageLaterality === 'R');
         const isRightBrestImage = (imagePosition !== undefined && imagePosition.imageLaterality === 'R');
         let containerClass = 'image-overlap-container ';
@@ -188,9 +188,9 @@ class ImageOverlap extends Component {
                     </div>
                     <div className={'overlap-info-text'}>
                         <div>
-                            <div style={{marginRight: 3}}>
-                                (x: {cursorPosition.x}, y: {cursorPosition.y})
-                            </div>
+                            {/*<div style={{marginRight: 3}}>*/}
+                            {/*    (x: {this.state.cursorPosition.x}, y: {this.state.cursorPosition.y})*/}
+                            {/*</div>*/}
                             <div style={{marginRight: 3}}>Zoom: {imageZoomLevel}</div>
                             <div className={'ww-wl-input-container'}>
                                 <span className='mr-5'>WW/WL: </span>

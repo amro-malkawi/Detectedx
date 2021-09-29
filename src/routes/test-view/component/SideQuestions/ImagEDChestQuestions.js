@@ -47,7 +47,7 @@ const chestLateralQuestion = [
         label: 'Are all relevant anatomic features clearly visible?',
         options: ['No', 'Yes'],
         desc: 'Please highlight any feature below that is displayed in a less than optimal way:',
-        child: ['Costophrenic angles', 'Anterior border of chest', 'Posterior border of chest', 'Vascular markings of the lungs', '10 posterior ribs shown above diaphragm'],
+        child: ['Costophrenic angles', 'Anterior border of chest', 'Posterior border of chest', 'Vascular markings of the lungs', '10 posterior ribs shown above diaphragm (good inspiration)'],
         showChildOptions: ['No']
     },
     {
@@ -56,7 +56,7 @@ const chestLateralQuestion = [
         options: ['No', 'Yes'],
         desc: 'Please highlight any parameter below that is obscuring the lungs:',
         child: [
-            'The arms', 'The chin', 'Patient laterally leaning from side to side (so anterior ribs/posterio costophrenic angles are not superimposed)',
+            'The arms overlying the apices', 'Patient laterally leaning from side to side (so anterior ribs/posterio costophrenic angles are not superimposed)',
             'Patient rotation (sternum in profile/ribs not superimposed posteriorly)', 'Patient movement', 'Collimation', 'Exposure factors'],
         showChildOptions: ['No']
     },

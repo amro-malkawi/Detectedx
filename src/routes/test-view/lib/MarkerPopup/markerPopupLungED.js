@@ -166,6 +166,7 @@ class MarkerPopupLungED extends Component {
                     value={selectedLesionOption}
                     styles={selectStyles}
                     onChange={(option) => this.onChangeLesionList('root', option)}
+                    defaultMenuIsOpen={true}
                 />
                 {
                     sizeOptions.length > 0 &&
@@ -177,6 +178,7 @@ class MarkerPopupLungED extends Component {
                         value={selectedSizeOption}
                         styles={selectStyles}
                         onChange={(option) => this.onChangeLesionList(selectedLesion, option)}
+                        defaultMenuIsOpen={true}
                     />
                 }
             </div>

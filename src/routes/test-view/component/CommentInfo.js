@@ -28,7 +28,8 @@ class CommentInfo extends Component {
         super(props);
         this.state = {
             commentText: '',
-            panelOpen: ((props.modality_type === 'volpara' || props.modality_type === 'imaged_mammo' || props.modality_name.indexOf('GE - CESM') === 0) && props.complete),
+            // panelOpen: ((props.modality_type === 'volpara' || props.modality_type === 'imaged_mammo' || props.modality_name.indexOf('GE - CESM') === 0) && props.complete),
+            panelOpen: (props.modality_type === 'volpara' || props.modality_type === 'imaged_mammo' || props.modality_name.indexOf('GE - CESM') === 0),
             imageCount: props.imageList.length,
             isGETestCase: false,
             loading: true,
@@ -49,7 +50,7 @@ class CommentInfo extends Component {
     }
 
     getComment() {
-        Apis.attemptGetTestCaseComment(this.props.attempts_id, this.props.test_case_id).then((resp) => {
+        Apis.attemptGetTestCaseComment(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then((resp) => {
             this.setState({
                 commentText: resp,
                 loading: false

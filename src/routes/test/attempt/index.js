@@ -9,9 +9,6 @@ import {
     FormGroup,
     FormControlLabel,
     Button,
-    Stepper,
-    Step,
-    StepButton,
     CircularProgress, withStyles,
 } from '@material-ui/core';
 import SchoolIcon from '@material-ui/icons/School';
@@ -29,7 +26,7 @@ const stepName = {
     mainQuestions: <IntlMessages id="test.questionnaires"/>,
     additionalQuestions: <IntlMessages id="test.additionalQuestions"/>,
     test: <IntlMessages id="test.test"/>,
-    score: <IntlMessages id="test.scores"/>,
+    score: <IntlMessages id="test.results"/>,
     answer: <IntlMessages id={"test.viewAnswer"}/>,
     postTest: <IntlMessages id="test.postTest"/>,
     postQuestions: <IntlMessages id="test.evaluationForm"/>,
@@ -55,6 +52,7 @@ class Attempt extends Component {
             showModalType: '',
             loading: true,
             isDownCert: false,
+            isHideScore: false,
         }
     }
 
@@ -83,6 +81,13 @@ class Attempt extends Component {
             Apis.attemptsQuestionnaire(that.state.attempts_id),
         ]).then(function ([detail, questionnaires]) {
             const hiddenTabs = JSONParseDefault(detail.test_sets.test_set_hidden_tabs, null, []);
+            // check hide scores
+            let isHideScore = false;
+            const hiddenScoreIndex = hiddenTabs.findIndex((v) => v === 'score');
+            if(hiddenScoreIndex !== -1) {
+                isHideScore = true;
+                hiddenTabs.splice(hiddenScoreIndex, 1);
+            }
             let steps;
             const isFinishMainQuestions = questionnaires.main.length === 0 || questionnaires.main.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('mainQuestions') !== -1);
             const isFinishAdditionalQuestions = questionnaires.additional.length === 0 || questionnaires.additional.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('additionalQuestions') !== -1);
@@ -123,9 +128,10 @@ class Attempt extends Component {
                 steps: steps,
                 stepIndex,
                 loading: false,
+                isHideScore
             });
         }).catch((e) => {
-            console.warn(e.message);
+            console.error(e.message);
         })
     }
 
@@ -281,15 +287,6 @@ class Attempt extends Component {
                     } else {
                         this.getData(false)
                     }
-                    // if ((this.state.steps[this.state.stepIndex] === 'mainQuestions' && this.state.additionalQuestions.length === 0) ||
-                    //     this.state.steps[this.state.stepIndex] === 'additionalQuestions') {
-                    //     this.setState({stepIndex: this.state.stepIndex + 1});
-                    // } else if (type === 'post') {
-                    //     updateValue.post_stage === 2;
-                    //     this.setState({post_stage: 2, stepIndex: this.state.stepIndex + 1});
-                    // } else {
-                    //     this.setState({stepIndex: this.state.stepIndex + 1});
-                    // }
                 }).catch((e) => {
                     console.warn(e);
                     NotificationManager.error(e.message);
@@ -362,21 +359,6 @@ class Attempt extends Component {
         }
         this.setState({[questionType]: [...questions], [isChangeField]: true});
     }
-
-
-    onClickStep = step => () => {
-        if (this.state.attemptInfo.complete) {
-            if (this.state.attemptInfo.test_sets.has_post) {
-                if ((this.state.post_stage === 0 && step <= this.state.steps.indexOf('postTest'))
-                    || (this.state.post_stage === 1 && step <= this.state.steps.indexOf('postQuestions'))
-                    || (this.state.post_stage === 2 && step <= this.state.steps.indexOf('postScore'))) {
-                    this.setState({stepIndex: step});
-                }
-            } else {
-                this.setState({stepIndex: step});
-            }
-        }
-    };
 
     onGetCertPdf(type) {
         this.setState({isDownCert: true});
@@ -530,6 +512,7 @@ class Attempt extends Component {
                             name="position"
                             value={item.answer}
                             row
+                            className={'ml-30'}
                         >
                             {
                                 options.map((v, i) => {
@@ -572,7 +555,7 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
-                    <FormGroup row>
+                    <FormGroup row className={'ml-30'}>
                         {
                             options.map((v, i) => {
                                 return (
@@ -613,15 +596,17 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
-                    <Input
-                        disabled={commponentDisable}
-                        type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
-                        name="name"
-                        id="name"
-                        placeholder=""
-                        value={item.answer}
-                        onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value)}
-                    />
+                    <div className={'ml-30 mb-2'} style={{maxWidth: 250}}>
+                        <Input
+                            disabled={commponentDisable}
+                            type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
+                            name="name"
+                            id="name"
+                            placeholder=""
+                            value={item.answer}
+                            onChange={(e) => this.onQuestionChangeAnswer(index, e.target.value)}
+                        />
+                    </div>
                 </FormGroup>
             );
         } else if (item.questionnaire.type === 3) {   // multiple select
@@ -689,14 +674,12 @@ class Attempt extends Component {
         } else {
             return null;
         }
-        for (let i = 0; i < questions.length; i += 2) {
+
+        for (let i = 0; i < questions.length; i++) {
             result.push(
                 <div className={'row m-0'} key={i}>
-                    <Col sm={6}>
+                    <Col sm={12}>
                         {this.renderQuestionnaireItem(questions[i], i, isDisable)}
-                    </Col>
-                    <Col sm={6}>
-                        {this.renderQuestionnaireItem(questions[i + 1], i + 1, isDisable)}
                     </Col>
                 </div>
             )
@@ -704,162 +687,16 @@ class Attempt extends Component {
         return result;
     }
 
-    renderStepperWithPost() {
-        const normalStepCount = this.state.steps.filter((v) => v.indexOf('post') === -1).length;
-        return (
-            <div className={'row ml-0 mr-0 attempt-stepper'}>
-                <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex}
-                         className={'normal-stepper col-12 col-sm-6 pt-40 pr-10'}>
-                    {this.state.steps.map((labelIndex, index) => {
-                        if (labelIndex.indexOf('post') !== -1) return null;
-
-                        const label = stepName[labelIndex];
-                        let stepCompleted = false;
-                        if (!this.state.attemptInfo.complete) {
-                            stepCompleted = index < this.state.stepIndex;
-                        } else {
-                            if (this.state.attemptInfo.test_sets.has_post) {
-                                if (this.state.post_stage === 0) {          // post test
-                                    stepCompleted = index < this.state.steps.indexOf('postTest');
-                                } else if (this.state.post_stage === 1) {   //post question
-                                    stepCompleted = index < this.state.steps.indexOf('postQuestions');
-                                } else if (this.state.post_stage >= 2) {   //post score
-                                    stepCompleted = true;
-                                }
-                            } else {
-                                stepCompleted = true;
-                            }
-                        }
-                        stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
-                        return (
-                            <Step key={label}>
-                                <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)}
-                                            completed={stepCompleted}>
-                                    {label}
-                                </StepButton>
-                                {
-                                    labelIndex === "answer" &&
-                                    <div className="MuiStepConnector-root MuiStepConnector-horizontal right-line">
-                                        <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
-                                    </div>
-                                }
-                            </Step>
-                        );
-                    })}
-                    <div className={'vertical-line'}/>
-                </Stepper>
-                <div className={'col-12 col-sm-6 pl-0 pr-0'}>
-                    <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex}
-                             className={'post-stepper pt-10 pb-0 pl-0'}>
-                        <div className={'post-stepper-background'}>
-                            <span>AMA Credits</span>
-                        </div>
-                        {
-                            Array(normalStepCount > 0 ? (normalStepCount - 1) : 0).fill(0).map((v) => <div/>)
-                        }
-                        {this.state.steps.map((labelIndex, index) => {
-                            if (labelIndex.indexOf('post') === -1) return null;
-                            const label = stepName[labelIndex];
-                            let stepCompleted = false;
-                            if (!this.state.attemptInfo.complete) {
-                                stepCompleted = index < this.state.stepIndex;
-                            } else {
-                                if (this.state.attemptInfo.test_sets.has_post) {
-                                    if (this.state.post_stage === 0) {          // post test
-                                        stepCompleted = index < this.state.steps.indexOf('postTest');
-                                    } else if (this.state.post_stage === 1) {   //post question
-                                        stepCompleted = index < this.state.steps.indexOf('postQuestions');
-                                    } else if (this.state.post_stage >= 2) {   //post score
-                                        stepCompleted = true;
-                                    }
-                                } else {
-                                    stepCompleted = true;
-                                }
-                            }
-                            stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
-                            return (
-                                <Step key={label}>
-                                    {
-                                        labelIndex === "postTest" &&
-                                        <div className="MuiStepConnector-root MuiStepConnector-horizontal left-line">
-                                            <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
-                                        </div>
-                                    }
-                                    <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)}
-                                                completed={stepCompleted}>
-                                        {label}
-                                    </StepButton>
-                                </Step>
-                            );
-                        })}
-                    </Stepper>
-                    <Stepper alternativeLabel nonLinear activeStep={0} className={'post-stepper pt-10 pb-10 pl-0'}>
-                        <div className={'post-stepper-background'}>
-                            <span>RANZCR</span>
-                        </div>
-                        <div>
-                            <div className="MuiStepConnector-root MuiStepConnector-horizontal left-line1">
-                                <span className="MuiStepConnector-line MuiStepConnector-lineHorizontal"/>
-                            </div>
-                            <div>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className="text-white ml-20"
-                                    disabled={this.state.isDownCert}
-                                    onClick={() => this.onGetCertPdf('normal')}
-                                >
-                                    <SchoolIcon className={'mr-10'}/><IntlMessages id='test.certificateOfCompletion'/>
-                                </Button>
-                                {
-                                    this.state.isDownCert &&
-                                    <div style={{marginTop: -28, marginLeft: 110}}><CircularProgress size={20}
-                                                                                                     style={{color: 'green'}}/>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </Stepper>
-                </div>
-            </div>
-        )
-    }
-
-    renderStepperNormal() {
-        return (
-            <Stepper alternativeLabel nonLinear activeStep={this.state.stepIndex} className={'attempt-stepper col'}>
-                {this.state.steps.map((label, index) => {
-                    label = stepName[label];
-                    const props = {};
-                    const buttonProps = {};
-                    let stepCompleted = false;
-                    if (!this.state.attemptInfo.complete) {
-                        stepCompleted = index < this.state.stepIndex;
-                    } else {
-                        if (this.state.attemptInfo.test_sets.has_post) {
-                            if (this.state.post_stage === 0) {          // post test
-                                stepCompleted = index < this.state.steps.indexOf('postTest');
-                            } else if (this.state.post_stage === 1) {   //post question
-                                stepCompleted = index < this.state.steps.indexOf('postQuestions');
-                            } else if (this.state.post_stage >= 2) {   //post score
-                                stepCompleted = true;
-                            }
-                        } else {
-                            stepCompleted = true;
-                        }
-                    }
-                    stepCompleted = index === this.state.stepIndex ? false : stepCompleted;
-                    return (
-                        <Step key={label} {...props}>
-                            <StepButton className={'attempt-stepper-btn'} onClick={this.onClickStep(index)}
-                                        completed={stepCompleted} {...buttonProps}>
-                                {label}
-                            </StepButton>
-                        </Step>
-                    );
-                })}
-            </Stepper>
-        );
+    renderScoreBlock() {
+        if(this.state.isHideScore) {
+            return ( <div className={'mt-70'} /> );
+        } else if (this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
+            return this.renderVolparaScore();
+        } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
+            return this.renderImagEDScore();
+        } else {
+            return this.renderNormalScore();
+        }
     }
 
 
@@ -897,90 +734,52 @@ class Attempt extends Component {
         });
 
         return (
-            <div className={'score-container'}>
-                <div className={'row'}>
-                    <div className={'col-md-6 score-data-container'}>
-                        <div className={'normal-score-data'}>
-                            <div className={'score-circle-container'}>
-                                <div className={'score-circle'}>
-                                    <div className={'score-circle-title'}>POSITIVES</div>
-                                    <div><span className={'text-green'}>True</span><span>{truePositives}</span></div>
-                                    <div><span className={'text-red'}>False</span><span>{falsePositives}</span></div>
-                                </div>
-                                <div className={'score-circle'}>
-                                    <div className={'score-circle-title'}>NEGATIVES</div>
-                                    <div><span className={'text-green'}>True</span><span>{trueNegatives}</span></div>
-                                    <div><span className={'text-red'}>False</span><span>{falseNegatives}</span></div>
-                                </div>
+            <div className={'row'}>
+                <div className={'col-md-6 score-data-container'}>
+                    <div className={'normal-score-data'}>
+                        <div className={'score-circle-container'}>
+                            <div className={'score-circle'}>
+                                <div className={'score-circle-title'}>POSITIVES</div>
+                                <div><span className={'text-green'}>True</span><span>{truePositives}</span></div>
+                                <div><span className={'text-red'}>False</span><span>{falsePositives}</span></div>
                             </div>
-                            <div className={'score-table'}>
-                                {
-                                    scoresForShow.map((v, i) => (
-                                        <div className={'score-row'} key={i}>
-                                            <span>{v.metrics.name}</span><span>{v.score}</span></div>
-                                    ))
-                                }
+                            <div className={'score-circle'}>
+                                <div className={'score-circle-title'}>NEGATIVES</div>
+                                <div><span className={'text-green'}>True</span><span>{trueNegatives}</span></div>
+                                <div><span className={'text-red'}>False</span><span>{falseNegatives}</span></div>
                             </div>
                         </div>
-                    </div>
-                    <div className={'col-md-6 score-chart-container'}>
-                        <BoxplotChart
-                            title={'Sensitivity compared to'}
-                            score_type={'Sensitivity'}
-                            showUserSelect={true}
-                            attempt_id={this.state.attempts_id}
-                            value={sensitivity}
-                        />
-                        <BoxplotChart
-                            title={'Specificity compared to'}
-                            score_type={'Specificity'}
-                            showUserSelect={true}
-                            attempt_id={this.state.attempts_id}
-                            value={specitifity}
-                        />
-                        <BoxplotChart
-                            title={'ROC compared to'}
-                            score_type={'ROC'}
-                            showUserSelect={true}
-                            attempt_id={this.state.attempts_id}
-                            value={roc}
-                        />
+                        <div className={'score-table'}>
+                            {
+                                scoresForShow.map((v, i) => (
+                                    <div className={'score-row'} key={i}>
+                                        <span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                ))
+                            }
+                        </div>
                     </div>
                 </div>
-                <div className={'row score-extra-container'}>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                        {
-                            this.state.attemptInfo.view_answer_time === null ?
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
-                        }
-                        <div className={'extra-button-container'}>
-                            <Button
-                                variant="contained"
-                                size="small"
-                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
-                                onClick={() => this.onGetCertPdf('normal')}
-                                disabled={this.state.attemptInfo.view_answer_time === null}
-                            >
-                                <SchoolIcon className={'mr-10'}/>
-                                <IntlMessages id="test.attempt.volparaCertTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    {this.renderVolparaScorePostBlock()}
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white"
-                                    onClick={() => this.onTest()}>
-                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    <ExtraInfo
-                        modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
+                <div className={'col-md-6 score-chart-container'}>
+                    <BoxplotChart
+                        title={'Sensitivity compared to'}
+                        score_type={'Sensitivity'}
+                        showUserSelect={true}
+                        attempt_id={this.state.attempts_id}
+                        value={sensitivity}
+                    />
+                    <BoxplotChart
+                        title={'Specificity compared to'}
+                        score_type={'Specificity'}
+                        showUserSelect={true}
+                        attempt_id={this.state.attempts_id}
+                        value={specitifity}
+                    />
+                    <BoxplotChart
+                        title={'ROC compared to'}
+                        score_type={'ROC'}
+                        showUserSelect={true}
+                        attempt_id={this.state.attempts_id}
+                        value={roc}
                     />
                 </div>
             </div>
@@ -1063,71 +862,33 @@ class Attempt extends Component {
 
     renderVolparaScore() {
         return (
-            <div className={'score-container'}>
-                <div className={'row'}>
-                    <div className={'col-md-6 score-data-container'}>
-                        <div className={'volpara-score-data'}>
-                            <div className={'score-title'}>
-                                <p><IntlMessages id="test.attempt.volparaScoreTitle1"/></p>
-                                <p><IntlMessages id="test.attempt.volparaScoreTitle2"/></p>
-                            </div>
-                            <p className={'score-value'}>
-                                {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
-                                <span>%</span></p>
-                            <p className={'score-desc'}><IntlMessages id="test.attempt.volparaScoreDesc"/></p>
+            <div className={'row'}>
+                <div className={'col-md-6 score-data-container'}>
+                    <div className={'volpara-score-data'}>
+                        <div className={'score-title'}>
+                            <p><IntlMessages id="test.attempt.volparaScoreTitle1"/></p>
+                            <p><IntlMessages id="test.attempt.volparaScoreTitle2"/></p>
                         </div>
-                    </div>
-                    <div className={'col-md-6 score-chart-container'}>
-                        <BoxplotChart
-                            title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
-                            score_type={'volpara_all'}
-                            showUserSelect={false}
-                            attempt_id={this.state.attempts_id}
-                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
-                        />
-                        <BoxplotChart
-                            title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
-                            score_type={'volpara_region'}
-                            showUserSelect={false}
-                            attempt_id={this.state.attempts_id}
-                            value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
-                        />
+                        <p className={'score-value'}>
+                            {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                            <span>%</span></p>
+                        <p className={'score-desc'}><IntlMessages id="test.attempt.volparaScoreDesc"/></p>
                     </div>
                 </div>
-                <div className={'row score-extra-container'}>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                        {
-                            this.state.attemptInfo.view_answer_time === null ?
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
-                        }
-                        <div className={'extra-button-container'}>
-                            <Button
-                                variant="contained"
-                                size="small"
-                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
-                                onClick={() => this.onGetCertPdf('normal')}
-                                disabled={this.state.attemptInfo.view_answer_time === null}
-                            >
-                                <SchoolIcon className={'mr-10'}/>
-                                <IntlMessages id="test.attempt.volparaCertTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    {this.renderVolparaScorePostBlock()}
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white"
-                                    onClick={() => this.onTest()}>
-                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
-                            </Button>
-                        </div>
-                    </div>
-                    <ExtraInfo
-                        modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
+                <div className={'col-md-6 score-chart-container'}>
+                    <BoxplotChart
+                        title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
+                        score_type={'volpara_all'}
+                        showUserSelect={false}
+                        attempt_id={this.state.attempts_id}
+                        value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
+                    />
+                    <BoxplotChart
+                        title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
+                        score_type={'volpara_region'}
+                        showUserSelect={false}
+                        attempt_id={this.state.attempts_id}
+                        value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                     />
                 </div>
             </div>
@@ -1145,82 +906,44 @@ class Attempt extends Component {
             scoreAverage = (scoreSum / scores.length).toFixed(2);
         }
         return (
-            <div className={'score-container'}>
-                <div className={'row'}>
-                    <div className={'col-md-6 score-data-container'}>
-                        <div className={'image-score-data'}>
-                            <div className={'quality-score-title'}>
-                                <span><IntlMessages id="test.attempt.imageQualityScoreCategory"/></span>
-                                <span><IntlMessages id="test.attempt.imageQualityScoreAgreeScore"/></span>
-                            </div>
-                            {
-                                this.state.attemptInfo.scores.map((v, i) => (
-                                    <div className={'quality-score-row'} key={i}>
-                                        <span>{v.metrics.name}</span><span>{v.score}%</span></div>
-                                ))
-                            }
+            <div className={'row'}>
+                <div className={'col-md-6 score-data-container'}>
+                    <div className={'image-score-data'}>
+                        <div className={'quality-score-title'}>
+                            <span><IntlMessages id="test.attempt.imageQualityScoreCategory"/></span>
+                            <span><IntlMessages id="test.attempt.imageQualityScoreAgreeScore"/></span>
                         </div>
-                    </div>
-                    <div className={'col-md-6'}>
-                        <div className={' score-data-container'}>
-                            <div className={'volpara-score-data'}>
-                                <div className={'score-title'}>
-                                    <p><IntlMessages id="test.attempt.imageQualityScoreTitle"/></p>
-                                </div>
-                                <p className={'score-value'}>
-                                    {scoreAverage}
-                                    <span>%</span>
-                                </p>
-                                <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/>
-                                </p>
-                            </div>
-                        </div>
-                        <div className={'score-chart-container'}>
-                            <BoxplotChart
-                                title={<IntlMessages id="test.attempt.imageQualityScoreTitle"/>}
-                                score_type={'imaged_average_percentile'}
-                                showUserSelect={false}
-                                attempt_id={this.state.attempts_id}
-                                value={scoreAverage}
-                            />
-                        </div>
+                        {
+                            this.state.attemptInfo.scores.map((v, i) => (
+                                <div className={'quality-score-row'} key={i}>
+                                    <span>{v.metrics.name}</span><span>{v.score}%</span></div>
+                            ))
+                        }
                     </div>
                 </div>
-                <div className={'row score-extra-container'}>
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                        {
-                            this.state.attemptInfo.view_answer_time === null ?
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
-                        }
-                        <div className={'extra-button-container'}>
-                            <Button
-                                variant="contained"
-                                size="small"
-                                className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
-                                onClick={() => this.onGetCertPdf('normal')}
-                                disabled={this.state.attemptInfo.view_answer_time === null}
-                            >
-                                <SchoolIcon className={'mr-10'}/>
-                                <IntlMessages id="test.attempt.volparaCertTitle"/>
-                            </Button>
+                <div className={'col-md-6'}>
+                    <div className={' score-data-container'}>
+                        <div className={'volpara-score-data'}>
+                            <div className={'score-title'}>
+                                <p><IntlMessages id="test.attempt.imageQualityScoreTitle"/></p>
+                            </div>
+                            <p className={'score-value'}>
+                                {scoreAverage}
+                                <span>%</span>
+                            </p>
+                            <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/>
+                            </p>
                         </div>
                     </div>
-                    {this.renderVolparaScorePostBlock()}
-                    <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
-                        <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white"
-                                    onClick={() => this.onTest()}>
-                                <IntlMessages id="test.attempt.volparaAnswerTitle"/>
-                            </Button>
-                        </div>
+                    <div className={'score-chart-container'}>
+                        <BoxplotChart
+                            title={<IntlMessages id="test.attempt.imageQualityScoreTitle"/>}
+                            score_type={'imaged_average_percentile'}
+                            showUserSelect={false}
+                            attempt_id={this.state.attempts_id}
+                            value={scoreAverage}
+                        />
                     </div>
-                    <ExtraInfo
-                        modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
-                    />
                 </div>
             </div>
         )
@@ -1259,13 +982,52 @@ class Attempt extends Component {
                     </div>
                 );
             case 'score':
-                if (this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
-                    return this.renderVolparaScore();
-                } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
-                    return this.renderImagEDScore();
-                } else {
-                    return this.renderNormalScore();
-                }
+                return (
+                    <div className={'score-container'}>
+                        {
+                            this.renderScoreBlock()
+                        }
+                        <div className={'row score-extra-container'}>
+                            <div className={'score-extra'}>
+                                <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
+                                {
+                                    this.state.attemptInfo.view_answer_time === null ?
+                                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
+                                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                                }
+                                <div className={'extra-button-container'}>
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
+                                        onClick={() => this.onGetCertPdf('normal')}
+                                        disabled={this.state.attemptInfo.view_answer_time === null}
+                                    >
+                                        <SchoolIcon className={'mr-10'}/>
+                                        <IntlMessages id="test.attempt.volparaCertTitle"/>
+                                    </Button>
+                                </div>
+                            </div>
+                            {this.renderVolparaScorePostBlock()}
+                            <div className={'score-extra'}>
+                                <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
+                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
+                                <div className={'extra-button-container'}>
+                                    <Button variant="contained" color="primary" size="small" className="text-white"
+                                            onClick={() => this.onTest()}>
+                                        <IntlMessages id="test.attempt.volparaAnswerTitle"/>
+                                    </Button>
+                                </div>
+                            </div>
+                            {
+                                !this.state.isHideScore &&
+                                <ExtraInfo
+                                    modality_type={this.state.attemptInfo.test_sets.modalities.modality_type}
+                                />
+                            }
+                        </div>
+                    </div>
+                )
             case 'answer':
                 return (
                     <div className="p-20 mt-50 text-center">
