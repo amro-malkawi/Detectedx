@@ -18,13 +18,13 @@ import $ from 'jquery';
 import {collapsedSidebarAction} from 'Actions';
 import {getAppLayout} from "Helpers/helpers";
 import UserInfo from './UserInfo';
-import Logout from './Logout';
 import LanguageProvider from "./LanguageProvider";
 import InstructionModal from "Routes/test-view/InstructionModal";
 import PaymentModal from "Components/Payment/PaymentModal";
 import IntlMessages from "Util/IntlMessages";
 import AppConfig from "Constants/AppConfig";
 import UserBlock from "Components/Header/UserBlock";
+import * as selectors from "Selectors";
 
 class Header extends Component {
 
@@ -41,20 +41,8 @@ class Header extends Component {
         this.props.collapsedSidebarAction(val);
     }
 
-    // close dashboard overlay
-    closeDashboardOverlay() {
-        $('.dashboard-overlay').removeClass('show');
-        $('.dashboard-overlay').addClass('d-none');
-        $('body').css('overflow', '');
-    }
-
     render() {
-        $('body').click(function () {
-            $('.dashboard-overlay').removeClass('show');
-            $('.dashboard-overlay').addClass('d-none');
-            $('body').css('overflow', '');
-        });
-        const {horizontalMenu, agencyMenu, location} = this.props;
+        const {location} = this.props;
         return (
             <AppBar position="static" className="rct-header app-wrapper">
                 <Toolbar className="d-flex justify-content-between w-100 pl-0 main-header">
@@ -65,16 +53,31 @@ class Header extends Component {
                             </a>
                         </div>
                     </div>
-                    <ul className="navbar-right list-inline mb-0">
-                        <li className="list-inline-item">
-                            <Button component={Link} to={`/${getAppLayout(location)}/test`} variant="contained" className="upgrade-btn tour-step-4 text-white mr-20" color="primary">
-                                <IntlMessages id={"header.home"}/>
-                            </Button>
-                        </li>
-                        <li className="list-inline-item">
-                            <UserBlock />
-                        </li>
-                    </ul>
+                    {
+                        this.props.isLogin ?
+                            <ul className="navbar-right list-inline mb-0">
+                                <li className="list-inline-item">
+                                    <Button component={Link} to={`/${getAppLayout(location)}/test`} variant="contained" className="upgrade-btn tour-step-4 text-white mr-20" color="primary">
+                                        <IntlMessages id={"header.home"}/>
+                                    </Button>
+                                </li>
+                                <li className="list-inline-item">
+                                    <UserBlock/>
+                                </li>
+                            </ul> :
+                            <ul className="navbar-right list-inline mb-0">
+                                <li className="list-inline-item">
+                                    <Button component={Link} to={`/signin`} className="text-white mr-10" color="primary">
+                                        <IntlMessages id={"user.signin"}/>
+                                    </Button>
+                                </li>
+                                <li className="list-inline-item">
+                                    <Button component={Link} to={`/signup`} className="text-white mr-20" color="primary">
+                                        <IntlMessages id={"user.signup"}/>
+                                    </Button>
+                                </li>
+                            </ul>
+                    }
                 </Toolbar>
                 <InstructionModal
                     isOpen={this.state.showModalType === 'instructions'}
@@ -87,9 +90,10 @@ class Header extends Component {
 }
 
 // map state to props
-const mapStateToProps = ({settings}) => {
-    return settings;
-};
+const mapStateToProps = (state) => ({
+    settings: state.settings,
+    isLogin: selectors.getIsLogin(state),
+});
 
 export default withRouter(connect(mapStateToProps, {
     collapsedSidebarAction

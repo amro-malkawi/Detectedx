@@ -312,6 +312,11 @@ export function attemptsStartVideo(id) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsAssignFromGuest(id) {
+    let url = '/attempts/' + id + '/assign_from_guest?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * score operation
  */

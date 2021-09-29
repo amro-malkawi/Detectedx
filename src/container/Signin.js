@@ -42,7 +42,9 @@ class Signin extends Component {
         this.setState({loading: true});
         if (this.state.email !== '' && this.state.password !== '') {
             Apis.login(this.state.email, this.state.password).then((result) => {
-                this.props.login(result.userId, result.userName, result.userEmail, result.id, this.props.history);
+                this.props.login(result.userId, result.userName, result.userEmail, result.id, () => {
+                    this.props.history.push('/')
+                });
             }).catch((e) => {
                 this.setState({errorMsg: e.response.data.error.message, loading: false});
             });

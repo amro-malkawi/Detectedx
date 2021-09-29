@@ -50,6 +50,7 @@ class DeleteProfileModal extends Component {
         Apis.userDeleteProfile().then((resp) => {
             NotificationManager.success('Your account was deleted permanently');
             this.props.logoutUserFromEmail();
+            this.props.history.push('/');
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         }).finally(() => {

@@ -20,7 +20,7 @@ const cookie = new Cookies();
 /**
  * Redux Action To Sigin User With Email
  */
-export const login = (userId, userName, userEmail, accessToken, history) => (dispatch, getState) => {
+export const login = (userId, userName, userEmail, accessToken, callback) => (dispatch, getState) => {
     if (Apis.apiHost.indexOf(':') !== -1) {
         cookie.set('user_id', userId, {path: '/'});
         cookie.set('user_name', userName, {path: '/'});
@@ -35,7 +35,7 @@ export const login = (userId, userName, userEmail, accessToken, history) => (dis
             accessToken: accessToken,
         }
     });
-    history.push('/');
+    callback();
 }
 
 export const signinUserInEmail = (user, history) => (dispatch) => {
@@ -70,10 +70,13 @@ export const logoutUserFromEmail = () => (dispatch) => {
     }).finally(() => {
         if (Apis.apiHost.indexOf(':') !== -1) {
             cookie.remove('user_id', {path: '/'});
+            cookie.remove('user_email', {path: '/'});
+            cookie.remove('user_name', {path: '/'});
             cookie.remove('access_token', {path: '/'});
         }
         dispatch({type: LOGOUT_USER});
         NotificationManager.success('User Logout Successfully');
+        window.location.reload();
     });
 }
 
