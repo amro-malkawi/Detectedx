@@ -130,51 +130,59 @@ class ImageViewer extends Component {
 
     getInitialViewport() {
         let initialViewport = {};
-        if(this.props.imageInfo.type === 'volpara') {
+        let imgMLOMaxRealHeight = 0
+        if (this.props.imageInfo.type === 'volpara') {
             return initialViewport;
         }
-        if (!isNaN(this.props.initialZoomLevel) && this.props.initialZoomLevel !== Infinity && this.props.initialZoomLevel !== 0) {
-            initialViewport.scale = this.props.initialZoomLevel;
+        if (this.props.initialZoomLevel && this.props.initialZoomLevel.length > 0) {
+            this.props.initialZoomLevel.forEach(v => {
+                if (this.props.imageInfo.id === v.zoom_image_id) {
+                    if (!isNaN(v.zoom_level) && v.zoom_level !== Infinity && v.zoom_level !== 0) {
+                        initialViewport.scale = v.zoom_level
+                        imgMLOMaxRealHeight = v.zoom_real_height
+                        try {
+                            const imagePosition = cornerstone.metaData.get(
+                                'imagePosition',
+                                this.props.imageInfo.image_url_path
+                            );
+                            this.imagePosition = imagePosition;
+                            const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
+                            const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
+                            const realContentRegion = this.props.imageInfo.real_content_region.split(',');
+                            const realContentLeft = Number(realContentRegion[0]);
+                            const realContentTop = Number(realContentRegion[1]);
+                            const realContentRight = Number(realContentRegion[2]);
+                            const realContentBottom = Number(realContentRegion[3]);
+                            let offsetX = 0, offsetY = 0;
+                            if (this.props.showImageList[0].length > 1 && imagePosition !== undefined) {
+                                if (imagePosition.imageLaterality === 'L') {
+                                    offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
+                                } else if (imagePosition.imageLaterality === 'R') {
+                                    offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
+                                }
+                                // if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
+                                //     // offsetY = 385;
+                                //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
+                                // }
 
-            try {
-                const imagePosition = cornerstone.metaData.get(
-                    'imagePosition',
-                    this.props.imageInfo.image_url_path
-                );
-                this.imagePosition = imagePosition;
-                const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
-                const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
-                const realContentRegion = this.props.imageInfo.real_content_region.split(',');
-                const realContentLeft = Number(realContentRegion[0]);
-                const realContentTop = Number(realContentRegion[1]);
-                const realContentRight = Number(realContentRegion[2]);
-                const realContentBottom = Number(realContentRegion[3]);
-                let offsetX = 0, offsetY = 0;
-                if(this.props.showImageList[0].length > 1 && imagePosition !== undefined) {
-                    if (imagePosition.imageLaterality === 'L') {
-                        offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
-                    } else if (imagePosition.imageLaterality === 'R') {
-                        offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
-                    }
-                    // if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
-                    //     // offsetY = 385;
-                    //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
-                    // }
-
-                    offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
-                    if(
-                        imagePosition.viewPosition.indexOf('MLO') !== -1 &&
-                        this.props.imgMLOMaxRealHeight !== 0
-                    ) {
-                        offsetY = offsetY + ((realContentBottom - realContentTop) - this.props.imgMLOMaxRealHeight) / 2;
+                                offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
+                                if (
+                                    imagePosition.viewPosition.indexOf('MLO') !== -1
+                                    && imgMLOMaxRealHeight !== 0
+                                    && this.props.imageInfo.type !== 'prior'
+                                ) {
+                                    offsetY = offsetY + ((realContentBottom - realContentTop) - imgMLOMaxRealHeight) / 2;
+                                }
+                            }
+                            initialViewport.translation = { x: offsetX, y: offsetY };
+                        } catch (e) {
+                            console.log(e.message)
+                        }
                     }
                 }
-                initialViewport.translation = {x: offsetX, y: offsetY};
-            } catch (e) {
-                console.log(e.message)
-            }
+            });
         }
-        if(this.props.imageInfo.ww && this.props.imageInfo.wc) {
+        if (this.props.imageInfo.ww && this.props.imageInfo.wc) {
             const voiLutModuleInfo = cornerstone.metaData.get(
                 'voiLutModule',
                 this.props.imageInfo.image_url_path

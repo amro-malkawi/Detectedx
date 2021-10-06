@@ -42,26 +42,39 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
     const sourceIndex = sourceElement.parentElement.dataset.index.split('_')[1];
     const targetHangingId = targetElement.parentElement.dataset.hangingId;
     const sourceHangingId = sourceElement.parentElement.dataset.hangingId;
-    if(
+    const targetRatio = getTargetRatio(sourceElement, targetElement);
+    if (
         targetHangingId !== undefined && sourceHangingId !== undefined &&
         targetHangingId.split('-')[1] !== undefined && sourceHangingId.split('-') !== undefined) {
-        if (targetHangingId.split('-')[1] !== sourceHangingId.split('-')[1]){
-            targetViewport.translation.x = -sourceViewport.translation.x;
+        if (targetHangingId.split('-')[1] !== sourceHangingId.split('-')[1]) {
+            targetViewport.translation.x = -sourceViewport.translation.x / targetRatio
         } else {
-            targetViewport.translation.x = sourceViewport.translation.x;
+            targetViewport.translation.x = sourceViewport.translation.x / targetRatio
         }
     } else {
         if (!isNaN(targetIndex) && !isNaN(sourceIndex) && !!((Number(targetIndex) - Number(sourceIndex)) % 2)) {
-            targetViewport.translation.x = -sourceViewport.translation.x;
+            targetViewport.translation.x = -sourceViewport.translation.x / targetRatio
         } else {
-            targetViewport.translation.x = sourceViewport.translation.x;
+            targetViewport.translation.x = sourceViewport.translation.x / targetRatio
         }
     }
-    targetViewport.translation.y = sourceViewport.translation.y;
-    targetViewport.scale = sourceViewport.scale;
+
+    targetViewport.translation.y = sourceViewport.translation.y
+
+    if (sourceHangingId.includes('GE')) {
+        targetViewport.scale = sourceViewport.scale
+    } else {
+        targetViewport.scale = sourceViewport.scale * targetRatio
+    }
+
     synchronizer.setViewport(targetElement, targetViewport);
 }
 
+function getTargetRatio(sourceElement, targetElement) {
+    const sourceImage = cornerstone.getImage(sourceElement)
+    const targetImage = cornerstone.getImage(targetElement)
+    return (sourceImage.width / targetImage.width).toFixed(2)
+}
 function stackScrollSync(synchronizer, sourceElement, targetElement, eventData) {    // stackScrollSynchronizer
     // If there is no event, or direction is 0, stop
 

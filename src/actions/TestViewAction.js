@@ -243,10 +243,10 @@ const getImageHangingType = (images) => {
 }
 
 const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowser, testSetHangingType) => {
-    let initialZoomLevel = 0;
+    let initialZoomLevel = []; // 0
     let imgMLOMaxRealHeight = 0;
     if (showImageIds.length === 0 || showImageIds[0].length === 0) {
-        initialZoomLevel = 0;
+        initialZoomLevel = [];
     } else {
         const imageObjList = showImageIds[0].map((v) => totalImageObjList.find((vv) => vv.id === v));
         const imageRow = showImageIds.length;
@@ -254,7 +254,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
         try {
             // check all breast image
             if (imageObjList.some((v) => (v.metaData.imageLaterality === undefined || v.metaData.imageLaterality === ''))) {
-                initialZoomLevel = 0;
+                initialZoomLevel = [];
             } else {
                 // get canvas width, height
                 let canvasWidth, canvasHeight;
@@ -276,7 +276,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                 }
                 let imgMaxRealWidth = 0;
                 let imgMaxRealHeight = 0;
-                imageObjList.forEach((img) => {
+                totalImageObjList.forEach((img) => {
                     try {
                         const region = img.real_content_region.split(',');  //left,top,right,bottom
                         img.realContentLeft = Number(region[0]);
@@ -290,21 +290,27 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                                 imgMLOMaxRealHeight = imgMaxRealHeight;
                             }
                         }
+                        if (imgMaxRealWidth === 0 || imgMaxRealHeight === 0) {
+                            initialZoomLevel = [];
+                        } else {
+                            const widthZoom = Number(((Math.floor(canvasWidth / imageObjList.length)) / imgMaxRealWidth).toFixed(2));
+                            const heightZoom = Number((canvasHeight / imgMaxRealHeight).toFixed(2));
+                            const calculatedZoomValue = Math.min(widthZoom, heightZoom);
+                            const zoomResult = {
+                                zoom_image_id: img.id,
+                                zoom_level: calculatedZoomValue,
+                                zoom_real_height: imgMLOMaxRealHeight
+                            }
+                            initialZoomLevel.push(zoomResult)
+                        }
                     } catch (e) {
                     }
                 });
-                if (imgMaxRealWidth === 0 || imgMaxRealHeight === 0) {
-                    initialZoomLevel = 0;
-                } else {
-                    const widthZoom = Number(((Math.floor(canvasWidth / imageObjList.length)) / imgMaxRealWidth).toFixed(2));
-                    const heightZoom = Number((canvasHeight / imgMaxRealHeight).toFixed(2));
-                    initialZoomLevel = Math.min(widthZoom, heightZoom);
-                }
             }
         } catch (e) {
         }
     }
-    return {initialZoomLevel, imgMLOMaxRealHeight};
+    return { initialZoomLevel, imgMLOMaxRealHeight };
 }
 
 const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, currentThicknessType) => {
@@ -556,9 +562,11 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
 };
 
 export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
+    const { imageList, isShowImageBrowser, testSetHangingType } = getState().testView;
     if (rowIndex === undefined || colIndex === undefined) return;
     const showImageList = [...getState().testView.showImageList];
     showImageList[rowIndex][colIndex] = id;
+    const { initialZoomLevel, imgMLOMaxRealHeight } = calcInitialZoomLevel(showImageList, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -566,7 +574,7 @@ export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: 0,
+            payload: { initialZoomLevel, imgMLOMaxRealHeight },
         });
     });
 };
