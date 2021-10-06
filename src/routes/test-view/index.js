@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity, setModalityInfo} from 'Actions';
+import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity, setModalityInfo, setAttemptInfo} from 'Actions';
 import {Button, Switch, Dialog} from '@material-ui/core';
 import SkipPreviousOutlinedIcon from '@material-ui/icons/SkipPreviousOutlined';
 import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
@@ -165,6 +165,7 @@ class TestView extends Component {
             that.synchronizer.enabled = (testCaseViewInfo.images.every((v) => v.stack_count === 1) && ['chest', 'ultrasound'].indexOf(testCaseViewInfo.modalities.modality_type) === -1);
 
             that.props.setModalityInfo(testCaseViewInfo.modalities);
+            that.props.setAttemptInfo(attemptsDetail);
             const testCaseIndex = testSetsCases.findIndex((v) => v.test_case_id === that.state.test_cases_id);
             that.setState({
                 test_case: testCaseViewInfo,
@@ -724,6 +725,7 @@ export default withRouter(connect(mapStateToProps, {
     changeHangingLayout,
     setCaseDensity,
     setModalityInfo,
+    setAttemptInfo,
 })(TestView));
 
 const AntSwitch = withStyles(theme => ({

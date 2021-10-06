@@ -133,7 +133,14 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                     }
                 }
 
-                const isShowInfo = eventData.element.parentElement.querySelector('.eye').firstElementChild.classList.contains('zmdi-eye');
+                let isShowInfo = eventData.element.parentElement.querySelector('.eye').firstElementChild.classList.contains('zmdi-eye');
+
+
+                // if attempt is screening, don't need to show info
+                if(Object.keys(data.lesionList)[0] === 'screening') {
+                    isShowInfo = false;
+                }
+
                 if(isShowInfo && data.polyBoundingBox && data.isTruth !== undefined) {
                     let lesionNames = [];
                     if(data.lesionList !== undefined && data.lesionList !== null && data.lesionList !== {}) {

@@ -16,7 +16,8 @@ import {
     TEST_VIEW_SET_CURRENT_TOOL,
     TEST_VIEW_SET_THICKNESS_TYPE,
     TEST_VIEW_FOCUS_IMAGEVIEWER,
-    TEST_VIEW_MODALITY_INFO
+    TEST_VIEW_MODALITY_INFO,
+    TEST_VIEW_ATTEMPT_INFO
 } from 'Actions/types';
 import {isMobile} from 'react-device-detect';
 
@@ -678,5 +679,15 @@ export const setModalityInfo = (modalityInfo) => (dispatch) => {
     dispatch({
         type: TEST_VIEW_MODALITY_INFO,
         payload: modalityInfo
+    })
+}
+
+export const setAttemptInfo = (data) => (dispatch) => {
+    const attemptInfo = {
+        attempt_sub_type: data.attempt_sub_type
+    }
+    dispatch({
+        type: TEST_VIEW_ATTEMPT_INFO,
+        payload: attemptInfo
     })
 }
