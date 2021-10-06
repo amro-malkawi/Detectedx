@@ -23,6 +23,7 @@ import TestSetCouponModal from "Components/Payment/TestSetCouponModal";
 import JSONParseDefault from 'json-parse-default';
 import {connect} from "react-redux";
 import VideoModal from "Routes/instructions/VideoModal";
+import AttemptSubTypeModal from "./AttemptSubTypeModal";
 
 // import NetSpeedMeter from "Components/NetSpeedMeter";
 
@@ -34,7 +35,7 @@ class List extends Component {
             tabIndex: 0,
             modalityList: [],
             selectedItem: {},
-            selectedId: null,
+            selectedTestSetId: null,
             isShowModalType: '',
             modalInfo: {},
             showInstructionVideoModal: false,
@@ -47,7 +48,6 @@ class List extends Component {
 
     getData() {
         Apis.currentTestSets().then((modalityList) => {
-            console.log('asdfasdf', modalityList)
             this.setState({modalityList: modalityList});
         });
     }
@@ -76,28 +76,30 @@ class List extends Component {
         });
     }
 
-    onGoAttempt() {
+    onCreateAttempt(testSetId, attemptSubType) {
+        Apis.attemptsAdd(testSetId, attemptSubType).then(resp => {
+            let path = '/test-view/' + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            this.props.history.push(path);
+        });
+    }
+
+    onStart(testSetId, modality_info) {
         this.setState({isShowModalType: ''});
-        if (this.state.selectedId.indexOf !== undefined && this.state.selectedId.indexOf('/app/test/attempt/') === 0) {
-            this.props.history.push(this.state.selectedId)
+        if (testSetId.indexOf !== undefined && testSetId.indexOf('/app/test/attempt/') === 0) {
+            this.props.history.push(testSetId)
         } else {
-            let newData = {
-                test_set_id: this.state.selectedId,
-            };
-            Apis.attemptsAdd(newData).then(resp => {
-                let path = '/test-view/' + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
-                // let path = '/app/test/attempt/' + resp.id;
-                this.props.history.push(path);
-            });
+            if(modality_info.modality_has_sub_type) {
+                this.setState({isShowModalType: 'attemptSubTypeModal', selectedTestSetId: testSetId});
+            } else {
+                this.onCreateAttempt(testSetId);
+            }
         }
     }
 
-    onStart(value, modality_type, has_post) {
-        this.setState({
-            selectedId: value
-        }, () => {
-            this.onGoAttempt();
-        });
+    onCloseSubTypeModal(subType) {
+        const testSetId = this.state.selectedTestSetId;
+        this.setState({isShowModalType: '', selectedTestSetId: null});
+        this.onCreateAttempt(testSetId, subType);
     }
 
     onPay(test_set_item) {
@@ -170,7 +172,7 @@ class List extends Component {
         }
     }
 
-    renderStartButton(test_set_item, modality_type) {
+    renderStartButton(test_set_item, modality_info) {
         const {id, attempts, has_post, test_set_paid, test_set_point, is_test_set_expired, test_set_price} = test_set_item;
         const test_set_id = id;
         let attempt = attempts[0];
@@ -178,19 +180,19 @@ class List extends Component {
             // free test set
             return (
                 <Button className="mr-10 mt-5 mb-5 pl-20 pr-20 test-set-buy-btn" outline color="secondary" size="sm"
-                        onClick={() => test_set_point === 0 ? this.onStart(test_set_id, modality_type, has_post) : this.onPay(test_set_item)}>
+                        onClick={() => test_set_point === 0 ? this.onStart(test_set_id, modality_info) : this.onPay(test_set_item)}>
                     {test_set_point === 0 ? <IntlMessages id="test.start"/> : `Buy ${test_set_price.currency_symbol}${test_set_price.price} ${test_set_price.currency}`}
                 </Button>
             );
         } else if (attempt === undefined) {
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_info)}>
                     <IntlMessages id="test.start"/>
                 </Button>
             );
         } else if (attempt.complete) {
             return (
-                <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_type, has_post)}>
+                <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_info)}>
                     <IntlMessages id="test.reStart"/>
                 </Button>
             );
@@ -281,11 +283,7 @@ class List extends Component {
         }
     }
 
-    renderTestSets(
-        {
-            test_sets, modality_info
-        }
-    ) {
+    renderTestSets({test_sets, modality_info}) {
         return (
             <div className={'m-0'} key={modality_info.id}>
                 {
@@ -307,7 +305,7 @@ class List extends Component {
                                             </div>
                                             <div className={'col-sm-12 col-md-3 test-list-action-buttons'}>
                                                 {this.renderScoresButton(item, modality_info.instruction_type)}
-                                                {this.renderStartButton(item, modality_info.modality_type)}
+                                                {this.renderStartButton(item, modality_info)}
                                             </div>
                                         </div>
                                         {
@@ -391,7 +389,11 @@ class List extends Component {
                     onClose={() => this.setState({isShowModalType: ''})}
                     link={this.state.modalInfo.video}
                 />
-
+                <AttemptSubTypeModal
+                    open={this.state.isShowModalType === 'attemptSubTypeModal'}
+                    onClose={() => this.setState({isShowModalType: ''})}
+                    onSelectSubType={(subType) => this.onCloseSubTypeModal(subType)}
+                />
                 {/*<NetSpeedMeter*/}
                 {/*    imageUrl={'https://static.detectedx.com/data/dummy.dat'}*/}
                 {/*    downloadSize={104857600}*/}

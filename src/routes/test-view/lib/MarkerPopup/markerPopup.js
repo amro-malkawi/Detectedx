@@ -130,6 +130,14 @@ class MarkerPopup extends Component {
         }
     }
 
+    onSaveScreeningMark() {
+        // I added "none" key in selectedLesionList to skip validation.
+        this.setState({
+            selectedRating: 3,
+            selectedLesionList: {screening: ''}
+        }, () => this.handleClosePopup('save'));
+    }
+
     renderSubLesion(parent, item) {
         const {selectedLesionList} = this.state;
         const options = item.children.map((v) => ({value: v.id, label: v.name}));
@@ -188,7 +196,7 @@ class MarkerPopup extends Component {
 
                 // step by step select feature
                 const temp = childrenLesionList.filter((v) => selectedLesionList[selectedLesionObj.name][v.name] !== undefined);
-                if(temp.length < childrenLesionList.length) {
+                if (temp.length < childrenLesionList.length) {
                     // add select what did not set value
                     temp.push(childrenLesionList[temp.length]);
                 }
@@ -241,6 +249,7 @@ class MarkerPopup extends Component {
     renderRatings() {
         const ratings = [...this.state.ratings];
         if (this.props.testSetHangingIdList.length > 0 && ratings.length > 0) {
+            // breast popup
             return (
                 <div>
                     <div className={'fs-19 mb-2'}>Bi-RADS Categories:</div>
@@ -318,19 +327,54 @@ class MarkerPopup extends Component {
 
     render() {
         const {lesionList} = this.state;
+        if (this.props.attemptInfo.attempt_sub_type === 'screening') {
+            // attempt type is screening, show only "Recall" button
+            return (
+                <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
+                    <div id="mark-details" onClick={(e) => e.stopPropagation()}>
+                        <form>
+                            <div className={'text-red fs-19'}>Suspicious Case?</div>
+                            <div className="actions">
+                                <div className="left">
+                                </div>
+                                {
+                                    this.state.complete ?
+                                        <div className="right">
+                                            <Button variant="contained" className="ok" onClick={() => this.handleClosePopup('ok')}>&nbsp;&nbsp;<IntlMessages id={"testView.ok"}/>&nbsp;&nbsp;</Button>
+                                        </div> :
+                                        <div className="right">
+                                            {
+                                                this.state.isShowPopupDelete ?
+                                                    <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}>
+                                                        <IntlMessages id={"testView.delete"}/>
+                                                    </Button> : null
+                                            }
+                                            <Button
+                                                variant="contained"
+                                                className="save"
+                                                onClick={() => this.onSaveScreeningMark()}
+                                            >
+                                                Recall
+                                            </Button>
+                                        </div>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
-                <div id="mark-details" onClick={(e) => {
-                    e.stopPropagation()
-                }}>
+                <div id="mark-details" onClick={(e) => e.stopPropagation()}>
                     <form>
                         {this.renderRatings()}
                         {
                             (lesionList.length > 0 && Number(this.state.selectedRating) > 2) &&
-                                <div>
-                                    <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
-                                    {this.renderLesion()}
-                                </div>
+                            <div>
+                                <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
+                                {this.renderLesion()}
+                            </div>
                         }
 
                         <div className="actions">
@@ -344,8 +388,9 @@ class MarkerPopup extends Component {
                                     <div className="right">
                                         {
                                             this.state.isShowPopupDelete ?
-                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}><IntlMessages
-                                                    id={"testView.delete"}/></Button> : null
+                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}>
+                                                    <IntlMessages id={"testView.delete"}/>
+                                                </Button> : null
                                         }
                                         <Button variant="contained" className="save" onClick={() => this.handleClosePopup('save')}><IntlMessages id={"testView.save"}/></Button>
                                     </div>
@@ -362,6 +407,7 @@ class MarkerPopup extends Component {
 const mapStateToProps = (state) => {
     return {
         testSetHangingIdList: state.testView.testSetHangingIdList,
+        attemptInfo: state.testView.attemptInfo
     };
 };
 

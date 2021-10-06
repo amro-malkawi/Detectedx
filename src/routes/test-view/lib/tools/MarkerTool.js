@@ -115,6 +115,10 @@ export default class MarkerTool extends BaseAnnotationTool {
                     if(v === 'Nil') lesionNames[i] = 'No associated features';
                     if(v === 'Present') lesionNames[i] = 'Associated features present';
                 });
+                // if attempt is screening, don't need to show info
+                if(rootLesion === 'screening') {
+                    isShowInfo = false;
+                }
 
                 let colour;
                 let padding;
