@@ -42,6 +42,14 @@ module.exports = {
 	"test.enterCouponCode": "Enter coupon code",
 	"test.verify": "VERIFY",
 	"test.apply": "APPLY",
+	"test.attemptSubModalTitle": "Which type test do you want?",
+	"test.attemptSubModalScreening": "Screening Test",
+	"test.attemptSubModalDiagnostic": "Diagnostic Test",
+	"test.attemptSubModalScreeningTooltip": "allows you to assign a BIRADS Assessment Category from 1 to 5 to each case. " +
+		"If you consider the case to be 1-Normal or 2-Benign, you press the Next button to move to the next case. " +
+		"For any other finding you mark the lesion and assign a code of 3-Probably Benign ,4-Suspicious or 5-Highly Suspicious of Malignancy. There is no BIRADS 0 choice.",
+	"test.attemptSubModalDiagnosticTooltip": "allows you press the Next button to move to the next case for all cases with Normal/Benign findings only.  " +
+		"If you think the case has a significant finding that requires further investigation then you mark the case and select the Recall option, equivalent to BIRADS 0.",
 
 	"test.list.instructionVideo": "Instruction Video",
 
@@ -165,6 +173,8 @@ module.exports = {
 	"testView.modal.selectBreastDensity": "Select breast density category",
 	"testView.confirm": "Confirm",
 	"testView.synopticComment": "Synoptic Comment",
+	"testView.screeningTitle": "Requires further investigation.",
+	"testView.screeningButton": "Recall",
 	"testView.comment": "Comment",
 	"testView.comment.patient": "Patient History",
 	"testView.covidQuestion.title1": "Distribution of COVID appearances",
