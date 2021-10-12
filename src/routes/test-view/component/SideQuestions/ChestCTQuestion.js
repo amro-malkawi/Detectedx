@@ -257,6 +257,7 @@ export default class ChestCTQuestion extends Component {
             ) return '';
             return ' truth-icon'
         }
+        const checkValues = answerValue[qId] || {};
         return (
             <div>
                 <div>
@@ -271,7 +272,7 @@ export default class ChestCTQuestion extends Component {
                                 <RadioGroup
                                     aria-label="position"
                                     name="position"
-                                    value={answerValue[qId][childQId + v + 'R'] ? answerValue[qId][childQId + v + 'R'] : ''}
+                                    value={checkValues[childQId + v + 'R'] ? checkValues[childQId + v + 'R'] : ''}
                                     onChange={(event) => (disabled ? null : this.onChangeChildValue(qId, childQId + v + 'R', event.target.value))}
                                     row
                                     disabled={disabled}
@@ -299,7 +300,7 @@ export default class ChestCTQuestion extends Component {
                                 <RadioGroup
                                     aria-label="position"
                                     name="position"
-                                    value={answerValue[qId][childQId + v + 'L'] ? answerValue[qId][childQId + v + 'L'] : ''}
+                                    value={checkValues[childQId + v + 'L'] ? checkValues[childQId + v + 'L'] : ''}
                                     onChange={(event) => (disabled ? null : this.onChangeChildValue(qId, childQId + v + 'L', event.target.value))}
                                     row
                                     disabled={disabled}
@@ -491,8 +492,9 @@ export default class ChestCTQuestion extends Component {
 
     renderAdditionalQuestion(questionObj, disabled) {
         const {answerValue, truthValue} = this.state;
-        if (answerValue[questionObj.id] === undefined) return null;
-        if (answerValue[questionObj.id].value !== undefined && answerValue[questionObj.id].value === 'Yes') {
+        if ((answerValue[questionObj.id] !== undefined && answerValue[questionObj.id].value !== undefined && answerValue[questionObj.id].value === 'Yes') ||
+            (truthValue[questionObj.id] !== undefined && truthValue[questionObj.id].value !== undefined && truthValue[questionObj.id].value === 'Yes')
+        ) {
             if (questionObj.id === 'chestCTQ1') {
                 return this.renderQuestion1Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ2') {

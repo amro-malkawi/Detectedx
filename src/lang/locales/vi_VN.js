@@ -42,6 +42,14 @@ module.exports = {
     "test.enterCouponCode": "Nhập mã phiếu giảm giá",
     "test.verify": "XÁC MINH",
     "test.apply": "ÁP DỤNG",
+    "test.attemptSubModalTitle": "Bạn muốn kiểm tra loại nào?",
+    "test.attemptSubModalScreening": "Xét nghiệm sàng lọc",
+    "test.attemptSubModalDiagnostic": "Xét nghiệm chẩn đoán",
+    "test.attemptSubModalScreeningTooltip": "cho phép bạn chỉ định Hạng mục Đánh giá BIRADS từ 1 đến 5 cho từng trường hợp. " +
+        "Nếu bạn coi trường hợp này là 1-Bình thường hoặc 2-Lành tính, bạn nhấn nút Tiếp theo để chuyển sang trường hợp tiếp theo. " +
+        "Đối với bất kỳ phát hiện nào khác, bạn đánh dấu tổn thương và gán mã là 3-Có thể là lành tính, 4-Đáng ngờ hoặc 5-Khả nghi cao về Bệnh ác tính. Không có lựa chọn BIRADS 0.",
+    "test.attemptSubModalDiagnosticTooltip": "cho phép bạn nhấn nút Tiếp theo để chuyển sang trường hợp tiếp theo cho tất cả các trường hợp chỉ có phát hiện Bình thường / Lành tính. " +
+        "Nếu bạn cho rằng trường hợp có một phát hiện quan trọng cần điều tra thêm thì bạn đánh dấu trường hợp đó và chọn tùy chọn Thu hồi, tương đương với BIRADS 0.",
 
     "test.list.instructionVideo": "Video hướng dẫn",
 
@@ -164,6 +172,8 @@ module.exports = {
     "testView.modal.selectBreastDensity": "Chọn danh mục mật độ vú",
     "testView.confirm": "Xác nhận",
     "testView.synopticComment": "Nhận xét khái quát",
+    "testView.screeningTitle": "Yêu cầu điều tra thêm.",
+    "testView.screeningButton": "Hồi tưởng",
     "testView.comment": "Bình luận",
     "testView.comment.patient": "Lịch sử bệnh nhân",
     "testView.covidQuestion.title1": "Phân phối xuất hiện COVID",

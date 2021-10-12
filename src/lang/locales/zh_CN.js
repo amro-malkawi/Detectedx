@@ -42,6 +42,12 @@ module.exports = {
     "test.enterCouponCode": "输入优惠券代码",
     "test.verify": "校验",
     "test.apply": "应用",
+    "test.attemptSubModalTitle": "您想要哪种类型的测试？",
+    "test.attemptSubModalScreening": "筛选测试",
+    "test.attemptSubModalDiagnostic": "诊断测试",
+    "test.attemptSubModalScreeningTooltip": "允许您为每个案例分配一个 BIRADS 评估类别，从 1 到 5。 如果您认为案例是 1-Normal 或 2-Benign，您可以按 Next 按钮移至下一个案例。 " +
+        "对于任何其他发现，您标记病变并指定 3-可能良性、4-可疑或 5-高度可疑恶性的代码。 没有 BIRADS 0 选择。",
+    "test.attemptSubModalDiagnosticTooltip": "允许您按“下一步”按钮移动到仅具有正常/良性结果的所有案例的下一个案例。 如果您认为案例有需要进一步调查的重要发现，那么您可以标记案例并选择召回选项，相当于 BIRADS 0。",
 
     "test.list.instructionVideo": "指导视频",
 
@@ -164,6 +170,8 @@ module.exports = {
     "testView.modal.selectBreastDensity": "选择乳房密度类别",
     "testView.confirm": "确认",
     "testView.synopticComment": "突触评论",
+    "testView.screeningTitle": "需要进一步调查。",
+    "testView.screeningButton": "记起",
     "testView.comment": "评论",
     "testView.comment.patient": "患者病史",
     "testView.covidQuestion.title1": "COVID外观的分布",
