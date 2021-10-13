@@ -11,10 +11,10 @@ const AttemptSubTypeModal = ({open, onClose, onSelectSubType}) => {
         >
             <DialogTitle className={'ml-70 mr-70'}><IntlMessages id={"test.attemptSubModalTitle"}/></DialogTitle>
             <DialogActions>
-                <Tooltip title={<IntlMessages id={"test.attemptSubModalScreeningTooltip"}/>} placement="bottom">
+                <Tooltip title={<span className={'fs-13'}><IntlMessages id={"test.attemptSubModalScreeningTooltip"}/></span>} placement="bottom">
                     <Button variant="contained" onClick={() => onSelectSubType('screening')} color="primary" className="text-white"><IntlMessages id={"test.attemptSubModalScreening"}/></Button>
                 </Tooltip>
-                <Tooltip title={<IntlMessages id={"test.attemptSubModalDiagnosticTooltip"}/>} placement="bottom">
+                <Tooltip title={<span className={'fs-13'}><IntlMessages id={"test.attemptSubModalDiagnosticTooltip"}/></span>} placement="bottom">
                     <Button variant="contained" onClick={() => onSelectSubType('')} color="primary" className="text-white"><IntlMessages id={"test.attemptSubModalDiagnostic"}/></Button>
                 </Tooltip>
             </DialogActions>
