@@ -45,11 +45,13 @@ module.exports = {
 	"test.attemptSubModalTitle": "Quel type de test voulez-vous ?",
 	"test.attemptSubModalScreening": "Test de dépistage",
 	"test.attemptSubModalDiagnostic": "Test diagnostique",
-	"test.attemptSubModalScreeningTooltip": "vous permet d'attribuer une catégorie d'évaluation BIRADS de 1 à 5 à chaque cas. " +
+	"test.attemptSubModalScreeningOption": "Option de dépistage",
+	"test.attemptSubModalDiagnosticOption": "Option de diagnostic",
+	"test.attemptSubModalScreeningTooltip": "– vous permet d'appuyer sur le bouton Suivant pour passer au cas suivant pour tous les cas avec des résultats normaux/bénins uniquement. " +
+		"Si vous pensez que le cas a une conclusion importante qui nécessite une enquête plus approfondie, alors vous marquez le cas et sélectionnez l'option Rappel, équivalente à BIRADS 0",
+	"test.attemptSubModalDiagnosticTooltip": "– vous permet d'attribuer une catégorie d'évaluation BIRADS de 1 à 5 à chaque cas. " +
 		"Si vous considérez que le cas est 1-Normal ou 2-Bénigne, vous appuyez sur le bouton Suivant pour passer au cas suivant. " +
 		"Pour tout autre résultat, vous marquez la lésion et attribuez un code 3-Probablement bénin, 4-Suspicieux ou 5-Très suspect de malignité. Il n'y a pas de choix BIRADS 0.",
-	"test.attemptSubModalDiagnosticTooltip": "vous permet d'appuyer sur le bouton Suivant pour passer au cas suivant pour tous les cas avec des résultats normaux/bénins uniquement. " +
-		"Si vous pensez que le cas a une conclusion importante qui nécessite une enquête plus approfondie, vous marquez le cas et sélectionnez l'option Rappeler, équivalente à BIRADS 0.",
 
 	"test.list.instructionVideo": "Vidéo d'instruction",
 
