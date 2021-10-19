@@ -9,18 +9,34 @@ import {
     FormGroup,
     FormControlLabel,
     Button,
-    CircularProgress, withStyles,
+    CircularProgress,
+    withStyles,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    TextField
 } from '@material-ui/core';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import SchoolIcon from '@material-ui/icons/School';
 import {NotificationManager} from 'react-notifications';
 import PostQuestionForm from "./PostQuestionForm";
 import BoxplotChart from "Components/BoxplotChart";
 import IntlMessages from "Util/IntlMessages";
 import JSONParseDefault from 'json-parse-default';
+import validator from 'validator';
 import ExtraInfo from "./ExtraInfo";
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
+
+
+const darkTheme = createMuiTheme({
+    palette: {
+        type: 'dark',
+    },
+});
 
 const stepName = {
     mainQuestions: <IntlMessages id="test.questionnaires"/>,
@@ -53,6 +69,8 @@ class Attempt extends Component {
             loading: true,
             isDownCert: false,
             isHideScore: false,
+            sendScoreModal: false,
+            sendScoreEmail: '',
         }
     }
 
@@ -362,11 +380,30 @@ class Attempt extends Component {
 
     onGetCertPdf(type) {
         this.setState({isDownCert: true});
-        Apis.attemptsCertificatePdf(this.state.attempts_id, type).then((resp) => {
+        Apis.attemptsCertificatePdf(this.state.attempts_id, type, this.state.attemptInfo.test_sets.name).then((resp) => {
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         }).finally(() => {
             this.setState({isDownCert: false});
+        })
+
+    }
+
+    onScoreDownload () {
+        Apis.attemptsScorePdf(this.state.attempts_id, null, this.state.attemptInfo.test_sets.name).then((resp) => {
+        }).catch((e) => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+        }).finally(() => {
+        })
+    }
+
+    onScoreSendEmail() {
+        this.setState({sendScoreModal: false, sendScoreEmail: ''})
+        Apis.attemptsScorePdf(this.state.attempts_id, this.state.sendScoreEmail, this.state.attemptInfo.test_sets.name).then((resp) => {
+            NotificationManager.success('The email has been successfully sent.');
+        }).catch((e) => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+        }).finally(() => {
         })
     }
 
@@ -756,6 +793,9 @@ class Attempt extends Component {
                                         <span>{v.metrics.name}</span><span>{v.score}</span></div>
                                 ))
                             }
+                            {
+                                this.renderScoreDownload()
+                            }
                         </div>
                     </div>
                 </div>
@@ -873,6 +913,9 @@ class Attempt extends Component {
                             {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                             <span>%</span></p>
                         <p className={'score-desc'}><IntlMessages id="test.attempt.volparaScoreDesc"/></p>
+                        {
+                            this.renderScoreDownload()
+                        }
                     </div>
                 </div>
                 <div className={'col-md-6 score-chart-container'}>
@@ -919,6 +962,9 @@ class Attempt extends Component {
                                     <span>{v.metrics.name}</span><span>{v.score}%</span></div>
                             ))
                         }
+                        {
+                            this.renderScoreDownload()
+                        }
                     </div>
                 </div>
                 <div className={'col-md-6'}>
@@ -945,6 +991,19 @@ class Attempt extends Component {
                         />
                     </div>
                 </div>
+            </div>
+        )
+    }
+
+    renderScoreDownload() {
+        return (
+            <div className={'d-flex flex-row justify-content-center mt-10'}>
+                <Button variant="contained" color="primary" size="small" className="text-white mr-20" onClick={() => this.onScoreDownload()}>
+                    Download Score
+                </Button>
+                <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({sendScoreModal: true, sendScoreEmail: ''})}>
+                    Send Via Email
+                </Button>
             </div>
         )
     }
@@ -1154,6 +1213,38 @@ class Attempt extends Component {
                 <div className={'attempt-container'}>
                     <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
                     {this.renderStepContent()}
+                    <ThemeProvider theme={darkTheme}>
+                    <Dialog open={this.state.sendScoreModal} onClose={() => this.setState({sendScoreModal: false})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
+                        <DialogTitle>Send Score</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>You can send score by email. please input the email you want.</DialogContentText>
+                            <TextField
+                                className={'text-white'}
+                                autoFocus
+                                margin="dense"
+                                id="score_email"
+                                label="Email Address"
+                                type="email"
+                                fullWidth
+                                value={this.state.sendScoreEmail}
+                                onChange={(e) => this.setState({sendScoreEmail: e.target.value})}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="contained" onClick={() => this.setState({sendScoreModal: false})} color="secondary"  >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={() => this.onScoreSendEmail()}
+                                color="primary"
+                                disabled={!validator.isEmail(this.state.sendScoreEmail)}
+                            >
+                                Send
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    </ThemeProvider>
                 </div>
             )
         } else {
