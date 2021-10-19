@@ -52,10 +52,17 @@ function setMetaDataSet(uri, metaDataSet) {
 }
 
 function metaDataRequest(uri) {
-    if(getMetaDataSet(uri) !== undefined) return Promise.resolve();
+    const currentMetaDataSet = getMetaDataSet(uri);
+    if(currentMetaDataSet !== undefined) {
+        if(Object.prototype.toString.call(currentMetaDataSet) === "[object Promise]") {
+            return currentMetaDataSet;
+        } else {
+            return Promise.resolve();
+        }
+    }
     // download metadata
     const metaDataSetUrl = getMetaDataSetUrl(uri);
-    if (metaDataSetUrl === null) return Promise.resolve();
+    if (metaDataSetUrl === '') return Promise.resolve();
     const metaRequestProgress =  new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('get', metaDataSetUrl);
@@ -67,7 +74,7 @@ function metaDataRequest(uri) {
                 console.error(e);
                 resolve({})
             }
-            resolve(null, xhr.response);
+            // resolve(null, xhr.response);
         };
         xhr.onerror = function (e) {
             console.error(e);
