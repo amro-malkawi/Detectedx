@@ -246,25 +246,29 @@ export function attemptsQuestionnaireAnswer(id, data, type) {
     return instance.post(url, data).then((response) => response.data);
 }
 
-export function attemptsCertificatePdf(id, type, testSetName) {
-    return new Promise(function (resolve, reject) {
-        const url = '/attempts/' + id + '/certificate/?type=' + type + '&access_token=' + getAccessToken();
-        instance({
-            url: url,
-            method: 'GET',
-            responseType: 'blob', // important
-        }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `certificate of ${testSetName}.pdf`);
-            document.body.appendChild(link);
-            link.click();
-            resolve();
-        }).catch((e) => {
-            reject(e);
+export function attemptsCertificatePdf(id, type, email, testSetName) {
+    const url = '/attempts/' + id + '/certificate/?type=' + type + '&email=' + email + '&access_token=' + getAccessToken();
+    if(email && email.length > 0) {
+        return instance.get(url).then((response) => response.data);
+    } else {
+        return new Promise(function (resolve, reject) {
+            instance({
+                url: url,
+                method: 'GET',
+                responseType: 'blob', // important
+            }).then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `certificate of ${testSetName}.pdf`);
+                document.body.appendChild(link);
+                link.click();
+                resolve();
+            }).catch((e) => {
+                reject(e);
+            });
         });
-    });
+    }
 }
 
 export function attemptsScorePdf(id, email, testSetName) {

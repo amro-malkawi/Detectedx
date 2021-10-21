@@ -19,7 +19,7 @@ module.exports = {
 	"test.results": "Results",
 	"test.proceedToTest": "Proceed to test",
 	"test.certificate": "Certificate",
-	"test.certificateOfCompletion": "Certificate Of Completion",
+	"test.certificateSendEmail": "Send via Email",
 	"test.name": "Name",
 	"test.value": "Value",
 	"test.description": "Description",

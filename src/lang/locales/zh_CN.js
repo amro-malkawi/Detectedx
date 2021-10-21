@@ -19,7 +19,7 @@ module.exports = {
     "test.results": "结果",
     "test.proceedToTest": "继续测试",
     "test.certificate": "证书",
-    "test.certificateOfCompletion": "完成证书",
+    "test.certificateSendEmail": "通过电子邮件发送",
     "test.name": "名称",
     "test.value": "值",
     "test.description": "描述",

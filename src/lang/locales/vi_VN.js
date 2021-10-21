@@ -19,7 +19,7 @@ module.exports = {
     "test.results": "Kết quả",
     "test.proceedToTest": "Tiến hành kiểm tra",
     "test.certificate": "Giấy chứng nhận",
-    "test.certificateOfCompletion": "Giấy chứng nhận hoàn thành",
+    "test.certificateSendEmail": "Gửi qua Email",
     "test.name": "Tên",
     "test.value": "Giá trị",
     "test.description": "Mô tả",
