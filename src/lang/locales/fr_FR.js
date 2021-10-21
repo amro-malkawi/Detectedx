@@ -47,11 +47,13 @@ module.exports = {
 	"test.attemptSubModalDiagnostic": "Test diagnostique",
 	"test.attemptSubModalScreeningOption": "Option de dépistage",
 	"test.attemptSubModalDiagnosticOption": "Option de diagnostic",
-	"test.attemptSubModalScreeningTooltip": "– vous permet d'appuyer sur le bouton Suivant pour passer au cas suivant pour tous les cas avec des résultats normaux/bénins uniquement. " +
-		"Si vous pensez que le cas a une conclusion importante qui nécessite une enquête plus approfondie, alors vous marquez le cas et sélectionnez l'option Rappel, équivalente à BIRADS 0",
+	"test.attemptSubModalScreeningTooltip": "– Si vous pensez que le cas a un résultat significatif qui nécessite une enquête plus approfondie, " +
+		"alors vous marquez le cas et sélectionnez l'option Rappel, équivalente à BIRADS 0. " +
+		"Pour tous les cas avec des résultats normaux/bénins, appuyez sur le bouton Suivant pour passer au cas suivant.",
 	"test.attemptSubModalDiagnosticTooltip": "– vous permet d'attribuer une catégorie d'évaluation BIRADS de 1 à 5 à chaque cas. " +
-		"Si vous considérez que le cas est 1-Normal ou 2-Bénigne, vous appuyez sur le bouton Suivant pour passer au cas suivant. " +
-		"Pour tout autre résultat, vous marquez la lésion et attribuez un code 3-Probablement bénin, 4-Suspicieux ou 5-Très suspect de malignité. Il n'y a pas de choix BIRADS 0.",
+		"Si vous pensez que le cas a un résultat significatif, vous pouvez marquer la lésion et attribuer un code 3-Probablement bénin, " +
+		"4-Suspicieux ou 5-Très suspect de malignité. Il n'y a pas de choix BIRADS 0. Si vous considérez que le cas est 1-Normal ou 2-Bénigne, " +
+		"vous appuyez sur le bouton Suivant pour passer au cas suivant.",
 
 	"test.list.instructionVideo": "Vidéo d'instruction",
 

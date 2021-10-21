@@ -333,7 +333,7 @@ class MarkerPopup extends Component {
                 <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
                     <div id="mark-details" onClick={(e) => e.stopPropagation()}>
                         <form>
-                            <div className={'text-red fs-19'}><IntlMessages id={"testView.screeningTitle"}/></div>
+                            <div className={'text-white fs-19'}><IntlMessages id={"testView.screeningTitle"}/></div>
                             <div className="actions">
                                 <div className="left">
                                 </div>
