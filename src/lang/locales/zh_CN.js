@@ -19,7 +19,7 @@ module.exports = {
     "test.results": "结果",
     "test.proceedToTest": "继续测试",
     "test.certificate": "证书",
-    "test.certificateOfCompletion": "完成证书",
+    "test.certificateSendEmail": "通过电子邮件发送",
     "test.name": "名称",
     "test.value": "值",
     "test.description": "描述",
@@ -47,9 +47,9 @@ module.exports = {
     "test.attemptSubModalDiagnostic": "诊断测试",
     "test.attemptSubModalScreeningOption": "筛选选项",
     "test.attemptSubModalDiagnosticOption": "诊断选项",
-    "test.attemptSubModalScreeningTooltip": "– 允许您按“下一步”按钮移动到仅具有正常/良性结果的所有案例的下一个案例。 如果您认为案例有需要进一步调查的重要发现，那么您可以标记案例并选择召回选项，相当于 BIRADS 0",
-    "test.attemptSubModalDiagnosticTooltip": "– 允许您为每个案例分配一个 BIRADS 评估类别，从 1 到 5。" +
-        " 如果您认为案例是 1-Normal 或 2-Benign，您可以按 Next 按钮移至下一个案例。 对于任何其他发现，您标记病变并指定 3-可能良性、4-可疑或 5-高度可疑恶性的代码。 没有 BIRADS 0 选择。",
+    "test.attemptSubModalScreeningTooltip": "– 如果您认为案例有需要进一步调查的重要发现，则标记案例并选择召回选项，相当于 BIRADS 0。对于具有正常/良性发现的所有案例，按下一步按钮移至下一个案例。",
+    "test.attemptSubModalDiagnosticTooltip": "– 允许您为每个案例分配一个 BIRADS 评估类别，从 1 到 5。 如果您认为病例有重要发现，您可以标记病变并指定 3-可能良性、4-可疑或 5-高度可疑恶性的代码。" +
+        " 没有 BIRADS 0 选择。 如果您认为案例是 1-Normal 或 2-Benign，您可以按 Next 按钮移至下一个案例。",
 
     "test.list.instructionVideo": "指导视频",
 
