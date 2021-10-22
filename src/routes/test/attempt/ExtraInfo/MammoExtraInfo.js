@@ -54,7 +54,7 @@ export default function () {
             <p className={'extra-title'}><IntlMessages id="test.attempt.scoreDefinitions"/></p>
             <p className={'extra-desc'}><IntlMessages id="test.attempt.scoreDefinitionsDesc"/></p>
             <div className={'extra-button-container'}>
-                <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => setShowModal(true)}>
+                <Button data-cy="test-attempt-definition-button" variant="contained" color="primary" size="small" className="text-white" onClick={() => setShowModal(true)}>
                     <IntlMessages id="test.attempt.definition"/>
                 </Button>
             </div>

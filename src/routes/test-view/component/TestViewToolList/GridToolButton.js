@@ -49,7 +49,7 @@ class GridToolButton extends PureComponent {
 
     render() {
         return (
-            <div className={"tool option"} onClick={this.onClick}>
+            <div data-cy="grid-tool" className={"tool option"} onClick={this.onClick}>
                 {<CornerstoneToolIcon name={'Grid'}/>}
                 <p><IntlMessages id={"testView.tool.grid"}/></p>
                 <LayoutMenu

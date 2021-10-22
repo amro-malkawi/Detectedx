@@ -202,7 +202,7 @@ export default class Profile extends Component {
                                     </div>
                                     <div className="card-footer">
                                         <div className="d-flex justify-content-center mt-10">
-                                            <Button variant="contained" className="btn-primary text-white" onClick={() => this.onShowPasswordChangeModal()}>
+                                            <Button data-cy="change-password-button" variant="contained" className="btn-primary text-white" onClick={() => this.onShowPasswordChangeModal()}>
                                                 <IntlMessages id="profile.changePassword" />
                                             </Button>
                                         </div>
@@ -213,7 +213,7 @@ export default class Profile extends Component {
                         <RctCollapsibleCard
                             colClasses="col-sm-12 col-md-8 col-xl-8 b-100 w-xs-full"
                         >
-                            <ExpansionPanel expanded={this.state.expanded === 'personalInfo'} onChange={this.onExpandeChange('personalInfo')}>
+                            <ExpansionPanel data-cy="expand-personal-info" expanded={this.state.expanded === 'personalInfo'} onChange={this.onExpandeChange('personalInfo')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
                                     <span className={'fs-17 fw-bold'}><IntlMessages id="profile.personalInformation" /></span>
                                 </ExpansionPanelSummary>
@@ -276,12 +276,12 @@ export default class Profile extends Component {
                                     />
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
-                            <ExpansionPanel expanded={this.state.expanded === 'address'} onChange={this.onExpandeChange('address')}>
+                            <ExpansionPanel data-cy="expand-address-info" expanded={this.state.expanded === 'address'} onChange={this.onExpandeChange('address')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
                                     <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.address"}/></span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
-                                    <FormControl variant="outlined" fullWidth>
+                                    <FormControl data-cy="form-address-info-country" variant="outlined" fullWidth>
                                         <CustomInputLabel
                                             htmlFor="country"
                                             shrink
@@ -300,6 +300,7 @@ export default class Profile extends Component {
                                     </FormControl>
 
                                     <TextField
+                                        data-cy="form-address-info-address-line1"
                                         id="address_line1"
                                         value={this.state.userInfo.address1}
                                         onChange={(event) => this.onChangeData('address1', event.target.value)}
@@ -310,6 +311,7 @@ export default class Profile extends Component {
                                         fullWidth
                                     />
                                     <TextField
+                                        data-cy="form-address-info-address-line2"
                                         id="address_line2"
                                         value={this.state.userInfo.address2}
                                         onChange={(event) => this.onChangeData('address2', event.target.value)}
@@ -320,6 +322,7 @@ export default class Profile extends Component {
                                         fullWidth
                                     />
                                     <TextField
+                                        data-cy="form-address-info-address-suburb"
                                         id="suburb"
                                         value={this.state.userInfo.suburb}
                                         onChange={(event) => this.onChangeData('suburb', event.target.value)}
@@ -330,6 +333,7 @@ export default class Profile extends Component {
                                         fullWidth
                                     />
                                     <TextField
+                                        data-cy="form-address-info-address-state"
                                         id="state"
                                         value={this.state.userInfo.state}
                                         onChange={(event) => this.onChangeData('state', event.target.value)}
@@ -340,6 +344,7 @@ export default class Profile extends Component {
                                         fullWidth
                                     />
                                     <TextField
+                                        data-cy="form-address-info-address-postcode"
                                         id="postcode"
                                         value={this.state.userInfo.postcode}
                                         onChange={(event) => this.onChangeData('postcode', event.target.value)}
@@ -351,12 +356,12 @@ export default class Profile extends Component {
                                     />
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
-                            <ExpansionPanel expanded={this.state.expanded === 'additional'} onChange={this.onExpandeChange('additional')}>
+                            <ExpansionPanel data-cy="expand-additional-info" expanded={this.state.expanded === 'additional'} onChange={this.onExpandeChange('additional')}>
                                 <ExpansionPanelSummary expandIcon={<i className="zmdi zmdi-chevron-down"/>}>
                                     <span className={'fs-17 fw-bold'}><IntlMessages id={"profile.additionalInformation"}/></span>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails style={{display: 'block'}}>
-                                    <FormControl variant="outlined" fullWidth>
+                                    <FormControl data-cy="form-additional-info-places-of-work" variant="outlined" fullWidth>
                                         <CustomInputLabel
                                             htmlFor="placesOfWork"
                                             shrink
@@ -374,7 +379,7 @@ export default class Profile extends Component {
                                             styles={selectStyles}
                                         />
                                     </FormControl>
-                                    <FormControl variant="outlined" fullWidth>
+                                    <FormControl data-cy="form-additional-info-position" variant="outlined" fullWidth>
                                         <CustomInputLabel
                                             htmlFor="position"
                                             shrink
@@ -391,7 +396,7 @@ export default class Profile extends Component {
                                             styles={selectStyles}
                                         />
                                     </FormControl>
-                                    <FormControl variant="outlined" fullWidth>
+                                    <FormControl data-cy="form-additional-info-interests" variant="outlined" fullWidth>
                                         <CustomInputLabel
                                             htmlFor="interest"
                                             shrink
@@ -410,6 +415,7 @@ export default class Profile extends Component {
                                         />
                                     </FormControl>
                                     <TextField
+                                        data-cy="form-additional-info-referred_by"
                                         id="referred_by"
                                         value={this.state.userInfo.referrer_by}
                                         onChange={(event) => this.onChangeData('referrer_by', event.target.value)}
@@ -421,6 +427,7 @@ export default class Profile extends Component {
                                         multiline
                                     />
                                     <TextField
+                                        data-cy="form-additional-info-extra-info"
                                         id="extra_info"
                                         value={this.state.userInfo.extra_info}
                                         onChange={(event) => this.onChangeData('extra_info', event.target.value)}
@@ -469,7 +476,7 @@ export default class Profile extends Component {
                         </RctCollapsibleCard>
                     </div>
                     <div className={'d-flex justify-content-end mr-50'}>
-                        <Fab variant="extended" color="primary" aria-label="add" className={'m-1 mr-70'} onClick={() => this.onSaveProfile()}>
+                        <Fab data-cy="update-profile" variant="extended" color="primary" aria-label="add" className={'m-1 mr-70'} onClick={() => this.onSaveProfile()}>
                             <SaveIcon className={'mr-1'} />
                             <IntlMessages id={"profile.update"} />
                         </Fab>
@@ -487,6 +494,7 @@ export default class Profile extends Component {
                         </ModalHeader>
                         <ModalBody>
                             <TextField
+                                data-cy="current-password"
                                 id="current_password"
                                 value={this.state.currentPassword}
                                 onChange={(event) => this.setState({currentPassword: event.target.value})}
@@ -498,6 +506,7 @@ export default class Profile extends Component {
                                 fullWidth
                             />
                             <TextField
+                                data-cy="new-password"
                                 id="new_password"
                                 value={this.state.newPassword}
                                 onChange={(event) => this.setState({newPassword: event.target.value})}
@@ -509,6 +518,7 @@ export default class Profile extends Component {
                                 fullWidth
                             />
                             <TextField
+                                data-cy="confirm-password"
                                 id="confirm_password"
                                 value={this.state.confirmNewPassword}
                                 onChange={(event) => this.setState({confirmNewPassword: event.target.value})}
@@ -522,6 +532,7 @@ export default class Profile extends Component {
                         </ModalBody>
                         <ModalFooter>
                             <Button
+                                data-cy="confirm-change-password-button"
                                 variant="contained"
                                 color="primary"
                                 className="text-white bg-primary"
