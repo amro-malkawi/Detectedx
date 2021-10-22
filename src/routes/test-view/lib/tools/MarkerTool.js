@@ -160,9 +160,11 @@ export default class MarkerTool extends BaseAnnotationTool {
         function _handler(event) {
             handler(event);
             document.removeEventListener('mouseup', _handler);
+            document.removeEventListener('touchend', _handler);
         }
 
         document.addEventListener('mouseup', _handler);
+        document.addEventListener('touchend', _handler);
     }
 
     static lesions = [];
