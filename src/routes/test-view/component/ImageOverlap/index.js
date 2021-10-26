@@ -182,6 +182,7 @@ class ImageOverlap extends Component {
                             <ImageEDMamoQuality imagePosition={imagePosition}/>
                         }
                         <GEThicknessSwitch
+                            imageId={this.props.imageId}
                             age={age}
                             metaData={imageMetaData}
                         />

@@ -16,7 +16,7 @@ export default class MarkerTool extends BaseAnnotationTool {
             name: 'Marker',
             supportedInteractionTypes: ['Mouse', 'Touch'],
             configuration: {
-                truthColour: 'red',
+                truthColour: '#ff1029',
                 notCancerColour: '#8CFF29',
                 answerColour: 'yellow'
             }

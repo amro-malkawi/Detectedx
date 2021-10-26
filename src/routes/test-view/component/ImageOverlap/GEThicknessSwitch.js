@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 import {changeThicknessType} from "Actions/TestViewAction";
 import IntlMessages from "Util/IntlMessages";
 
-const GEThicknessSwitch = ({metaData, age, currentThicknessType, changeThicknessType}) => {
+const GEThicknessSwitch = ({imageId, metaData, age, currentThicknessType, changeThicknessType, imageList}) => {
     // if(currentThicknessType === 'NOTHICKNESS' || (metaData.positionDesc !== 'GE-PLANES' && metaData.positionDesc !== 'GE-SLABS')) return null;
     const onChange = (type) => {
         if(type !== null) changeThicknessType(type);
@@ -16,6 +16,15 @@ const GEThicknessSwitch = ({metaData, age, currentThicknessType, changeThickness
     const renderAge = () => {
         if(age !== 0) {
             return <div className="age-info status fs-14 text-white"><IntlMessages id="testView.age"/>: {age}</div>
+        } else {
+            return null;
+        }
+    }
+
+    const renderImageType = () => {
+        const imageInfo = imageList.find((v) => v.id === imageId);
+        if(imageInfo && imageInfo.type === 'prior') {
+            return <div className="age-info status fs-14 text-white">Type: Prior</div>
         } else {
             return null;
         }
@@ -38,6 +47,7 @@ const GEThicknessSwitch = ({metaData, age, currentThicknessType, changeThickness
     return (
         <div className={'ge-thickness-switch'}>
             {renderAge()}
+            {renderImageType()}
             {renderToggleButtonGroup()}
         </div>
     )
@@ -47,6 +57,7 @@ const GEThicknessSwitch = ({metaData, age, currentThicknessType, changeThickness
 const mapStateToProps = (state) => {
     return {
         currentThicknessType: state.testView.currentThicknessType,
+        imageList: state.testView.imageList
     };
 };
 
