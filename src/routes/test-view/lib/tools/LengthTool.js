@@ -132,7 +132,7 @@ export default class MyLengthTool extends LengthTool {
 
                     // change for middle text
                     data.handles.textBox.x = (data.handles.start.x + data.handles.end.x) / 2 - 20;
-                    data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2 - 70;
+                    data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2 - 10;
                 }
 
                 // Move the textbox slightly to the right and upwards

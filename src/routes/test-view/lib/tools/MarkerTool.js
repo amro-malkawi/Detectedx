@@ -16,7 +16,7 @@ export default class MarkerTool extends BaseAnnotationTool {
             name: 'Marker',
             supportedInteractionTypes: ['Mouse', 'Touch'],
             configuration: {
-                truthColour: 'red',
+                truthColour: '#ff1029',
                 notCancerColour: '#8CFF29',
                 answerColour: 'yellow'
             }
@@ -160,9 +160,11 @@ export default class MarkerTool extends BaseAnnotationTool {
         function _handler(event) {
             handler(event);
             document.removeEventListener('mouseup', _handler);
+            document.removeEventListener('touchend', _handler);
         }
 
         document.addEventListener('mouseup', _handler);
+        document.addEventListener('touchend', _handler);
     }
 
     static lesions = [];

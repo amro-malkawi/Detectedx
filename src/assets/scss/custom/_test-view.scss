@@ -1295,6 +1295,7 @@ div.viewer {
     }
 
     .rotate-error {
+      position: fixed;
       display: flex;
       align-items: center;
       background-color: black;

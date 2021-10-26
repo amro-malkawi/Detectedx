@@ -323,6 +323,7 @@ export default class CovidQuestions extends Component {
                     <div className={'covid-confidence'}>
                         <p><IntlMessages id={"testView.covidQuestion.title2"}/></p>
                         <RadioGroup
+                            data-cy="covid-confidence-position"
                             aria-label="position"
                             name="position"
                             className={'ml-15'}

@@ -157,20 +157,20 @@ class ImageOverlap extends Component {
                         <div className={'overlap-control-btn'}>
                             {
                                 canDrawMarker &&
-                                <a className="eye" onClick={() => this.onToggleMarkInfo()}>
+                                <a className="eye" data-cy="tool-mark-info" onClick={() => this.onToggleMarkInfo()}>
                                     <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
                                         <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
                                     </Tooltip>
                                 </a>
                             }
-                            <a onClick={() => this.onInvert()}>
+                            <a data-cy="tool-invert" onClick={() => this.onInvert()}>
                                 <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
                                     <i className={"zmdi zmdi-brightness-6 fs-23"}/>
                                 </Tooltip>
                             </a>
                             {
                                 (!this.props.complete && canDrawMarker) &&
-                                <a onClick={() => onClearSymbols()}>
+                                <a data-cy="tool-clear-symbols" onClick={() => onClearSymbols()}>
                                     <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
                                         <i className={"zmdi zmdi-delete fs-23 ml-2"}/>
                                     </Tooltip>
@@ -182,6 +182,7 @@ class ImageOverlap extends Component {
                             <ImageEDMamoQuality imagePosition={imagePosition}/>
                         }
                         <GEThicknessSwitch
+                            imageId={this.props.imageId}
                             age={age}
                             metaData={imageMetaData}
                         />

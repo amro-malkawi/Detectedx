@@ -16,7 +16,7 @@ const style = {
     activeColor: 'greenyellow',
     invalidColor: '',
     fillColor: 'transparent',
-    truthColour: 'red',
+    truthColour: '#ff1029',
     notCancerColour: '#8CFF29',
     answerColour: 'yellow'
 };

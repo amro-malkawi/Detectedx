@@ -32,7 +32,7 @@ export default function ({open, score, remainCount, onPostTestAgain}) {
                 }
             </DialogContent>
             <DialogActions className={'justify-content-center'}>
-                <Button variant="contained" onClick={onPostTestAgain} color="primary" className={'mr-10'} autoFocus>
+                <Button data-cy="review-answers-button" variant="contained" onClick={onPostTestAgain} color="primary" className={'mr-10'} autoFocus>
                     {
                         remainCount > 0 ? <IntlMessages id={"testView.viewer.reviewAnswers"}/> : <IntlMessages id={"testView.viewer.home"}/>
                     }

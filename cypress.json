@@ -1,0 +1,11 @@
+{
+    "baseUrl": "http://localhost:3002",
+    "experimentalStudio": true,
+    "viewportWidth": 1280,
+    "viewportHeight": 800,
+    "env": {
+        "cypress-react-selector": {
+            "root": "#root"
+        }
+    }
+}

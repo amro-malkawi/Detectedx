@@ -180,20 +180,20 @@ class List extends Component {
         if (!test_set_paid || is_test_set_expired) {
             // free test set
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20 test-set-buy-btn" outline color="secondary" size="sm"
+                <Button data-cy="test-start-button" className="mr-10 mt-5 mb-5 pl-20 pr-20 test-set-buy-btn" outline color="secondary" size="sm"
                         onClick={() => test_set_point === 0 ? this.onStart(test_set_id, modality_info) : this.onPay(test_set_item)}>
                     {test_set_point === 0 ? <IntlMessages id="test.start"/> : `Buy ${test_set_price.currency_symbol}${test_set_price.price} ${test_set_price.currency}`}
                 </Button>
             );
         } else if (attempt === undefined) {
             return (
-                <Button className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_info)}>
+                <Button data-cy="test-start-button" className="mr-10 mt-5 mb-5 pl-20 pr-20" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_info)}>
                     <IntlMessages id="test.start"/>
                 </Button>
             );
         } else if (attempt.complete) {
             return (
-                <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_info)}>
+                <Button data-cy="test-start-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.onStart(test_set_id, modality_info)}>
                     <IntlMessages id="test.reStart"/>
                 </Button>
             );
@@ -201,14 +201,14 @@ class List extends Component {
             if (attempt.progress === '' || attempt.progress === 'test') {
                 const path = '/test-view/' + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
                 return (
-                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
+                    <Button data-cy="test-continue-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
                         <IntlMessages id="test.continue"/>
                     </Button>
                 );
             } else {
                 const path = '/app/test/attempt/' + attempt.id + '/' + attempt.progress;
                 return (
-                    <Button className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
+                    <Button data-cy="test-continue-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
                         <IntlMessages id="test.continue"/>
                     </Button>
                 );
@@ -219,14 +219,15 @@ class List extends Component {
     renderModalityTab({modality_info}) {
         return (
             <ModalityTab
+                data-cy="modality-tab"
                 key={modality_info.id}
                 label={
-                    <div className={'modality-tab-item'}>
+                    <div data-cy="modality-tab-item" className={'modality-tab-item'}>
                         <p>{modality_info.name}</p>
                         <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
                         {
                             modality_info.instruction_type !== null ?
-                                <MuiButton variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
+                                <MuiButton data-cy="instruction-button" variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
                                     <IntlMessages id={"testView.instructions"}/>
                                 </MuiButton> : <div style={{height: 35}}/>
                         }
@@ -256,7 +257,7 @@ class List extends Component {
             return <div className={'mt-50'}/>
         } else {
             return (
-                <div className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
+                <div data-cy="modality-desc-text" className="modality-desc-text d-flex col-sm-12 col-md-12 col-lg-10 offset-lg-1 mt-20 mb-20">
                     {
                         !unavailableDescText &&
                         <div className={unavailableVideo ? 'col-sm-12' : 'col-sm-12 col-md-7'} dangerouslySetInnerHTML={{__html: descText}}/>
@@ -267,7 +268,7 @@ class List extends Component {
                             <div className={'d-flex justify-content-center'}>
                                 <h3><strong><IntlMessages id="test.list.instructionVideo"/></strong></h3>
                             </div>
-                            <div className={'instruction-video'}
+                            <div data-cy="instruction-video" className={'instruction-video'}
                                  onClick={() => this.setState({
                                      isShowModalType: 'instructionVideoModal',
                                      modalInfo: {type: modality_info.instruction_type, video: instruction_video}
@@ -286,14 +287,14 @@ class List extends Component {
 
     renderTestSets({test_sets, modality_info}) {
         return (
-            <div className={'m-0'} key={modality_info.id}>
+            <div className={'m-0'} key={modality_info.id} data-cy={modality_info.name}>
                 {
                     this.renderModalityDesc(modality_info)
                 }
                 {
                     test_sets.map((item, index) => {
                         return (
-                            <div className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
+                            <div data-cy="test-set" className="col-sm-12 col-md-12 col-lg-10 offset-lg-1 p-0" key={index}>
                                 <Card className="rct-block">
                                     <CardBody>
                                         <div className="row d-flex justify-content-between">
@@ -331,13 +332,14 @@ class List extends Component {
                 {
                     this.props.isLogin &&
                     <div className={'test-set-coupon'}>
-                        <MuiButton variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
+                        <MuiButton data-cy="test-set-coupon-button" variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
                             <IntlMessages id={"test.testSetCoupon"}/>
                         </MuiButton>
                     </div>
                 }
                 <AppBar position="static" color="default">
                     <ModalityTabs
+                        data-cy="modality-tabs"
                         value={this.state.tabIndex}
                         onChange={(e, value) => this.setState({tabIndex: value})}
                         variant="scrollable"
