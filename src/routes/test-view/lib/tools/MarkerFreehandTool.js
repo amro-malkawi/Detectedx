@@ -186,6 +186,11 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                     const ratingLabelObj = MarkerTool.modalityRatings.find((v) => v.value === data.rating);
                     if(ratingLabelObj !== undefined) ratingLabel = ratingLabelObj.label;
 
+                    context.shadowColor = "black";
+                    context.shadowOffsetX = 1;
+                    context.shadowOffsetY = 1;
+                    context.shadowBlur = 1;
+
                     if ( !data.isTruth ) {
                         drawTextBox(context, 'Your answer. Rate: ' + ratingLabel, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
                     } else {
