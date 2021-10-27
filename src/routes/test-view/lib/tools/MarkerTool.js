@@ -141,6 +141,11 @@ export default class MarkerTool extends BaseAnnotationTool {
                     const ratingLabelObj = MarkerTool.modalityRatings.find((v) => v.value === mark.rating);
                     if(ratingLabelObj !== undefined) ratingLabel = ratingLabelObj.label;
 
+                    context.shadowColor = "black";
+                    context.shadowOffsetX = 1;
+                    context.shadowOffsetY = 1;
+                    context.shadowBlur = 1;
+
                     if ( !mark.isTruth ) {
                         drawTextBox(context, 'Your answer. Rate: ' + ratingLabel, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
