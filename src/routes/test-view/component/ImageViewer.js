@@ -21,12 +21,13 @@ import WebWorker from "../worker/WebWorker";
 import WorkerProc from "../worker/WorkerProc";
 
 import stackPrefetch from '../lib/stackTools/stackPrefetch';
+import cornerstoneResize from "../lib/resize";
+
 import MarkerTool from "../lib/tools/MarkerTool";
 import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
 import LengthTool from "../lib/tools/LengthTool";
 import AngleTool from "../lib/tools/AngleTool";
-import cornerstoneResize from "../lib/resize";
-
+import TruthArrowTool from "Routes/test-view/lib/tools/TruthArrowTool";
 const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
@@ -64,7 +65,7 @@ class ImageViewer extends Component {
             age: 0,
             loadedImage: false,
         };
-        this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'Eraser'];
+        this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'TruthArrow', 'Eraser'];
         // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.imageWidth = 0;
@@ -250,10 +251,16 @@ class ImageViewer extends Component {
                 cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
             } else if (toolName === 'Angle') {
                 cornerstoneTools.addToolForElement(this.imageElement, AngleTool);
+            } else if (toolName === 'TruthArrow') {
+                cornerstoneTools.addToolForElement(this.imageElement, TruthArrowTool);
             } else {
                 cornerstoneTools.addToolForElement(this.imageElement, cornerstoneTools[toolName + 'Tool']);
             }
-            cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
+            if (toolName === 'TruthArrow') {
+                cornerstoneTools.setToolEnabledForElement(this.imageElement, toolName);
+            } else {
+                cornerstoneTools[setToolElementFunc](this.imageElement, toolName);
+            }
         });
 
         // cornerstoneTools.addToolForElement(this.imageElement, LengthTool);
@@ -437,7 +444,6 @@ class ImageViewer extends Component {
     }
 
     handleMeasureModifyEvent(event) {
-        console.log('measure modify', event.detail.toolName)
         this.tempMeasureToolData = event.detail;
     }
 
