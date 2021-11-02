@@ -30,11 +30,11 @@ export default class MarkerTool extends BaseAnnotationTool {
     }
 
     createNewMeasurement(eventData) {
-        const { currentPoints, element } = eventData;
+        const {currentPoints, element} = eventData;
         if (!currentPoints || !currentPoints.image)
             throw 'currentPoints.image not supplied to MarkerTool createNewMeasurement';
 
-        const data  = {
+        const data = {
             toolName: this.name,
             element,
             measurementData: {
@@ -42,7 +42,7 @@ export default class MarkerTool extends BaseAnnotationTool {
             },
         };
         this._handleMouseUp(_ => {
-            triggerEvent(element, 'cornerstonetoolsmeasurementcompleted', data );
+            triggerEvent(element, 'cornerstonetoolsmeasurementcompleted', data);
             this.addMarkFunc && this.addMarkFunc(currentPoints.image);
         });
 
@@ -50,7 +50,7 @@ export default class MarkerTool extends BaseAnnotationTool {
     }
 
     handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
-        const { element } = evt.detail;
+        const {element} = evt.detail;
         // precondition: toolData is a Mark object
         moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
         toolData.originalX = toolData.handles.end.x;
@@ -61,7 +61,7 @@ export default class MarkerTool extends BaseAnnotationTool {
             measurementData: toolData,
         };
         this._handleMouseUp(_ => {
-            triggerEvent(element, 'cornerstonetoolsmarkerselected', data );
+            triggerEvent(element, 'cornerstonetoolsmarkerselected', data);
             this.editMarkFunc && this.editMarkFunc(toolData);
         });
     }
@@ -74,9 +74,9 @@ export default class MarkerTool extends BaseAnnotationTool {
 
     renderToolData(evt) {
         const eventData = evt.detail;
-        const context   = getNewContext(eventData.canvasContext.canvas);
-        const viewport  = cornerstone.getViewport(evt.currentTarget);
-        const toolData  = cornerstoneTools.getToolState(evt.currentTarget, this.name);
+        const context = getNewContext(eventData.canvasContext.canvas);
+        const viewport = cornerstone.getViewport(evt.currentTarget);
+        const toolData = cornerstoneTools.getToolState(evt.currentTarget, this.name);
 
         // we can't draw anything unless the tool instance has some marks
         if (toolData === undefined || toolData.data === undefined) {
@@ -97,13 +97,13 @@ export default class MarkerTool extends BaseAnnotationTool {
             draw(context, context => {
                 let lesionNames = [];
                 const rootLesion = Object.keys(mark.lesionList)[0];
-                if(rootLesion !== undefined) {
-                    if(typeof mark.lesionList[rootLesion] === "object") {
+                if (rootLesion !== undefined) {
+                    if (typeof mark.lesionList[rootLesion] === "object") {
                         lesionNames.push(rootLesion);
                         Object.keys(mark.lesionList[rootLesion]).forEach((key) => {
                             lesionNames.push(mark.lesionList[rootLesion][key]);
                         });
-                    } else if(typeof mark.lesionList[rootLesion] === "string" && mark.lesionList[rootLesion].length > 0) {
+                    } else if (typeof mark.lesionList[rootLesion] === "string" && mark.lesionList[rootLesion].length > 0) {
                         lesionNames.push(rootLesion);
                         lesionNames.push(mark.lesionList[rootLesion]);
                     } else {
@@ -112,41 +112,42 @@ export default class MarkerTool extends BaseAnnotationTool {
                 }
                 // replace Nil and Present to "No associated features", "Associated features present"
                 lesionNames.forEach((v, i) => {
-                    if(v === 'Nil') lesionNames[i] = 'No associated features';
-                    if(v === 'Present') lesionNames[i] = 'Associated features present';
+                    if (v === 'Nil') lesionNames[i] = 'No associated features';
+                    if (v === 'Present') lesionNames[i] = 'Associated features present';
                 });
                 // if attempt is screening, don't need to show info
-                if(rootLesion === 'screening') {
+                if (rootLesion === 'screening') {
                     isShowInfo = false;
                 }
 
                 let colour;
                 let padding;
+                context.save();
                 if (mark.isTruth) {
                     colour = mark.isCancerMarker ? this.configuration.truthColour : this.configuration.notCancerColour;
                     padding = -15 - (lesionNames.length * 15) - radius;
-                }
-                else {
+                } else {
                     colour = this.configuration.answerColour;
                     padding = radius + 15;
+                    context.setLineDash([5, 5]);
                 }
-
                 drawHandles(context, eventData, mark.handles, {
                     handleRadius: radius,
                     color: colour,
                 });
-                if(isShowInfo && mark.isTruth !== undefined) {
+                context.restore();
+                if (isShowInfo && mark.isTruth !== undefined) {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
                     let ratingLabel = mark.rating;
                     const ratingLabelObj = MarkerTool.modalityRatings.find((v) => v.value === mark.rating);
-                    if(ratingLabelObj !== undefined) ratingLabel = ratingLabelObj.label;
+                    if (ratingLabelObj !== undefined) ratingLabel = ratingLabelObj.label;
 
                     context.shadowColor = "black";
                     context.shadowOffsetX = 1;
                     context.shadowOffsetY = 1;
                     context.shadowBlur = 1;
 
-                    if ( !mark.isTruth ) {
+                    if (!mark.isTruth) {
                         drawTextBox(context, 'Your answer. Rate: ' + ratingLabel, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     } else {

@@ -82,9 +82,15 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                             // The mouse location
                             lines.push(config.mouseLocation.handles.start);
                         }
+
+                        context.save();
+                        if(!data.isTruth) {
+                            context.setLineDash([5, 5]);
+                        }
                         drawJoinedLines(context, element, data.handles.points[j], lines, {
                             color,
                         });
+                        context.restore();
                     }
                 }
 
@@ -200,8 +206,6 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                         drawTextBox(context, v, textCoords.x, textCoords.y + padding + (15 * (i + 1)), colour, {centering: {x: true, y: true}});
                     });
                 }
-
-
             });
         }
     }
