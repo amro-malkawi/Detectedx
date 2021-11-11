@@ -190,10 +190,19 @@ function metaDataProvider(type, imageId) {
         let seriesDescription = getValue(getInsensitiveElement(metaData, '0008103e'));
         if (seriesDescription !== undefined) {
             seriesDescription = seriesDescription.toUpperCase();
-            if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0) {
-                positionDesc = 'GE-PLANES';
-            } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0) {
-                positionDesc = 'GE-SLABS';
+            if(seriesDescription.indexOf('ROUTINE3D_') === 0) {
+                if (seriesDescription.indexOf('ROUTINE3D_PLANES_') === 0) {
+                    positionDesc = 'GE-PLANES';
+                } else if (seriesDescription.indexOf('ROUTINE3D_SLABS_') === 0) {
+                    positionDesc = 'GE-SLABS';
+                } else {
+                    const sliceThickness = getValue(getInsensitiveElement(metaData, '00180050'));
+                    if(sliceThickness === 1) {
+                        positionDesc = 'GE-PLANES';
+                    } else if (sliceThickness === 10) {
+                        positionDesc = 'GE-SLABS';
+                    }
+                }
             } else if(seriesDescription.indexOf('V-PREVIEW') !== -1) {
                 positionDesc = 'GE-V-PREVIEW';
             }
