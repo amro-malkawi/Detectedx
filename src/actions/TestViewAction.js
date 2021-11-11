@@ -22,7 +22,8 @@ import {
 import {isMobile} from 'react-device-detect';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
-const gePositions = [['GE-V-PREVIEW', 'L'], ['GE-V-PREVIEW', 'R'], ['GE-PLANES', 'L'], ['GE-PLANES', 'R'], ['GE-SLABS', 'L'], ['GE-SLABS', 'R']]
+const geTypes = ['GE-PLANES', 'GE-SLABS', 'GE-V-PREVIEW'];
+const gePositions = [['GE-V-PREVIEW', 'L'], ['GE-V-PREVIEW', 'R'], ['GE-PLANES', 'L'], ['GE-PLANES', 'R'], ['GE-SLABS', 'L'], ['GE-SLABS', 'R']];
 
 const hangingIdList = {
     normalHangings: [],
@@ -85,6 +86,12 @@ const hangingIdList = {
         'CC-L_CC-L-P',
         'CC-L_CC-L-3D',
     ],
+    breastGE3DHangings: [
+        'MLO-R-3D-GE_MLO-L-3D-GE_CC-R-3D-GE_CC-L-3D-GE',
+        'MLO-R-GE_MLO-L-GE_CC-R-GE_CC-L-GE',
+        'CC-R-3D-GE_CC-R-GE_CC-L-GE_CC-L-3D-GE',
+        'MLO-R-3D-GE_MLO-R-GE_MLO-L-GE_MLO-L-3D-GE',
+    ],
     breastGEHangings: [
         'MLO-R_MLO-L_CC-R_CC-L',
         'CC-R_CC-L',
@@ -109,6 +116,7 @@ const getImageHangingType = (images) => {
     let hasAllCESMImages = true;
     let hasAll2DImages = true;
     let hasAll3DImages = true;
+    let hasAllGE3DImages = true;
     let hasAllGEImages = true;
     let hasVolparaImage = false;
 
@@ -181,6 +189,25 @@ const getImageHangingType = (images) => {
         if (thirdCount < 1) hasAll3DImages = false;
     });
 
+    geTypes.forEach((geType) => {
+        breastPositions.forEach((position) => {
+            const geBreastImageCount = images.filter((image) => {
+                try {
+                    const metaData = image.metaData;
+                    return (
+                        image.type === 'test' &&
+                        metaData.positionDesc === geType &&
+                        metaData.viewPosition !== undefined && metaData.viewPosition.toUpperCase().indexOf(position[0]) > -1 &&
+                        metaData.imageLaterality !== undefined && metaData.imageLaterality === position[1]
+                    )
+                } catch (e) {
+                    return false;
+                }
+            }).length;
+            if (geBreastImageCount < 1) hasAllGE3DImages = false;
+        });
+    });
+
     gePositions.forEach((position) => {
         const count = images.filter((image) => {
             try {
@@ -200,6 +227,8 @@ const getImageHangingType = (images) => {
     if (images.some((image) => image.type === 'volpara')) hasVolparaImage = true;
     if (hasVolparaImage && hasAllBreastImages) {
         return 'volparaHangings'
+    } else if (hasAllGE3DImages) {
+        return 'breastGE3DHangings';
     } else if (hasAllGEImages && hasAllBreastImages) {
         return 'breastGEHangings';
     } else if (hasAllPriorImages && hasAll3DImages && hasAll2DImages) {
@@ -355,7 +384,6 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 };
 
 export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false, isShowImageBrowser = true) => (dispatch, getState) => {
-    const {currentThicknessType} = getState().testView;
     if (isMobile) {
         isShowImageBrowser = false;
     }
@@ -467,6 +495,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
 
     let showImageList;
+    const currentThicknessType = (newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length >= 4) ?  'SLABS' : 'NOTHICKNESS';
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
     if (volparaImage !== undefined) {
@@ -503,7 +532,6 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     }
     const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser, testSetHangingType);
     showImageList = showImageList.filter((v) => v.length !== 0);
-    const thicknessImageCount = newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length;
     dispatch({
         type: TEST_VIEW_SET_IMAGE_LIST,
         imageList: newList,
@@ -518,7 +546,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
         volparaImageId,
         toolList: toolList,
         currentTool: 'Pan',
-        currentThicknessType: thicknessImageCount >= 4 ? 'SLABS' : 'NOTHICKNESS',
+        currentThicknessType,
     });
 };
 

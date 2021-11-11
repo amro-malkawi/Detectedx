@@ -12,7 +12,7 @@ import IntlMessages from "Util/IntlMessages";
 const question = [
     {
         id: 'chestCTQ1',
-        label: 'Well defined rounded opacities? Diffuse well rounded opacities?',
+        label: 'Diffuse well rounded opacities?',
         options: ['Yes', 'No'],
         child: {
             q1Sub1: {
@@ -28,7 +28,7 @@ const question = [
     },
     {
         id: 'chestCTQ2',
-        label: 'Irregular and/or linear opacities? Diffuse irregular and/or linear opacities?',
+        label: 'Diffuse irregular and/or linear opacities?',
         options: ['Yes', 'No'],
         child: {
             q2Sub1: {
@@ -44,7 +44,7 @@ const question = [
     },
     {
         id: 'chestCTQ3',
-        label: 'Large opacities? Large Opacities consistent with progressive massive fibrosis?',
+        label: 'Large Opacities consistent with progressive massive fibrosis?',
         options: ['Yes', 'No'],
         child: {
             q3Sub1: {
