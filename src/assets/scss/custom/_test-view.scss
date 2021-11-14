@@ -242,10 +242,34 @@ div.viewer {
               position: relative;
               display: flex;
               flex-direction: column;
-              justify-content: space-between;
+              //justify-content: space-between;
               width: 100%;
 
-              .overlap-info-text {
+              .overlap-info-center {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-end;
+                .overlap-marker-info {
+                  display: none;
+                  flex-direction: column;
+                  padding: 10px;
+                  margin: 8px;
+                  color: white;
+                  font-size: 12px;
+                  line-height: 15px;
+                  border: 2px solid white;
+                  border-radius: 10px;
+
+                  &.truth {
+                    border-color: red;
+                    color: red;
+                  }
+                }
+              }
+
+              .overlap-info-bottom {
                 display: flex;
                 justify-content: flex-end;
                 //margin-left: 10px;

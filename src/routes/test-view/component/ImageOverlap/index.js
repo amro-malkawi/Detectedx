@@ -187,7 +187,16 @@ class ImageOverlap extends Component {
                             metaData={imageMetaData}
                         />
                     </div>
-                    <div className={'overlap-info-text'}>
+                    <div className={'overlap-info-center'}>
+                        <div className={'overlap-marker-info'}>
+                            <span className={'fs-14 mb-2'}><u>Your answer</u></span>
+                            <span>Rate: 5</span>
+                            <span>Mass</span>
+                            <span>Oval</span>
+                            <span>Indistinct</span>
+                        </div>
+                    </div>
+                    <div className={'overlap-info-bottom'}>
                         <div>
                             {/*<div style={{marginRight: 3}}>*/}
                             {/*    (x: {this.state.cursorPosition.x}, y: {this.state.cursorPosition.y})*/}

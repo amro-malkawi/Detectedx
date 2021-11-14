@@ -136,6 +136,24 @@ export default class MarkerTool extends BaseAnnotationTool {
                     color: colour,
                 });
                 context.restore();
+
+                // const infoElement = eventData.element.parentElement.querySelector('.overlap-marker-info');
+                // if (isShowInfo && mark.isTruth !== undefined && infoElement) {
+                //     if (mark.active) {
+                //         infoElement.style.display = "flex";
+                //         // mark.isTruth ? infoElement.classList.add('truth') : infoElement.classList.remove('truth');
+                //         let infoHtml = `<span class="fs-14 b-2"><u>${(mark.isTruth ? "Your truth" : "Your answer")}</u></span>`;
+                //         infoHtml += "<span>Rate: 5</span>";
+                //         lesionNames.forEach((v, i) => {
+                //             infoHtml += `<span>${v}</span>`;
+                //         });
+                //         infoElement.innerHTML = infoHtml;
+                //     } else {
+                //         infoElement.innerHTML = "";
+                //         infoElement.style.display = "none";
+                //     }
+                // }
+
                 if (isShowInfo && mark.isTruth !== undefined) {
                     let textCoords = cornerstone.pixelToCanvas(eventData.element, mark.handles.end);
                     let ratingLabel = mark.rating;
@@ -148,14 +166,27 @@ export default class MarkerTool extends BaseAnnotationTool {
                     context.shadowBlur = 1;
 
                     if (!mark.isTruth) {
-                        drawTextBox(context, 'Your answer. Rate: ' + ratingLabel, textCoords.x, textCoords.y + padding, colour, {fontSize: 100, centering: {x: true, y: true}});
+                        drawTextBox(context, 'Your answer. Rate: ' + ratingLabel, textCoords.x, textCoords.y + padding, colour, {
+                            fontSize: 100,
+                            centering: {x: true, y: true}
+                        });
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     } else {
-                        drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {centering: {x: true, y: true}});
+                        drawTextBox(context, 'Lesion Number: ' + mark.lesionNumber, textCoords.x, textCoords.y + padding, colour, {
+                            centering: {
+                                x: true,
+                                y: true
+                            }
+                        });
                         // drawTextBox(context, `(x: ${mark.handles.end.x.toFixed(0)}, y: ${mark.handles.end.y.toFixed(0)}) (R = ${mark.radius})`, textCoords.x, textCoords.y + padding + 15, colour, {centering: {x: true, y: true}});
                     }
                     lesionNames.forEach((v, i) => {
-                        drawTextBox(context, v, textCoords.x, textCoords.y + padding + (15 * (i + 1)), colour, {centering: {x: true, y: true}});
+                        drawTextBox(context, v, textCoords.x, textCoords.y + padding + (15 * (i + 1)), colour, {
+                            centering: {
+                                x: true,
+                                y: true
+                            }
+                        });
                     });
                 }
             });

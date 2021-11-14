@@ -185,7 +185,11 @@
       align-items: flex-start !important;
     }
 
-    .overlap-info-text {
+    .overlap-info-center {
+      align-items: flex-start !important;
+    }
+
+    .overlap-info-bottom {
       justify-content: flex-start !important;
       & > div {
         align-items: flex-start !important;

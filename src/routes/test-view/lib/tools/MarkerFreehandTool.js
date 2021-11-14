@@ -171,6 +171,22 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
                         if(v === 'Present') lesionNames[i] = 'Associated features present';
                     });
 
+                    // const infoElement = eventData.element.parentElement.querySelector('.overlap-marker-info');
+                    // if (infoElement) {
+                    //     if (data.active) {
+                    //         infoElement.style.display = "flex";
+                    //         let infoHtml = `<span class="fs-14 b-2"><u>${(data.isTruth ? "Your truth" : "Your answer")}</u></span>`;
+                    //         infoHtml += "<span>Rate: 5</span>";
+                    //         lesionNames.forEach((v, i) => {
+                    //             infoHtml += `<span>${v}</span>`;
+                    //         });
+                    //         infoElement.innerHTML = infoHtml;
+                    //     } else {
+                    //         infoElement.innerHTML = "";
+                    //         infoElement.style.display = "none";
+                    //     }
+                    // }
+
                     let textCoords, padding, colour;
                     if (data.isTruth) {
                         textCoords = cornerstone.pixelToCanvas(eventData.element, {
