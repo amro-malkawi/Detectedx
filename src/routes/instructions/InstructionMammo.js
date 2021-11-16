@@ -83,58 +83,53 @@ export default function({instructionLocale}) {
                 </Col>
             </div>
             <hr />
-
-            <p className={'sub-menu-title'}> Marking a lesion </p>
+            <p className={'sub-menu-title'}> Type of test</p>
+            <div >
+                <img src={require('Assets/img/instruction/img_mammo4.png')} width={'35%'}/>
+            </div>
+            <hr />
             <div className={'row'}>
-                <Col sm={7}>
-                    <div>
-                        <p> 1. Select the <span style={{color: '#42A5F5'}}>Mark</span> tool </p>
-                        <p> 2. Place your mouse pointer over the site you want to mark. </p>
-                        <p> 3. <span style={{color: '#42A5F5'}}>Click</span> to mark a lesion </p>
-                    </div>
+                <Col sm={6}>
+                    <p className={'sub-menu-title'}>Screening</p>
+                    <p>Allows you to choose either:</p>
+                    <ul>
+                        <li>Recall (BIRADS 0)</li>
+                        <li>Next Case (Normal)</li>
+                    </ul>
+                    <img src={require('Assets/img/instruction/img_mammo5.png')} width={'70%'}/>
+                    <p>To add a second lesion, please repeat all the above steps.</p>
+                </Col>
+                <Col sm={6}>
+                    <p className={'sub-menu-title'}>Diagnostic</p>
+                    <p>Allows you to assign either:</p>
+                    <ul>
+                        <li>BIRADS assessment category</li>
+                        <p className={'mb-0'}>o 3 – probably benign, 4 – suspicious or 5 – highly suspicious</p>
+                        <p>o Abnormality appearances</p>
+                        <li>BIRADS assessment category </li>
+                        <p className={'mb-0'}>o 2 – benign</p>
+                        <p>o Next case ( 1 – normal)</p>
+                    </ul>
+                    <img src={require('Assets/img/instruction/img_mammo1.png')} width={'70%'}/>
+                    <p>For lesions given ratings of 3 or 4 or 5, you will have to select one or more lesion type(s). </p>
+                    <p>To select a lesion type: <img src={require('Assets/img/instruction/img_select_lesion.png')} height={35} alt={''}/></p>
+                    <p>Other selection boxes will appear depending on your choice. </p>
+                    <p>To add a second lesion, please repeat all the above steps.</p>
                 </Col>
             </div>
-            <div className={'row'}>
-                <Col sm={7}>
-                    <div>
-                        <p> 4. A pop-up menu will appear asking you yo rate the lesion </p>
-                        <ul>
-                            <li>2 = Benign</li>
-                            <li>3 = Equivocal</li>
-                            <li>4 = Suspicious</li>
-                            <li>5 = Malignant</li>
-                        </ul>
-                        <p>
-                            Tip: Rating a case 3, 4, or 5, means you are calling this <span style={{color: '#42A5F5'}}>a positive case, i.e. it requires further investigation / assessment.</span>
-                        </p>
-                    </div>
-                </Col>
-                <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_mammo1.png')} width={'70%'} alt={''} style={{margin: "auto"}}/>
-                </Col>
+            <hr />
+
+            <p className={'sub-menu-title'}> Marking</p>
+            <div>
+                <p>Mark either the screening or diagnostic as above by:</p>
+                <div>
+                    <p> 1. Select the <span style={{color: '#42A5F5'}}>Mark</span> tool </p>
+                    <p> 2. Place your mouse pointer over the site you want to mark. </p>
+                    <p> 3. <span style={{color: '#42A5F5'}}>Click</span> to mark a lesion </p>
+                </div>
             </div>
             <hr/>
 
-            <div className={'row'}>
-                <Col sm={7}>
-                    <div>
-                        <p> 5. For lesions given ratings of 3 or 4 or 5, you will have to select one or more lesion type(s). </p>
-                        <p> To select a lesion type: </p>
-                        <ul>
-                            <li>click on <img src={require('Assets/img/instruction/img_select_lesion.png')} height={35} alt={''}/></li>
-                            <li>a list of lesion types will appear.</li>
-                            <li>Click on lesion type to select it.</li>
-                            <li>Other selection boxes will appear depending on your choice.</li>
-                            <li>To add a second lesion, please repeat all the above steps.</li>
-                            <li>To change the lesion type on a selected lesion, you can click in the centre of the yellow circle and choose another lesion type</li>
-                        </ul>
-                    </div>
-                </Col>
-                <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_mammo2.png')} width={'70%'} alt={''} style={{margin: "auto"}} />
-                </Col>
-            </div>
-            <hr/>
             <p>
                 Tip: If you see the same lesion on both MLO and CC, we recommend that you mark the sites on both views.
                 If you correctly locate the lesion on just 1 view, you will get full points for <span style={{color: '#42A5F5'}}>lesion sensitivity.</span>
@@ -142,15 +137,14 @@ export default function({instructionLocale}) {
             </p>
             <hr/>
             <p className={'sub-menu-title'}> Delete a cancer selection </p>
-            <div className={'row'}>
-                <Col sm={7}>
-                    <p> Move the mouse to the center of the circle or the sides of a freehand selection, the selection will be highlighted, click and a popup window will appear,
-                        select <span style={{color: '#42A5F5'}}>Delete</span>
-                    </p>
-                </Col>
-                <Col sm={5}>
-                    <img src={require('Assets/img/instruction/img_mammo3.png')} width={'70%'} alt={''} style={{margin: 'auto'}}/>
-                </Col>
+            <div>
+                <p> Move the mouse to the center of the circle or the sides of a freehand selection, the selection will be highlighted, click and a popup window will appear,
+                    select <span style={{color: '#42A5F5'}}>Delete</span>
+                </p>
+                <div className={'d-flex flex-row justify-content-center'}>
+                <img src={require('Assets/img/instruction/img_mammo6.png')} width={'20%'} alt={''} style={{margin: 'auto'}}/>
+                <img src={require('Assets/img/instruction/img_mammo7.png')} width={'30%'} alt={''} style={{margin: 'auto'}}/>
+                </div>
             </div>
             <hr/>
 
