@@ -9,30 +9,36 @@ import LearningDeltalEDModal from "./LearningDeltalEDModal";
 import LearningLungEDModal from "./LearningLungEDModal";
 import LearningImagEDChestModal from "./LearningImagEDChestModal";
 import LearningImagEDMammoModal from "./LearningImagEDMammoModal";
+import LearningGEUSAPostModal from "./LearningGEUSAPostModal";
 
-export default ({open, type, name, postTestCount, credit, onClose}) => {
-    if(!open) return null;
-    if (type === 'normal') {
-        return <LearningNormalModal open={open} onClose={onClose} />
-    } else if (type === 'has_post') {
-        return <USStartModal open={open} name={name} postTestCount={postTestCount} credit={credit} onClose={onClose} />
-    } else if (type === 'covid') {
-        return <LearningCovidModal open={open} onClose={onClose} />
-    } else if (type === 'has_post_covid') {
-        return <USCovidStartModal open={open} onClose={onClose} />
-    } else if (type === 'volpara') {
-        return <LearningVolparaModal name={name} postTestCount={postTestCount} credit={credit} open={open} onClose={onClose} />
-    } else if (type === 'has_post_volpara') {
-        return <LearningVolparaPostModal name={name} postTestCount={postTestCount} credit={credit} open={open} onClose={onClose} />
-    } else if (type === 'dentalED') {
-        return <LearningDeltalEDModal open={open} onClose={onClose} />
-    } else if( type === 'LUNGED') {
-        return <LearningLungEDModal open={open} onClose={onClose} />
-    } else if( type === 'IMAGED_CHEST') {
-        return <LearningImagEDChestModal open={open} onClose={onClose} />
-    } else if( type === 'IMAGED_MAMMO') {
-        return <LearningImagEDMammoModal open={open} onClose={onClose} />
+export default ({open, modalityInfo, testSetInfo, onClose}) => {
+    if (!open) return null;
+    const testSetName = testSetInfo.name;
+    const postTestCount = testSetInfo.post_test_count;
+    const credit = testSetInfo.test_set_point;
+    const {instruction_type, modality_type} = modalityInfo;
+    console.log(modalityInfo)
+    if (modalityInfo.name === 'DentalED') {
+        return <LearningDeltalEDModal open={open} onClose={onClose}/>
+    } else if (modalityInfo.name === 'GE 3D' && testSetInfo.has_post) {
+        return <LearningGEUSAPostModal open={open} onClose={onClose} name={testSetName} postTestCount={postTestCount} credit={credit} />
+    } else if (instruction_type === 'COVID-19') {
+        return testSetInfo.has_post ?
+            <USCovidStartModal open={open} onClose={onClose}/> :
+            <LearningCovidModal open={open} onClose={onClose}/>
+    } else if (instruction_type === 'VOLPARA') {
+        return testSetInfo.has_post ?
+            <LearningVolparaPostModal name={testSetName} postTestCount={postTestCount} credit={credit} open={open} onClose={onClose}/> :
+            <LearningVolparaModal name={testSetName} postTestCount={postTestCount} credit={credit} open={open} onClose={onClose}/>
+    } else if (instruction_type === 'LUNGED') {
+        return <LearningLungEDModal open={open} onClose={onClose}/>
+    } else if (modality_type === 'imaged_chest') {
+        return <LearningImagEDChestModal open={open} onClose={onClose}/>
+    } else if (modality_type === 'imaged_mammo') {
+        return <LearningImagEDMammoModal open={open} onClose={onClose}/>
     } else {
-        return null;
+        return testSetInfo.has_post ?
+            <USStartModal open={open} name={testSetName} postTestCount={postTestCount} credit={credit} onClose={onClose}/> :
+            <LearningNormalModal open={open} onClose={onClose}/>
     }
 }

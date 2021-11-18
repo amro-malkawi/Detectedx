@@ -269,7 +269,7 @@ module.exports = {
 	"test.attempt.volparaCertDesc": "Cliquez ci-dessous pour télécharger un certificat d'achèvement",
 	"test.attempt.volparaCertDisabled": "Vous devez revoir vos réponses avant de recevoir votre certificat de réussite",
 	"test.attempt.volparaPostBeforeTitle": "Crédit (s) AMA PRA Catégorie 1 ™",
-	"test.attempt.volparaPostBeforeDesc": "Complétez 8 autres cas pour recevoir des crédits et un certificat AMA PRA Catégorie 1. Cliquez pour commencer",
+	"test.attempt.volparaPostBeforeDesc": "Complétez {postTestCount} autres cas pour recevoir des crédits et un certificat AMA PRA Catégorie 1. Cliquez pour commencer",
 	"test.attempt.volparaPostBeforeButton": "Démarrer",
 	"test.attempt.volparaPostProgressTitle": "Crédit (s) AMA PRA Catégorie 1 ™ en cours",
 	"test.attempt.volparaPostProgressDesc": "Cliquez ci-dessous pour continuer le post-test",

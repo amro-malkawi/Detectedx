@@ -267,7 +267,7 @@ module.exports = {
     "test.attempt.volparaCertDesc": "Nhấp vào bên dưới để tải xuống chứng chỉ hoàn thành",
     "test.attempt.volparaCertDisabled": "Bạn phải xem lại câu trả lời của mình trước khi nhận được chứng chỉ hoàn thành",
     "test.attempt.volparaPostBeforeTitle": "AMA PRA Loại 1 Tín dụng ™",
-    "test.attempt.volparaPostBeforeDesc": "Hoàn thành 8 trường hợp khác để nhận Chứng chỉ và chứng chỉ AMA PRA Hạng 1. Nhấp để Bắt đầu",
+    "test.attempt.volparaPostBeforeDesc": "Hoàn thành {postTestCount} trường hợp khác để nhận Chứng chỉ và chứng chỉ AMA PRA Hạng 1. Nhấp để Bắt đầu",
     "test.attempt.volparaPostBeforeButton": "Bắt đầu",
     "test.attempt.volparaPostProgressTitle": "AMA PRA Loại 1 Tín dụng ™ Đang được Tiến hành",
     "test.attempt.volparaPostProgressDesc": "Nhấp vào bên dưới để tiếp tục với bài kiểm tra",

@@ -265,7 +265,7 @@ module.exports = {
     "test.attempt.volparaCertDesc": "点击下面下载完成证书",
     "test.attempt.volparaCertDisabled": "您必须先查看答案，然后才能获得结业证书",
     "test.attempt.volparaPostBeforeTitle": " AMA PRA 1类信用™",
-    "test.attempt.volparaPostBeforeDesc": "再完成8个案例以获得AMA PRA类别1积分和证书。单击以开始",
+    "test.attempt.volparaPostBeforeDesc": "再完成{postTestCount}个案例以获得AMA PRA类别1积分和证书。单击以开始",
     "test.attempt.volparaPostBeforeButton": "开始",
     "test.attempt.volparaPostProgressTitle": "正在进行中的AMA PRA 1类信用™",
     "test.attempt.volparaPostProgressDesc": "单击下面继续进行后期测试",

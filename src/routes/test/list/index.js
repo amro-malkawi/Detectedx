@@ -53,26 +53,9 @@ class List extends Component {
     }
 
     onLearningModal(modalityInfo, test_set) {
-        const {name, instruction_type, modality_type} = modalityInfo
-        let type;
-        if (name === 'DentalED') {
-            type = 'dentalED';
-        } else if (instruction_type === 'COVID-19') {
-            type = test_set.has_post ? 'has_post_covid' : 'covid';
-        } else if (instruction_type === 'VOLPARA') {
-            type = test_set.has_post ? 'has_post_volpara' : 'volpara';
-        } else if (instruction_type === 'LUNGED') {
-            type = 'LUNGED';
-        } else if (modality_type === 'imaged_chest') {
-            type = 'IMAGED_CHEST'
-        } else if (modality_type === 'imaged_mammo') {
-            type = 'IMAGED_MAMMO'
-        } else {
-            type = test_set.has_post ? 'has_post' : 'normal';
-        }
         this.setState({
             isShowModalType: 'learningModal',
-            modalInfo: {learningType: type, name: test_set.name, postTestCount: test_set.post_test_count, credit: test_set.test_set_point}
+            modalInfo: {modalityInfo: modalityInfo, testSetInfo: test_set}
         });
     }
 
@@ -361,10 +344,8 @@ class List extends Component {
                 </SwipeableViews>
                 <LearningModal
                     open={this.state.isShowModalType === 'learningModal'}
-                    type={this.state.modalInfo.learningType}
-                    name={this.state.modalInfo.name}
-                    postTestCount={this.state.modalInfo.postTestCount}
-                    credit={this.state.modalInfo.credit}
+                    modalityInfo={this.state.modalInfo.modalityInfo}
+                    testSetInfo={this.state.modalInfo.testSetInfo}
                     onClose={() => this.setState({isShowModalType: '', modalInfo: {}})}
                 />
                 {
