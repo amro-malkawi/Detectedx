@@ -43,15 +43,8 @@ module.exports = {
     "test.verify": "VERIFICAR",
     "test.apply": "APLICAR",
     "test.attemptSubModalTitle": "¿Qué tipo de prueba quieres?",
-    "test.attemptSubModalScreening": "Prueba de pantalla",
-    "test.attemptSubModalDiagnostic": "Prueba de diagnóstico",
-    "test.attemptSubModalScreeningOption": "Opción de filtrado",
-    "test.attemptSubModalDiagnosticOption": "Opción de diagnóstico",
-    "test.attemptSubModalScreeningTooltip": "- Si cree que el caso tiene un hallazgo significativo que requiere más investigación, marque el caso y seleccione la opción Recall, equivalente a BIRADS 0. " +
-        "Para todos los casos con hallazgos normales / benignos, presione el botón Siguiente para pasar al siguiente caso.",
-    "test.attemptSubModalDiagnosticTooltip": "- le permite asignar una Categoría de Evaluación BIRADS de 1 a 5 a cada caso. " +
-        "Si cree que el caso tiene un hallazgo significativo, puede marcar la lesión y asignar un código de 3-Probablemente benigno, 4-Sospechoso o 5-Muy sospechoso de malignidad. " +
-        "No hay opción BIRADS 0. Si considera que el caso es 1-Normal o 2-Benigno, presione el botón Siguiente para pasar al siguiente caso.",
+    "test.attemptSubModalScreening": "Pantalla",
+    "test.attemptSubModalDiagnostic": "Diagnóstico",
 
     "test.list.instructionVideo": "Video de instrucciones",
 

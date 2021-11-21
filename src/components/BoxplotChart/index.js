@@ -32,9 +32,18 @@ class BoxplotChart extends Component {
 
     componentDidMount() {
         this.renderBoxplot();
-        this.getData();
+        // this.getData();
         Apis.userPositions().then((resp) => {
-            this.setState({userPositionList: resp})
+            let userPosition = 'all';
+            resp.forEach((v) => {
+                if(v.name === 'Radiologist') userPosition = v.id
+            });
+            this.setState({
+                userPositionList: resp,
+                userPosition,
+            }, () => {
+                this.getData();
+            })
         });
     }
 
@@ -218,7 +227,7 @@ class BoxplotChart extends Component {
     renderUserType() {
         if(!this.props.showUserSelect) return null;
         return (
-            <Input type="select" name="select" onChange={(e) => this.onChangeUserPosition(e.target.value)}>
+            <Input type="select" name="select" onChange={(e) => this.onChangeUserPosition(e.target.value)} value={this.state.userPosition}>
                 <option value={'all'}>All</option>
                 {
                     this.state.userPositionList.map((v) => <option value={v.id} key={v.id}>{v.name}</option>)

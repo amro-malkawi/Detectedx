@@ -43,15 +43,8 @@ module.exports = {
 	"test.verify": "VERIFY",
 	"test.apply": "APPLY",
 	"test.attemptSubModalTitle": "Which type test do you want?",
-	"test.attemptSubModalScreening": "Screening Test",
-	"test.attemptSubModalDiagnostic": "Diagnostic Test",
-	"test.attemptSubModalScreeningOption": "Screening option",
-	"test.attemptSubModalDiagnosticOption": "Diagnostic option",
-	"test.attemptSubModalScreeningTooltip": " – If you think the case has a significant finding that requires further investigation then you mark the case and select the Recall option, " +
-		"equivalent to BIRADS 0. For all cases with Normal/Benign findings,  press the Next button to move to the next case.  ",
-	"test.attemptSubModalDiagnosticTooltip": " – allows you to assign a BIRADS Assessment Category from 1 to 5 to each case. " +
-		"If you think the case has a significant finding you can mark the lesion and assign a code of 3-Probably Benign ,4-Suspicious or 5-Highly Suspicious of Malignancy. " +
-		"There is no BIRADS 0 choice. If you consider the case to be 1-Normal or 2-Benign, you press the Next button to move to the next case. ",
+	"test.attemptSubModalScreening": "Screening",
+	"test.attemptSubModalDiagnostic": "Diagnostic",
 
 	"test.list.instructionVideo": "Instruction Video",
 
