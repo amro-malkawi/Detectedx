@@ -951,8 +951,12 @@ export default class ChestQuestions extends Component {
                         >
                             {
                                 [
-                                    {value: 0, tooltip: 'Absolutely not'}, {value: 1, tooltip: 'Probably not'}, {value: 2, tooltip: 'Possibly not'},
-                                    {value: 3, tooltip: 'Possibly yes'}, {value: 4, tooltip: 'Probably yes'}, {value: 5, tooltip: 'Absolutely yes'}
+                                    {value: 0, tooltip: 'Normal, no abnormality attributable to OLD'},
+                                    {value: 1, tooltip: 'Some abnormalities present that maybe associated with OLD, either very nonspecific or equivocal'},
+                                    {value: 2, tooltip: 'Nonspecific features of OLD, remains nonspecific even with exposure history'},
+                                    {value: 3, tooltip: 'Nonspecific features of OLD, woulfd support diagnosis with appropriate exposure history'},
+                                    {value: 4, tooltip: 'Suggestive features of OLD. More specific for OLD, perhaps in top 3 differential'},
+                                    {value: 5, tooltip: 'Pathonomic features, OLD main differential even without exposure history'}
                                 ].map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
                                         <CheckboxTooltip title={v.tooltip} key={i}>

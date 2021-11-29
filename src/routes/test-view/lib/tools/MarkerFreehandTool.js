@@ -1,13 +1,13 @@
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from "cornerstone-tools";
+import cornerstoneMath from 'cornerstone-math';
 import MarkerTool from './MarkerTool';
 const getNewContext = cornerstoneTools.import('drawing/getNewContext');
 const draw = cornerstoneTools.import('drawing/draw');
 const drawHandles = cornerstoneTools.import('drawing/drawHandles');
 const drawJoinedLines = cornerstoneTools.import('drawing/drawJoinedLines');
-const drawLinkedTextBox = cornerstoneTools.import('drawing/drawLinkedTextBox');
 const drawTextBox = cornerstoneTools.import('drawing/drawTextBox');
-const numbersWithCommas = cornerstoneTools.import('util/numbersWithCommas');
+const pointInsideBoundingBox = cornerstoneTools.import('util/pointInsideBoundingBox');
 const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
 
 const style = {
@@ -25,6 +25,30 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
     constructor() {
         super({name: 'MarkerFreehand'});
     }
+
+    // _pointNearHandle(element, data, coords) {
+    //     if (data.handles === undefined || data.handles.points === undefined) return;
+    //     if (data.visible === false) return;
+    //     for (let i = 0; i < data.handles.points.length; i++) {
+    //         const handleCanvas = cornerstone.pixelToCanvas( element, data.handles.points[i] );
+    //         if (cornerstoneMath.point.distance(handleCanvas, coords) < 6) return i;
+    //     }
+    //     // Check to see if mouse in bounding box of textbox
+    //     if (data.handles.textBox) {
+    //         if (pointInsideBoundingBox(data.handles.textBox, coords)) {
+    //             return data.handles.textBox;
+    //         }
+    //     }
+    // }
+    //
+    // pointNearTool(element, data, coords) {
+    //     const validParameters = data && data.handles && data.handles.points;
+    //     if (!validParameters) throw new Error( `invalid parameters supplied to tool ${this.name}'s pointNearTool` );
+    //     if (!validParameters || data.visible === false)  return false;
+    //     const isPointNearTool = this._pointNearHandle(element, data, coords);
+    //     if (isPointNearTool !== undefined)  return true;
+    //     return false;
+    // }
 
     renderToolData(evt) {
         const eventData = evt.detail;

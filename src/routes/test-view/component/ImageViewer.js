@@ -75,6 +75,17 @@ class ImageViewer extends Component {
         this.tempMeasureToolData = null;
         this.imageElementRef = React.createRef();
         this.isComponentMount = false;
+
+        this.handleDoubleClickEvent = this.handleDoubleClickEvent.bind(this)
+        this.handleDoubleClickEvent = this.handleDoubleClickEvent.bind(this)
+        this.handleChangeStack = this.handleChangeStack.bind(this)
+        this.handleMeasureCompleteEvent = this.handleMeasureCompleteEvent.bind(this)
+        this.handleMeasureModifyEvent = this.handleMeasureModifyEvent.bind(this)
+        this.handleMeasureRemoveEvent = this.handleMeasureRemoveEvent.bind(this)
+        this.handleEditMark = this.handleEditMark.bind(this)
+        this.handleMouseUp = this.handleMouseUp.bind(this)
+        this.handlePrefecthDone = this.handlePrefecthDone.bind(this)
+        this.handleDatasetsCacheChanged = this.handleDatasetsCacheChanged.bind(this)
     }
 
     componentDidMount() {
@@ -120,12 +131,11 @@ class ImageViewer extends Component {
         if (this.state.imageIds.length > 1) {
             stackPrefetch.disable(this.imageElement);
         }
-
+        this.clearEvents();
         cornerstoneTools.clearToolState(this.imageElement, 'stackPrefetch');
         cornerstone.imageCache.purgeCache();
         cornerstoneTools.stopClip(this.imageElement);
         cornerstone.disable(this.imageElement);
-
         if (this.webWorker) this.webWorker.terminate();
     }
 
@@ -213,25 +223,35 @@ class ImageViewer extends Component {
     }
 
     initEvents() {
-
-        this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', (event) => this.handleDoubleClickEvent(event));
-        this.imageElement.addEventListener('cornerstonetoolsdoubletap', (event) => this.handleDoubleClickEvent(event));
-
-        // this.imageElement.addEventListener('cornerstonenewimage', _.debounce((e) => this.handleChangeStack(e), 0));
-        this.imageElement.addEventListener('cornerstonenewimage', (e) => this.handleChangeStack(e));
-
+        this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', this.handleDoubleClickEvent);
+        this.imageElement.addEventListener('cornerstonetoolsdoubletap', this.handleDoubleClickEvent);
+        // this.imageElement.addEventListener('cornerstonetoolsmousemove', this.handleMouseMoveEvent);
+        this.imageElement.addEventListener('cornerstonenewimage', this.handleChangeStack);
         this.imageElement.querySelector('canvas').oncontextmenu = function () {
             return false;
         }
-
-        this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', this.handleMeasureCompleteEvent.bind(this));
-        this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', this.handleMeasureModifyEvent.bind(this));
-        this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent.bind(this));
-        this.imageElement.addEventListener('cornerstonetoolsmarkerselected', (event) => this.handleEditMark(event.detail.toolName, event.detail));
-        this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp.bind(this));
-        this.imageElement.addEventListener(cornerstoneTools.EVENTS.STACK_PREFETCH_DONE, () => this.handlePrefecthDone(false));
-        this.imageElement.addEventListener('cornerstonedatasetscachechanged', this.handleDatasetsCacheChanged.bind(this));
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementcompleted', this.handleMeasureCompleteEvent);
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementmodified', this.handleMeasureModifyEvent);
+        this.imageElement.addEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent);
+        this.imageElement.addEventListener('cornerstonetoolsmarkerselected', this.handleEditMark);
+        this.imageElement.addEventListener('cornerstonetoolsmouseup', this.handleMouseUp);
+        this.imageElement.addEventListener(cornerstoneTools.EVENTS.STACK_PREFETCH_DONE, this.handlePrefecthDone);
+        this.imageElement.addEventListener('cornerstonedatasetscachechanged', this.handleDatasetsCacheChanged);
         // cornerstone.events.addEventListener('cornerstoneimageloadprogress', this.handleImageLoadProgress.bind(this));
+    }
+
+    clearEvents() {
+        this.imageElement.removeEventListener('cornerstonetoolsmousedoubleclick', this.handleDoubleClickEvent);
+        this.imageElement.removeEventListener('cornerstonetoolsdoubletap', this.handleDoubleClickEvent);
+        // this.imageElement.removeEventListener('cornerstonetoolsmousemove', this.handleMouseMoveEvent);
+        this.imageElement.removeEventListener('cornerstonenewimage', this.handleChangeStack);
+        this.imageElement.removeEventListener('cornerstonetoolsmeasurementcompleted', this.handleMeasureCompleteEvent);
+        this.imageElement.removeEventListener('cornerstonetoolsmeasurementmodified', this.handleMeasureModifyEvent);
+        this.imageElement.removeEventListener('cornerstonetoolsmeasurementremoved', this.handleMeasureRemoveEvent);
+        this.imageElement.removeEventListener('cornerstonetoolsmarkerselected', this.handleEditMark);
+        this.imageElement.removeEventListener('cornerstonetoolsmouseup', this.handleMouseUp);
+        this.imageElement.removeEventListener(cornerstoneTools.EVENTS.STACK_PREFETCH_DONE, this.handlePrefecthDone);
+        this.imageElement.removeEventListener('cornerstonedatasetscachechanged', this.handleDatasetsCacheChanged);
     }
 
     initTools() {
@@ -436,7 +456,7 @@ class ImageViewer extends Component {
                 console.log('marker complete', event.detail.toolName)
                 this.handleAddMark(event.detail.toolName, event.detail);
             } else {
-                this.handleEditMark(event.detail.toolName, event.detail);
+                this.handleEditMark(event);
             }
         } else {
             this.handleAddShape(event);
@@ -471,7 +491,6 @@ class ImageViewer extends Component {
                 end: {
                     x: eventDetail.measurementData.point.x,
                     y: eventDetail.measurementData.point.y,
-                    active: true,
                     highlight: true
                 }
             };
@@ -484,8 +503,9 @@ class ImageViewer extends Component {
         cornerstone.invalidate(this.imageElement);
     }
 
-    handleEditMark(toolName, eventDetail) {
-        console.log('marker edit', toolName, eventDetail);
+    handleEditMark(event) {
+        const toolName = event.detail.toolName;
+        const eventDetail = event.detail;
         const markerData = eventDetail.measurementData;
         markerData.isNew = false;
         markerData.marker_tool_type = toolName;
@@ -625,7 +645,7 @@ class ImageViewer extends Component {
         }
     }
 
-    handlePrefecthDone(doneThumbnail = true) {
+    handlePrefecthDone(doneThumbnail = false) {
         this.isComponentMount && cornerstone.triggerEvent(
             cornerstone.events,
             doneThumbnail ? 'cornerstoneimageviewthumbnaildone' : 'cornerstoneimageviewprefetchdone',
@@ -640,7 +660,7 @@ class ImageViewer extends Component {
             if (mark.stack === Number(this.state.currentStackIndex)) {
                 try {
                     const markHandlesData = JSON.parse(mark.marker_data);
-                    const active = true;
+                    const active = false;
                     const markerData = {
                         active: active,
                         id: mark.id,
