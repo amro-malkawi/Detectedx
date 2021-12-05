@@ -45,13 +45,6 @@ module.exports = {
     "test.attemptSubModalTitle": "Bạn muốn kiểm tra loại nào?",
     "test.attemptSubModalScreening": "Xét nghiệm sàng lọc",
     "test.attemptSubModalDiagnostic": "Xét nghiệm chẩn đoán",
-    "test.attemptSubModalScreeningOption": "Tùy chọn sàng lọc",
-    "test.attemptSubModalDiagnosticOption": "Tùy chọn chẩn đoán",
-    "test.attemptSubModalScreeningTooltip": "- Nếu bạn cho rằng trường hợp có một phát hiện quan trọng cần điều tra thêm thì bạn đánh dấu trường hợp đó và chọn tùy chọn Nhớ lại, " +
-        "tương đương với BIRADS 0. Đối với tất cả các trường hợp có phát hiện Bình thường / Lành tính, hãy nhấn nút Tiếp theo để chuyển sang trường hợp tiếp theo.",
-    "test.attemptSubModalDiagnosticTooltip": "- cho phép bạn chỉ định Hạng mục Đánh giá BIRADS từ 1 đến 5 cho từng trường hợp. Nếu bạn nghĩ rằng trường hợp có một phát hiện đáng kể, " +
-        "bạn có thể đánh dấu tổn thương và gán mã là 3-Có thể là lành tính, 4-Đáng ngờ hoặc 5-Có khả năng ác tính cao. Không có lựa chọn BIRADS 0. " +
-        "Nếu bạn coi trường hợp này là 1-Bình thường hoặc 2-Lành tính, bạn nhấn nút Tiếp theo để chuyển sang trường hợp tiếp theo.",
 
     "test.list.instructionVideo": "Video hướng dẫn",
 
@@ -267,7 +260,7 @@ module.exports = {
     "test.attempt.volparaCertDesc": "Nhấp vào bên dưới để tải xuống chứng chỉ hoàn thành",
     "test.attempt.volparaCertDisabled": "Bạn phải xem lại câu trả lời của mình trước khi nhận được chứng chỉ hoàn thành",
     "test.attempt.volparaPostBeforeTitle": "AMA PRA Loại 1 Tín dụng ™",
-    "test.attempt.volparaPostBeforeDesc": "Hoàn thành 8 trường hợp khác để nhận Chứng chỉ và chứng chỉ AMA PRA Hạng 1. Nhấp để Bắt đầu",
+    "test.attempt.volparaPostBeforeDesc": "Hoàn thành {postTestCount} trường hợp khác để nhận Chứng chỉ và chứng chỉ AMA PRA Hạng 1. Nhấp để Bắt đầu",
     "test.attempt.volparaPostBeforeButton": "Bắt đầu",
     "test.attempt.volparaPostProgressTitle": "AMA PRA Loại 1 Tín dụng ™ Đang được Tiến hành",
     "test.attempt.volparaPostProgressDesc": "Nhấp vào bên dưới để tiếp tục với bài kiểm tra",

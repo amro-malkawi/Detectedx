@@ -13,18 +13,26 @@ const AttemptSubTypeModal = ({open, onClose, onSelectSubType}) => {
             <DialogActions>
                 <Tooltip
                     title={
-                        <span className={'fs-13'}>
-                            <span className={'fs-14 fw-bold'}><IntlMessages id={'test.attemptSubModalScreeningOption'}/></span><IntlMessages id={"test.attemptSubModalScreeningTooltip"}/>
-                        </span>}
+                        <div className={'fs-13'}>
+                            <div className={'fs-14 fw-bold'}>Allows you to choose either:</div>
+                            <div className={'ml-2 mt-1'}>• Recall (BIRADS 0)</div>
+                            <div className={'ml-2 mt-1'}>• Next case (Normal)</div>
+                        </div>}
                     placement="bottom"
                 >
                     <Button variant="contained" onClick={() => onSelectSubType('screening')} color="primary" className="text-white"><IntlMessages id={"test.attemptSubModalScreening"}/></Button>
                 </Tooltip>
                 <Tooltip
                     title={
-                        <span className={'fs-13'}>
-                            <span className={'fs-14 fw-bold'}><IntlMessages id={'test.attemptSubModalDiagnosticOption'}/></span><IntlMessages id={"test.attemptSubModalDiagnosticTooltip"}/>
-                        </span>
+                        <div className={'fs-13'}>
+                            <div className={'fs-14 fw-bold'}>Allows you to assign either:</div>
+                            <div className={'ml-2 mt-1'}>• BIRADS assessment category</div>
+                            <div className={'ml-2 mt-1'}>• 3-Probably benign, 4-Suspicious<br/>&nbsp;&nbsp; or 5-Highly suspicious</div>
+                            <div className={'ml-2 mt-1'}>• Abnormality appearances</div>
+                            <div className={'ml-2 mt-1'}>• BIRADS assessment category</div>
+                            <div className={'ml-2 mt-1'}>• 2-benign</div>
+                            <div className={'ml-2 mt-1'}>• Next case (1-Normal)</div>
+                        </div>
                     }
                     placement="bottom"
                 >

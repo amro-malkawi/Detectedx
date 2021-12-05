@@ -43,13 +43,8 @@ module.exports = {
     "test.verify": "校验",
     "test.apply": "应用",
     "test.attemptSubModalTitle": "您想要哪种类型的测试？",
-    "test.attemptSubModalScreening": "筛选测试",
-    "test.attemptSubModalDiagnostic": "诊断测试",
-    "test.attemptSubModalScreeningOption": "筛选选项",
-    "test.attemptSubModalDiagnosticOption": "诊断选项",
-    "test.attemptSubModalScreeningTooltip": "– 如果您认为案例有需要进一步调查的重要发现，则标记案例并选择召回选项，相当于 BIRADS 0。对于具有正常/良性发现的所有案例，按下一步按钮移至下一个案例。",
-    "test.attemptSubModalDiagnosticTooltip": "– 允许您为每个案例分配一个 BIRADS 评估类别，从 1 到 5。 如果您认为病例有重要发现，您可以标记病变并指定 3-可能良性、4-可疑或 5-高度可疑恶性的代码。" +
-        " 没有 BIRADS 0 选择。 如果您认为案例是 1-Normal 或 2-Benign，您可以按 Next 按钮移至下一个案例。",
+    "test.attemptSubModalScreening": "筛选",
+    "test.attemptSubModalDiagnostic": "诊断",
 
     "test.list.instructionVideo": "指导视频",
 
@@ -265,7 +260,7 @@ module.exports = {
     "test.attempt.volparaCertDesc": "点击下面下载完成证书",
     "test.attempt.volparaCertDisabled": "您必须先查看答案，然后才能获得结业证书",
     "test.attempt.volparaPostBeforeTitle": " AMA PRA 1类信用™",
-    "test.attempt.volparaPostBeforeDesc": "再完成8个案例以获得AMA PRA类别1积分和证书。单击以开始",
+    "test.attempt.volparaPostBeforeDesc": "再完成{postTestCount}个案例以获得AMA PRA类别1积分和证书。单击以开始",
     "test.attempt.volparaPostBeforeButton": "开始",
     "test.attempt.volparaPostProgressTitle": "正在进行中的AMA PRA 1类信用™",
     "test.attempt.volparaPostProgressDesc": "单击下面继续进行后期测试",

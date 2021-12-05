@@ -20,7 +20,7 @@ const cookie = new Cookies();
 /**
  * Redux Action To Sigin User With Email
  */
-export const login = (userId, userName, userEmail, accessToken, callback) => (dispatch, getState) => {
+export const login = (userId, userName, userEmail, accessToken, history, fromUrl) => (dispatch, getState) => {
     if (Apis.apiHost.indexOf(':') !== -1) {
         cookie.set('user_id', userId, {path: '/'});
         cookie.set('user_name', userName, {path: '/'});
@@ -35,7 +35,7 @@ export const login = (userId, userName, userEmail, accessToken, callback) => (di
             accessToken: accessToken,
         }
     });
-    callback();
+    history.push(fromUrl);
 }
 
 export const signinUserInEmail = (user, history) => (dispatch) => {
@@ -65,7 +65,7 @@ export const signinUserInEmail = (user, history) => (dispatch) => {
 /**
  * Redux Action To Signout User From  Email
  */
-export const logoutUserFromEmail = () => (dispatch) => {
+export const logoutUserFromEmail = (history) => (dispatch) => {
     Apis.logout().then(() => {
     }).finally(() => {
         if (Apis.apiHost.indexOf(':') !== -1) {
@@ -76,7 +76,7 @@ export const logoutUserFromEmail = () => (dispatch) => {
         }
         dispatch({type: LOGOUT_USER});
         NotificationManager.success('User Logout Successfully');
-        window.location.reload();
+        history.push('/');
     });
 }
 

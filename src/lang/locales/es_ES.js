@@ -43,15 +43,8 @@ module.exports = {
     "test.verify": "VERIFICAR",
     "test.apply": "APLICAR",
     "test.attemptSubModalTitle": "¿Qué tipo de prueba quieres?",
-    "test.attemptSubModalScreening": "Prueba de pantalla",
-    "test.attemptSubModalDiagnostic": "Prueba de diagnóstico",
-    "test.attemptSubModalScreeningOption": "Opción de filtrado",
-    "test.attemptSubModalDiagnosticOption": "Opción de diagnóstico",
-    "test.attemptSubModalScreeningTooltip": "- Si cree que el caso tiene un hallazgo significativo que requiere más investigación, marque el caso y seleccione la opción Recall, equivalente a BIRADS 0. " +
-        "Para todos los casos con hallazgos normales / benignos, presione el botón Siguiente para pasar al siguiente caso.",
-    "test.attemptSubModalDiagnosticTooltip": "- le permite asignar una Categoría de Evaluación BIRADS de 1 a 5 a cada caso. " +
-        "Si cree que el caso tiene un hallazgo significativo, puede marcar la lesión y asignar un código de 3-Probablemente benigno, 4-Sospechoso o 5-Muy sospechoso de malignidad. " +
-        "No hay opción BIRADS 0. Si considera que el caso es 1-Normal o 2-Benigno, presione el botón Siguiente para pasar al siguiente caso.",
+    "test.attemptSubModalScreening": "Pantalla",
+    "test.attemptSubModalDiagnostic": "Diagnóstico",
 
     "test.list.instructionVideo": "Video de instrucciones",
 
@@ -267,7 +260,7 @@ module.exports = {
     "test.attempt.volparaCertDesc": "Haga clic a continuación para descargar un certificado de finalización",
     "test.attempt.volparaCertDisabled": "Debe revisar sus respuestas antes de recibir su certificado de finalización",
     "test.attempt.volparaPostBeforeTitle": "Crédito (s) de categoría 1 de AMA PRA ™",
-    "test.attempt.volparaPostBeforeDesc": "Complete 8 casos más para recibir créditos y certificado AMA PRA Categoría 1. Haga clic para comenzar",
+    "test.attempt.volparaPostBeforeDesc": "Complete {postTestCount} casos más para recibir créditos y certificado AMA PRA Categoría 1. Haga clic para comenzar",
     "test.attempt.volparaPostBeforeButton": "Inicio",
     "test.attempt.volparaPostProgressTitle": "AMA PRA Category 1 Credit(s)™ Inicio",
     "test.attempt.volparaPostProgressDesc": "Haga clic a continuación para continuar con la prueba posterior",

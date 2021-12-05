@@ -43,15 +43,8 @@ module.exports = {
 	"test.verify": "VERIFY",
 	"test.apply": "APPLY",
 	"test.attemptSubModalTitle": "Which type test do you want?",
-	"test.attemptSubModalScreening": "Screening Test",
-	"test.attemptSubModalDiagnostic": "Diagnostic Test",
-	"test.attemptSubModalScreeningOption": "Screening option",
-	"test.attemptSubModalDiagnosticOption": "Diagnostic option",
-	"test.attemptSubModalScreeningTooltip": " – If you think the case has a significant finding that requires further investigation then you mark the case and select the Recall option, " +
-		"equivalent to BIRADS 0. For all cases with Normal/Benign findings,  press the Next button to move to the next case.  ",
-	"test.attemptSubModalDiagnosticTooltip": " – allows you to assign a BIRADS Assessment Category from 1 to 5 to each case. " +
-		"If you think the case has a significant finding you can mark the lesion and assign a code of 3-Probably Benign ,4-Suspicious or 5-Highly Suspicious of Malignancy. " +
-		"There is no BIRADS 0 choice. If you consider the case to be 1-Normal or 2-Benign, you press the Next button to move to the next case. ",
+	"test.attemptSubModalScreening": "Screening",
+	"test.attemptSubModalDiagnostic": "Diagnostic",
 
 	"test.list.instructionVideo": "Instruction Video",
 
@@ -268,7 +261,7 @@ module.exports = {
 	"test.attempt.volparaCertDesc": "Click below to download a certificate of completion",
 	"test.attempt.volparaCertDisabled": "You must review your answers before receiving your certificate of completion",
 	"test.attempt.volparaPostBeforeTitle": "AMA PRA Category 1 Credit(s)™",
-	"test.attempt.volparaPostBeforeDesc": "Complete 8 more cases to receive AMA PRA Category 1 Credits and certificate. Click to Start",
+	"test.attempt.volparaPostBeforeDesc": "Complete {postTestCount} more cases to receive AMA PRA Category 1 Credits and certificate. Click to Start",
 	"test.attempt.volparaPostBeforeButton": "Start",
 	"test.attempt.volparaPostProgressTitle": "AMA PRA Category 1 Credit(s)™ In Progress",
 	"test.attempt.volparaPostProgressDesc": "Click below to continue with the post test",

@@ -41,10 +41,9 @@ class Signin extends Component {
         e.preventDefault();
         this.setState({loading: true});
         if (this.state.email !== '' && this.state.password !== '') {
+            const fromUrl = (this.props.location.state && this.props.location.state.from) ? this.props.location.state.from.pathname : '/';
             Apis.login(this.state.email, this.state.password).then((result) => {
-                this.props.login(result.userId, result.userName, result.userEmail, result.id, () => {
-                    this.props.history.push('/')
-                });
+                this.props.login(result.userId, result.userName, result.userEmail, result.id, this.props.history, fromUrl);
             }).catch((e) => {
                 this.setState({errorMsg: e.response.data.error.message, loading: false});
             });

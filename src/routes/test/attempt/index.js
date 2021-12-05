@@ -854,7 +854,7 @@ class Attempt extends Component {
                 return (
                     <div className={'score-extra'}>
                         <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostBeforeTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostBeforeDesc"/></p>
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostBeforeDesc" values={{postTestCount: this.state.attemptInfo.test_sets.test_set_post_cases.length}}/></p>
                         <div className={'extra-button-container'}>
                             <Button variant="contained" color="primary" size="small" className="text-white"
                                     onClick={() => this.onPostTest()}>
@@ -1159,7 +1159,7 @@ class Attempt extends Component {
                                 answer={this.state.postQuestions}
                                 onRef={ref => (this.postQuestionFormRef = ref)}
                                 complete={this.state.attemptInfo.complete && this.state.post_stage > 1}
-                                isCovid={this.state.attemptInfo.test_sets.modalities.modality_type === 'covid'}
+                                modalityInfo={this.state.attemptInfo.test_sets.modalities}
                             />
                             <div className={'text-center mt-70'}>
                                 {
