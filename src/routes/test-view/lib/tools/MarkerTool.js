@@ -137,10 +137,9 @@ export default class MarkerTool extends BaseAnnotationTool {
                 });
                 context.restore();
 
-                // const infoElement = eventData.element.parentElement.querySelector('.overlap-marker-info');
+                // const infoElement = eventData.element.parentElement.querySelector('.overlap-marker-info-list');
                 // if (isShowInfo && mark.isTruth !== undefined && infoElement) {
                 //     if (mark.active) {
-                //         infoElement.style.display = "flex";
                 //         // mark.isTruth ? infoElement.classList.add('truth') : infoElement.classList.remove('truth');
                 //         let infoHtml = `<span class="fs-14 b-2"><u>${(mark.isTruth ? "Your truth" : "Your answer")}</u></span>`;
                 //         infoHtml += "<span>Rate: 5</span>";

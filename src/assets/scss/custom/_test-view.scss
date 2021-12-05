@@ -251,20 +251,25 @@ div.viewer {
                 flex-direction: column;
                 justify-content: center;
                 align-items: flex-end;
-                .overlap-marker-info {
-                  display: none;
+                .overlap-marker-info-list {
+                  display: flex;
                   flex-direction: column;
-                  padding: 10px;
                   margin: 8px;
-                  color: white;
-                  font-size: 12px;
-                  line-height: 15px;
-                  border: 2px solid white;
-                  border-radius: 10px;
 
-                  &.truth {
-                    border-color: red;
-                    color: red;
+                  .overlap-marker-info {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 10px;
+                    margin-top: 5px;
+                    color: yellow;
+                    font-size: 12.5px;
+                    line-height: 15px;
+                    border: 2px solid yellow;
+                    border-radius: 10px;
+                    &.truth {
+                      border-color: red;
+                      color: red;
+                    }
                   }
                 }
               }

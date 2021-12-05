@@ -20,7 +20,7 @@ class ImageOverlap extends Component {
             imageWW: props.ww ? props.ww : 255,
             imageWL: props.wc ? props.wc : 128,
             voiList: [],
-            isShowMarkInfo: !isMobile,
+            isShowMarkInfo: false, // !isMobile,
         }
         this.windowWidth = 255;
         this.windowLength = 128;
@@ -188,13 +188,7 @@ class ImageOverlap extends Component {
                         />
                     </div>
                     <div className={'overlap-info-center'}>
-                        <div className={'overlap-marker-info'}>
-                            <span className={'fs-14 mb-2'}><u>Your answer</u></span>
-                            <span>Rate: 5</span>
-                            <span>Mass</span>
-                            <span>Oval</span>
-                            <span>Indistinct</span>
-                        </div>
+                        <div className={'overlap-marker-info-list'} />
                     </div>
                     <div className={'overlap-info-bottom'}>
                         <div>
