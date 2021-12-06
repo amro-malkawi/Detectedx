@@ -74,7 +74,6 @@ class ImageViewer extends Component {
             currentStackIndex: 0,
             downStatus: Array(props.imageInfo.stack_count).fill(props.imageInfo.stack_count === 1),
             isLoading: false,
-            isShowMarkInfo: !isMobile,
             isShowFloatingMenu: false,
             age: 0,
             loadedImage: false,
@@ -800,18 +799,6 @@ class ImageViewer extends Component {
         //active
         cornerstoneTools.setToolActive(nextName, {
             mouseButtonMask: 1
-        });
-    }
-
-    onInvert() {
-        let viewport = cornerstone.getViewport(this.imageElement);
-        viewport.invert = !viewport.invert;
-        cornerstone.setViewport(this.imageElement, viewport);
-    }
-
-    toggleMarkInfo() {
-        this.setState({isShowMarkInfo: !this.state.isShowMarkInfo}, () => {
-            cornerstone.invalidate(this.imageElement);
         });
     }
 
