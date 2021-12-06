@@ -92,7 +92,7 @@ class ImageViewer extends Component {
 
         this.handleDoubleClickEvent = this.handleDoubleClickEvent.bind(this)
         this.handleDoubleClickEvent = this.handleDoubleClickEvent.bind(this)
-        this.handleMouseMoveEvent = _.throttle(this.handleMouseMoveEvent.bind(this), 200);
+        this.handleMouseMoveEvent = _.throttle(this.handleMouseMoveEvent.bind(this), 150);
         this.handleChangeStack = this.handleChangeStack.bind(this)
         this.handleMeasureCompleteEvent = this.handleMeasureCompleteEvent.bind(this)
         this.handleMeasureModifyEvent = this.handleMeasureModifyEvent.bind(this)
