@@ -505,8 +505,8 @@ class ImageViewer extends Component {
                     return;
                 }
 
-                infoHtml += `<div class='overlap-marker-info ${isTruth ? ' truth' : ''}'>`;
-                infoHtml += `<span class="fs-14 b-2"><u>${(isTruth ? "Your truth" : "Your answer")}</u></span>`;
+                infoHtml += `<div class='overlap-marker-info'>`;
+                infoHtml += `<span class="fs-14 b-2"><u>${(isTruth ? "Truth" : "Your answer")}</u></span>`;
                 infoHtml += isTruth ? `<span>Lesion Number: ${lesionNumber}</span>` : `<span>Rate: ${rating}</span>`;
                 lesionNames.forEach((v, i) => {
                     infoHtml += `<span>${v}</span>`;

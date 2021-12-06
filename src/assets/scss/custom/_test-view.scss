@@ -261,15 +261,11 @@ div.viewer {
                     flex-direction: column;
                     padding: 10px;
                     margin-top: 5px;
-                    color: yellow;
+                    color: white;
                     font-size: 12.5px;
                     line-height: 15px;
-                    border: 2px solid yellow;
+                    border: 2px solid white;
                     border-radius: 10px;
-                    &.truth {
-                      border-color: red;
-                      color: red;
-                    }
                   }
                 }
               }
