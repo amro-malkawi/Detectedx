@@ -283,14 +283,14 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
         // calculate for initial position
         try {
             // check all breast image
-            if (imageObjList.some((v) => (v.metaData.imageLaterality === undefined || v.metaData.imageLaterality === ''))) {
+            if (imageObjList.every((v) => (v.metaData.imageLaterality === undefined || v.metaData.imageLaterality === ''))) {
                 initialZoomLevel = [];
             } else {
                 // get canvas width, height
                 let canvasWidth, canvasHeight;
                 const canvasInstance = $('div#images');
-                // if (canvasInstance.length === 0) {
-                if (true) {
+                if (canvasInstance.length === 0 || canvasInstance.width() === 0) {
+                // if (true) {
                     //did not load
                     canvasWidth = $(window).width();
                     if (isShowImageBrowser) {
@@ -306,7 +306,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                 }
                 let imgMaxRealWidth = 0;
                 let imgMaxRealHeight = 0;
-                totalImageObjList.forEach((img) => {
+                imageObjList.forEach((img) => {
                     try {
                         const region = img.real_content_region.split(',');  //left,top,right,bottom
                         img.realContentLeft = Number(region[0]);
@@ -316,7 +316,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                         if ((Number(region[2]) - Number(region[0])) > imgMaxRealWidth) imgMaxRealWidth = (Number(region[2]) - Number(region[0]));
                         if ((Number(region[3]) - Number(region[1])) > imgMaxRealHeight) {
                             imgMaxRealHeight = (Number(region[3]) - Number(region[1]));
-                            if (img.hangingId.indexOf('MLO') !== -1 && imgMLOMaxRealHeight < imgMaxRealHeight) {
+                            if (img.hangingId && img.hangingId.indexOf('MLO') !== -1 && imgMLOMaxRealHeight < imgMaxRealHeight) {
                                 imgMLOMaxRealHeight = imgMaxRealHeight;
                             }
                         }
@@ -346,7 +346,6 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
 const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, currentThicknessType) => {
     const typeArray = type.split('_');
     let idList = [];
-
 
     typeArray.forEach((v) => {
         let imageObj;
