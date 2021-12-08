@@ -24,7 +24,6 @@ const INIT_STATE = {
     caseDensity: -1,
     showImageList: [[]],
     initialZoomLevel: 0,
-    imgMLOMaxRealHeight: 0,
     isShowImageBrowser: true,
     testSetHangingType: 'normal',
     testSetHangingIdList: [],
@@ -49,7 +48,6 @@ export default (state = INIT_STATE, action) => {
                 showImageList: action.showImageList,
                 isShowImageBrowser: action.isShowImageBrowser,
                 initialZoomLevel: action.initialZoomLevel,
-                imgMLOMaxRealHeight: action.imgMLOMaxRealHeight,
                 testSetHangingType: action.testSetHangingType,
                 testSetHangingIdList: action.testSetHangingIdList,
                 selectedHangingType: action.selectedHangingType,
@@ -66,7 +64,7 @@ export default (state = INIT_STATE, action) => {
         case TEST_VIEW_SET_SHOW_IMAGE_LIST:
             return { ...state, showImageList: action.payload };
         case TEST_VIEW_SET_INITIAL_ZOOM_LEVEL:
-            return { ...state, initialZoomLevel: action.payload.initialZoomLevel, imgMLOMaxRealHeight: action.payload.imgMLOMaxRealHeight };
+            return { ...state, initialZoomLevel: action.payload.initialZoomLevel};
         case TEST_VIEW_SET_SHOW_IMAGE_BROWSER:
             return { ...state, isShowImageBrowser: action.payload };
         case TEST_VIEW_SET_HANGING_TYPE:
