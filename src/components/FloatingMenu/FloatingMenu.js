@@ -65,7 +65,7 @@ class FloatingMenu extends Component {
                 direction={direction}
             >
                 <MainButton
-                    iconResting={<Tooltip title={<IntlMessages id={"testView.viewer.viewSlice"}/>}><MdAdd style={{fontSize: 20, color: '#FFB300"'}}/></Tooltip>}
+                    iconResting={<Tooltip title={<IntlMessages id={"testView.viewer.viewSlice"}/>}><MdAdd style={{fontSize: 20, color: '#FFB300'}}/></Tooltip>}
                     iconActive={<MdClose style={{fontSize: 20, color: '#FFB300'}}/>}
                     background={"transparent"}
                     isOpen={isOpen}

@@ -163,8 +163,8 @@ class ImageViewer extends Component {
             'imagePosition',
             this.props.imageInfo.image_url_path
         );
-        if( this.props.initialZoomLevel && this.props.initialZoomLevel.findIndex((v) =>  v.zoom_image_id === this.props.imageInfo.id) !== -1) {
-            const initZoomInfo = this.props.initialZoomLevel.find((v) =>  v.zoom_image_id === this.props.imageInfo.id);
+        if (this.props.initialZoomLevel && this.props.initialZoomLevel.findIndex((v) => v.zoom_image_id === this.props.imageInfo.id) !== -1) {
+            const initZoomInfo = this.props.initialZoomLevel.find((v) => v.zoom_image_id === this.props.imageInfo.id);
             initialViewport.scale = initZoomInfo.zoom_level
             imgMLOMaxRealHeight = initZoomInfo.zoom_real_height
             try {
@@ -507,8 +507,11 @@ class ImageViewer extends Component {
             const rating = mark.rating;
             const lesionList = mark.lesionList;
             if (
-                (mark.marker_tool_type === 'Marker' && cornerstoneMath.point.distance(markHandlesData, mousePoint) < this.props.radius) ||
-                (mark.marker_tool_type === 'MarkerFreehand' && insidePolygon(mousePoint, markHandlesData.points))
+                mark.stack === this.state.currentStackIndex &&
+                (
+                    (mark.marker_tool_type === 'Marker' && cornerstoneMath.point.distance(markHandlesData, mousePoint) < this.props.radius) ||
+                    (mark.marker_tool_type === 'MarkerFreehand' && insidePolygon(mousePoint, markHandlesData.points))
+                )
             ) {
                 let lesionNames = [];
                 const rootLesion = Object.keys(mark.lesionList)[0];
