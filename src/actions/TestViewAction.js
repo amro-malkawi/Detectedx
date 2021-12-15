@@ -344,40 +344,6 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                         }
                     }
                 });
-
-
-                // let imgMaxRealWidth = 0;
-                // let imgMaxRealHeight = 0;
-                // imageObjList.forEach((img) => {
-                //     try {
-                //         const region = img.real_content_region.split(',');  //left,top,right,bottom
-                //         img.realContentLeft = Number(region[0]);
-                //         img.realContentTop = Number(region[1]);
-                //         img.realContentRight = Number(region[2]);
-                //         img.realContentBottom = Number(region[3]);
-                //         if ((Number(region[2]) - Number(region[0])) > imgMaxRealWidth) imgMaxRealWidth = (Number(region[2]) - Number(region[0]));
-                //         if ((Number(region[3]) - Number(region[1])) > imgMaxRealHeight) {
-                //             imgMaxRealHeight = (Number(region[3]) - Number(region[1]));
-                //             if (img.hangingId && img.hangingId.indexOf('MLO') !== -1 && imgMLOMaxRealHeight < imgMaxRealHeight) {
-                //                 imgMLOMaxRealHeight = imgMaxRealHeight;
-                //             }
-                //         }
-                //         if (imgMaxRealWidth === 0 || imgMaxRealHeight === 0) {
-                //             initialZoomLevel = [];
-                //         } else {
-                //             const widthZoom = Number((canvasWidth / imgMaxRealWidth).toFixed(2));
-                //             const heightZoom = Number((canvasHeight / imgMaxRealHeight).toFixed(2));
-                //             const calculatedZoomValue = Math.min(widthZoom, heightZoom);
-                //             const zoomResult = {
-                //                 zoom_image_id: img.id,
-                //                 zoom_level: calculatedZoomValue,
-                //                 zoom_real_height: imgMLOMaxRealHeight
-                //             }
-                //             initialZoomLevel.push(zoomResult)
-                //         }
-                //     } catch (e) {
-                //     }
-                // });
             }
         } catch (e) {
             console.log('zoom level error', e)
