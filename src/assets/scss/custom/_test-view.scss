@@ -589,9 +589,9 @@ div.viewer {
         .dropdown-menu {
           left: 45px !important;
           right: auto !important;
-          width: 26rem; // 330px;
+          width: 22rem; // 330px;
           border-radius: 5px;
-          padding: 1.25rem;
+          padding: 0.75rem;
           background-color: black;
           border: 0.5px solid #aaa;
           margin-top: -70px;
@@ -600,6 +600,9 @@ div.viewer {
             color: #aaa;
             font-size: 14px;
             text-align: left;
+            .ql-editor {
+              padding: 5px 7px;
+            }
           }
         }
       }

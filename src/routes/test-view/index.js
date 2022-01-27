@@ -268,8 +268,8 @@ class TestView extends Component {
 
     validateForNext() {
         let valid = true;
-        if (!this.state.complete) {
-            if (['covid', 'chest', 'imaged_chest', 'imaged_mammo', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
+        if(!this.state.complete) {
+            if (['covid', 'chest', 'imaged_chest', 'imaged_mammo', 'chest_ct', 'quiz'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
                 if (this.sideQuestionRef.current && this.sideQuestionRef.current.checkQuestionValidate) {
                     valid = this.sideQuestionRef.current.checkQuestionValidate();
                 } else {
@@ -328,8 +328,8 @@ class TestView extends Component {
         } else {
             this.setState({loading: true}, () => {
                 if (!this.state.isPostTest) {
-                    Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
-                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
+                    Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
+                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + nextStep);  // go to scores tab
                         // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
                     }).catch((e) => {
                         console.warn(e.response ? e.response.data.error.message : e.message);
@@ -487,7 +487,7 @@ class TestView extends Component {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
-        } else if (['volpara', 'imaged_mammo', 'imaged_chest'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
+        } else if (['volpara', 'imaged_mammo', 'imaged_chest', 'quiz'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
             return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
@@ -649,33 +649,33 @@ class TestView extends Component {
                     {
                         !this.state.isShowPopup ? null :
                             this.state.test_case.modalities.name !== 'LungED' ?
-                                <MarkerPopup
-                                    attempts_id={this.state.attempts_id}
-                                    test_cases_id={this.state.test_cases_id}
-                                    // ultrasound modality does not have lesion in test
-                                    lesion_list={this.state.test_case.modalities.modality_type !== 'ultrasound' ? this.state.test_case.modalities.lesion_list : '[]'}
-                                    isPostTest={this.state.isPostTest}
-                                    markData={this.state.selectedMarkData}
-                                    ratings={this.state.test_case.ratings}
-                                    complete={this.state.complete}
-                                    popupCancelHandler={this.popupCancelHandler}
-                                    popupDeleteHandler={this.popupDeleteHandler}
-                                    popupSaveHandler={this.popupSaveHandler}
-                                    onClose={() => this.setState({isShowPopup: false})}
-                                /> :
-                                <MarkerPopupLungED
-                                    attempts_id={this.state.attempts_id}
-                                    test_cases_id={this.state.test_cases_id}
-                                    lesion_list={this.state.test_case.modalities.lesion_list}
-                                    isPostTest={this.state.isPostTest}
-                                    markData={this.state.selectedMarkData}
-                                    ratings={this.state.test_case.ratings}
-                                    complete={this.state.complete}
-                                    popupCancelHandler={this.popupCancelHandler}
-                                    popupDeleteHandler={this.popupDeleteHandler}
-                                    popupSaveHandler={this.popupSaveHandler}
-                                    onClose={() => this.setState({isShowPopup: false})}
-                                />
+                            <MarkerPopup
+                                attempts_id={this.state.attempts_id}
+                                test_cases_id={this.state.test_cases_id}
+                                // ultrasound modality does not have lesion in test
+                                lesion_list={this.state.test_case.modalities.modality_type !== 'ultrasound' ? this.state.test_case.modalities.lesion_list : '[]'}
+                                isPostTest={this.state.isPostTest}
+                                markData={this.state.selectedMarkData}
+                                ratings={this.state.test_case.ratings}
+                                complete={this.state.complete}
+                                popupCancelHandler={this.popupCancelHandler}
+                                popupDeleteHandler={this.popupDeleteHandler}
+                                popupSaveHandler={this.popupSaveHandler}
+                                onClose={() => this.setState({isShowPopup: false})}
+                            /> :
+                            <MarkerPopupLungED
+                                attempts_id={this.state.attempts_id}
+                                test_cases_id={this.state.test_cases_id}
+                                lesion_list={this.state.test_case.modalities.lesion_list}
+                                isPostTest={this.state.isPostTest}
+                                markData={this.state.selectedMarkData}
+                                ratings={this.state.test_case.ratings}
+                                complete={this.state.complete}
+                                popupCancelHandler={this.popupCancelHandler}
+                                popupDeleteHandler={this.popupDeleteHandler}
+                                popupSaveHandler={this.popupSaveHandler}
+                                onClose={() => this.setState({isShowPopup: false})}
+                            />
                     }
                     <VideoModal
                         open={this.state.testSetStartVideo !== ''}

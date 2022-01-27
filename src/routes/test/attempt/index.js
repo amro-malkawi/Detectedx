@@ -738,6 +738,8 @@ class Attempt extends Component {
             return this.renderVolparaScore();
         } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
             return this.renderImagEDScore();
+        } else if (['quiz'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
+            return this.renderQuizScore();
         } else {
             return this.renderNormalScore();
         }
@@ -996,6 +998,53 @@ class Attempt extends Component {
                             attempt_id={this.state.attempts_id}
                             value={scoreAverage}
                         />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderQuizScore() {
+        const percent = this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score;
+        return (
+            <div className={'row'}>
+                <div className={'col-md-6 score-data-container'}>
+                    <div className={'quiz-score-data'}>
+                        <div className="circle-progress">
+                            <svg viewBox="0 0 36 36">
+                                <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path className="circle" stroke-dasharray={`${percent}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            </svg>
+                        </div>
+                        <div className={'quiz-progress-info'}>
+                            <span className={'text-white fs-19'}>{percent} %</span>
+                            <span className={'text-white fs-23 fw-bold'}>Correct</span>
+                        </div>
+                    </div>
+                    <div className={'score-chart-container mt-4'}>
+                        <BoxplotChart
+                            title={'Results compared to'}
+                            score_type={'Quiz Result'}
+                            showUserSelect={true}
+                            attempt_id={this.state.attempts_id}
+                            value={0}
+                        />
+                    </div>
+                </div>
+                <div className={'col-md-6'}>
+                    <div className={'bg-gray mt-4 p-4'}>
+                        <div className={'fs-23'}>Discussing: Invasive Lobular Carcinoma</div>
+                        Invasive lobular carcinoma:(ILC) represents about 5-15% of all invasive breast carcinomas and is biologically distinct. (ref 1, 2, 3)
+                        There are several variants of ILC with a range cell behaviours but a lack of E-cadherin expression in almost all variants means that the
+                        malignant cells tend to separate rather than aggregate. ILC tends to infiltrate the normal tissues in a linear rather than a mass-like fashion and to provoke an
+                        immune response leading to peri tumoral fibrosis and distortion of the normal architecture (ref 1, 2, 3, 4). ILC may be difficult to diagnose clinically and on imaging
+                        due to the nature of
+                        its histology (ref 3, 4, 5, 6).
+                        While the commonest imaging finding of ILC is a mass lesion, its imaging appearances are variable and, when compared with invasive carcinoma NST,
+                        it it more commonly seen ans an architectural distortion. As in this case, the extent of disease may be better shown on ultrasound examination than on mammography (ref
+                        3, 4, 5, 6).
+                        When peri-tumora fibrosis is advanced, the nipple may be retracted and the breast may appear reduced in size or shrunken when compared with the normal breast, again
+                        illustrated by this case (ref 7)
                     </div>
                 </div>
             </div>

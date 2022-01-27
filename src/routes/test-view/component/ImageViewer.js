@@ -74,7 +74,6 @@ class ImageViewer extends Component {
             currentStackIndex: 0,
             downStatus: Array(props.imageInfo.stack_count).fill(props.imageInfo.stack_count === 1),
             isLoading: false,
-            isShowMarkInfo: !isMobile,
             isShowFloatingMenu: false,
             age: 0,
             loadedImage: false,
@@ -160,54 +159,85 @@ class ImageViewer extends Component {
         if (this.props.imageInfo.type === 'volpara') {
             return initialViewport;
         }
-        if (this.props.initialZoomLevel && this.props.initialZoomLevel.length > 0) {
-            this.props.initialZoomLevel.forEach(v => {
-                if (this.props.imageInfo.id === v.zoom_image_id) {
-                    if (!isNaN(v.zoom_level) && v.zoom_level !== Infinity && v.zoom_level !== 0) {
-                        initialViewport.scale = v.zoom_level
-                        imgMLOMaxRealHeight = v.zoom_real_height
-                        try {
-                            const imagePosition = cornerstone.metaData.get(
-                                'imagePosition',
-                                this.props.imageInfo.image_url_path
-                            );
-                            this.imagePosition = imagePosition;
-                            const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
-                            const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
-                            const realContentRegion = this.props.imageInfo.real_content_region.split(',');
-                            const realContentLeft = Number(realContentRegion[0]);
-                            const realContentTop = Number(realContentRegion[1]);
-                            const realContentRight = Number(realContentRegion[2]);
-                            const realContentBottom = Number(realContentRegion[3]);
-                            let offsetX = 0, offsetY = 0;
-                            if (this.props.showImageList[0].length > 1 && imagePosition !== undefined) {
-                                if (imagePosition.imageLaterality === 'L') {
-                                    offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
-                                } else if (imagePosition.imageLaterality === 'R') {
-                                    offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
-                                }
-                                // if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
-                                //     // offsetY = 385;
-                                //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
-                                // }
-
-                                offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
-                                if (
-                                    imagePosition.viewPosition.indexOf('MLO') !== -1
-                                    && imgMLOMaxRealHeight !== 0
-                                    && this.props.imageInfo.type !== 'prior'
-                                ) {
-                                    offsetY = offsetY + ((realContentBottom - realContentTop) - imgMLOMaxRealHeight) / 2;
-                                }
-                            }
-                            initialViewport.translation = {x: offsetX, y: offsetY};
-                        } catch (e) {
-                            console.log(e.message)
-                        }
+        this.imagePosition = cornerstone.metaData.get(
+            'imagePosition',
+            this.props.imageInfo.image_url_path
+        );
+        if (this.props.initialZoomLevel && this.props.initialZoomLevel.findIndex((v) => v.zoom_image_id === this.props.imageInfo.id) !== -1) {
+            const initZoomInfo = this.props.initialZoomLevel.find((v) => v.zoom_image_id === this.props.imageInfo.id);
+            initialViewport.scale = initZoomInfo.zoom_level
+            imgMLOMaxRealHeight = initZoomInfo.zoom_real_height
+            try {
+                const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
+                const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
+                const realContentRegion = this.props.imageInfo.real_content_region.split(',');
+                const realContentLeft = Number(realContentRegion[0]);
+                const realContentTop = Number(realContentRegion[1]);
+                const realContentRight = Number(realContentRegion[2]);
+                const realContentBottom = Number(realContentRegion[3]);
+                let offsetX = 0, offsetY = 0;
+                if (this.props.showImageList[0].length > 1 && this.imagePosition !== undefined) {
+                    if (this.imagePosition.imageLaterality === 'L') {
+                        offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
+                    } else if (this.imagePosition.imageLaterality === 'R') {
+                        offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
                     }
+                    offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
                 }
-            });
+                initialViewport.translation = {x: offsetX, y: offsetY};
+            } catch (e) {
+                console.log(e.message)
+            }
         }
+
+        // if (this.props.initialZoomLevel && this.props.initialZoomLevel.length > 0) {
+        //     this.props.initialZoomLevel.forEach(v => {
+        //         if (this.props.imageInfo.id === v.zoom_image_id) {
+        //             if (!isNaN(v.zoom_level) && v.zoom_level !== Infinity && v.zoom_level !== 0) {
+        //                 initialViewport.scale = v.zoom_level
+        //                 imgMLOMaxRealHeight = v.zoom_real_height
+        //                 try {
+        //                     const imagePosition = cornerstone.metaData.get(
+        //                         'imagePosition',
+        //                         this.props.imageInfo.image_url_path
+        //                     );
+        //                     this.imagePosition = imagePosition;
+        //                     const canvasWidth = Math.floor(this.imageElementRef.current.clientWidth / initialViewport.scale);
+        //                     const canvasHeight = Math.floor(this.imageElementRef.current.clientHeight / initialViewport.scale);
+        //                     const realContentRegion = this.props.imageInfo.real_content_region.split(',');
+        //                     const realContentLeft = Number(realContentRegion[0]);
+        //                     const realContentTop = Number(realContentRegion[1]);
+        //                     const realContentRight = Number(realContentRegion[2]);
+        //                     const realContentBottom = Number(realContentRegion[3]);
+        //                     let offsetX = 0, offsetY = 0;
+        //                     if (this.props.showImageList[0].length > 1 && imagePosition !== undefined) {
+        //                         if (imagePosition.imageLaterality === 'L') {
+        //                             offsetX = (this.imageWidth / 2 - canvasWidth / 2 - realContentLeft);
+        //                         } else if (imagePosition.imageLaterality === 'R') {
+        //                             offsetX = -(realContentRight - this.imageWidth / 2 - canvasWidth / 2);
+        //                         }
+        //                         // if (imagePosition.positionDesc === 'GE-V-PREVIEW') {
+        //                         //     // offsetY = 385;
+        //                         //     offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
+        //                         // }
+        //
+        //                         offsetY = (this.imageHeight / 2 - (realContentTop + (realContentBottom - realContentTop) / 2));
+        //                         if (
+        //                             imagePosition.viewPosition.indexOf('MLO') !== -1
+        //                             && imgMLOMaxRealHeight !== 0
+        //                             && this.props.imageInfo.type !== 'prior'
+        //                         ) {
+        //                             offsetY = offsetY + ((realContentBottom - realContentTop) - imgMLOMaxRealHeight) / 2;
+        //                         }
+        //                     }
+        //                     initialViewport.translation = {x: offsetX, y: offsetY};
+        //                 } catch (e) {
+        //                     console.log(e.message)
+        //                 }
+        //             }
+        //         }
+        //     });
+        // }
         if (this.props.imageInfo.ww && this.props.imageInfo.wc) {
             const voiLutModuleInfo = cornerstone.metaData.get(
                 'voiLutModule',
@@ -477,8 +507,11 @@ class ImageViewer extends Component {
             const rating = mark.rating;
             const lesionList = mark.lesionList;
             if (
-                (mark.marker_tool_type === 'Marker' && cornerstoneMath.point.distance(markHandlesData, mousePoint) < this.props.radius) ||
-                (mark.marker_tool_type === 'MarkerFreehand' && insidePolygon(mousePoint, markHandlesData.points))
+                mark.stack === this.state.currentStackIndex &&
+                (
+                    (mark.marker_tool_type === 'Marker' && cornerstoneMath.point.distance(markHandlesData, mousePoint) < this.props.radius) ||
+                    (mark.marker_tool_type === 'MarkerFreehand' && insidePolygon(mousePoint, markHandlesData.points))
+                )
             ) {
                 let lesionNames = [];
                 const rootLesion = Object.keys(mark.lesionList)[0];
@@ -803,18 +836,6 @@ class ImageViewer extends Component {
         });
     }
 
-    onInvert() {
-        let viewport = cornerstone.getViewport(this.imageElement);
-        viewport.invert = !viewport.invert;
-        cornerstone.setViewport(this.imageElement, viewport);
-    }
-
-    toggleMarkInfo() {
-        this.setState({isShowMarkInfo: !this.state.isShowMarkInfo}, () => {
-            cornerstone.invalidate(this.imageElement);
-        });
-    }
-
     onClearSymbols() {
         if (this.tempMeasureToolData !== null) {
             return;
@@ -938,7 +959,6 @@ const mapStateToProps = (state) => {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
         initialZoomLevel: state.testView.initialZoomLevel,
-        imgMLOMaxRealHeight: state.testView.imgMLOMaxRealHeight,
         modalityInfo: state.testView.modalityInfo
     };
 };

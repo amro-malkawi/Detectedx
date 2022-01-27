@@ -507,6 +507,11 @@ export function getAttemptImageQuality(attempt_id, test_case_id, is_post_test) {
     return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
 }
 
+export function getAttemptQuizAnswer(attempt_id, test_case_id, is_post_test) {
+    const url = 'answer_image_qualities/get_quiz_answer?access_token=' + getAccessToken();
+    return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
+}
+
 /**
  * chest answer functions
  */
