@@ -266,7 +266,7 @@ class TestView extends Component {
     validateForNext() {
         let valid = true;
         if(!this.state.complete) {
-            if (['covid', 'chest', 'imaged_chest', 'imaged_mammo', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
+            if (['covid', 'chest', 'imaged_chest', 'imaged_mammo', 'chest_ct', 'quiz'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
                 if (this.sideQuestionRef.current && this.sideQuestionRef.current.checkQuestionValidate) {
                     valid = this.sideQuestionRef.current.checkQuestionValidate();
                 } else {
@@ -480,7 +480,7 @@ class TestView extends Component {
         const {isAnswerCancer, isTruthCancer} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
-        } else if (['volpara', 'imaged_mammo', 'imaged_chest'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
+        } else if (['volpara', 'imaged_mammo', 'imaged_chest', 'quiz'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
             return null;
         } else {
             // let isCorrect = isAnswerCancer === isTruthCancer;
