@@ -211,7 +211,7 @@ class TestView extends Component {
                     testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
                     testCaseViewInfo.modalities.number_of_slides,
                     complete,
-                    (testCaseViewInfo.images.length >= 2 && testCaseViewInfo.modalities.modality_type !== 'chest' && testCaseViewInfo.modalities.modality_type !== 'imaged_mammo')
+                    (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo', 'quiz'].indexOf(testCaseViewInfo.modalities.modality_type) === -1)
                 );
                 if(testCaseViewInfo.modalities.modality_type === 'volpara') {
                     that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
@@ -322,9 +322,14 @@ class TestView extends Component {
     onComplete() {
         this.setState({loading: true}, () => {
             if (!this.state.isPostTest) {
-                Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((resp) => {
-                    this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/mainQuestions');  // go to scores tab
-                    // this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score');  // go to scores tab
+                Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
+                    const {step, score} = nextStep;
+                    if(step === 'repeat') {
+                        NotificationManager.error(`You score is ${score}. You have to answer again.`);
+                        this.onSeek(0);
+                    } else {
+                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + step);  // go to scores tab
+                    }
                 }).catch((e) => {
                     console.warn(e.response ? e.response.data.error.message : e.message);
                 });

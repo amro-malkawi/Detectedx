@@ -2,15 +2,14 @@ import React, {Component} from "react";
 import {NotificationManager} from "react-notifications";
 import {Button} from '@material-ui/core';
 import classNames from 'classnames';
-import {setImageEDBreastQuality} from "Actions";
-import {connect} from "react-redux";
 import * as Apis from 'Api';
 
-class ImagEDMammoQuestions extends Component {
+class QuizQuestions extends Component {
     constructor(props) {
         super(props);
         this.state = {
             questionList: [],
+            isSubmitted: false,
         }
     }
 
@@ -20,39 +19,45 @@ class ImagEDMammoQuestions extends Component {
 
     getData() {
         Apis.getAttemptQuizAnswer(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then((resp) => {
-            this.setState({questionList: resp});
+            const isSubmitted = resp.some((v) => v.truthOptionId);
+            this.setState({questionList: resp, isSubmitted});
         }).catch((error) => {
             NotificationManager.error(error.response ? error.response.data.error.message : error.message);
         });
     }
 
-    saveQualityAnswer() {
-        Apis.setAttemptImageQuality(this.props.attempts_id, this.props.test_case_id, this.state.selectedValue, this.props.isPostTest).then(resp => {
-
-        }).catch(error => {
-            NotificationManager.error(error.response ? error.response.data.error.message : error.message);
-        });
+    checkQuestionValidate() {
+        if (!this.state.isSubmitted) NotificationManager.error('Please select answer and submit.');
+        return this.state.isSubmitted;
     }
 
-    checkQuestionValidate() {
-        const {questionList} = this.state;
-        let valid = true;
+    checkShowSubmitButton() {
+        const {questionList, isSubmitted} = this.state;
+        if(questionList.length === 0 || isSubmitted) return false;
+        let show = true;
         questionList.forEach((v) => {
-            if (!v.answerOptionId) valid = false;
+            if (!v.answerOptionId) show = false;
         });
-        if (!valid) NotificationManager.error('Please select answer of questions.');
-        return valid;
+        return show;
     }
 
     onSelectAnswer(qIndex, oId) {
         const {questionList} = this.state;
         questionList[qIndex].answerOptionId = oId;
         this.setState({questionList: [...questionList]});
-        const answerIds = {};
+        const answerObj = {};
         questionList.forEach((v) => {
-            if (v.answerOptionId) answerIds[v.id] = v.answerOptionId;
+            if (v.answerOptionId) answerObj[v.id] = v.answerOptionId;
         });
-        Apis.setAttemptImageQuality(this.props.attempts_id, this.props.test_case_id, answerIds, this.props.isPostTest).then(resp => {
+        Apis.setAttemptImageQuality(this.props.attempts_id, this.props.test_case_id, answerObj, this.props.isPostTest).then(resp => {
+        }).catch(error => {
+            NotificationManager.error(error.response ? error.response.data.error.message : error.message);
+        });
+    }
+
+    onSubmitAnswer() {
+        Apis.submitQuizAnswer(this.props.attempts_id, this.props.test_case_id).then((resp) => {
+            this.getData();
         }).catch(error => {
             NotificationManager.error(error.response ? error.response.data.error.message : error.message);
         });
@@ -70,19 +75,25 @@ class ImagEDMammoQuestions extends Component {
                             <div key={option.id}>
                                 <Button
                                     className={classNames('quiz-option', {'selected': option.id === question.answerOptionId}, {'truth': option.id === question.truthOptionId})}
-                                    disabled={this.props.complete}
+                                    disabled={this.state.isSubmitted}
                                     onClick={() => this.onSelectAnswer(questionIndex, option.id)}
                                 >
                                     <div>{option.value}</div>
                                 </Button>
                                 {
-                                    (this.props.complete && option.id === question.answerOptionId && question.matchPercent) &&
+                                    (option.id === question.truthOptionId && question.matchPercent) &&
                                     <div className={'quiz-percent'}>{question.matchPercent}% of users chose this answer</div>
                                 }
                             </div>
                         ))
                     }
                 </div>
+                {
+                    question.questionExplain &&
+                        <div className={'quiz-explain'}>
+                            <div>{question.questionExplain}</div>
+                        </div>
+                }
             </div>
         )
     }
@@ -90,8 +101,16 @@ class ImagEDMammoQuestions extends Component {
     render() {
         return (
             <div className={'covid-question-container chest-data'}>
-                <div className={'quiz-question-container'}>
-                    {this.state.questionList.map((v, i) => this.renderQuestion(v, i))}
+                <div className={'d-flex flex-column'}>
+                    <div className={'quiz-question-container'}>
+                        {this.state.questionList.map((v, i) => this.renderQuestion(v, i))}
+                    </div>
+                    {
+                        this.checkShowSubmitButton() &&
+                        <div className={'quiz-submit-btn'}>
+                            <Button variant={'contained'} onClick={() => this.onSubmitAnswer()}>Submit</Button>
+                        </div>
+                    }
                 </div>
             </div>
         )
@@ -99,6 +118,4 @@ class ImagEDMammoQuestions extends Component {
 }
 
 
-export default connect(null, {
-    setImageEDBreastQuality
-}, null, {forwardRef: true})(ImagEDMammoQuestions);
+export default QuizQuestions;

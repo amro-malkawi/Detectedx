@@ -29,7 +29,7 @@ class CommentInfo extends Component {
         this.state = {
             commentText: '',
             // panelOpen: ((props.modality_type === 'volpara' || props.modality_type === 'imaged_mammo' || props.modality_name.indexOf('GE - CESM') === 0) && props.complete),
-            panelOpen: (props.modality_type === 'volpara' || props.modality_type === 'imaged_mammo' || props.modality_name.indexOf('GE - CESM') === 0),
+            panelOpen: (['volpara', 'imaged_mammo', 'quiz'].indexOf(props.modality_type) !== -1 || props.modality_name.indexOf('GE - CESM') === 0),
             imageCount: props.imageList.length,
             isGETestCase: false,
             loading: true,
