@@ -1033,18 +1033,7 @@ class Attempt extends Component {
                 </div>
                 <div className={'col-md-6'}>
                     <div className={'bg-gray mt-4 p-4'}>
-                        <div className={'fs-23'}>Discussing: Invasive Lobular Carcinoma</div>
-                        Invasive lobular carcinoma:(ILC) represents about 5-15% of all invasive breast carcinomas and is biologically distinct. (ref 1, 2, 3)
-                        There are several variants of ILC with a range cell behaviours but a lack of E-cadherin expression in almost all variants means that the
-                        malignant cells tend to separate rather than aggregate. ILC tends to infiltrate the normal tissues in a linear rather than a mass-like fashion and to provoke an
-                        immune response leading to peri tumoral fibrosis and distortion of the normal architecture (ref 1, 2, 3, 4). ILC may be difficult to diagnose clinically and on imaging
-                        due to the nature of
-                        its histology (ref 3, 4, 5, 6).
-                        While the commonest imaging finding of ILC is a mass lesion, its imaging appearances are variable and, when compared with invasive carcinoma NST,
-                        it it more commonly seen ans an architectural distortion. As in this case, the extent of disease may be better shown on ultrasound examination than on mammography (ref
-                        3, 4, 5, 6).
-                        When peri-tumora fibrosis is advanced, the nipple may be retracted and the breast may appear reduced in size or shrunken when compared with the normal breast, again
-                        illustrated by this case (ref 7)
+                        <div dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}} />
                     </div>
                 </div>
             </div>

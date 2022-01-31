@@ -512,6 +512,11 @@ export function getAttemptQuizAnswer(attempt_id, test_case_id, is_post_test) {
     return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
 }
 
+export function submitQuizAnswer(attempt_id, test_case_id) {
+    const url = 'answer_image_qualities/submit_quiz_answer?access_token=' + getAccessToken();
+    return instance.post(url, {attempt_id, test_case_id}).then((response) => response.data);
+}
+
 /**
  * chest answer functions
  */

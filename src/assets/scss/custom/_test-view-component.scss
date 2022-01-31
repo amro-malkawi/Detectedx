@@ -435,6 +435,7 @@
 
 .quiz-question-container {
   display: flex;
+  flex: 1;
   flex-direction: column;
   overflow: auto;
 
@@ -512,6 +513,21 @@
         color: #329553;
       }
     }
+
+    .quiz-explain {
+      margin-top: 10px;
+      color: white;
+      font-size: 13px;
+      font-weight: 300;
+    }
+  }
+}
+
+.quiz-submit-btn {
+  margin: 5px 10px;
+  button {
+    width: 100%;
+    background-color: #FFD600;
   }
 }
 
