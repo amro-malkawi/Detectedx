@@ -14,6 +14,8 @@ export default function ({open, onClose, modality_type}) {
         case "imaged_mammo":
         case "imaged_chest":
             return <ImagedExtraInfo open={open} onClose={onClose}/>
+        case "quiz":
+            return null;
         default:
             return <MammoExtraInfo open={open} onClose={onClose}/>
     }

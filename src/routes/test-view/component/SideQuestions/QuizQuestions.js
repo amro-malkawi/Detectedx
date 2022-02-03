@@ -91,7 +91,7 @@ class QuizQuestions extends Component {
                 {
                     question.questionExplain &&
                         <div className={'quiz-explain'}>
-                            <div>{question.questionExplain}</div>
+                            <div dangerouslySetInnerHTML={{__html: question.questionExplain}}/>
                         </div>
                 }
             </div>
