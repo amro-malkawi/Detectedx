@@ -34,6 +34,7 @@ import SideQuestions from "./component/SideQuestions";
 import CovidQuestions from "./component/SideQuestions/CovidQuestions";
 import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
+import ReattemptQuizModal from './ReattemptQuizModal';
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
@@ -74,6 +75,7 @@ class TestView extends Component {
 
             possiblePostTestReattempt: false,
             isShowPostTestReattemptModal: false,
+            isShowQuizReattemptModal: false,
             reattemptScore: 0,
             postTestRemainCount: 0,
         };
@@ -320,13 +322,12 @@ class TestView extends Component {
     }
 
     onComplete() {
-        this.setState({loading: true}, () => {
+        // this.setState({loading: true}, () => {
             if (!this.state.isPostTest) {
                 Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
                     const {step, score} = nextStep;
                     if(step === 'repeat') {
-                        NotificationManager.error(`You score is ${score}. You have to answer again.`);
-                        this.onSeek(0);
+                        this.setState({isShowQuizReattemptModal: true, reattemptScore: score, loading: false});
                     } else {
                         this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + step);  // go to scores tab
                     }
@@ -350,7 +351,7 @@ class TestView extends Component {
                     this.setState({loading: false})
                 });
             }
-        });
+        // });
     }
 
     onPostTestReviewAnswer() {
@@ -698,6 +699,11 @@ class TestView extends Component {
                         score={this.state.reattemptScore}
                         remainCount={this.state.postTestRemainCount}
                         onPostTestAgain={() => this.onPostTestReviewAnswer()}
+                    />
+                    <ReattemptQuizModal
+                        open={this.state.isShowQuizReattemptModal}
+                        score={this.state.reattemptScore}
+                        onReattempt={() => {this.setState({isShowQuizReattemptModal: false}); this.onSeek(0);}}
                     />
                 </div>
             );

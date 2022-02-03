@@ -18,7 +18,7 @@ import {
     DialogActions,
     TextField
 } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import SchoolIcon from '@material-ui/icons/School';
 import MailIcon from '@material-ui/icons/Mail';
 import {NotificationManager} from 'react-notifications';
@@ -103,7 +103,7 @@ class Attempt extends Component {
             // check hide scores
             let isHideScore = false;
             const hiddenScoreIndex = hiddenTabs.findIndex((v) => v === 'score');
-            if(hiddenScoreIndex !== -1) {
+            if (hiddenScoreIndex !== -1) {
                 isHideScore = true;
                 hiddenTabs.splice(hiddenScoreIndex, 1);
             }
@@ -390,7 +390,7 @@ class Attempt extends Component {
 
     }
 
-    onScoreDownload () {
+    onScoreDownload() {
         Apis.attemptsScorePdf(this.state.attempts_id, null, this.state.attemptInfo.test_sets.name).then((resp) => {
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
@@ -400,7 +400,7 @@ class Attempt extends Component {
 
     onSendPdfEmail() {
         let func;
-        if(this.state.sendEmailModalType === 'score') {
+        if (this.state.sendEmailModalType === 'score') {
             func = Apis.attemptsScorePdf(this.state.attempts_id, this.state.sendPdfEmail, this.state.attemptInfo.test_sets.name);
         } else {
             func = Apis.attemptsCertificatePdf(this.state.attempts_id, 'normal', this.state.sendPdfEmail, this.state.attemptInfo.test_sets.name)
@@ -732,8 +732,8 @@ class Attempt extends Component {
     }
 
     renderScoreBlock() {
-        if(this.state.isHideScore) {
-            return ( <div className={'mt-70'} /> );
+        if (this.state.isHideScore) {
+            return (<div className={'mt-70'}/>);
         } else if (this.state.attemptInfo.test_sets.modalities.modality_type === 'volpara') {
             return this.renderVolparaScore();
         } else if (['imaged_chest', 'imaged_mammo'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
@@ -1033,7 +1033,7 @@ class Attempt extends Component {
                 </div>
                 <div className={'col-md-6'}>
                     <div className={'bg-gray mt-4 p-4'}>
-                        <div dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}} />
+                        <div dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}}/>
                     </div>
                 </div>
             </div>
@@ -1117,22 +1117,25 @@ class Attempt extends Component {
                                         onClick={() => this.setState({sendEmailModalType: 'certificate', sendPdfEmail: ''})}
                                         disabled={this.state.attemptInfo.view_answer_time === null}
                                     >
-                                        <MailIcon className={'mr-1'} />
+                                        <MailIcon className={'mr-1'}/>
                                         <IntlMessages id="test.certificateSendEmail"/>
                                     </Button>
                                 </div>
                             </div>
                             {this.renderVolparaScorePostBlock()}
-                            <div className={'score-extra'}>
-                                <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                                <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
-                                <div className={'extra-button-container'}>
-                                    <Button variant="contained" color="primary" size="small" className="text-white"
-                                            onClick={() => this.onTest()}>
-                                        <IntlMessages id="test.attempt.volparaAnswerTitle"/>
-                                    </Button>
+                            {
+                                this.state.attemptInfo.test_sets.modalities.modality_type !== 'quiz' &&
+                                <div className={'score-extra'}>
+                                    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
+                                    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
+                                    <div className={'extra-button-container'}>
+                                        <Button variant="contained" color="primary" size="small" className="text-white"
+                                                onClick={() => this.onTest()}>
+                                            <IntlMessages id="test.attempt.volparaAnswerTitle"/>
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                             {
                                 !this.state.isHideScore &&
                                 <ExtraInfo
@@ -1269,42 +1272,42 @@ class Attempt extends Component {
                     <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
                     {this.renderStepContent()}
                     <ThemeProvider theme={darkTheme}>
-                    <Dialog open={this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
-                        <DialogTitle>
-                            {
-                                this.state.sendEmailModalType === 'score' ? 'Send Score' : 'Send certification'
-                            }
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                You can send score by email. please input the email you want.
-                            </DialogContentText>
-                            <TextField
-                                className={'text-white'}
-                                autoFocus
-                                margin="dense"
-                                id="score_email"
-                                label="Email Address"
-                                type="email"
-                                fullWidth
-                                value={this.state.sendPdfEmail}
-                                onChange={(e) => this.setState({sendPdfEmail: e.target.value})}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button variant="contained" onClick={() => this.setState({sendEmailModalType: null})} color="secondary"  >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={() => this.onSendPdfEmail()}
-                                color="primary"
-                                disabled={!validator.isEmail(this.state.sendPdfEmail)}
-                            >
-                                Send
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+                        <Dialog open={this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
+                            <DialogTitle>
+                                {
+                                    this.state.sendEmailModalType === 'score' ? 'Send Score' : 'Send certification'
+                                }
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    You can send score by email. please input the email you want.
+                                </DialogContentText>
+                                <TextField
+                                    className={'text-white'}
+                                    autoFocus
+                                    margin="dense"
+                                    id="score_email"
+                                    label="Email Address"
+                                    type="email"
+                                    fullWidth
+                                    value={this.state.sendPdfEmail}
+                                    onChange={(e) => this.setState({sendPdfEmail: e.target.value})}
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="contained" onClick={() => this.setState({sendEmailModalType: null})} color="secondary">
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => this.onSendPdfEmail()}
+                                    color="primary"
+                                    disabled={!validator.isEmail(this.state.sendPdfEmail)}
+                                >
+                                    Send
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </ThemeProvider>
                 </div>
             )
