@@ -78,10 +78,10 @@ class QuizQuestions extends Component {
                                     disabled={this.state.isSubmitted}
                                     onClick={() => this.onSelectAnswer(questionIndex, option.id)}
                                 >
-                                    <div>{option.value}</div>
+                                    <div dangerouslySetInnerHTML={{__html: option.value}}/>
                                 </Button>
                                 {
-                                    (option.id === question.truthOptionId && question.matchPercent) &&
+                                    (option.id === question.truthOptionId && question.matchPercent !== undefined) &&
                                     <div className={'quiz-percent'}>{question.matchPercent}% of users chose this answer</div>
                                 }
                             </div>

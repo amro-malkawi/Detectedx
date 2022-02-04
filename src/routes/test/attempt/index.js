@@ -22,12 +22,14 @@ import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import SchoolIcon from '@material-ui/icons/School';
 import MailIcon from '@material-ui/icons/Mail';
 import {NotificationManager} from 'react-notifications';
+import QueryString from 'query-string';
 import PostQuestionForm from "./PostQuestionForm";
 import BoxplotChart from "Components/BoxplotChart";
 import IntlMessages from "Util/IntlMessages";
 import JSONParseDefault from 'json-parse-default';
 import validator from 'validator';
 import ExtraInfo from "./ExtraInfo";
+import ReattemptQuizModal from "./ReattemptQuizModal";
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -72,6 +74,7 @@ class Attempt extends Component {
             isHideScore: false,
             sendEmailModalType: null,
             sendPdfEmail: '',
+            reattemptQuizPercent: null
         }
     }
 
@@ -111,13 +114,8 @@ class Attempt extends Component {
             const isFinishMainQuestions = questionnaires.main.length === 0 || questionnaires.main.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('mainQuestions') !== -1);
             const isFinishAdditionalQuestions = questionnaires.additional.length === 0 || questionnaires.additional.some((v) => v.answer.length !== 0) || (hiddenTabs.indexOf('additionalQuestions') !== -1);
             if (!detail.complete) {
-                // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test'] : ['mainQuestions', 'test'];
-                // if(!isFinishMainQuestions || !isFinishAdditionalQuestions) {
-                //
-                // }
                 steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions'] : ['mainQuestions'];
             } else {
-                // steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'test', 'score', 'answer'] : ['mainQuestions', 'test', 'score', 'answer'];
                 steps = questionnaires.additional.length > 0 ? ['mainQuestions', 'additionalQuestions', 'score', 'answer'] : ['mainQuestions', 'score', 'answer'];
                 if (detail.test_sets.has_post) {
                     steps = steps.concat(['postTest', 'postQuestions', 'postScore']);
@@ -136,6 +134,16 @@ class Attempt extends Component {
             } else {
                 stepIndex = that.state.stepIndex + 1
             }
+
+            // check show quiz reattempt modal
+            let reattemptQuizPercent = null;
+            if(isFirstMount && detail.complete && steps[stepIndex] === 'score' && detail.test_sets.modalities.modality_type === 'quiz') {
+                const percent = detail.scores[0].score === undefined ? 0 : detail.scores[0].score;
+                const param = QueryString.parse(that.props.location.search)
+                if(param && param.from === 'test' && percent < 75) {
+                    reattemptQuizPercent = percent;
+                }
+            }
             that.setState({
                 mainQuestions: questionnaires.main,
                 isFinishMainQuestions,
@@ -147,11 +155,19 @@ class Attempt extends Component {
                 steps: steps,
                 stepIndex,
                 loading: false,
-                isHideScore
+                isHideScore,
+                reattemptQuizPercent
             });
         }).catch((e) => {
             console.error(e.message);
         })
+    }
+
+    onRestartTest() {
+        Apis.attemptsAdd(this.state.attemptInfo.test_set_id, undefined).then(resp => {
+            let path = '/test-view/' + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            this.props.history.replace(path);
+        });
     }
 
     onTest() {
@@ -1271,6 +1287,12 @@ class Attempt extends Component {
                 <div className={'attempt-container'}>
                     <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
                     {this.renderStepContent()}
+                    <ReattemptQuizModal
+                        open={this.state.reattemptQuizPercent !== null}
+                        score={this.state.reattemptQuizPercent}
+                        onClose={() => this.setState({reattemptQuizPercent: null})}
+                        onReattempt={() => this.onRestartTest()}
+                    />
                     <ThemeProvider theme={darkTheme}>
                         <Dialog open={this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
                             <DialogTitle>

@@ -35,7 +35,6 @@ import CovidQuestions from "./component/SideQuestions/CovidQuestions";
 import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
 import GuestLoginModal from "./GuestLoginModal";
-import ReattemptQuizModal from './ReattemptQuizModal';
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
@@ -78,7 +77,6 @@ class TestView extends Component {
 
             possiblePostTestReattempt: false,
             isShowPostTestReattemptModal: false,
-            isShowQuizReattemptModal: false,
             reattemptScore: 0,
             postTestRemainCount: 0,
         };
@@ -216,7 +214,8 @@ class TestView extends Component {
                     testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
                     testCaseViewInfo.modalities.number_of_slides,
                     complete,
-                    (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo', 'quiz'].indexOf(testCaseViewInfo.modalities.modality_type) === -1)
+                    (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo', 'quiz'].indexOf(testCaseViewInfo.modalities.modality_type) === -1),
+                    testCaseViewInfo.test_case_grid_info
                 );
                 if (testCaseViewInfo.modalities.modality_type === 'volpara') {
                     that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
@@ -328,36 +327,31 @@ class TestView extends Component {
         if(!this.props.isLogin) {
             this.setState({isShowLoginModal: true});
         } else {
-            // this.setState({loading: true}, () => {
-            if (!this.state.isPostTest) {
-                Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
-                    const {step, score} = nextStep;
-                    if(step === 'repeat') {
-                        this.setState({isShowQuizReattemptModal: true, reattemptScore: score, loading: false});
-                    } else {
-                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + step);  // go to scores tab
-                    }
-                }).catch((e) => {
-                    console.warn(e.response ? e.response.data.error.message : e.message);
-                });
-            } else {
-                Apis.attemptsPostTestFinish(this.state.attempts_id).then(resp => {
-                    if (resp.score < 75) {
-                        this.setState({
-                            isShowPostTestReattemptModal: true,
-                            reattemptScore: resp.score,
-                            postTestRemainCount: resp.post_test_remain_count,
-                            loading: false
-                        });
-                    } else {
-                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
-                    }
-                }).catch(e => {
-                    console.warn(e.response ? e.response.data.error.message : e.message);
-                    this.setState({loading: false})
-                });
-            }
-            // });
+            this.setState({loading: true}, () => {
+                if (!this.state.isPostTest) {
+                    Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
+                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
+                    }).catch((e) => {
+                        console.warn(e.response ? e.response.data.error.message : e.message);
+                    });
+                } else {
+                    Apis.attemptsPostTestFinish(this.state.attempts_id).then(resp => {
+                        if (resp.score < 75) {
+                            this.setState({
+                                isShowPostTestReattemptModal: true,
+                                reattemptScore: resp.score,
+                                postTestRemainCount: resp.post_test_remain_count,
+                                loading: false
+                            });
+                        } else {
+                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                        }
+                    }).catch(e => {
+                        console.warn(e.response ? e.response.data.error.message : e.message);
+                        this.setState({loading: false})
+                    });
+                }
+            });
         }
     }
 
@@ -712,11 +706,6 @@ class TestView extends Component {
                         attemptId={this.state.attempts_id}
                         onClose={() => this.setState({isShowLoginModal: false})}
                         onComplete={this.onComplete.bind(this)}
-                    />
-                    <ReattemptQuizModal
-                        open={this.state.isShowQuizReattemptModal}
-                        score={this.state.reattemptScore}
-                        onReattempt={() => {this.setState({isShowQuizReattemptModal: false}); this.onSeek(0);}}
                     />
                 </div>
             );

@@ -20,6 +20,7 @@ import {
     TEST_VIEW_ATTEMPT_INFO
 } from 'Actions/types';
 import {isMobile} from 'react-device-detect';
+import JSONParseDefault from 'json-parse-default';
 
 const breastPositions = [['CC', 'L'], ['CC', 'R'], ['MLO', 'L'], ['MLO', 'R']];
 const geTypes = ['GE-PLANES', 'GE-SLABS', 'GE-V-PREVIEW'];
@@ -290,7 +291,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                 let canvasWidth, canvasHeight;
                 const canvasInstance = $('div#images');
                 if (canvasInstance.length === 0 || canvasInstance.width() === 0) {
-                // if (true) {
+                    // if (true) {
                     //did not load
                     canvasWidth = $(window).width();
                     if (isShowImageBrowser) {
@@ -319,15 +320,15 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                     img.realWidth = Math.abs(img.realContentRight - img.realContentLeft);
                     const zoomLevel = Math.min(canvasHeight / img.realHeight, canvasWidth / img.realWidth);
                     if (img.hangingId && img.hangingId.indexOf('MLO') !== -1) {
-                        if(imgMinMLOShowHeight === 0 || img.realHeight * zoomLevel < imgMinMLOShowHeight) imgMinMLOShowHeight = img.realHeight * zoomLevel;
+                        if (imgMinMLOShowHeight === 0 || img.realHeight * zoomLevel < imgMinMLOShowHeight) imgMinMLOShowHeight = img.realHeight * zoomLevel;
                     } else {
-                        if(imgMinShowHeight === 0 || img.realHeight * zoomLevel < imgMinShowHeight) imgMinShowHeight = img.realHeight * zoomLevel;
+                        if (imgMinShowHeight === 0 || img.realHeight * zoomLevel < imgMinShowHeight) imgMinShowHeight = img.realHeight * zoomLevel;
                     }
                 });
 
                 imageObjList.forEach((img) => {
                     if (img.hangingId && img.hangingId.indexOf('MLO') !== -1) {
-                        if(imgMinMLOShowHeight !== 0) {
+                        if (imgMinMLOShowHeight !== 0) {
                             initialZoomLevel.push({
                                 zoom_image_id: img.id,
                                 zoom_level: Math.floor((imgMinMLOShowHeight / img.realHeight) * 100) / 100,
@@ -335,7 +336,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                             });
                         }
                     } else {
-                        if(imgMinShowHeight !== 0) {
+                        if (imgMinShowHeight !== 0) {
                             initialZoomLevel.push({
                                 zoom_image_id: img.id,
                                 zoom_level: Math.floor((imgMinShowHeight / img.realHeight) * 100) / 100,
@@ -349,7 +350,7 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
             console.log('zoom level error', e)
         }
     }
-    return { initialZoomLevel};
+    return {initialZoomLevel};
 }
 
 const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true, currentThicknessType) => {
@@ -370,7 +371,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
     });
 
     // check for existing all images
-    if(type === '') {
+    if (type === '') {
         idList = images.map(v => v.id).slice(0, defaultImagesNumber);
     } else if (idList.length < typeArray.length && isForce) {
         images.forEach((v) => {
@@ -392,7 +393,7 @@ const getHangingImageOrder = (images, type, defaultImagesNumber, isForce = true,
 
 };
 
-export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false, isShowImageBrowser = true) => (dispatch, getState) => {
+export const setImageListAction = (list, answer, toolList = [], defaultImagesNumber = 1, complete = false, isShowImageBrowser = true, gridInfoStr) => (dispatch, getState) => {
     if (isMobile) {
         isShowImageBrowser = false;
     }
@@ -494,7 +495,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             }
 
             // check ultrasound hanging
-            if(image.type === 'ultrasound') {
+            if (image.type === 'ultrasound') {
                 image.hangingId = 'ULTRASOUND';
             }
 
@@ -504,7 +505,7 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
     });
 
     let showImageList;
-    const currentThicknessType = (newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length >= 4) ?  'SLABS' : 'NOTHICKNESS';
+    const currentThicknessType = (newList.filter((v) => v.metaData.positionDesc === 'GE-PLANES' || v.metaData.positionDesc === 'GE-SLABS').length >= 4) ? 'SLABS' : 'NOTHICKNESS';
     const volparaImage = newList.find((v) => v.type === 'volpara');
     let volparaImageId;
     if (volparaImage !== undefined) {
@@ -514,30 +515,49 @@ export const setImageListAction = (list, answer, toolList = [], defaultImagesNum
             newList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1)),
             selectedHangingType, defaultImagesNumber, false, currentThicknessType
         );
-    } else if (newList.filter((v) => v.type === 'ultrasound').length > 0) {
-        // for Ultrasound modality
-        const uImageIds = newList.filter((v) => v.type === 'ultrasound').map((v) => v.id);
-        if(!complete) {
-            // while test, hanging is 4 x ultrasound image.
-            if(uImageIds.length >= 4) {
-                showImageList = [uImageIds.splice(0, 2), uImageIds.splice(0, 2)];
+    } else {
+        // check validation of grid information
+        let gridInfoValid = false;
+        const gridInfo = gridInfoStr ? JSONParseDefault(gridInfoStr) : null;
+        if(gridInfo) {
+            gridInfoValid = true;
+            gridInfo.forEach((row) => {
+                row.forEach((id) => {
+                    if(newList.every((v) => v.id !== id)) {
+                        gridInfoValid = false;
+                    }
+                });
+            });
+        }
+        if(!gridInfoValid) {
+            if (newList.filter((v) => v.type === 'ultrasound').length > 0) {
+                // for Ultrasound modality
+                const uImageIds = newList.filter((v) => v.type === 'ultrasound').map((v) => v.id);
+                if (!complete) {
+                    // while test, hanging is 4 x ultrasound image.
+                    if (uImageIds.length >= 4) {
+                        showImageList = [uImageIds.splice(0, 2), uImageIds.splice(0, 2)];
+                    } else {
+                        showImageList = [uImageIds];
+                    }
+                } else {
+                    // when complete, show 2 x ultrasound + 2 x breast image
+                    showImageList = [uImageIds.splice(0, 2)];
+                    const bImageIds = newList.filter((v) => v.type !== 'ultrasound').map((v) => v.id);
+                    if (bImageIds.length > 0) {
+                        showImageList.push(bImageIds.splice(0, 2));
+                    }
+                }
             } else {
-                showImageList = [uImageIds];
+                showImageList = getHangingImageOrder(
+                    newList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1)),
+                    selectedHangingType, defaultImagesNumber,
+                    true, currentThicknessType
+                );
             }
         } else {
-            // when complete, show 2 x ultrasound + 2 x breast image
-            showImageList = [uImageIds.splice(0, 2)];
-            const bImageIds = newList.filter((v) => v.type !== 'ultrasound').map((v) => v.id);
-            if(bImageIds.length > 0) {
-                showImageList.push(bImageIds.splice(0, 2));
-            }
+            showImageList = gridInfo;
         }
-    } else {
-        showImageList = getHangingImageOrder(
-            newList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1)),
-            selectedHangingType, defaultImagesNumber,
-            true, currentThicknessType
-        );
     }
     const initZoomResult = calcInitialZoomLevel(showImageList, newList, isShowImageBrowser, testSetHangingType);
     showImageList = showImageList.filter((v) => v.length !== 0);
@@ -598,11 +618,11 @@ export const changeHangingLayout = (type) => (dispatch, getState) => {
 };
 
 export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
-    const { imageList, isShowImageBrowser, testSetHangingType } = getState().testView;
+    const {imageList, isShowImageBrowser, testSetHangingType} = getState().testView;
     if (rowIndex === undefined || colIndex === undefined) return;
     const showImageList = [...getState().testView.showImageList];
     showImageList[rowIndex][colIndex] = id;
-    const { initialZoomLevel } = calcInitialZoomLevel(showImageList, imageList, isShowImageBrowser, testSetHangingType);
+    const {initialZoomLevel} = calcInitialZoomLevel(showImageList, imageList, isShowImageBrowser, testSetHangingType);
     batch(() => {
         dispatch({
             type: TEST_VIEW_SET_SHOW_IMAGE_LIST,
@@ -610,7 +630,7 @@ export const dropImage = (id, rowIndex, colIndex) => (dispatch, getState) => {
         });
         dispatch({
             type: TEST_VIEW_SET_INITIAL_ZOOM_LEVEL,
-            payload: { initialZoomLevel },
+            payload: {initialZoomLevel},
         });
     });
 };
@@ -642,7 +662,7 @@ export const setCaseDensity = (value) => (dispatch, getState) => {
 
 export const changeCurrentTool = (tool) => (dispatch, getState) => {
     const toolList = getState().testView.toolList;
-    if(toolList.indexOf(tool) !== -1) {
+    if (toolList.indexOf(tool) !== -1) {
         dispatch({
             type: TEST_VIEW_SET_CURRENT_TOOL,
             payload: tool
