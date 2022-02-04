@@ -10,22 +10,25 @@ import {
 import {withStyles} from '@material-ui/core/styles';
 import IntlMessages from "Util/IntlMessages";
 
-export default function ({open, score, onReattempt}) {
+export default function ({open, score, onReattempt, onClose}) {
     return (
         <CustomDialog
             open={open}
-            onClose={null}
+            onClose={onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
             <DialogContent>
                 <CustomDialogContentText>
-                    You scored<span className={'text-primary'}>{score}%</span>, A passing score of 75% is needed to finish quiz.
+                    You scored <span className={'text-primary'}>{score}%</span>, a passing score of 75% is needed to receive CME points.
                 </CustomDialogContentText>
             </DialogContent>
             <DialogActions className={'justify-content-center'}>
-                <Button data-cy="review-answers-button" variant="contained" onClick={onReattempt} color="primary" className={'mr-10'} autoFocus>
-                    Restart quiz
+                <Button data-cy="review-answers-button" variant="contained" onClick={onReattempt} color="primary" className={'mr-10 px-4'}>
+                    Redo
+                </Button>
+                <Button data-cy="review-answers-button" variant="contained" onClick={onClose} color="secondary" className={'mr-10'}>
+                    Cancel
                 </Button>
             </DialogActions>
         </CustomDialog>
