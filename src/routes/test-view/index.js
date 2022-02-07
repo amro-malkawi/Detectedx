@@ -211,7 +211,7 @@ class TestView extends Component {
                     testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
                     testCaseViewInfo.modalities.number_of_slides,
                     complete,
-                    (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo', 'quiz'].indexOf(testCaseViewInfo.modalities.modality_type) === -1),
+                    (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo'].indexOf(testCaseViewInfo.modalities.modality_type) === -1),
                     testCaseViewInfo.test_case_grid_info
                 );
                 if(testCaseViewInfo.modalities.modality_type === 'volpara') {
