@@ -137,10 +137,10 @@ class Attempt extends Component {
 
             // check show quiz reattempt modal
             let reattemptQuizPercent = null;
-            if(isFirstMount && detail.complete && steps[stepIndex] === 'score' && detail.test_sets.modalities.modality_type === 'quiz') {
+            if (isFirstMount && detail.complete && steps[stepIndex] === 'score' && detail.test_sets.modalities.modality_type === 'quiz') {
                 const percent = detail.scores[0].score === undefined ? 0 : detail.scores[0].score;
                 const param = QueryString.parse(that.props.location.search)
-                if(param && param.from === 'test' && percent < 75) {
+                if (param && param.from === 'test' && percent < 75) {
                     reattemptQuizPercent = percent;
                 }
             }
@@ -761,6 +761,56 @@ class Attempt extends Component {
         }
     }
 
+    renderCertificationDown() {
+        const {attemptInfo} = this.state;
+        let disableDown = false;
+        if (attemptInfo.test_sets.modalities.modality_type === 'quiz') {
+            const percent = attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score;
+            if (percent < 75) {
+                disableDown = true;
+            }
+        } else {
+            disableDown = attemptInfo.view_answer_time === null;
+        }
+        return (
+            <div className={'score-extra'}>
+                <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
+                {
+                    disableDown ?
+                        <p className={'extra-desc'}>
+                            {
+                                attemptInfo.test_sets.modalities.modality_type === 'quiz' ?
+                                    'The score must be greater than 75% to download the certificate.' :
+                                    <IntlMessages id="test.attempt.volparaCertDisabled"/>
+                            }
+                        </p> :
+                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                }
+                <div className={'extra-button-container justify-content-start'}>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        className={disableDown ? "text-white grey-btn" : "text-white green-btn"}
+                        onClick={() => this.onGetCertPdf('normal')}
+                        disabled={disableDown}
+                    >
+                        <SchoolIcon className={'mr-1'}/>
+                        <IntlMessages id="test.attempt.volparaCertTitle"/>
+                    </Button>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        className={disableDown ? "text-white grey-btn ml-10" : "text-white green-btn ml-10"}
+                        onClick={() => this.setState({sendEmailModalType: 'certificate', sendPdfEmail: ''})}
+                        disabled={disableDown}
+                    >
+                        <MailIcon className={'mr-1'}/>
+                        <IntlMessages id="test.certificateSendEmail"/>
+                    </Button>
+                </div>
+            </div>
+        )
+    }
 
     renderNormalScore() {
         let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity,
@@ -1108,36 +1158,7 @@ class Attempt extends Component {
                             this.renderScoreBlock()
                         }
                         <div className={'row score-extra-container'}>
-                            <div className={'score-extra'}>
-                                <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
-                                {
-                                    this.state.attemptInfo.view_answer_time === null ?
-                                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDisabled"/></p> :
-                                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
-                                }
-                                <div className={'extra-button-container justify-content-start'}>
-                                    <Button
-                                        variant="contained"
-                                        size="small"
-                                        className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn" : "text-white green-btn"}
-                                        onClick={() => this.onGetCertPdf('normal')}
-                                        disabled={this.state.attemptInfo.view_answer_time === null}
-                                    >
-                                        <SchoolIcon className={'mr-1'}/>
-                                        <IntlMessages id="test.attempt.volparaCertTitle"/>
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        size="small"
-                                        className={this.state.attemptInfo.view_answer_time === null ? "text-white grey-btn ml-10" : "text-white green-btn ml-10"}
-                                        onClick={() => this.setState({sendEmailModalType: 'certificate', sendPdfEmail: ''})}
-                                        disabled={this.state.attemptInfo.view_answer_time === null}
-                                    >
-                                        <MailIcon className={'mr-1'}/>
-                                        <IntlMessages id="test.certificateSendEmail"/>
-                                    </Button>
-                                </div>
-                            </div>
+                            {this.renderCertificationDown()}
                             {this.renderVolparaScorePostBlock()}
                             {
                                 this.state.attemptInfo.test_sets.modalities.modality_type !== 'quiz' &&
