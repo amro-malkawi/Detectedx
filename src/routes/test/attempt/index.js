@@ -23,6 +23,7 @@ import SchoolIcon from '@material-ui/icons/School';
 import MailIcon from '@material-ui/icons/Mail';
 import {NotificationManager} from 'react-notifications';
 import QueryString from 'query-string';
+import {Scrollbars} from 'react-custom-scrollbars';
 import PostQuestionForm from "./PostQuestionForm";
 import BoxplotChart from "Components/BoxplotChart";
 import IntlMessages from "Util/IntlMessages";
@@ -1093,14 +1094,14 @@ class Attempt extends Component {
                             score_type={'Quiz Result'}
                             showUserSelect={true}
                             attempt_id={this.state.attempts_id}
-                            value={0}
+                            value={percent}
                         />
                     </div>
                 </div>
                 <div className={'col-md-6'}>
-                    <div className={'bg-gray mt-4 p-4'}>
-                        <div dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}}/>
-                    </div>
+                    <Scrollbars style={{height: 480}}>
+                        <div className={'bg-gray p-4'} dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}}/>
+                    </Scrollbars>
                 </div>
             </div>
         )
