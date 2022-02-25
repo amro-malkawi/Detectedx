@@ -239,6 +239,22 @@
    }
 }
 
+@media (min-width: 2800px) {
+   .app-boxed {
+      .app-container {
+         width: 2300px
+      }
+   }
+}
+
+@media (min-width: 2000px) {
+   .app-boxed {
+      .app-container {
+         width: 1900px
+      }
+   }
+}
+
 @media (min-width: 1208px) {
    .app-boxed {
       .agency-menu {
