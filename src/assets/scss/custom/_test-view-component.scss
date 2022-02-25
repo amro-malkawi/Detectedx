@@ -8,7 +8,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-width: 130px;
+    min-width: 8.125rem;
     padding: 6px 10px;
     color: white;
     cursor: context-menu;
@@ -19,7 +19,7 @@
 
     .shortcut-key {
       font-family: Monaco, Courier New, monospace;
-      font-size: 11px;
+      font-size: 0.687rem;
       margin-left: 10px;
     }
 
@@ -28,15 +28,15 @@
     }
 
     svg {
-      width: 17px;
-      height: 17px;
+      width: 1.062rem;
+      height: 1.062rem;
       stroke: $normal-colour;
       fill: $normal-colour;
     }
 
     span {
       color: $normal-colour;
-      font-size: 13px;
+      font-size: 0.812rem;
       text-align: center;
       margin-left: 15px;
     }
@@ -58,7 +58,7 @@
 .quality-question-container {
   display: flex;
   flex-direction: column;
-  width: 320px;
+  width: 20rem;
   height: 100%;
   padding: 20px;
   background-color: black;
@@ -102,13 +102,13 @@
       cursor: pointer;
 
       & > div {
-        font-size: 20px;
+        font-size: 1.25rem;
       }
 
       span {
         flex: 1;
         padding-left: 7px;
-        font-size: 19px;
+        font-size: 1.187rem;
       }
     }
 
@@ -121,7 +121,7 @@
 
         span {
           color: green;
-          font-size: 16px;
+          font-size: 1rem;
         }
 
         .question-number-container {
@@ -133,18 +133,18 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            width: 20px;
-            height: 20px;
+            width: 1.25rem;
+            height: 1.25rem;
             margin-right: 10px;
             color: #d2d2d2;
-            font-size: 13px;
+            font-size: 0.812rem;
 
             .yellow-circle {
               position: absolute;
               top: 0;
               right: -1.5px;
-              width: 20px;
-              height: 20px;
+              width: 1.25rem;
+              height: 1.25rem;
               border: 1px solid yellow;
               border-radius: 10px;
             }
@@ -153,8 +153,8 @@
               position: absolute;
               top: 1px;
               right: 1.5px;
-              width: 20px;
-              height: 20px;
+              width: 1.25rem;
+              height: 1.25rem;
               border: 1px solid red;
               border-radius: 10px;
             }
@@ -173,7 +173,7 @@
 
   i {
     color: white;
-    font-size: 24px;
+    font-size: 1.5rem;
     cursor: pointer;
   }
 }
@@ -228,7 +228,7 @@
 
   .chest-question-title {
     display: flex;
-    font-size: 18px;
+    font-size: 1.125rem;
     line-height: 22px;
     margin-top: 8px;
   }
@@ -237,23 +237,23 @@
     height: 27px !important;
     line-height: 27px !important;
     padding: 0;
-    font-size: 14px;
+    font-size: 0.875rem;
     background-color: black;
     color: white;
   }
 
   .chest-question-sub-title {
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 18px;
   }
 
   .chest-question-sub-desc {
-    font-size: 11px;
+    font-size: 0.687rem;
   }
 
   .chest-question-radio-icon {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
     box-shadow: inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1);
     border-radius: 50%;
     border: 2px solid white;
@@ -275,8 +275,8 @@
 
   .chest-question-checkbox-icon {
     border-radius: 3px;
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
     border: 2px solid white;
     &.truth-icon {
       border-color: red !important;
@@ -294,10 +294,10 @@
   }
 
   .chest-shape-select {
-    width: 100px;
+    width: 6.25rem;
     background-color: transparent;
     color: white;
-    font-size: 13px;
+    font-size: 0.812rem;
     padding: 1px 7px;
     height: 26px !important;
     line-height: 26px;
@@ -308,26 +308,26 @@
 
   .question2-zone-title {
     display: inline-block;
-    width: 50px;
-    height: 17px;
-    line-height: 17px;
-    font-size: 14px;
+    width: 3.125rem;
+    height: 1.06rem;
+    line-height: 1.06rem;
+    font-size: 0.875rem;
   }
 
   .question3-check-title-line {
     display: flex;
-    font-size: 13px;
+    font-size: 0.812rem;
     font-weight: bold;
     margin-top: 6px;
     div:first-child {
-      width: 79px;
+      width: 4.937rem;
     }
     div:nth-child(2) {
-      width: 89px;
+      width: 5.562rem;
       text-align: center;
     }
     div:nth-child(3) {
-      width: 89px;
+      width: 5.562rem;
       margin-left: 3px;
       text-align: center;
     }
@@ -336,8 +336,8 @@
   .question3-check-line {
     display: flex;
     div:first-child {
-      width: 79px;
-      font-size: 13px;
+      width: 4.937rem;
+      font-size: 0.812rem;
     }
     div:nth-child(2) {
       border-right: 1px solid #99999988;
@@ -350,28 +350,28 @@
   .question3-extent {
     margin-left: 11px;
     div:first-child {
-      font-size: 15px;
+      font-size: 0.937rem;
       font-weight: bold;
     }
     div:nth-child(2) {
-      font-size: 11px;
+      font-size: 0.687rem;
       text-align: center;
     }
   }
 
   .truth-other-text {
-    max-width: 100px;
+    max-width: 6.25rem;
     margin-top: -26px;
     margin-left: 57px;
     padding-bottom: 8px;
-    font-size: 11px;
+    font-size: 0.687rem;
     color: red;
   }
 }
 
 .chest-question-rating-radio-icon {
-  width: 19px;
-  height: 19px;
+  width: 1.187rem;
+  height: 1.187rem;
   margin-right: 3px;
   box-shadow: inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1);
   border-radius: 50%;
@@ -405,7 +405,7 @@
   flex-direction: row;
   & > div {
     position: relative;
-    font-size: 14px;
+    font-size: 0.875rem;
     color: white;
     padding: 0 7px;
 
@@ -413,8 +413,8 @@
       position: absolute;
       top: 0;
       right: -0.5px;
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
       border: 1px solid yellow;
       border-radius: 10px;
     }
@@ -423,8 +423,8 @@
       position: absolute;
       top: 0;
       right: 1.5px;
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
       border: 1px solid red;
       border-radius: 10px;
     }
@@ -470,7 +470,7 @@
 
     .quiz-title {
       position: relative;
-      font-size: 18px;
+      font-size: 1.125rem;
       color: #dddddd;
     }
 
@@ -484,7 +484,7 @@
         margin: 7px 0;
         padding: 5px 10px;
         background-color: #191b1c;
-        font-size: 14px;
+        font-size: 0.875rem;
         line-height: 1.5;
         color: #dddddd;
         border: 1px solid #dddddd;
@@ -507,7 +507,7 @@
       }
 
       .quiz-percent {
-        font-size: 12px;
+        font-size: 0.75rem;
         margin-top: -7px;
         margin-left: 10px;
         color: #329553;
@@ -517,7 +517,7 @@
     .quiz-explain {
       margin-top: 10px;
       color: white;
-      font-size: 13px;
+      font-size: 0.812rem;
       font-weight: 300;
     }
   }
