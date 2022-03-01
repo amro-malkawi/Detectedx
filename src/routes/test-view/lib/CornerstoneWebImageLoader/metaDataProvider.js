@@ -197,10 +197,12 @@ function metaDataProvider(type, imageId) {
                     positionDesc = 'GE-SLABS';
                 } else {
                     const sliceThickness = getValue(getInsensitiveElement(metaData, '00180050'));
-                    if(sliceThickness === 1) {
-                        positionDesc = 'GE-PLANES';
-                    } else if (sliceThickness === 10) {
-                        positionDesc = 'GE-SLABS';
+                    if(sliceThickness !== undefined) {
+                        if (sliceThickness <= 2) {
+                            positionDesc = 'GE-PLANES';
+                        } else if (sliceThickness === 10) {
+                            positionDesc = 'GE-SLABS';
+                        }
                     }
                 }
             } else if(seriesDescription.indexOf('V-PREVIEW') !== -1) {
