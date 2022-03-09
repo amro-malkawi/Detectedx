@@ -101,7 +101,7 @@ class QuizQuestions extends Component {
     render() {
         return (
             <div className={'covid-question-container chest-data'}>
-                <div className={'d-flex flex-column'}>
+                <div className={'d-flex flex-column'} style={{flex: 1}}>
                     <div className={'quiz-question-container'}>
                         {this.state.questionList.map((v, i) => this.renderQuestion(v, i))}
                     </div>
