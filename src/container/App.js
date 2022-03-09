@@ -16,6 +16,7 @@ import ResetPassword from './ResetPassword';
 import SendEmail from 'Routes/user/SendEmail';
 import Confirm from 'Routes/user/Confirm';
 import NoMatch from './NoMatch';
+import VideoView from 'Routes/test-view/VideoView';
 import ChromeError from './ChromeError';
 
 // async components
@@ -70,6 +71,7 @@ class App extends Component {
                     />
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
+                    <PrivateRoute path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" component={VideoView} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
                     <Route path="/terms" component={Terms}/>
