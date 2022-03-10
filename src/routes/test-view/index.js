@@ -406,8 +406,9 @@ class TestView extends Component {
     }
 
     renderHeaderNumber() {
+        const marginLeft = (window.innerWidth > 2000 && window.screen.width < window.outerWidth) ? 350 : 0;
         return (
-            <h1 className={'test-view-header-number'}>
+            <h1 className={'test-view-header-number'} style={{marginLeft: marginLeft}}>
                 <Input data-cy="test-case-selector" disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
                     {
                         this.state.test_set_cases.map((v, i) =>

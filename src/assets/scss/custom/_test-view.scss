@@ -621,6 +621,14 @@ div.viewer {
     align-items: center;
     z-index: 2;
 
+    &.left-padding {
+      padding-left: 38.4375rem;
+    }
+
+    &.right-padding {
+      padding-right: 38.4375rem;
+    }
+
     #mark-details {
       width: 23.125rem;
       background-color: black;
