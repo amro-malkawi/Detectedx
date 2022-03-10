@@ -308,7 +308,8 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                 canvasWidth = Math.floor(canvasWidth / imageObjList.length);
                 canvasHeight = Math.floor(canvasInstance.height() / imageRow);
 
-                let imgMinShowHeight = 0;  // CC or other image min height
+                let imgMinShowHeight = 0;  // other image min height
+                let imgMinCCShowHeight = 0; // CC image min height
                 let imgMinMLOShowHeight = 0; // MLO image min height
                 imageObjList.forEach((img) => {
                     const region = img.real_content_region.split(',');  //left,top,right,bottom
@@ -319,7 +320,9 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                     img.realHeight = Math.abs(img.realContentBottom - img.realContentTop);
                     img.realWidth = Math.abs(img.realContentRight - img.realContentLeft);
                     const zoomLevel = Math.min(canvasHeight / img.realHeight, canvasWidth / img.realWidth);
-                    if (img.hangingId && img.hangingId.indexOf('MLO') !== -1) {
+                    if (img.hangingId && img.hangingId.indexOf('CC') !== -1) {
+                        if (imgMinCCShowHeight === 0 || img.realHeight * zoomLevel < imgMinCCShowHeight) imgMinCCShowHeight = img.realHeight * zoomLevel;
+                    } else if (img.hangingId && img.hangingId.indexOf('MLO') !== -1) {
                         if (imgMinMLOShowHeight === 0 || img.realHeight * zoomLevel < imgMinMLOShowHeight) imgMinMLOShowHeight = img.realHeight * zoomLevel;
                     } else {
                         if (imgMinShowHeight === 0 || img.realHeight * zoomLevel < imgMinShowHeight) imgMinShowHeight = img.realHeight * zoomLevel;
@@ -327,7 +330,15 @@ const calcInitialZoomLevel = (showImageIds, totalImageObjList, isShowImageBrowse
                 });
 
                 imageObjList.forEach((img) => {
-                    if (img.hangingId && img.hangingId.indexOf('MLO') !== -1) {
+                    if (img.hangingId && img.hangingId.indexOf('CC') !== -1) {
+                        if (imgMinCCShowHeight !== 0) {
+                            initialZoomLevel.push({
+                                zoom_image_id: img.id,
+                                zoom_level: Math.floor((imgMinCCShowHeight / img.realHeight) * 100) / 100,
+                                zoom_real_height: imgMinCCShowHeight
+                            });
+                        }
+                    } else if (img.hangingId && img.hangingId.indexOf('MLO') !== -1) {
                         if (imgMinMLOShowHeight !== 0) {
                             initialZoomLevel.push({
                                 zoom_image_id: img.id,
