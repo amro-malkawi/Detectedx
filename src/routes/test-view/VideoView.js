@@ -150,6 +150,15 @@ function VideoView(props) {
                             controls
                             width={'100%'}
                             height={'100%'}
+                            config={{
+                                file: {
+                                    attributes: {
+                                        disablePictureInPicture: true,
+                                        controlsList: 'nodownload noplaybackrate',
+                                        onContextMenu: e => e.preventDefault()
+                                    }
+                                }
+                            }}
                             onProgress={(e) => handleVideoProgress(e)}
                             onSeek={(time) => handleVideoSeek(time)}
                             onEnded={() => handleVideoEnded()}
