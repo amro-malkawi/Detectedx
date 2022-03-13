@@ -47,7 +47,7 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        if(browserName !== 'Chrome' && browserName !== 'Firefox') {
+        if(browserName !== 'Chrome' && browserName !== 'Firefox' && browserName !== 'Edge') {
             return (<Route component={ChromeError}/>);
         }
         const {isLogin, location, match} = this.props;
@@ -66,6 +66,7 @@ class App extends Component {
                     <Route path={`${match.url}app`} component={RctDefaultLayout} />
                     <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
+                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" component={VideoView} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
