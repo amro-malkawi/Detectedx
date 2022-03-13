@@ -67,7 +67,8 @@ class QuizQuestions extends Component {
         return (
             <div className={'quiz-question-item'} key={questionIndex}>
                 <div className={'quiz-title'}>
-                    <div>{question.question} </div>
+                    {/*<div>{question.question} </div>*/}
+                    <div dangerouslySetInnerHTML={{__html: question.question}}/>
                 </div>
                 <div className={'quiz-option-list'}>
                     {

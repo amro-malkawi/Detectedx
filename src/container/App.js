@@ -47,9 +47,9 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
-        // if(browserName !== 'Chrome' && browserName !== 'Firefox') {
-        //     return (<Route component={ChromeError}/>);
-        // }
+        if(browserName !== 'Chrome' && browserName !== 'Firefox' && browserName !== 'Edge') {
+            return (<Route component={ChromeError}/>);
+        }
         const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
             if (!isLogin) {
