@@ -59,9 +59,9 @@ class List extends Component {
         });
     }
 
-    onCreateAttempt(testSetId, attemptSubType) {
+    onCreateAttempt(testSetId, attemptSubType, modalityInfo) {
         Apis.attemptsAdd(testSetId, attemptSubType).then(resp => {
-            let path = '/test-view/' + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            let path = (modalityInfo.modality_type !== 'video_lecture' ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
             this.props.history.push(path);
         });
     }
@@ -74,7 +74,7 @@ class List extends Component {
             if(modality_info.modality_has_sub_type) {
                 this.setState({isShowModalType: 'attemptSubTypeModal', selectedTestSetId: testSetId});
             } else {
-                this.onCreateAttempt(testSetId);
+                this.onCreateAttempt(testSetId, null, modality_info);
             }
         }
     }
@@ -181,7 +181,7 @@ class List extends Component {
             );
         } else {
             if (attempt.progress === '' || attempt.progress === 'test') {
-                const path = '/test-view/' + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+                const path = (modality_info.modality_type !== 'video_lecture' ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
                 return (
                     <Button data-cy="test-continue-button" className="mr-10 mt-5 mb-5" outline color="primary" size="sm" onClick={() => this.props.history.push(path)}>
                         <IntlMessages id="test.continue"/>

@@ -67,7 +67,8 @@ class QuizQuestions extends Component {
         return (
             <div className={'quiz-question-item'} key={questionIndex}>
                 <div className={'quiz-title'}>
-                    <div>{question.question} </div>
+                    {/*<div>{question.question} </div>*/}
+                    <div dangerouslySetInnerHTML={{__html: question.question}}/>
                 </div>
                 <div className={'quiz-option-list'}>
                     {
@@ -101,7 +102,7 @@ class QuizQuestions extends Component {
     render() {
         return (
             <div className={'covid-question-container chest-data'}>
-                <div className={'d-flex flex-column'}>
+                <div className={'d-flex flex-column'} style={{flex: 1}}>
                     <div className={'quiz-question-container'}>
                         {this.state.questionList.map((v, i) => this.renderQuestion(v, i))}
                     </div>

@@ -29,7 +29,7 @@ export default class NotFound extends Component {
                             <div className="error-body text-center">
                                 <h1 className="oops mt-30" style={{fontSize: 120}}><i className="zmdi zmdi-info-outline"/></h1>
                                 <h2 className="error-msg mb-0">Browser not supported</h2>
-                                <h3 className=" mt-30">Please use Google Chrome or Firefox to access DetectED-X software</h3>
+                                <h3 className=" mt-30">Please use Google Chrome, Firefox or Edge to access DetectED-X software</h3>
                             </div>
                         </div>
                     </div>
