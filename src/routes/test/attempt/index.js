@@ -1130,7 +1130,7 @@ class Attempt extends Component {
                     <div className={'score-chart-container mt-4'}>
                         <BoxplotChart
                             title={'Results compared to'}
-                            score_type={'Video Lecture Result'}
+                            score_type={this.state.attemptInfo.test_sets.modalities.modality_type === 'video_lecture' ? 'Video Lecture Result' : 'Presentations Result'}
                             showUserSelect={true}
                             attempt_id={this.state.attempts_id}
                             value={percent}
