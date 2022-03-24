@@ -16,6 +16,7 @@ export default function ({open, onClose, modality_type}) {
             return <ImagedExtraInfo open={open} onClose={onClose}/>
         case 'quiz':
         case 'video_lecture':
+        case 'presentations':
             return null;
         default:
             return <MammoExtraInfo open={open} onClose={onClose}/>

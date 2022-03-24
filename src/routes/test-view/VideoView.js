@@ -5,10 +5,10 @@ import ReactPlayer from "react-player";
 import {useHistory} from 'react-router-dom';
 import IntlMessages from "Util/IntlMessages";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import HistoryOutlinedIcon from "@material-ui/icons/HistoryOutlined";
 import CommentInfo from "./component/CommentInfo";
 import SideQuestions from "./component/SideQuestions";
+import PowerPointViewer from "./component/PowerPointViewer";
 import * as Apis from 'Api';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import {NotificationManager} from "react-notifications";
@@ -42,11 +42,16 @@ function VideoView(props) {
             setComplete(attemptsDetail.complete);
             setAllowSkip(completeList.attempts.filter((v) => v.complete).length > 0);
             setLoading(false);
+
+            const fileExt = attemptsDetail.test_sets.test_set_discussion.split('.').pop();
+            if (fileExt === 'ppt' || fileExt === 'pptx') {
+                setAllowSkip(true);
+            }
         });
     }
 
     const handleVideoProgress = (e) => {
-        if(!allowSkip && (e.playedSeconds - playedSeconds.current) > 2) {
+        if (!allowSkip && (e.playedSeconds - playedSeconds.current) > 2) {
             playerRef.current.seekTo(parseFloat(playedSeconds.current), 'seconds');
         } else {
             playedSeconds.current = e.playedSeconds;
@@ -54,18 +59,18 @@ function VideoView(props) {
     }
 
     const handleVideoSeek = (seekTime) => {
-        if(!allowSkip && (seekTime - playedSeconds.current) > 0.1) {
+        if (!allowSkip && (seekTime - playedSeconds.current) > 0.1) {
             playerRef.current.seekTo(parseFloat(playedSeconds.current), 'seconds');
         }
     }
 
     const validateForNext = () => {
         let valid = true;
-        if(!allowSkip) {
+        if (!allowSkip) {
             valid = false;
             NotificationManager.error('You have to watch the video until the end.');
-        } else if(!complete) {
-            if (['video_lecture'].indexOf(testCaseInfo.modalities.modality_type) !== -1) {
+        } else if (!complete) {
+            if (['video_lecture', 'presentations'].indexOf(testCaseInfo.modalities.modality_type) !== -1) {
                 if (sideQuestionRef.current && sideQuestionRef.current.checkQuestionValidate) {
                     valid = sideQuestionRef.current.checkQuestionValidate();
                 } else {
@@ -78,7 +83,7 @@ function VideoView(props) {
     }
 
     const onFinish = () => {
-        if(validateForNext()) {
+        if (validateForNext()) {
             Apis.attemptsFinishTest(attemptId, window.screen.width, window.screen.height).then((nextStep) => {
                 history.push('/app/test/attempt/' + attemptId + '/' + nextStep + '?from=test');  // go to scores tab
             }).catch((e) => {
@@ -119,6 +124,42 @@ function VideoView(props) {
         );
     }
 
+    const renderTestContent = () => {
+        const fileExt = testSetInfo.test_set_discussion.split('.').pop();
+        if (fileExt === 'ppt' || fileExt === 'pptx') {
+            return (
+                <PowerPointViewer
+                    filePath={testSetInfo.test_set_discussion}
+                    allowSkip={allowSkip}
+                    onEnded={() => handleVideoEnded()}
+                />
+            )
+        } else {
+            return (
+                <ReactPlayer
+                    ref={playerRef}
+                    url={testSetInfo.test_set_discussion}
+                    playing
+                    controls
+                    width={'100%'}
+                    height={'100%'}
+                    config={{
+                        file: {
+                            attributes: {
+                                disablePictureInPicture: true,
+                                controlsList: 'nodownload noplaybackrate',
+                                onContextMenu: e => e.preventDefault()
+                            }
+                        }
+                    }}
+                    onProgress={(e) => handleVideoProgress(e)}
+                    onSeek={(time) => handleVideoSeek(time)}
+                    onEnded={() => handleVideoEnded()}
+                />
+            )
+        }
+    }
+
     if (loading) {
         return (<RctSectionLoader style={{backgroundColor: 'black'}}/>);
     }
@@ -143,26 +184,7 @@ function VideoView(props) {
                 }
                 <div className={'image-container'}>
                     <div className={'video-container'}>
-                        <ReactPlayer
-                            ref={playerRef}
-                            url={testSetInfo.test_set_discussion}
-                            playing
-                            controls
-                            width={'100%'}
-                            height={'100%'}
-                            config={{
-                                file: {
-                                    attributes: {
-                                        disablePictureInPicture: true,
-                                        controlsList: 'nodownload noplaybackrate',
-                                        onContextMenu: e => e.preventDefault()
-                                    }
-                                }
-                            }}
-                            onProgress={(e) => handleVideoProgress(e)}
-                            onSeek={(time) => handleVideoSeek(time)}
-                            onEnded={() => handleVideoEnded()}
-                        />
+                        {renderTestContent()}
                     </div>
                 </div>
                 {
