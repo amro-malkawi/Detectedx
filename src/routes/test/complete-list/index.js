@@ -30,16 +30,23 @@ export default class CompleteList extends Component {
     }
 
     renderScores(scores) {
+        console.log(scores)
         let scoreValues = this.state.completeList.metrics.map((v) => {
-            let findObj = scores.find((vv) => vv.metric_id === v.id);
-            if (findObj === undefined) {
-                return '';
+            let findArray = scores.filter((vv) => vv.metric_id === v.id);
+            if (findArray === undefined) {
+                return [];
             } else {
-                return findObj.score;
+                return findArray.map((v) => v.score);
             }
         });
-        return scoreValues.map((vv, ii) => (
-            <td key={ii} className={'text-center'} data-title={this.state.completeList.metrics[ii].name}>{vv}</td>
+        return scoreValues.map((ss, ii) => (
+            <td key={ii} className={'text-center'} data-title={this.state.completeList.metrics[ii].name}>
+                <div className={'d-flex flex-column'}>
+                    {
+                        ss.map((vv, i) => <span key={i}>{vv}</span>)
+                    }
+                </div>
+            </td>
         ))
     }
 

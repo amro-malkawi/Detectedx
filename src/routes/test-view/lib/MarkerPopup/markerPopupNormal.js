@@ -9,7 +9,7 @@ import {NotificationManager} from "react-notifications";
 import chroma from "chroma-js";
 import {connect} from "react-redux";
 
-class MarkerPopup extends Component {
+class MarkerPopupNormal extends Component {
     constructor(props) {
         super(props);
         const {attempts_id, test_cases_id, markData, lesion_list, isPostTest, ratings, complete, showImageList} = props;
@@ -25,8 +25,7 @@ class MarkerPopup extends Component {
 
         // support multiple monitor, add padding for two monitor.
         this.dialogSide = null;
-        if(true) {
-        // if(window.innerWidth > 2000 && window.screen.width < window.outerWidth) {
+        if(window.innerWidth > 2000 && window.screen.width < window.outerWidth) {
             showImageList.forEach((imgRow) => {
                 const i = imgRow.findIndex((v) => v === markData.imageId);
                 if(i !== -1) {
@@ -422,7 +421,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(MarkerPopup);
+export default connect(mapStateToProps)(MarkerPopupNormal);
 
 
 const CustomFormControlLabel = withStyles(theme => ({
