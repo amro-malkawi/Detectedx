@@ -19,7 +19,6 @@ const theme = createMuiTheme({
          "Roboto",
          "Helvetica",
          "Arial",
-         'Heebo',
          'sans-serif',
       ].join(','),
       htmlFontSize: 16,
