@@ -151,7 +151,6 @@ export default class WBCTQuestions extends Component {
 
     render() {
         const {answerRating1, truthRating1, answerRating2, truthRating2} = this.state;
-        console.log(truthRating1, '-----')
         const disabled = this.props.complete;
         return (
             <div className={'pl-10 covid-question-container chest-data'}>
@@ -180,7 +179,6 @@ export default class WBCTQuestions extends Component {
                                     {value: 0, tooltip: 'Absolutely confident that this case is NOT suspicious for NAI'}, {value: 1, tooltip: 'Very confident that this case is NOT suspicious for NAI'}, {value: 2, tooltip: 'Quite confident that this case is NOT suspicious for NAI'},
                                     {value: 3, tooltip: 'Quite confident that this case is suspicious for NAI'}, {value: 4, tooltip: 'Very confident that this case is suspicious for NAI'}, {value: 5, tooltip: 'Absolutely confident that this case is suspicious for NAI'}
                                 ].map((v, i) => {   // [0, 1, 2, 3...]
-                                    console.log(v.value, truthRating1, truthRating1 === v.value, '//////////')
                                     return (
                                         <CheckboxTooltip title={v.tooltip} key={i}>
                                             <RatingLabel
