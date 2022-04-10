@@ -84,7 +84,8 @@ export default class MarkerTool extends BaseAnnotationTool {
         }
 
         // check show information
-        let isShowInfo = eventData.element.parentElement.querySelector('.eye').firstElementChild.classList.contains('zmdi-eye');
+        // let isShowInfo = eventData.element.parentElement.querySelector('.eye').firstElementChild.classList.contains('zmdi-eye');
+        let isShowInfo = false;
 
 
         // precondition: toolData.data is an array of Mark objects
