@@ -218,7 +218,7 @@ class MarkerPopupWBCT extends Component {
             <div>
                 <Select
                     isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                    placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : <IntlMessages id={"testView.selectLesion"}/>}
+                    placeholder={'Select fracture type'}
                     name="lesions"
                     isSearchable={false}
                     options={options}
@@ -336,7 +336,7 @@ class MarkerPopupWBCT extends Component {
                         {
                             (lesionList.length > 0 && Number(this.state.selectedRating) > 2) &&
                             <div>
-                                <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
+                                <Label>Fractures:</Label>
                                 {this.renderLesion()}
                             </div>
                         }

@@ -540,7 +540,9 @@ class ImageViewer extends Component {
 
                 infoHtml += `<div class='overlap-marker-info'>`;
                 infoHtml += `<span class="fs-14 b-2"><u>${(isTruth ? "Truth" : "Your answer")}</u></span>`;
-                infoHtml += isTruth ? `<span>Lesion Number: ${lesionNumber}</span>` : `<span>Rate: ${rating}</span>`;
+                if(this.props.modalityInfo.modality_type !== 'wb_ct') {
+                    infoHtml += isTruth ? `<span>Lesion Number: ${lesionNumber}</span>` : `<span>Rate: ${rating}</span>`;
+                }
                 lesionNames.forEach((v, i) => {
                     infoHtml += `<span>${v}</span>`;
                 });
