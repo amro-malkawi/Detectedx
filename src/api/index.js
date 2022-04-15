@@ -61,7 +61,7 @@ export function logout() {
 }
 
 export function singUp(data) {
-    const url = '/users';
+    const url = '/signup';
     return instance.post(url, data).then((response) => response.data);
 }
 

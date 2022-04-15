@@ -1,0 +1,301 @@
+
+.main-profile {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  color: white;
+  overflow: hidden;
+
+  .main-profile-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+  }
+
+  .profile-tab-container {
+    width: 360px;
+    padding-right: 60px;
+
+    .profile-tab-list {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 35px;
+
+      .profile-tab {
+        width: 100%;
+        justify-content: flex-start;
+        margin: 5px 0;
+        padding: 27px 30px;
+        font-size: 23px;
+        font-family: "Poppins", sans-serif;
+        border-radius: 0;
+        color: white;
+        background-color: #1E213E;
+
+        &.active {
+          padding-left: 25px;
+          border-left: 5px solid #54A9FB;
+          background-color: #2F367B;
+        }
+      }
+    }
+  }
+
+  .profile-content {
+    display: flex;
+    flex: 1;
+    padding: 50px;
+    border-radius: 35px;
+    background-color: #1E213E;
+  }
+
+  .personal-content {
+    flex: 1;
+    margin-right: 50px;
+
+    .personal-item-list {
+      .personal-item {
+        margin-bottom: 30px;
+        border-bottom: 2px solid #777275;
+
+        span {
+          font-size: 15px;
+          color: #54A9FB;
+        }
+
+        input {
+          margin: 10px 0 0;
+          padding: 0;
+          font-size: 23px;
+          color: white;
+          border: none;
+          background-color: transparent;
+
+          &::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+          }
+        }
+
+        label .MuiTypography-root {
+          font-family: "Poppins", sans-serif;
+        }
+      }
+    }
+  }
+
+  .completed-list {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+
+    .personal-completed-test {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
+  .profile-completed-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .profile-completed-top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      padding-bottom: 15px;
+      border-bottom: 2px solid #777275;
+
+      select {
+        height: 21px;
+        padding: 0 5px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        color: #54A9FB;
+        border: none;
+        background-color: transparent;
+
+        option {
+          background-color: transparent;
+        }
+      }
+    }
+
+    .profile-completed-table {
+      flex: 1;
+      margin: 10px 0;
+      padding: 5px 5px 3px 0;
+      overflow: auto;
+      &::-webkit-scrollbar-track
+      {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #170F15;
+      }
+
+      &::-webkit-scrollbar
+      {
+        width: 10px;
+        background-color: #170F15;
+      }
+
+      &::-webkit-scrollbar-thumb
+      {
+        background-color: #3B4071;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 5px;
+
+        thead {
+          background-color: transparent;
+          th {
+            padding-bottom: 10px;
+            font-size: 15px;
+            color: #54A9FB;
+          }
+        }
+        tr {
+          margin-bottom: 10px;
+          td {
+            padding: 10px 0;
+            font-size: 15px;
+          }
+
+          td:nth-child(1) {
+            padding-left: 22px;
+            font-size: 19px;
+            font-weight: 500;
+            border-top-left-radius: 7px;
+            border-bottom-left-radius: 7px;
+          }
+          td:nth-child(2) {
+            span {
+              padding: 0 10px;
+              font-size: 14px;
+              font-weight: 600;
+              background-color: white;
+              border-radius: 5px;
+            }
+          }
+          td:last-child {
+            padding-right: 10px;
+            border-top-right-radius: 7px;
+            border-bottom-right-radius: 7px;
+            button {
+              background-color: #180F15;
+              font-family: "Poppins", sans-serif;
+              font-size: 14px;
+              font-weight: 500;
+              border-radius: 7px;
+            }
+          }
+        }
+      }
+    }
+
+    .profile-completed-bottom {
+      .profile-completed-bottom-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 15px;
+        color: #54A9FB;
+        border-bottom: 2px solid #777275;
+      }
+    }
+
+    .profile-complete-reattempt {
+      padding: 3px 40px;
+      font-family: "Poppins", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #180F15;
+      background-color: #54a9fb;
+      border-radius: 7px;
+    }
+    .profile-attempt-table {
+      flex: 1;
+      margin: 10px 0;
+      padding: 5px 5px 3px 0;
+      overflow: auto;
+      &::-webkit-scrollbar-track
+      {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #170F15;
+      }
+
+      &::-webkit-scrollbar
+      {
+        width: 10px;
+        background-color: #170F15;
+      }
+
+      &::-webkit-scrollbar-thumb
+      {
+        background-color: #3B4071;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 5px;
+
+        thead {
+          background-color: transparent;
+          th {
+            padding-bottom: 10px;
+            font-size: 15px;
+            color: #54A9FB;
+          }
+        }
+        tbody {
+          padding: 0 10px;
+        }
+        tr {
+          margin-bottom: 10px;
+          td {
+            padding: 10px 0;
+            font-size: 15px;
+          }
+
+          td:nth-child(1) {
+            border-top-left-radius: 7px;
+            border-bottom-left-radius: 7px;
+          }
+          td:nth-child(2) {
+          }
+          td:last-child {
+            text-align: right;
+            padding-right: 10px;
+            border-top-right-radius: 7px;
+            border-bottom-right-radius: 7px;
+            button {
+              padding: 3px 30px;
+              font-family: "Poppins", sans-serif;
+              font-size: 15px;
+              font-weight: 600;
+              border-radius: 7px;
+              color: #534ED9;
+              background-color: #180f15;
+              img {
+                height: 17px;
+                margin-right: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

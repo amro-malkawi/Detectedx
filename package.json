@@ -62,6 +62,8 @@
       "@material-ui/icons": "^4.9.1",
       "@material-ui/lab": "^4.0.0-alpha.57",
       "@material-ui/pickers": "^3.2.10",
+      "@stripe/react-stripe-js": "^1.7.1",
+      "@stripe/stripe-js": "^1.27.0",
       "axios": "^0.19.0",
       "babel-polyfill": "^6.26.0",
       "chroma-js": "^2.0.4",
@@ -122,6 +124,6 @@
       "reselect": "^4.0.0",
       "styled-jss": "^2.2.3",
       "uuid": "^8.1.0",
-      "validator": "^13.6.0"
+      "validator": "^13.7.0"
    }
 }

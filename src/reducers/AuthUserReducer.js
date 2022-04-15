@@ -9,7 +9,8 @@ import {
     LOGOUT_USER,
     SIGNUP_USER,
     SIGNUP_USER_SUCCESS,
-    SIGNUP_USER_FAILURE
+    SIGNUP_USER_FAILURE,
+    USER_COMPLETED_COUNT,
 } from 'Actions/types';
 
 const cookie = new Cookies();
@@ -22,6 +23,7 @@ const INIT_STATE = {
     userName: cookie.get("user_name"),
     userEmail: cookie.get("user_email"),
     accessToken: cookie.get("access_token"),
+    completedCount: 0,
     loading: false
 };
 
@@ -54,6 +56,9 @@ export default (state = INIT_STATE, action) => {
 
         case SIGNUP_USER_FAILURE:
             return { ...state, loading: false };
+
+        case USER_COMPLETED_COUNT:
+            return {...state, completedCount: action.payload}
 
         default: return { ...state };
     }

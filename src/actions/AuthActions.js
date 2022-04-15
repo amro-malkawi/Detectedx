@@ -11,7 +11,8 @@ import {
     LOGOUT_USER,
     SIGNUP_USER,
     SIGNUP_USER_SUCCESS,
-    SIGNUP_USER_FAILURE
+    SIGNUP_USER_FAILURE,
+    USER_COMPLETED_COUNT,
 } from 'Actions/types';
 import * as Apis from 'Api';
 
@@ -95,4 +96,8 @@ export const signupUserInEmail = (userData, history) => (dispatch) => {
             // NotificationManager.error(error.response.data.error.message);
         });
     });
+}
+
+export const setUserCompletedCount = (count) => (dispatch) => {
+    dispatch({type: USER_COMPLETED_COUNT, payload: count});
 }

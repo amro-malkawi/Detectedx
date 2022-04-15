@@ -1,57 +1,198 @@
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {Button, Dialog} from '@material-ui/core';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import ReactPlayer from "react-player";
+import JSONParseDefault from "json-parse-default";
+import {useSelector} from "react-redux";
+import {useHistory} from 'react-router-dom';
+import * as Apis from "Api";
 
-function TestSetModal(props) {
+function TestSetModal({data, onClose}) {
+    const history = useHistory();
+    const locale = useSelector((state) => state.settings.locale.locale);
+    const videoRef = useRef();
+    const [isVideoPlay, setIsVideoPlay] = useState(false);
+    const [isFirstPlay, setIsFirstPlay] = useState(true);
+
+
+    const onCreateAttempt = (testSetId, attemptSubType, modalityInfo) => {
+        Apis.attemptsAdd(testSetId, attemptSubType).then(resp => {
+            let path = (['video_lecture', 'presentations'].indexOf(modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            history.push(path);
+        });
+    }
+
+    const onStart = () => {
+        if (data.id.indexOf !== undefined && data.id.indexOf('/app/test/attempt/') === 0) {
+            history.push(data.id)
+        } else {
+            onCreateAttempt(data.id, null, data.modalityInfo);
+            // if (data.modalityInfo.modality_has_sub_type) {
+            //     this.setState({isShowModalType: 'attemptSubTypeModal', selectedTestSetId: testSetId});
+            // } else {
+            //     this.onCreateAttempt(data.id, null, data.modalityInfo);
+            // }
+        }
+    }
+
+    const onPay = () => {
+
+    }
+
+    const renderDifficult = (difficult) => {
+        if (!difficult) {
+            return (<div className={'test-set-difficult'}>
+                <div/>
+                <div/>
+                <div/>
+            </div>)
+        } else if (difficult === 1) {
+            return (<div className={'test-set-difficult'}>
+                <div className={'active'}/>
+                <div/>
+                <div/>
+            </div>)
+        } else if (difficult === 2) {
+            return (<div className={'test-set-difficult'}>
+                <div className={'active'}/>
+                <div className={'active'}/>
+                <div/>
+            </div>)
+        } else {
+            return (<div className={'test-set-difficult'}>
+                <div className={'active'}/>
+                <div className={'active'}/>
+                <div className={'active'}/>
+            </div>)
+        }
+    }
+
+    const renderDesc = () => {
+        const {modality_desc, instruction_video_thumbnail, instruction_video} = data.modalityInfo;
+        const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
+        let descText = '';
+        if (typeof modalityDesc !== 'object') {
+            // if desc is not JSON type, will be shown this text
+            descText = modality_desc;
+        } else if (modalityDesc[locale] !== undefined) {
+            descText = modalityDesc[locale];
+        } else if (modalityDesc['en'] !== undefined) {
+            descText = modalityDesc['en'];
+        }
+        return <div dangerouslySetInnerHTML={{__html: descText}}/>
+    }
+
+
+    const renderStartButton = () => {
+        const {id, attempts, has_post, test_set_paid, test_set_point, is_test_set_expired, test_set_price} = data;
+        const test_set_id = id;
+        let attempt = attempts[0];
+        if (!test_set_paid || is_test_set_expired) {
+            // free test set
+            return (
+                <Button className={'test-set-start-btn'} onClick={() => test_set_point === 0 ? onStart() : onPay()}>
+                    Start Assessment
+                </Button>
+            )
+        } else if (attempt === undefined || attempt.complete) {
+            return (
+                <Button className={'test-set-start-btn'} onClick={onStart}>
+                    Start Assessment
+                </Button>
+            )
+        } else {
+            let path;
+            if (attempt.progress === '' || attempt.progress === 'test') {
+                path = (['video_lecture', 'presentations'].indexOf(data.modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+            } else {
+                path = '/app/test/attempt/' + attempt.id + '/' + attempt.progress;
+            }
+            return (
+                <Button className={'test-set-start-btn'} onClick={() => history.push(path)}>
+                    Continue Assessment
+                </Button>
+            );
+        }
+    }
+
+
     return (
-        <Dialog open={true} maxWidth={'xs'}>
+        <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
             <div className={'main-test-set-modal'}>
-                <div className={'test-set-modal-header'}>
+                <div className={'test-set-modal-header'} style={{backgroundColor: '#4f4bce'}}>
                     <img src={require('Assets/img/main/temp_bg.png')} className={'test-set-modal-header-img'} alt={''}/>
-                    <div>Breast Cancer Screening</div>
-                    <div className={'test-set-modal-header-tags'}>
-                        <div className={'modality-type'}>Breast</div>
-                        <div className={'mark-3d'}>
-                            <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                    <div className={'d-flex flex-row align-items-end'}>
+                        <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
+                        <div className={'test-set-modal-header-tags'}>
+                            <div className={'modality-type'}>BREAST</div>
+                            <div className={'mark-3d'}>
+                                <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div className={'test-set-modal-content'}>
-                    <div>
-                        <div>
-                            <span>DIFFICULT</span>
-                            <div/>
-                            <div/>
-                            <div/>
-                            <span className={'mr-40'}>60MINS</span>
-                            <span className={''}>CME: 1</span>
-                            <span>SBMC22-01</span>
+                    <div className={'pr-20'}>
+                        <div className={'test-set-item-spec'}>
+                            <span>DIFFICULTY</span>
+                            {
+                                renderDifficult(data.difficulty)
+                            }
+                            <span className={'mr-20'}>60MINS</span>
+                            <span className={'mr-20'}>CME: {data.test_set_point}</span>
+                            <span className={''}>{data.test_set_code}</span>
                         </div>
-                        <div>
-                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim
-                            veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut.
-                            Aliquip ex ea commodo consequat. Duis autem vel eum iriure doloration adipiscing elit, sed diam nonummy nibh euismod.
+                        <div className={'text-white fs-18 my-20'}>
+                            {renderDesc()}
                         </div>
                     </div>
-                    <div>
-                        <div>
-                            <Button>Start Assessment</Button>
+                    <div className={'pl-20'}>
+                        <div className={'d-flex flex-row align-items-center'}>
+                            {
+                                renderStartButton()
+                            }
                             <Button>
-                                <span>Save</span>
-                                <BookmarkIcon/>
+                                <div className={'test-set-save-btn'}>
+                                    <span>Save</span>
+                                    <BookmarkIcon/>
+                                </div>
                             </Button>
                         </div>
-                        <div>
-                            <div>
-                                <PlayArrowIcon />
+                        {
+                            (data.modalityInfo.instruction_video && data.modalityInfo.instruction_video !== '') &&
+                            <div className={'d-flex flex-column justify-content-center align-items-center'}>
+                                <div className={'test-set-modal-video'}>
+                                    <ReactPlayer
+                                        ref={videoRef}
+                                        url={data.modalityInfo.instruction_video}
+                                        playing={isVideoPlay}
+                                        controls
+                                        onPause={() => setIsVideoPlay(false)}
+                                        width={'100%'}
+                                        height={'100%'}
+                                    />
+                                    {
+                                        (isFirstPlay && data.modalityInfo.instruction_video_thumbnail && data.modalityInfo.instruction_video_thumbnail !== '') &&
+                                        <img src={data.modalityInfo.instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
+                                    }
+                                    {
+                                        !isVideoPlay &&
+                                        <Button className={'play-btn'} onClick={() => {
+                                            setIsVideoPlay(true);
+                                            setIsFirstPlay(false)
+                                        }}>
+                                            <PlayArrowIcon/>
+                                        </Button>
+                                    }
+                                </div>
+                                <span className={'text-white fs-14'}>INSTRUCTION VIDEO</span>
                             </div>
-                        </div>
-                        <span>INSTRUCTION VIDEO</span>
+                        }
                     </div>
                 </div>
-                <div className={'close-btn'}>
-                    <i className={'ti ti-close'} />
+                <div className={'test-set-modal-close-btn'} onClick={onClose}>
+                    <i className={'ti ti-close'}/>
                 </div>
             </div>
         </Dialog>

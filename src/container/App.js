@@ -8,10 +8,10 @@ import {NotificationContainer} from 'react-notifications';
 import {browserName, isChrome, isFirefox} from 'react-device-detect';
 import RctThemeProvider from './RctThemeProvider';
 import RctDefaultLayout from './DefaultLayout';
-import AppSignIn from './Signin';
-import AppSignUp from './Signup';
+import AppSignIn from 'Routes/user/Signin';
+import AppSignUp from 'Routes/user/signup';
 import Terms from './Terms';
-import ForgotPassword from './ForgotPassword';
+import ForgotPassword from 'Routes/user/ForgotPassword';
 import ResetPassword from './ResetPassword';
 import SendEmail from 'Routes/user/SendEmail';
 import Confirm from 'Routes/user/Confirm';
@@ -57,7 +57,7 @@ class App extends Component {
                 return (<Redirect to={'/signin'}/>);
                 // return (<Redirect to={'/site/home'}/>);
             } else {
-                return (<Redirect to={'/app/test/list'}/>);
+                return (<Redirect to={'/main'}/>);
                 // return (<Redirect to={'/site/home'}/>);
             }
         }
