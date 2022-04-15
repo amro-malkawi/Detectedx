@@ -7,7 +7,7 @@ export default class VideoModal extends Component {
     static propTypes = {
         open: PropTypes.bool.isRequired,
         onClose: PropTypes.func.isRequired,
-        link: PropTypes.string.isRequired,
+        link: PropTypes.string,
         possibleClose: PropTypes.bool
     };
 

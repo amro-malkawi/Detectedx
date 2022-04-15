@@ -53,23 +53,19 @@ class App extends Component {
         }
         const {isLogin, location, match} = this.props;
         if (location.pathname === '/') {
-            if (!isLogin) {
-                return (<Redirect to={'/signin'}/>);
-                // return (<Redirect to={'/site/home'}/>);
-            } else {
-                return (<Redirect to={'/main'}/>);
-                // return (<Redirect to={'/site/home'}/>);
-            }
+            return (<Redirect to={'/main'}/>);
+            // if (!isLogin) {
+            //     return (<Redirect to={'/signin'}/>);
+            // } else {
+            //     return (<Redirect to={'/main'}/>);
+            // }
         }
         return (
             <RctThemeProvider>
                 <NotificationContainer/>
                 <Switch>
-                    <PrivateRoute
-                        path={`${match.url}app`}
-                        authUser={isLogin}
-                        component={RctDefaultLayout}
-                    />
+                    <Route path={`${match.url}app`} component={RctDefaultLayout} />
+                    <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" component={VideoView} authUser={isLogin}/>

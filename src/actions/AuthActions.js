@@ -71,6 +71,8 @@ export const logoutUserFromEmail = (history) => (dispatch) => {
     }).finally(() => {
         if (Apis.apiHost.indexOf(':') !== -1) {
             cookie.remove('user_id', {path: '/'});
+            cookie.remove('user_email', {path: '/'});
+            cookie.remove('user_name', {path: '/'});
             cookie.remove('access_token', {path: '/'});
         }
         dispatch({type: LOGOUT_USER});

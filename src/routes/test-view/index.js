@@ -34,16 +34,17 @@ import SideQuestions from "./component/SideQuestions";
 import CovidQuestions from "./component/SideQuestions/CovidQuestions";
 import DensityModal from './DensityModal';
 import ReattemptPostTestModal from './ReattemptPostTestModal';
+import GuestLoginModal from "./GuestLoginModal";
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
-import MarkerPopup from "./lib/MarkerPopup/markerPopup";
-import MarkerPopupLungED from "./lib/MarkerPopup/markerPopupLungED";
+import MarkerPopup from "./lib/MarkerPopup";
 import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
 import VideoModal from "Routes/instructions/VideoModal";
+import * as selectors from "Selectors";
 
 class TestView extends Component {
 
@@ -71,6 +72,7 @@ class TestView extends Component {
             isShowToolModal: false,
             isShowInstructionModal: false,
             isShowLoadingIndicator: true,
+            isShowLoginModal: false,
 
             possiblePostTestReattempt: false,
             isShowPostTestReattemptModal: false,
@@ -159,7 +161,7 @@ class TestView extends Component {
                     complete = attemptsDetail.complete;
                 }
             }
-            that.synchronizer.enabled = ( testCaseViewInfo.images.every((v) => v.stack_count === 1) && ['chest', 'ultrasound'].indexOf(testCaseViewInfo.modalities.modality_type) === -1) ;
+            that.synchronizer.enabled = (testCaseViewInfo.images.every((v) => v.stack_count === 1) && ['chest', 'ultrasound'].indexOf(testCaseViewInfo.modalities.modality_type) === -1);
 
             that.props.setModalityInfo(testCaseViewInfo.modalities);
             that.props.setAttemptInfo(attemptsDetail);
@@ -185,14 +187,14 @@ class TestView extends Component {
             that.needLoadImagePathList = [];
             let needLoadImageList = [];
             needLoadImageList = needLoadImageList.concat(testSetsCases[testCaseIndex].images);
-            if(testCaseIndex + 1 < testSetsCases.length) {
+            if (testCaseIndex + 1 < testSetsCases.length) {
                 needLoadImageList = needLoadImageList.concat(testSetsCases[testCaseIndex + 1].images);
             }
             if (!complete) {
                 needLoadImageList = needLoadImageList.filter(image => (['test', 'prior', 'cesm', 'ultrasound'].indexOf(image.type) !== -1));
             }
             needLoadImageList.forEach((v) => {
-                for(let i = 0; i < v.stack_count; i++) {
+                for (let i = 0; i < v.stack_count; i++) {
                     that.needLoadImagePathList.push(testCaseViewInfo.image_url_base + v.id + '/' + i);
                 }
             });
@@ -214,7 +216,7 @@ class TestView extends Component {
                     (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo'].indexOf(testCaseViewInfo.modalities.modality_type) === -1),
                     testCaseViewInfo.test_case_grid_info
                 );
-                if(testCaseViewInfo.modalities.modality_type === 'volpara') {
+                if (testCaseViewInfo.modalities.modality_type === 'volpara') {
                     that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
                 }
             });
@@ -224,11 +226,11 @@ class TestView extends Component {
     }
 
     handleImageViewThumbnailDone(e) {
-        if(this.imageViewThumbnailDoneStatus === undefined) this.imageViewThumbnailDoneStatus = [];
+        if (this.imageViewThumbnailDoneStatus === undefined) this.imageViewThumbnailDoneStatus = [];
         this.imageViewThumbnailDoneStatus.push(e.detail.imageViewImageId);
         let showImageLength = 0;
         this.props.showImageList.forEach((v) => showImageLength += v.length);
-        if(this.imageViewThumbnailDoneStatus.length === showImageLength) {
+        if (this.imageViewThumbnailDoneStatus.length === showImageLength) {
             //load finished all current image thumbnails
             console.log('all image thumbnail loaded');
             if (this.state.isShowLoadingIndicator) {
@@ -239,8 +241,8 @@ class TestView extends Component {
 
     handleImageViewPrefetchDone(e) {
         // all images preloaded
-        if(this.needLoadImagePathList.length === 0) return;
-        if(this.imageViewLoadedStatus === undefined) this.imageViewLoadedStatus = [];
+        if (this.needLoadImagePathList.length === 0) return;
+        if (this.imageViewLoadedStatus === undefined) this.imageViewLoadedStatus = [];
         this.imageViewLoadedStatus.push(e.detail.imageViewImageId);
         this.needLoadImagePathList = this.needLoadImagePathList.filter((imgPath) =>
             this.imageViewLoadedStatus.every((imgId) => imgPath.indexOf(imgId) === -1)
@@ -248,10 +250,10 @@ class TestView extends Component {
         let loadAllImageView = true;
         this.props.showImageList.forEach((imgRow) => {
             imgRow.forEach((imgId) => {
-                if(this.imageViewLoadedStatus.indexOf(imgId) === -1) loadAllImageView = false;
+                if (this.imageViewLoadedStatus.indexOf(imgId) === -1) loadAllImageView = false;
             })
         });
-        if(!this.startPreloadImageFunc && loadAllImageView) {
+        if (!this.startPreloadImageFunc && loadAllImageView) {
             this.startPreloadImageFunc = true;
             this.startPreloadImages();
         }
@@ -280,7 +282,7 @@ class TestView extends Component {
     }
 
     onNext() {
-        if ( !this.state.complete && this.state.test_case.modalities.modality_type === 'volpara' ) {
+        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'volpara') {
             this.onSendCaseDensity();
         } else if (this.validateForNext()) {
             this.onMove(1);
@@ -288,7 +290,7 @@ class TestView extends Component {
     }
 
     onFinish() {
-        if ( !this.state.complete && this.state.test_case.modalities.modality_type === 'volpara' ) {
+        if (!this.state.complete && this.state.test_case.modalities.modality_type === 'volpara') {
             this.onSendCaseDensity();
         } else if (this.validateForNext()) {
             this.onComplete();
@@ -321,31 +323,35 @@ class TestView extends Component {
     }
 
     onComplete() {
-        this.setState({loading: true}, () => {
-            if (!this.state.isPostTest) {
-                Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
-                    this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
-                }).catch((e) => {
-                    console.warn(e.response ? e.response.data.error.message : e.message);
-                });
-            } else {
-                Apis.attemptsPostTestFinish(this.state.attempts_id).then(resp => {
-                    if (resp.score < 75) {
-                        this.setState({
-                            isShowPostTestReattemptModal: true,
-                            reattemptScore: resp.score,
-                            postTestRemainCount: resp.post_test_remain_count,
-                            loading: false
-                        });
-                    } else {
-                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
-                    }
-                }).catch(e => {
-                    console.warn(e.response ? e.response.data.error.message : e.message);
-                    this.setState({loading: false})
-                });
-            }
-        });
+        if(!this.props.isLogin) {
+            this.setState({isShowLoginModal: true});
+        } else {
+            this.setState({loading: true}, () => {
+                if (!this.state.isPostTest) {
+                    Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
+                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
+                    }).catch((e) => {
+                        console.warn(e.response ? e.response.data.error.message : e.message);
+                    });
+                } else {
+                    Apis.attemptsPostTestFinish(this.state.attempts_id).then(resp => {
+                        if (resp.score < 75) {
+                            this.setState({
+                                isShowPostTestReattemptModal: true,
+                                reattemptScore: resp.score,
+                                postTestRemainCount: resp.post_test_remain_count,
+                                loading: false
+                            });
+                        } else {
+                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                        }
+                    }).catch(e => {
+                        console.warn(e.response ? e.response.data.error.message : e.message);
+                        this.setState({loading: false})
+                    });
+                }
+            });
+        }
     }
 
     onPostTestReviewAnswer() {
@@ -487,7 +493,7 @@ class TestView extends Component {
             // let isCorrect = isAnswerCancer === isTruthCancer;
             // let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
             let resultStr;
-            if(this.state.test_case.modalities.modality_type === 'covid') {
+            if (this.state.test_case.modalities.modality_type === 'covid') {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>
             } else if (['chest', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
                 if(this.state.test_case.modalities.name !== 'LinED') {
@@ -523,7 +529,7 @@ class TestView extends Component {
                     </div>
                 )
             } else {
-                if(this.state.answerDensity === undefined) {
+                if (this.state.answerDensity === undefined) {
                     return null;
                 } else {
                     return (
@@ -626,7 +632,7 @@ class TestView extends Component {
                             </DndProvider>
                         </div>
                     </ShortcutContainer>
-                    {this.state.isShowLoadingIndicator && <LoadingIndicator type={"test-view"} />}
+                    {this.state.isShowLoadingIndicator && <LoadingIndicator type={"test-view"}/>}
                     <div className={'rotate-error'}>
                         <img src={require('Assets/img/rotate.png')} alt=''/>
                     </div>
@@ -642,25 +648,11 @@ class TestView extends Component {
                     </Dialog>
                     {
                         !this.state.isShowPopup ? null :
-                            this.state.test_case.modalities.name !== 'LungED' ?
                             <MarkerPopup
                                 attempts_id={this.state.attempts_id}
                                 test_cases_id={this.state.test_cases_id}
                                 // ultrasound modality does not have lesion in test
                                 lesion_list={this.state.test_case.modalities.modality_type !== 'ultrasound' ? this.state.test_case.modalities.lesion_list : '[]'}
-                                isPostTest={this.state.isPostTest}
-                                markData={this.state.selectedMarkData}
-                                ratings={this.state.test_case.ratings}
-                                complete={this.state.complete}
-                                popupCancelHandler={this.popupCancelHandler}
-                                popupDeleteHandler={this.popupDeleteHandler}
-                                popupSaveHandler={this.popupSaveHandler}
-                                onClose={() => this.setState({isShowPopup: false})}
-                            /> :
-                            <MarkerPopupLungED
-                                attempts_id={this.state.attempts_id}
-                                test_cases_id={this.state.test_cases_id}
-                                lesion_list={this.state.test_case.modalities.lesion_list}
                                 isPostTest={this.state.isPostTest}
                                 markData={this.state.selectedMarkData}
                                 ratings={this.state.test_case.ratings}
@@ -695,6 +687,12 @@ class TestView extends Component {
                         remainCount={this.state.postTestRemainCount}
                         onPostTestAgain={() => this.onPostTestReviewAnswer()}
                     />
+                    <GuestLoginModal
+                        open={this.state.isShowLoginModal}
+                        attemptId={this.state.attempts_id}
+                        onClose={() => this.setState({isShowLoginModal: false})}
+                        onComplete={this.onComplete.bind(this)}
+                    />
                 </div>
             );
         } else {
@@ -704,14 +702,13 @@ class TestView extends Component {
 }
 
 // map state to props
-const mapStateToProps = (state) => {
-    return {
-        imageList: state.testView.imageList,
-        showImageList: state.testView.showImageList,
-        isShowImageBrowser: state.testView.isShowImageBrowser,
-        caseDensity: state.testView.caseDensity,
-    };
-};
+const mapStateToProps = (state) => ({
+    imageList: state.testView.imageList,
+    showImageList: state.testView.showImageList,
+    isShowImageBrowser: state.testView.isShowImageBrowser,
+    caseDensity: state.testView.caseDensity,
+    isLogin: selectors.getIsLogin(state),
+});
 
 export default withRouter(connect(mapStateToProps, {
     setImageListAction,

@@ -17,20 +17,10 @@ import {NotificationManager} from 'react-notifications';
 import {FormControl, InputLabel, Radio, RadioGroup, TextField, Divider, CircularProgress, Switch} from '@material-ui/core';
 import ConsentModal from "Routes/test/attempt/ConsentModal";
 import * as Apis from 'Api';
-
-// app config
 import AppConfig from 'Constants/AppConfig';
-
-// redux action
-import {
-    signupUserInEmail,
-    signinUserInEmail
-} from 'Actions';
-import CreatableSelect from 'react-select/creatable';
+import { login } from 'Actions';
 import IntlMessages from "Util/IntlMessages";
-import LanguageProvider from "Components/Header/LanguageProvider";
 import * as selectors from "Selectors";
-import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 
 class Signup extends Component {
 
@@ -62,7 +52,6 @@ class Signup extends Component {
         checkTermsInvalid: false,
 
         positionList: [],
-        interestList: [],
         placeOfWorkList: [],
         countryList: [],
         showConsentModal: false,
@@ -87,7 +76,6 @@ class Signup extends Component {
                 positionList,
                 placeOfWorkList,
                 countryList,
-                // interestList,
                 loading: false,
             });
         }).catch(e => {
@@ -157,86 +145,8 @@ class Signup extends Component {
         return valid;
     }
 
-    validateInfo() {
-        let valid = true;
-        let invalidObj = {};
-        if (this.state.firstName.trim().length === 0) {
-            valid = false;
-            invalidObj.firstNameInvalid = true;
-        }
-        if (this.state.lastName.trim().length === 0) {
-            valid = false;
-            invalidObj.lastNameInvalid = true;
-        }
-        // if(this.state.placeOfWork === null) {
-        //     valid = false;
-        //     invalidObj.placeOfWorkInvalid = true;
-        // }
-        // if(this.state.title.trim().length === 0) {
-        //     valid = false;
-        //     invalidObj.titleInvalid = true;
-        // }
-        // if(this.state.position === undefined) {
-        //     valid = false;
-        //     invalidObj.positionInvalid = true;
-        // }
-        if (this.state.country === undefined) {
-            valid = false;
-            invalidObj.countryInvalid = true;
-        }
-        // if(this.state.address1.trim().length === 0) {
-        //     valid = false;
-        //     invalidObj.address1Invalid = true;
-        // }
-        // if(this.state.suburb.trim().length === 0) {
-        //     valid = false;
-        //     invalidObj.suburbInvalid = true;
-        // }
-        if (this.state.postcode.trim().length === 0) {
-            valid = false;
-            invalidObj.postcodeInvalid = true;
-        }
-        // if(this.state.employer.trim().length === 0) {
-        //     valid = false;
-        //     invalidObj.employerInvalid = true;
-        // }
-        // if(this.state.jobTitle.trim().length === 0) {
-        //     valid = false;
-        //     invalidObj.jobTitleInvalid = true
-        // }
-        // if(this.state.hearFromWhere === null) {
-        //     valid = false;
-        //     invalidObj.hearFromWhereInvalid = true;
-        // }
-        // if(this.state.hearFromWhere === 'Other-Specify' && this.state.hearFromOtherText.trim().length === 0) {
-        //     valid = false;
-        //     invalidObj.hearFromOtherTextInvalid = true;
-        // }
-        if (!valid) {
-            this.setState(invalidObj);
-        }
-        console.log(invalidObj, valid);
-        return valid;
-    }
-
     onSetValue(key, value) {
         this.setState({[key]: value, [key + 'Invalid']: false});
-    }
-
-    onChangeSelectData(key, data) {
-        if (data === null) {
-            this.onSetValue(key, '');
-        } else if (typeof data === 'object' && !Array.isArray(data)) {
-            this.onSetValue(key, data.value);
-        } else if (typeof data === 'object' && Array.isArray(data)) {
-            this.onSetValue(key, data.map((v) => v.value).join(','));
-        }
-    }
-
-    onNextForm() {
-        if (this.validate()) {
-            this.setState({formType: 'info'});
-        }
     }
 
     /**
@@ -245,36 +155,48 @@ class Signup extends Component {
     onUserSignUp() {
         if (this.validate()) {
             this.setState({loading: true});
-            this.props.signupUserInEmail({
+            Apis.singUp({
                 email: this.state.email,
                 password: this.state.password,
                 first_name: this.state.firstName,
                 last_name: this.state.lastName,
-                // gender: this.state.gender,
-                // title: this.state.title,
-                // place_of_work: this.state.placeOfWork,
-                // position: this.state.position,
                 country: this.state.country,
-                // address1: this.state.address1,
-                // address2: this.state.address2,
-                // suburb: this.state.suburb,
                 state: this.state.state,
                 postcode: this.state.postcode,
                 position: this.state.position,
                 employer: this.state.employer,
-                // job_title: this.state.jobTitle,
-                // hear_from_where: this.state.hearFromWhere,
-                // hear_from_other_text: this.state.hearFromOtherText,
-                // extra_info: this.state.extraInfo,
                 allow_contact_me: this.state.allowContactMe,
-            }, this.props.history).then((result) => {
-                NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
-                // this.props.history.push('/users/send-email/' + result.id);
-                this.props.signinUserInEmail(this.state, this.props.history);
-            }).catch((error) => {
+            }).then((resp) => {
+                //success register
+                return Apis.login(this.state.email, this.state.password);
+            }).then((result) => {
+                this.props.login(result.userId, result.userName, result.userEmail, result.id, () => {
+                    this.props.history.push('/')
+                });
+            }).catch((e) => {
                 this.setState({loading: false});
-                NotificationManager.error(error.response ? error.response.data.error.message : error.message);
+                NotificationManager.error(e.response ? e.response.data.error.message : e.message);
             });
+
+
+            // this.props.signupUserInEmail({
+            //     email: this.state.email,
+            //     password: this.state.password,
+            //     first_name: this.state.firstName,
+            //     last_name: this.state.lastName,
+            //     country: this.state.country,
+            //     state: this.state.state,
+            //     postcode: this.state.postcode,
+            //     position: this.state.position,
+            //     employer: this.state.employer,
+            //     allow_contact_me: this.state.allowContactMe,
+            // }, this.props.history).then((result) => {
+            //     NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
+            //     this.props.signinUserInEmail(this.state, this.props.history);
+            // }).catch((error) => {
+            //     this.setState({loading: false});
+            //     NotificationManager.error(error.response ? error.response.data.error.message : error.message);
+            // });
         }
     }
 
@@ -578,7 +500,6 @@ const mapStateToProps = ({authUser}) => {
 };
 
 export default connect(mapStateToProps, {
-    signupUserInEmail,
-    signinUserInEmail,
+    login,
 })(Signup);
 

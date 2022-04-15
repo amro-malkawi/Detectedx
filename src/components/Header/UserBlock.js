@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Modal} from 'reactstrap';
 import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as selectors from 'Selectors';
 
@@ -16,12 +16,14 @@ import LanguageProvider from "Components/Header/LanguageProvider";
 import PaymentModal from "Components/Payment/PaymentModal";
 
 class UserBlock extends Component {
-
-    state = {
-        userDropdownMenu: false,
-        isSupportModal: false,
-        isShowSubscriptionModal: false,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            userDropdownMenu: false,
+            isSupportModal: false,
+            isShowSubscriptionModal: false,
+        };
+    }
 
     /**
      * Logout User
@@ -105,6 +107,6 @@ const mapStateToProps = (state) => ({
     userEmail: selectors.getUserEmail(state),
 });
 
-export default connect(mapStateToProps, {
+export default withRouter(connect(mapStateToProps, {
     logoutUserFromEmail
-})(UserBlock);
+})(UserBlock));
