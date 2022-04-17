@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {Input} from 'reactstrap';
 import {useSelector} from "react-redux";
 import {useHistory} from 'react-router-dom';
 import * as selectors from "Selectors";
@@ -8,13 +9,26 @@ function Header(props) {
     const isLogin = selectors.getIsLogin(null);
     const userName = useSelector((state) => state.authUser.userName);
     const userCompletedCount = useSelector((state) => state.authUser.completedCount);
+    const [searchText, setSearchText] = useState('');
 
     const getAvatarChars = () => {
+        if(!userName) return '';
         const names = userName.split(' ');
         if(names.length >= 2) {
             return names[0][0] + names[1][0];
         } else {
             return names[0][0] + names[0][1];
+        }
+    }
+
+    const onSearchKeyPress = (event) => {
+        if(event.key === 'Enter' && searchText.length > 0) {
+            const path = '/main/home?search=' + searchText;
+            if(history.location.pathname.indexOf('/main/home')) {
+                history.replace(path);
+            } else {
+                history.push(path);
+            }
         }
     }
 
@@ -28,7 +42,11 @@ function Header(props) {
                     <img src={require('Assets/img/main/icon_home.svg')} alt={''}/>
                 </div>
                 <div className={'search-input'}>
-                    <input />
+                    <Input
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        onKeyPress={onSearchKeyPress}
+                    />
                     <img src={require('Assets/img/main/icon_search.svg')} alt={''}/>
                 </div>
             </div>

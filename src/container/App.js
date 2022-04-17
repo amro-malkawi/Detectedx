@@ -65,11 +65,11 @@ class App extends Component {
                 <NotificationContainer/>
                 <Switch>
                     <Route path={`${match.url}app`} component={RctDefaultLayout} />
+                    <Route path="/main" component={MainPage}/>
                     <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" component={VideoView} authUser={isLogin}/>
-                    <PrivateRoute path="/main" component={MainPage} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
                     <Route path="/terms" component={Terms}/>

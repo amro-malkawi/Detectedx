@@ -1,33 +1,33 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {Button, Dialog} from '@material-ui/core';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import ReactPlayer from "react-player";
 import JSONParseDefault from "json-parse-default";
 import {useSelector} from "react-redux";
 import {useHistory} from 'react-router-dom';
+import {NotificationManager} from "react-notifications";
 import * as Apis from "Api";
+import * as selectors from "Selectors";
 
 function TestSetModal({data, onClose}) {
     const history = useHistory();
+    const isLogin = selectors.getIsLogin(null);
     const locale = useSelector((state) => state.settings.locale.locale);
     const videoRef = useRef();
     const [isVideoPlay, setIsVideoPlay] = useState(false);
     const [isFirstPlay, setIsFirstPlay] = useState(true);
-
-
-    const onCreateAttempt = (testSetId, attemptSubType, modalityInfo) => {
-        Apis.attemptsAdd(testSetId, attemptSubType).then(resp => {
-            let path = (['video_lecture', 'presentations'].indexOf(modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
-            history.push(path);
-        });
-    }
+    const [, updateState] = useState();
 
     const onStart = () => {
-        if (data.id.indexOf !== undefined && data.id.indexOf('/app/test/attempt/') === 0) {
+        if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
             history.push(data.id)
         } else {
-            onCreateAttempt(data.id, null, data.modalityInfo);
+            Apis.attemptsAdd(data.id, undefined).then(resp => {
+                let path = (['video_lecture', 'presentations'].indexOf(data.modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+                history.push(path);
+            });
             // if (data.modalityInfo.modality_has_sub_type) {
             //     this.setState({isShowModalType: 'attemptSubTypeModal', selectedTestSetId: testSetId});
             // } else {
@@ -36,8 +36,22 @@ function TestSetModal({data, onClose}) {
         }
     }
 
-    const onPay = () => {
-
+    const onSave = () => {
+        const promise = !data.bookedTestSet ? Apis.bookTestSet(data.id) : Apis.bookTestSetCancel(data.id);
+        promise.then((result) => {
+            NotificationManager.success(!data.bookedTestSet ? 'Test set was saved' : 'Test set was removed');
+            if (!data.bookedTestSet) {
+                data.bookedTestSet = true;
+                data.filterKeys.push('saved');
+            } else {
+                data.bookedTestSet = false;
+                const i = data.filterKeys.findIndex((v) => v === 'saved');
+                if (i !== -1) data.filterKeys.splice(i, 1);
+            }
+            updateState({});
+        }).catch((e) => {
+            console.error(e);
+        })
     }
 
     const renderDifficult = (difficult) => {
@@ -85,17 +99,16 @@ function TestSetModal({data, onClose}) {
 
 
     const renderStartButton = () => {
-        const {id, attempts, has_post, test_set_paid, test_set_point, is_test_set_expired, test_set_price} = data;
+        const {id, attempts, has_post, test_set_paid, test_set_point, is_test_set_expired, demoTestSet} = data;
         const test_set_id = id;
         let attempt = attempts[0];
-        if (!test_set_paid || is_test_set_expired) {
-            // free test set
+        if (!isLogin && !demoTestSet) {
             return (
-                <Button className={'test-set-start-btn'} onClick={() => test_set_point === 0 ? onStart() : onPay()}>
-                    Start Assessment
+                <Button className={'test-set-start-btn'} onClick={() => history.push('/signin')}>
+                    Login
                 </Button>
             )
-        } else if (attempt === undefined || attempt.complete) {
+        } else if ((!isLogin && demoTestSet) || attempt === undefined || attempt.complete) {
             return (
                 <Button className={'test-set-start-btn'} onClick={onStart}>
                     Start Assessment
@@ -106,7 +119,7 @@ function TestSetModal({data, onClose}) {
             if (attempt.progress === '' || attempt.progress === 'test') {
                 path = (['video_lecture', 'presentations'].indexOf(data.modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             } else {
-                path = '/app/test/attempt/' + attempt.id + '/' + attempt.progress;
+                path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
             }
             return (
                 <Button className={'test-set-start-btn'} onClick={() => history.push(path)}>
@@ -125,7 +138,7 @@ function TestSetModal({data, onClose}) {
                     <div className={'d-flex flex-row align-items-end'}>
                         <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                         <div className={'test-set-modal-header-tags'}>
-                            <div className={'modality-type'}>BREAST</div>
+                            <div className={'test-category'}>{data.test_set_category}</div>
                             <div className={'mark-3d'}>
                                 <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
                             </div>
@@ -139,7 +152,7 @@ function TestSetModal({data, onClose}) {
                             {
                                 renderDifficult(data.difficulty)
                             }
-                            <span className={'mr-20'}>60MINS</span>
+                            <span className={'mr-20'}>{data.test_set_time || 0}MINS</span>
                             <span className={'mr-20'}>CME: {data.test_set_point}</span>
                             <span className={''}>{data.test_set_code}</span>
                         </div>
@@ -152,12 +165,17 @@ function TestSetModal({data, onClose}) {
                             {
                                 renderStartButton()
                             }
-                            <Button>
-                                <div className={'test-set-save-btn'}>
-                                    <span>Save</span>
-                                    <BookmarkIcon/>
-                                </div>
-                            </Button>
+                            {
+                                isLogin &&
+                                <Button>
+                                    <div className={'test-set-save-btn'} onClick={onSave}>
+                                        <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
+                                        {
+                                            !data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
+                                        }
+                                    </div>
+                                </Button>
+                            }
                         </div>
                         {
                             (data.modalityInfo.instruction_video && data.modalityInfo.instruction_video !== '') &&

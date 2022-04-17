@@ -329,7 +329,7 @@ class TestView extends Component {
             this.setState({loading: true}, () => {
                 if (!this.state.isPostTest) {
                     Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
-                        this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
+                        this.props.history.push('/main/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
                     }).catch((e) => {
                         console.warn(e.response ? e.response.data.error.message : e.message);
                     });
@@ -343,7 +343,7 @@ class TestView extends Component {
                                 loading: false
                             });
                         } else {
-                            this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                            this.props.history.push('/main/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
                         }
                     }).catch(e => {
                         console.warn(e.response ? e.response.data.error.message : e.message);
@@ -362,7 +362,7 @@ class TestView extends Component {
         if (this.state.postTestRemainCount > 0) {
             this.onSeek(0)
         } else {
-            this.props.history.push('/app/test/list');
+            this.props.history.push('/main/home');
         }
     }
 
@@ -463,7 +463,7 @@ class TestView extends Component {
                 {
                     (this.state.complete && !this.state.possiblePostTestReattempt) &&
                     <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
-                            onClick={() => this.props.history.push('/app/test/attempt/' + this.state.attempts_id + '/score')}>
+                            onClick={() => this.props.history.push('/main/attempt/' + this.state.attempts_id + '/score')}>
                         <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
                         <HistoryOutlinedIcon size="small"/>
                     </Button>
@@ -475,7 +475,7 @@ class TestView extends Component {
                             <CachedIcon size="small"/>
                         </Button> : null
                 }
-                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => this.props.history.push('/app/test/list')}>
+                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => this.props.history.push('/main/home')}>
                     <span className={'test-action-btn-label'}><IntlMessages id={"testView.home"}/></span>
                     <HomeOutlinedIcon size="small"/>
                 </Button>

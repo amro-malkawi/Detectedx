@@ -36,7 +36,6 @@ import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
-
 const darkTheme = createMuiTheme({
     palette: {
         type: 'dark',
@@ -81,13 +80,10 @@ class Attempt extends Component {
     }
 
     componentDidMount() {
-        document.getElementsByClassName('rct-page')[0].style.backgroundColor = "black";
-        // this.props.setDarkMode(true);
         this.getData(true);
     }
 
     componentWillUnmount() {
-        document.getElementsByClassName('rct-page')[0].style.backgroundColor = "#F4F7FA";
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -1346,53 +1342,55 @@ class Attempt extends Component {
     render() {
         if (!this.state.loading) {
             return (
-                <div className={'attempt-data'}>
-                    <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
-                    {this.renderStepContent()}
-                    <ReattemptQuizModal
-                        open={this.state.reattemptQuizPercent !== null}
-                        score={this.state.reattemptQuizPercent}
-                        onClose={() => this.setState({reattemptQuizPercent: null})}
-                        onReattempt={() => this.onRestartTest()}
-                    />
-                    <ThemeProvider theme={darkTheme}>
-                        <Dialog open={this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
-                            <DialogTitle>
-                                {
-                                    this.state.sendEmailModalType === 'score' ? 'Send Score' : 'Send certification'
-                                }
-                            </DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    You can send score by email. please input the email you want.
-                                </DialogContentText>
-                                <TextField
-                                    className={'text-white'}
-                                    autoFocus
-                                    margin="dense"
-                                    id="score_email"
-                                    label="Email Address"
-                                    type="email"
-                                    fullWidth
-                                    value={this.state.sendPdfEmail}
-                                    onChange={(e) => this.setState({sendPdfEmail: e.target.value})}
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button variant="contained" onClick={() => this.setState({sendEmailModalType: null})} color="secondary">
-                                    Cancel
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => this.onSendPdfEmail()}
-                                    color="primary"
-                                    disabled={!validator.isEmail(this.state.sendPdfEmail)}
-                                >
-                                    Send
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-                    </ThemeProvider>
+                <div className={'attempt-container'}>
+                    <div className={'attempt-data'}>
+                        <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
+                        {this.renderStepContent()}
+                        <ReattemptQuizModal
+                            open={this.state.reattemptQuizPercent !== null}
+                            score={this.state.reattemptQuizPercent}
+                            onClose={() => this.setState({reattemptQuizPercent: null})}
+                            onReattempt={() => this.onRestartTest()}
+                        />
+                        <ThemeProvider theme={darkTheme}>
+                            <Dialog open={this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
+                                <DialogTitle>
+                                    {
+                                        this.state.sendEmailModalType === 'score' ? 'Send Score' : 'Send certification'
+                                    }
+                                </DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>
+                                        You can send score by email. please input the email you want.
+                                    </DialogContentText>
+                                    <TextField
+                                        className={'text-white'}
+                                        autoFocus
+                                        margin="dense"
+                                        id="score_email"
+                                        label="Email Address"
+                                        type="email"
+                                        fullWidth
+                                        value={this.state.sendPdfEmail}
+                                        onChange={(e) => this.setState({sendPdfEmail: e.target.value})}
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button variant="contained" onClick={() => this.setState({sendEmailModalType: null})} color="secondary">
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => this.onSendPdfEmail()}
+                                        color="primary"
+                                        disabled={!validator.isEmail(this.state.sendPdfEmail)}
+                                    >
+                                        Send
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </ThemeProvider>
+                    </div>
                 </div>
             )
         } else {

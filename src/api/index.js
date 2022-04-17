@@ -167,6 +167,15 @@ export function testSetsCaseList(id, isPost) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function testSetRecentlyCompleted() {
+    const url = '/test_sets/recently_completed?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function testSetsCategories() {
+    const url = '/test_sets/categories?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
 /**
  * test_set_cases operation
  */
@@ -189,8 +198,11 @@ export function testCasesAnswers(id, attempt_id, isPostTest) {
  * test-set-assignments operation
  */
 
-export function currentTestSets() {
-    const url = '/test_set_assignments/current_test_sets?access_token=' + getAccessToken();
+export function currentTestSets(searchText) {
+    let url = `/test_set_assignments/current_test_sets?access_token=` + getAccessToken();
+    if(searchText) {
+        url += `&search=${searchText}`;
+    }
     return instance.get(url).then((response) => response.data);
 }
 
@@ -528,4 +540,17 @@ export function setAttemptChestAnswer(attempt_id, test_case_id, chest_rating, ch
 export function getAttemptChestAnswer(attempt_id, test_case_id, is_post_test) {
     const url = 'answers_chests/get_chest_answer?access_token=' + getAccessToken();
     return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
+}
+
+/**
+ * book(save) test set functions
+ */
+export function bookTestSet(test_set_id) {
+    const url = 'test_set_books/book?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function bookTestSetCancel(test_set_id) {
+    const url = 'test_set_books/book_cancel?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }

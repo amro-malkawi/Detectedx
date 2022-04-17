@@ -85,7 +85,7 @@ function VideoView(props) {
     const onFinish = () => {
         if (validateForNext()) {
             Apis.attemptsFinishTest(attemptId, window.screen.width, window.screen.height).then((nextStep) => {
-                history.push('/app/test/attempt/' + attemptId + '/' + nextStep + '?from=test');  // go to scores tab
+                history.push('/main/attempt/' + attemptId + '/' + nextStep + '?from=test');  // go to scores tab
             }).catch((e) => {
                 console.warn(e.response ? e.response.data.error.message : e.message);
             });
@@ -111,12 +111,12 @@ function VideoView(props) {
                 {
                     complete &&
                     <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
-                            onClick={() => history.push('/app/test/attempt/' + attemptId + '/score')}>
+                            onClick={() => history.push('/main/attempt/' + attemptId + '/score')}>
                         <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
                         <HistoryOutlinedIcon size="small"/>
                     </Button>
                 }
-                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => history.push('/app/test/list')}>
+                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => history.push('/main/home')}>
                     <span className={'test-action-btn-label'}><IntlMessages id={"testView.home"}/></span>
                     <HomeOutlinedIcon size="small"/>
                 </Button>

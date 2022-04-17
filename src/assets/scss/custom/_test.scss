@@ -93,6 +93,15 @@
 }
 
 .attempt-container {
+  flex: 1;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+}
+
+.attempt-data {
   margin-bottom: 10px;
   color: white;
 

@@ -60,13 +60,16 @@
       .personal-item {
         margin-bottom: 30px;
         border-bottom: 2px solid #777275;
+        &.error {
+          border-bottom-color: red;
+        }
 
         span {
           font-size: 15px;
           color: #54A9FB;
         }
 
-        input {
+        input, select {
           margin: 10px 0 0;
           padding: 0;
           font-size: 23px;
@@ -77,12 +80,30 @@
           &::-webkit-calendar-picker-indicator {
             filter: invert(1);
           }
+
+          option {
+            font-size: 15px;
+            background-color: #1e213e;
+          }
         }
 
         label .MuiTypography-root {
           font-family: "Poppins", sans-serif;
+          color: white;
         }
       }
+    }
+
+    .profile-save-btn {
+      font-family: "Poppins", sans-serif;
+      flex: 1;
+      height: 50px;
+      margin-right: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #180F15;
+      background-color: #54A9FB;
+      border-radius: 25px;
     }
   }
 

@@ -3,6 +3,7 @@ import {Button} from '@material-ui/core';
 import PropTypes from "prop-types";
 import classNames from 'classnames';
 import * as Apis from 'Api';
+import * as selectors from "Selectors";
 
 TestSetItem.defaultProps = {
     smallSize: false
@@ -13,11 +14,10 @@ TestSetItem.propTypes = {
 }
 
 function TestSetItem({data, onClick, smallSize}) {
-    const [isBreast, setIsBreast] = useState(false);
     const [testSetType, setTestSetType] = useState('');
 
     useEffect(() => {
-        let type = '', breast = false;
+        let type = '';
         if(data.modalityInfo.modality_type === 'quiz') {
             type = 'quiz';
         } else if (data.modalityInfo.modality_type === 'video_lecture') {
@@ -25,10 +25,8 @@ function TestSetItem({data, onClick, smallSize}) {
         } else if (data.modalityInfo.modality_type === 'presentations') {
             type = 'PRESENTATIONS';
         } else {
-            breast = data.modalityInfo.number_of_slides === 4;
             type = 'SELF ASSESSMENT MODULE';
         }
-        setIsBreast(breast);
         setTestSetType(type);
     }, [data]);
 
@@ -56,10 +54,8 @@ function TestSetItem({data, onClick, smallSize}) {
             }
             <div className={'d-flex flex-row justify-content-between align-items-center'}>
                 <div className={'d-flex flex-row align-items-center'}>
-                    <span className={'modality-type'}>{testSetType}</span>
-                    {
-                        isBreast && <span>BREAST</span>
-                    }
+                    <span className={'test-category'}>{testSetType}</span>
+                    <span>{data.test_set_category}</span>
                 </div>
                 {
                     data.name.toLowerCase().indexOf('3d') !== -1 &&
@@ -78,18 +74,18 @@ function TestSetItem({data, onClick, smallSize}) {
                     {
                         renderDifficult(data.difficulty)
                     }
-                    <span className={'mr-40'}>60MINS</span>
+                    <span className={'mr-40'}>{data.test_set_time || 0}MINS</span>
                     <span className={''}>CME: {data.test_set_point}</span>
                 </div>
             }
-            {/*{*/}
-            {/*    data.attempts.some((v) => v.complete) &&*/}
-            {/*    <div className={'test-set-item-complete'}>*/}
-            {/*        <div className={'complete-bar fs-16 fw-semi-bold'}>*/}
-            {/*            COMPLETED*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*}*/}
+            {
+                data.demoTestSet &&
+                <div className={'test-set-item-demo'}>
+                    <div className={'demo-bar fs-16 fw-semi-bold'}>
+                        FREE DEMO
+                    </div>
+                </div>
+            }
         </Button>
     )
 }
