@@ -1,26 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from "reactstrap";
-import {Button, CircularProgress} from "@material-ui/core";
 import {NotificationManager} from "react-notifications";
 import {loadStripe} from '@stripe/stripe-js';
-import {
-    CardElement,
-    CardNumberElement,
-    CardExpiryElement,
-    CardCvcElement,
-    Elements,
-    useStripe,
-    useElements,
-} from '@stripe/react-stripe-js';
+import {CardNumberElement, Elements, useStripe} from '@stripe/react-stripe-js';
 import PaypalButton from "Components/Payment/PaypalButton";
 import StripeForm from "Components/Payment/StripeForm";
 import * as Apis from "Api";
 
-function PayComponent({plan, stripeKey, paypalKey, onPay}) {
-    const {price, currency, couponCode} = plan;
-    const [keyLoading, setKeyLoading] = useState(true);
-
-    const stripePromise = loadStripe(stripeKey);
+function PayComponent({plan, onPay, signupEmail}) {
+    const [discountCode, setDiscountCode] = useState('');
+    const [stripePromise, setStripePromise] = useState(() => loadStripe(plan.stripeKey))
     const stripeOptions = {
         // passing the client secret obtained from the server
         // clientSecret: '{{CLIENT_SECRET}}',
@@ -29,18 +18,9 @@ function PayComponent({plan, stripeKey, paypalKey, onPay}) {
     useEffect(() => {
     }, []);
 
-    const onPaypalCreateOrder = () => {
-        return Apis.paymentPaypalCreate('test_set_id', price, currency, couponCode);
+    const onStripeSubscribe = (subscriptionId, customerId, paymentIntentId) => {
+        onPay(subscriptionId, customerId, paymentIntentId);
     }
-
-    const onPaypalApprove = (data, action) => {
-        return Apis.paymentPaypalApprove('test_set_id', price, currency, couponCode, JSON.stringify(data));
-    }
-
-    const onPaypalCancel = () => {
-
-    }
-
 
 
     return (
@@ -55,26 +35,42 @@ function PayComponent({plan, stripeKey, paypalKey, onPay}) {
                             YOU HAVE SELECTED THE
                         </div>
                         <div className={'pay-plan-name'}>
-                            Annual Plan
+                            {plan.desc}
                         </div>
                         <div className={'cost-content'}>
                             <span className={'cost-symbol'}>$</span>
-                            <span className={'cost-val'}>499</span>
+                            <span className={'cost-val'}>{plan.price}</span>
                             <span className={'cost-currency'}>AUD</span>
                         </div>
-                        <div className={'fs-14 text-primary1'}>COMPLETE ACCESS</div>
-                        <div className={'fs-12 text-primary1 fw-semi-bold text-underline'}>Billed Monthly.</div>
-                        <div className={'d-flex flex-row justify-content-between fs-14 text-white mt-20 mb-40'}>
-                            <span>DETECTEDX ANNUAL PLAN</span>
-                            <span>SAVE 15%</span>
-                        </div>
+                        <div className={'fs-14 text-primary1'}>{plan.access}</div>
+                        {
+                            plan.id !== 'free' && <div className={'fs-12 text-primary1 fw-semi-bold text-underline'}>Billed {plan.name}.</div>
+                        }
+                        {
+                            plan.id === 'free' ?
+                                <div className={'d-flex flex-row justify-content-between fs-14 text-white mt-20 mb-40'}>
+                                    <span>{plan.desc}</span>
+                                </div> :
+                                <div className={'d-flex flex-row justify-content-between fs-14 text-white mt-20 mb-40'}>
+                                    <span>DETECTEDX {plan.desc.toUpperCase()}</span>
+                                    {
+                                        plan.id === 'annual' && <span>SAVE 15%</span>
+                                    }
+                                </div>
+                        }
                         <div className={'d-flex flex-row justify-content-between fs-14 text-white'}>
                             <span>SUBTOTAL</span>
-                            <span>$499.00</span>
+                            <span>${plan.price}.00</span>
                         </div>
                         <div className={'pay-split-bar'}/>
                         <div>
-                            <Input type={'text'} className={'pay-coupon-code'} placeholder={'ADD DISCOUNT CODE'}/>
+                            <Input
+                                type={'text'}
+                                className={'pay-coupon-code'}
+                                placeholder={'ADD DISCOUNT CODE'}
+                                value={discountCode}
+                                onChange={(e) => setDiscountCode(e.target.value)}
+                            />
                         </div>
                         <div className={'d-flex flex-row justify-content-between fs-14 text-white mt-30'}>
                             <span>SALES TAX</span>
@@ -90,28 +86,22 @@ function PayComponent({plan, stripeKey, paypalKey, onPay}) {
                 </div>
                 <div className={'main-pay-purchase'}>
                     <div className={'main-pay-purchase-content'}>
-                        <div>
-                            {
-                                keyLoading ?
-                                    <div className={'paypal-button'}>
-                                        <CircularProgress size={23}/>
-                                    </div> :
-                                    <PaypalButton
-                                        planId=''
-                                        paypalKey={paypalKey}
-                                        currency={'AUD'}
-                                        createOrder={onPaypalCreateOrder}
-                                        onApprove={onPaypalApprove}
-                                        onSuccess={null}
-                                        onCancel={onPaypalCancel}
-                                    />
-                            }
-                        </div>
+                        {/*<div>*/}
+                        {/*    <PaypalButton*/}
+                        {/*        planId=''*/}
+                        {/*        paypalKey={paypalKey}*/}
+                        {/*        currency={'AUD'}*/}
+                        {/*        createOrder={onPaypalCreateOrder}*/}
+                        {/*        onApprove={onPaypalApprove}*/}
+                        {/*        onSuccess={null}*/}
+                        {/*        onCancel={onPaypalCancel}*/}
+                        {/*    />*/}
+                        {/*</div>*/}
                         <div className={'text-center fs-11 mt-2'}>
-                            Or enter payment details
+                            Enter payment details
                         </div>
                         <Elements stripe={stripePromise} options={stripeOptions}>
-                            <StripeForm />
+                            <StripeForm initialEmail={signupEmail} priceId={plan.priceId} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
                         </Elements>
                     </div>
                     <div className={'pay-purchase-bottom'}>

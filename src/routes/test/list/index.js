@@ -25,6 +25,7 @@ import {connect} from "react-redux";
 import VideoModal from "Routes/instructions/VideoModal";
 import AttemptSubTypeModal from "./AttemptSubTypeModal";
 import * as selectors from "Selectors";
+import {apiUploadAddress} from "Api";
 
 // import NetSpeedMeter from "Components/NetSpeedMeter";
 
@@ -207,7 +208,7 @@ class List extends Component {
                 label={
                     <div data-cy="modality-tab-item" className={'modality-tab-item'}>
                         <p>{modality_info.name}</p>
-                        <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
+                        <img src={Apis.apiUploadAddress + modality_info.modality_icon_image} alt="site logo"/>
                         {
                             modality_info.instruction_type !== null ?
                                 <MuiButton data-cy="instruction-button" variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>

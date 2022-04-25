@@ -52,6 +52,7 @@ function PlanComponent({onSelectPlan, planList}) {
                         </div>
                     </div>
                 </div>
+
                 <div className={'main-plan-item'}>
                     <div className={'plan-item-header'}>
                         <span>Monthly</span>

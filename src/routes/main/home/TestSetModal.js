@@ -82,19 +82,36 @@ function TestSetModal({data, onClose}) {
         }
     }
 
-    const renderDesc = () => {
-        const {modality_desc, instruction_video_thumbnail, instruction_video} = data.modalityInfo;
-        const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
-        let descText = '';
-        if (typeof modalityDesc !== 'object') {
-            // if desc is not JSON type, will be shown this text
-            descText = modality_desc;
-        } else if (modalityDesc[locale] !== undefined) {
-            descText = modalityDesc[locale];
-        } else if (modalityDesc['en'] !== undefined) {
-            descText = modalityDesc['en'];
+    const renderLeftContent = () => {
+        const {modality_type, modality_desc} = data.modalityInfo;
+        if(['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === -1) {
+            const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
+            let descText = '';
+            if (typeof modalityDesc !== 'object') {
+                // if desc is not JSON type, will be shown this text
+                descText = modality_desc;
+            } else if (modalityDesc[locale] !== undefined) {
+                descText = modalityDesc[locale];
+            } else if (modalityDesc['en'] !== undefined) {
+                descText = modalityDesc['en'];
+            }
+            return <div dangerouslySetInnerHTML={{__html: descText}}/>
+        } else {
+            const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
+            return (
+                <div className={'d-flex flex-column'}>
+                    <div className={'d-flex flex-row'}>
+                        <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
+                        <div className={'mt-2 ml-30 d-flex flex-column'}>
+                            <div className={'fs-14 mb-3'}>{presenterInfo.presenterName}</div>
+                            <img src={Apis.apiUploadAddress + presenterInfo.presenterLogo} alt={''} className={'presenter-logo'}/>
+                        </div>
+                    </div>
+                    <div className={'fs-26 mt-30'}>Speaker</div>
+                    <div className={'fs-19 mt-10'}>{presenterInfo.presenterDesc}</div>
+                </div>
+            )
         }
-        return <div dangerouslySetInnerHTML={{__html: descText}}/>
     }
 
 
@@ -129,6 +146,51 @@ function TestSetModal({data, onClose}) {
         }
     }
 
+    const renderRightContent = () => {
+        const {modality_type, instruction_video, instruction_video_thumbnail} = data.modalityInfo;
+        if(['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === 1) {
+            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations'}[modality_type] + 'Overview';
+            return (
+                <div className={'text-white'}>
+                    <div className={'fs-26 mt-30'}>{title}</div>
+                    <div className={'fs-19 mt-10'}>{data.test_set_desc}</div>
+                </div>
+            );
+        } else if(instruction_video && instruction_video !== '') {
+            return (
+                <div className={'d-flex flex-column justify-content-center align-items-center'}>
+                    <div className={'test-set-modal-video'}>
+                        <ReactPlayer
+                            ref={videoRef}
+                            url={instruction_video}
+                            playing={isVideoPlay}
+                            controls
+                            onPause={() => setIsVideoPlay(false)}
+                            width={'100%'}
+                            height={'100%'}
+                        />
+                        {
+                            (isFirstPlay && instruction_video_thumbnail && instruction_video_thumbnail !== '') &&
+                            <img src={instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
+                        }
+                        {
+                            !isVideoPlay &&
+                            <Button className={'play-btn'} onClick={() => {
+                                setIsVideoPlay(true);
+                                setIsFirstPlay(false)
+                            }}>
+                                <PlayArrowIcon/>
+                            </Button>
+                        }
+                    </div>
+                    <span className={'text-white fs-14'}>INSTRUCTION VIDEO</span>
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
 
     return (
         <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
@@ -157,7 +219,7 @@ function TestSetModal({data, onClose}) {
                             <span className={''}>{data.test_set_code}</span>
                         </div>
                         <div className={'text-white fs-18 my-20'}>
-                            {renderDesc()}
+                            {renderLeftContent()}
                         </div>
                     </div>
                     <div className={'pl-20'}>
@@ -177,36 +239,7 @@ function TestSetModal({data, onClose}) {
                                 </Button>
                             }
                         </div>
-                        {
-                            (data.modalityInfo.instruction_video && data.modalityInfo.instruction_video !== '') &&
-                            <div className={'d-flex flex-column justify-content-center align-items-center'}>
-                                <div className={'test-set-modal-video'}>
-                                    <ReactPlayer
-                                        ref={videoRef}
-                                        url={data.modalityInfo.instruction_video}
-                                        playing={isVideoPlay}
-                                        controls
-                                        onPause={() => setIsVideoPlay(false)}
-                                        width={'100%'}
-                                        height={'100%'}
-                                    />
-                                    {
-                                        (isFirstPlay && data.modalityInfo.instruction_video_thumbnail && data.modalityInfo.instruction_video_thumbnail !== '') &&
-                                        <img src={data.modalityInfo.instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
-                                    }
-                                    {
-                                        !isVideoPlay &&
-                                        <Button className={'play-btn'} onClick={() => {
-                                            setIsVideoPlay(true);
-                                            setIsFirstPlay(false)
-                                        }}>
-                                            <PlayArrowIcon/>
-                                        </Button>
-                                    }
-                                </div>
-                                <span className={'text-white fs-14'}>INSTRUCTION VIDEO</span>
-                            </div>
-                        }
+                        { renderRightContent() }
                     </div>
                 </div>
                 <div className={'test-set-modal-close-btn'} onClick={onClose}>

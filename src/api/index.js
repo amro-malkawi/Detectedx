@@ -20,6 +20,7 @@ function getApiHost()
 export const apiHost = getApiHost();
 
 export const apiAddress = apiHost + '/api/';
+export const apiUploadAddress = apiHost + '/upload';
 
 const instance = axios.create({
     baseURL: apiAddress,
@@ -60,8 +61,13 @@ export function logout() {
     return instance.post(url, {}).then((response) => response.data);
 }
 
-export function singUp(data) {
-    const url = '/signup';
+export function userCheckEmail(email) {
+    const url = '/users/check_email?email=' + email;
+    return instance.get(url).then((response) => response.data);
+}
+
+export function signUp(data) {
+    const url = '/users/signup';
     return instance.post(url, data).then((response) => response.data);
 }
 
@@ -463,6 +469,12 @@ export function paymentInfo() {
     const url = 'payments/info?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
+
+export function paymentStripeSubscription(email, phone, name, country, address, priceId) {
+    const url = 'payments/stripe_subscription';
+    return instance.post(url, {email, phone, name, country, address, priceId}).then((response) => response.data);
+}
+
 
 export function paymentFree(test_set_id, price, currency, couponCode) {
     const url = 'payments/free?access_token=' + getAccessToken();

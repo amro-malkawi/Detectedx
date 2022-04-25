@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import classNames from 'classnames';
 import * as Apis from 'Api';
 import * as selectors from "Selectors";
+import {apiUploadAddress} from "Api";
 
 TestSetItem.defaultProps = {
     smallSize: false
@@ -50,7 +51,7 @@ function TestSetItem({data, onClick, smallSize}) {
         >
             {
                 data.modalityInfo.modality_icon_image &&
-                <img src={Apis.apiHost + data.modalityInfo.modality_icon_image} className={'test-set-item-img'} alt={''} />
+                <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-item-img'} alt={''} />
             }
             <div className={'d-flex flex-row justify-content-between align-items-center'}>
                 <div className={'d-flex flex-row align-items-center'}>

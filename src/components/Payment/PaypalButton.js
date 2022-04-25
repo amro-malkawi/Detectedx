@@ -5,8 +5,8 @@ import {CircularProgress} from "@material-ui/core";
 
 
 export default class PaypalButton extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             scriptLoaded: false,
             scriptError: false

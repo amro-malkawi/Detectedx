@@ -5,6 +5,7 @@ import {withStyles} from "@material-ui/core/styles";
 import {NotificationManager} from "react-notifications";
 import validator from "validator";
 import * as Apis from "Api";
+import {userCheckEmail} from "Api";
 
 function SignupFormComponent({onComplete}) {
     const [firstName, setFirstName] = useState('');
@@ -102,24 +103,29 @@ function SignupFormComponent({onComplete}) {
 
     const onFinish = () => {
         if(!checkValidate()) return;
-        onComplete({
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            password: password,
-            phone: phone,
-            // gender: this.state.gender,
-            // place_of_work: this.state.placeOfWork,
-            country: country,
-            // address1: this.state.address1,
-            // address2: this.state.address2,
-            // suburb: this.state.suburb,
-            state: state,
-            postcode: postcode,
-            position: jobTitle,
-            employer: institution,
-            allow_contact_me: allowContactMe,
-        }, hasEnterpriseCode);
+        Apis.userCheckEmail(email).then((resp) => {
+            onComplete({
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                password: password,
+                phone: phone,
+                // gender: this.state.gender,
+                // place_of_work: this.state.placeOfWork,
+                country: country,
+                // address1: this.state.address1,
+                // address2: this.state.address2,
+                // suburb: this.state.suburb,
+                state: state,
+                postcode: postcode,
+                position: jobTitle,
+                employer: institution,
+                allow_contact_me: allowContactMe,
+            }, hasEnterpriseCode);
+        }).catch((e) => {
+            setErrorEmail(true);
+            NotificationManager.error('Email already exist');
+        });
     }
 
     return (

@@ -353,6 +353,10 @@
             border: 2px solid #B2B2B288;
             border-radius: 7px;
 
+            &.error {
+              border: 2px solid #ff4747;
+            }
+
             div {
               padding: 3px 5px;
             }
@@ -377,10 +381,12 @@
                 color: #B2B2B2;
               }
             }
+
             .StripeElement {
               flex: 1;
               height: 100%;
             }
+
             .card-img {
               width: 132px;
             }
@@ -467,16 +473,19 @@
           color: #444C96;
         }
       }
+
       .enterprise-phone-num {
         font-size: 25px;
         font-weight: 600;
         letter-spacing: 2px;
       }
+
       .enterprise-split-line {
         height: 1px;
         margin-top: 60px;
         background-color: #656FD0;
       }
+
       .enterprise-desc {
         text-align: center;
         margin: 20px 0 40px;

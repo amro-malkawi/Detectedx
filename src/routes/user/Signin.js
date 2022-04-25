@@ -24,7 +24,8 @@ function Signin() {
     const onLogin = () => {
         if(email !== '' && password !== '') {
             setLoading(true);
-            const fromUrl = (history.location.state && history.location.state.from) ? history.location.state.from.pathname : '/';
+            // const fromUrl = (history.location.state && history.location.state.from) ? history.location.state.from.pathname : '/';
+            const fromUrl = '/';
             Apis.login(email, password).then((result) => {
                 dispatch(login(result.userId, result.userName, result.userEmail, result.id, history, fromUrl));
             }).catch((e) => {
