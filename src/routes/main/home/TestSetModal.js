@@ -107,8 +107,7 @@ function TestSetModal({data, onClose}) {
             return <div dangerouslySetInnerHTML={{__html: descText}}/>
         } else {
             const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
-            console.log(aa.ddddfdf)
-            // if(!presenterInfo) return;
+            if(!presenterInfo) return;
             return (
                 <div className={'d-flex flex-column'}>
                     <div className={'d-flex flex-row'}>
