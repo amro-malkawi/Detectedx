@@ -107,10 +107,15 @@ function TestSetModal({data, onClose}) {
             return <div dangerouslySetInnerHTML={{__html: descText}}/>
         } else {
             const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
+            console.log(aa.ddddfdf)
+            // if(!presenterInfo) return;
             return (
                 <div className={'d-flex flex-column'}>
                     <div className={'d-flex flex-row'}>
-                        <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
+                        {
+                            presenterInfo.presenterPhoto && presenterInfo.presenterPhoto.length > 0 &&
+                            <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
+                        }
                         <div className={'mt-2 ml-30 d-flex flex-column'}>
                             <div className={'fs-14 mb-3'}>{presenterInfo.presenterName}</div>
                             <img src={Apis.apiUploadAddress + presenterInfo.presenterLogo} alt={''} className={'presenter-logo'}/>
@@ -157,8 +162,8 @@ function TestSetModal({data, onClose}) {
 
     const renderRightContent = () => {
         const {modality_type, instruction_video, instruction_video_thumbnail} = data.modalityInfo;
-        if(['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === 1) {
-            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations'}[modality_type] + 'Overview';
+        if(['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) !== -1) {
+            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations'}[modality_type] + ' Overview';
             return (
                 <div className={'text-white'}>
                     <div className={'fs-26 mt-30'}>{title}</div>
@@ -204,7 +209,7 @@ function TestSetModal({data, onClose}) {
     return (
         <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
             <div className={'main-test-set-modal'}>
-                <div className={'test-set-modal-header'} style={{backgroundColor: '#4f4bce'}}>
+                <div className={'test-set-modal-header'} style={{backgroundColor: data.modalityInfo.modality_color || '#4f4bce'}}>
                     <img src={require('Assets/img/main/temp_bg.png')} className={'test-set-modal-header-img'} alt={''}/>
                     <div className={'d-flex flex-row align-items-end'}>
                         <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
