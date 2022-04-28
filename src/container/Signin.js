@@ -149,7 +149,7 @@ class Signin extends Component {
                                             <div className={'d-flex sso-button justify-content-center mt-2'}>
                                                 <a onClick={() => window.location.href="/sso/ge_login"}>
                                                     <img src={require('Assets/img/sso/ge_healthineers_logo.png')} className="" alt=""/>
-                                                    <span>Sign in with GE Healthcare</span>
+                                                    <span>GE CARES</span>
                                                 </a>
                                             </div>
                                         </div>
