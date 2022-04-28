@@ -30,7 +30,7 @@ function Home() {
     const [filter, setFilter] = useState(''); // inProgress, saved, sam, lecture, quizzes
     const [testSetList, setTestSetList] = useState([]);
 
-    const [categoryObj, setCategoryObj] = useState({});
+    const [categoryObj, setCategoryObj] = useState([]);
     const [selectedCategoryList, setSelectedCategoryList] = useState([]);
     const [selectedTestSet, setSelectedTestSet] = useState(null);
     const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0});
@@ -94,7 +94,7 @@ function Home() {
         let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0;
         const showList = testSets.filter((v) => (
             selectedCategoryList.length === 0 ||
-            selectedCategoryList.findIndex((c) => (v.test_set_category === c.category && v.test_set_sub_category === c.subCategory)) !== -1
+            selectedCategoryList.indexOf(v.test_set_category) !== -1
         ));
         showList.forEach((t) => {
             const modalityInfo = modalities.find((m) => m.id === t.modality_id);
@@ -127,11 +127,26 @@ function Home() {
         });
     }
 
-    const onSelectCategory = (category, subCategory) => {
-        const i = selectedCategoryList.findIndex((v) => (v.category === category && v.subCategory === subCategory));
+    const onCategoryExpand = (categoryLabel, parentIndex) => {
+        console.log(categoryLabel, parentIndex);
+        const newCategoryObj = [...categoryObj];
+        if(parentIndex === undefined) {
+            // root category
+            const i = newCategoryObj.findIndex((v) => v.label === categoryLabel);
+            if(i !== -1) newCategoryObj[i].expand = newCategoryObj[i].expand === undefined ? true : !newCategoryObj[i].expand;
+        } else {
+            // child category
+            const i = newCategoryObj[parentIndex].options.findIndex((v) => v.label === categoryLabel);
+            if(i !== -1) newCategoryObj[parentIndex].options[i].expand = newCategoryObj[parentIndex].options[i].expand === undefined ? true : !newCategoryObj[parentIndex].options[i].expand;
+        }
+        setCategoryObj(newCategoryObj);
+    }
+
+    const onSelectCategory = (categoryId) => {
+        const i = selectedCategoryList.indexOf(categoryId);
 
         if (i === -1) {
-            setSelectedCategoryList([...selectedCategoryList, {category, subCategory}]);
+            setSelectedCategoryList([...selectedCategoryList, categoryId]);
         } else {
             selectedCategoryList.splice(i, 1);
             setSelectedCategoryList([...selectedCategoryList]);
@@ -146,29 +161,35 @@ function Home() {
         }
     }
 
-    const renderCategoryItem = (category, subCategory) => {
-        const selected = selectedCategoryList.findIndex((v) => (v.category === category && v.subCategory === subCategory)) !== -1;
+    const renderCategoryItem = (subCategory) => {
+        const selected = selectedCategoryList.indexOf(subCategory.id) !== -1;
         return (
-            <div className={'pl-3'}>
-                <Button key={subCategory} className={classNames('modality-name-item', {active: selected})} onClick={() => onSelectCategory(category, subCategory)}>
+            <div key={subCategory.label}>
+                <Button className={classNames('category-item sub-item', {active: selected})} onClick={() => onSelectCategory(subCategory.id)}>
                     <i className={classNames('zmdi fs-23', (selected ? 'zmdi-check' : 'zmdi-close'))}/>
-                    <span className={classNames({'fs-18': subCategory.length < 20}, {'fs-16': subCategory.length >= 20})}>{subCategory}</span>
+                    <span className={'fs-18'}>{subCategory.label}</span>
                 </Button>
+                {
+                    subCategory.options && subCategory.options.map((v, i) => renderCategoryItem(subCategory, v))
+                }
             </div>
         )
     }
 
-    const renderCategories = (category) => {
+    const renderCategories = (category, selfIndex, parentIndex) => {
         return (
-            <div key={category}>
+            <div key={category.label}>
                 <div>
-                    <div className={'modality-name-item'}>
-                        <span className={'fs-18'}>{category}</span>
-                    </div>
+                    <Button className={'category-item'} onClick={() => onCategoryExpand(category.label, parentIndex)}>
+                        <i className={classNames('zmdi fs-23', (category.expand ? 'zmdi-chevron-down' : 'zmdi-chevron-right'))}/>
+                        <span className={'fs-18'}>{category.label}</span>
+                    </Button>
                 </div>
-                {
-                    categoryObj[category].map((v, i) => renderCategoryItem(category, v))
-                }
+                <div className={'pl-3'}>
+                    {
+                        (category.options && category.expand) && category.options.map((v, i) => (v.options ? renderCategories(v, i, selfIndex) : renderCategoryItem(v)))
+                    }
+                </div>
             </div>
         )
     }
@@ -177,7 +198,7 @@ function Home() {
         if (modalityList.length === 0) return null;
         let showList = testSetList.filter((v) => (
             selectedCategoryList.length === 0 ||
-            selectedCategoryList.findIndex((c) => (v.test_set_category === c.category && v.test_set_sub_category === c.subCategory)) !== -1
+            selectedCategoryList.indexOf(v.test_set_category) !== -1
         ));
         if (filter !== '') {
             showList = showList.filter((v) => v.filterKeys.indexOf(filter) !== -1);
@@ -220,7 +241,7 @@ function Home() {
                     autoHideDuration={100}
                 >
                     {
-                        Object.keys(categoryObj).map((c) => renderCategories(c))
+                        categoryObj.map((c, i) => renderCategories(c, i))
                     }
                 </Scrollbars>
             </div>

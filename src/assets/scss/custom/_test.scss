@@ -94,6 +94,8 @@
 
 .attempt-container {
   flex: 1;
+  display: flex;
+  justify-content: center;
   overflow: auto;
   &::-webkit-scrollbar {
     width: 0;
@@ -102,6 +104,7 @@
 }
 
 .attempt-data {
+  width: 80%;
   margin-bottom: 10px;
   color: white;
 
@@ -739,12 +742,17 @@
 }
 
 /*======= Responsive =======*/
-@media (max-width: 1200px) {
 
+@media (max-width: 1440px) {
+  .attempt-data {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1200px) {
 }
 
 @media (max-width: 992px) {
-
 }
 
 @media (max-width: 768px) {

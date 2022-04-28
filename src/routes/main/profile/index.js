@@ -6,6 +6,8 @@ import PersonalComponent from "./PersonalComponent";
 import BillingComponent from "./BillingComponent";
 import CompletedComponent from "./CompletedComponent";
 import SettingComponent from "./SettingComponent";
+import QueryString from "query-string";
+import {useHistory, useLocation} from "react-router-dom";
 
 const tabList = [
     {value: 'personal', label: 'Personal Info', component: <PersonalComponent />},
@@ -15,12 +17,17 @@ const tabList = [
 ];
 
 function Profile() {
+    const location = useLocation();
     const userName = useState(useSelector((state) => state.authUser.userName));
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
     useEffect(() => {
-
-    }, [])
+        const param = QueryString.parse(location.search);
+        if(param.tab) {
+            const i = tabList.findIndex((v) => v.value === param.tab);
+            if(i !== -1) setSelectedTabIndex(i);
+        }
+    }, [location])
 
     return (
         <div className={'main-profile'}>

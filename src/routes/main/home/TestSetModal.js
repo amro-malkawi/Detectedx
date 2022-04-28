@@ -18,7 +18,16 @@ function TestSetModal({data, onClose}) {
     const videoRef = useRef();
     const [isVideoPlay, setIsVideoPlay] = useState(false);
     const [isFirstPlay, setIsFirstPlay] = useState(true);
+    const [testSetCategory, setTestSetCategory] = useState('');
     const [, updateState] = useState();
+
+    useEffect(() => {
+        const categoryList = data.test_set_category ? data.test_set_category.split(' > ') : [];
+        if(categoryList.length >= 2) {
+            categoryList.splice(0, 1);
+            setTestSetCategory(categoryList.join(' '));
+        }
+    }, [data]);
 
     const onStart = () => {
         if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
@@ -200,7 +209,7 @@ function TestSetModal({data, onClose}) {
                     <div className={'d-flex flex-row align-items-end'}>
                         <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                         <div className={'test-set-modal-header-tags'}>
-                            <div className={'test-category'}>{data.test_set_category}</div>
+                            <div className={'test-category'}>{testSetCategory}</div>
                             <div className={'mark-3d'}>
                                 <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
                             </div>

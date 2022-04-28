@@ -16,10 +16,11 @@ TestSetItem.propTypes = {
 
 function TestSetItem({data, onClick, smallSize}) {
     const [testSetType, setTestSetType] = useState('');
+    const [testSetCategory, setTestSetCategory] = useState('');
 
     useEffect(() => {
         let type = '';
-        if(data.modalityInfo.modality_type === 'quiz') {
+        if (data.modalityInfo.modality_type === 'quiz') {
             type = 'quiz';
         } else if (data.modalityInfo.modality_type === 'video_lecture') {
             type = 'LECTURE';
@@ -29,17 +30,38 @@ function TestSetItem({data, onClick, smallSize}) {
             type = 'SELF ASSESSMENT MODULE';
         }
         setTestSetType(type);
+        const categoryList = data.test_set_category ? data.test_set_category.split(' > ') : [];
+        if(categoryList.length >= 2) {
+            categoryList.splice(0, 1);
+            setTestSetCategory(categoryList.join(' '));
+        }
     }, [data]);
 
     const renderDifficult = (difficult) => {
-        if(!difficult) {
-            return (<div className={'test-set-difficult'}><div/><div/><div/></div>)
-        } else if(difficult === 1) {
-            return (<div className={'test-set-difficult'}><div className={'active'}/><div/><div/></div>)
-        } else if(difficult === 2) {
-            return (<div className={'test-set-difficult'}><div className={'active'}/><div className={'active'}/><div/></div>)
+        if (!difficult) {
+            return (<div className={'test-set-difficult'}>
+                <div/>
+                <div/>
+                <div/>
+            </div>)
+        } else if (difficult === 1) {
+            return (<div className={'test-set-difficult'}>
+                <div className={'active'}/>
+                <div/>
+                <div/>
+            </div>)
+        } else if (difficult === 2) {
+            return (<div className={'test-set-difficult'}>
+                <div className={'active'}/>
+                <div className={'active'}/>
+                <div/>
+            </div>)
         } else {
-            return (<div className={'test-set-difficult'}><div className={'active'}/><div className={'active'}/><div className={'active'}/></div>)
+            return (<div className={'test-set-difficult'}>
+                <div className={'active'}/>
+                <div className={'active'}/>
+                <div className={'active'}/>
+            </div>)
         }
     }
 
@@ -51,17 +73,17 @@ function TestSetItem({data, onClick, smallSize}) {
         >
             {
                 data.modalityInfo.modality_icon_image &&
-                <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-item-img'} alt={''} />
+                <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-item-img'} alt={''}/>
             }
             <div className={'d-flex flex-row justify-content-between align-items-center'}>
                 <div className={'d-flex flex-row align-items-center'}>
                     <span className={'test-category'}>{testSetType}</span>
-                    <span>{data.test_set_category}</span>
+                    <span>{testSetCategory}</span>
                 </div>
                 {
                     data.name.toLowerCase().indexOf('3d') !== -1 &&
                     <div className={'mark-3d'}>
-                        <img src={require('Assets/img/main/icon_3d.svg')} alt={''} />
+                        <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
                     </div>
                 }
             </div>

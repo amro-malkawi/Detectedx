@@ -1,20 +1,22 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from 'reactstrap';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from 'react-router-dom';
+import {logoutUserFromEmail} from "Actions";
 import * as selectors from "Selectors";
 
 function Header(props) {
     const history = useHistory();
+    const dispatch = useDispatch();
     const isLogin = selectors.getIsLogin(null);
     const userName = useSelector((state) => state.authUser.userName);
     const userCompletedCount = useSelector((state) => state.authUser.completedCount);
     const [searchText, setSearchText] = useState('');
 
     const getAvatarChars = () => {
-        if(!userName) return '';
+        if (!userName) return '';
         const names = userName.split(' ');
-        if(names.length >= 2) {
+        if (names.length >= 2) {
             return names[0][0] + names[1][0];
         } else {
             return names[0][0] + names[0][1];
@@ -22,9 +24,9 @@ function Header(props) {
     }
 
     const onSearchKeyPress = (event) => {
-        if(event.key === 'Enter' && searchText.length > 0) {
+        if (event.key === 'Enter' && searchText.length > 0) {
             const path = '/main/home?search=' + searchText;
-            if(history.location.pathname.indexOf('/main/home')) {
+            if (history.location.pathname.indexOf('/main/home')) {
                 history.replace(path);
             } else {
                 history.push(path);
@@ -32,10 +34,16 @@ function Header(props) {
         }
     }
 
+    const onLogout = () => {
+        dispatch(logoutUserFromEmail());
+    }
+
     return (
         <div className={'main-header d-flex flex-row align-items-center'}>
             <div className={'header-logo'}>
-                <img src={require('Assets/img/main/header_logo.png')} alt={''} />
+                <a href={'https://detectedx.com'}>
+                    <img src={require('Assets/img/main/header_logo.png')} alt={''}/>
+                </a>
             </div>
             <div className={'header-searchbar d-flex flex-row align-items-center'}>
                 <div className={'home-icon'} onClick={() => history.push('/main')}>
@@ -56,16 +64,19 @@ function Header(props) {
                     {
                         isLogin ?
                             <span>{getAvatarChars()}</span> :
-                            <i className={'zmdi zmdi-account'} />
+                            <i className={'zmdi zmdi-account'}/>
                     }
                 </div>
                 <div className={'info-block'}>
                     {
                         isLogin ?
-                            <span className={'fs-23 fw-semi-bold'}>{userName}</span>:
+                            <div className={'d-flex flex-row justify-content-between align-items-center'}>
+                                <span className={'fs-23 fw-semi-bold'}>{userName}</span>
+                                <span className={'fs-16 fw-semi-bold text-primary1 cursor-pointer'} onClick={onLogout}>LOGOUT</span>
+                            </div> :
                             <span className={'fs-23 fw-semi-bold'}>Login</span>
                     }
-                    <div className={'fs-14'}>
+                    <div className={'fs-14 cursor-pointer'} onClick={() => history.push('/main/profile?tab=completed')}>
                         <span>COMPLETED MODULES:</span>
                         <span className={'info-num'}>{isLogin ? userCompletedCount : ''}</span>
                         <span>THIS YEARS CME POINTS:</span>

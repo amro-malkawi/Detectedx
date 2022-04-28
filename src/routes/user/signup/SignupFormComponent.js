@@ -182,6 +182,7 @@ function SignupFormComponent({onComplete}) {
                             <Input
                                 name={'new-pass'}
                                 type={'password'}
+                                autoComplete="new-password"
                                 invalid={errorPassword}
                                 value={password}
                                 onChange={(e) => {setPassword(e.target.value); setErrorPassword(false)}}
