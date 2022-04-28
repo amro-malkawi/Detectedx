@@ -37,8 +37,7 @@ import ReattemptPostTestModal from './ReattemptPostTestModal';
 import ImageBrowser from "./component/ImageBrowser";
 import CommentInfo from "./component/CommentInfo";
 import HangingSelector from './component/HangingSelector';
-import MarkerPopup from "./lib/MarkerPopup/markerPopup";
-import MarkerPopupLungED from "./lib/MarkerPopup/markerPopupLungED";
+import MarkerPopup from "./lib/MarkerPopup";
 import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
 import IntlMessages from "Util/IntlMessages";
@@ -406,8 +405,9 @@ class TestView extends Component {
     }
 
     renderHeaderNumber() {
+        const marginLeft = (window.innerWidth > 2000 && window.screen.width < window.outerWidth) ? 350 : 0;
         return (
-            <h1 className={'test-view-header-number'}>
+            <h1 className={'test-view-header-number'} style={{marginLeft: marginLeft}}>
                 <Input data-cy="test-case-selector" disabled={this.state.test_case.modalities.force_flow} type="select" value={this.state.testCaseIndex} onChange={(e) => this.onSeek(e.target.value)}>
                     {
                         this.state.test_set_cases.map((v, i) =>
@@ -641,25 +641,11 @@ class TestView extends Component {
                     </Dialog>
                     {
                         !this.state.isShowPopup ? null :
-                            this.state.test_case.modalities.name !== 'LungED' ?
                             <MarkerPopup
                                 attempts_id={this.state.attempts_id}
                                 test_cases_id={this.state.test_cases_id}
                                 // ultrasound modality does not have lesion in test
                                 lesion_list={this.state.test_case.modalities.modality_type !== 'ultrasound' ? this.state.test_case.modalities.lesion_list : '[]'}
-                                isPostTest={this.state.isPostTest}
-                                markData={this.state.selectedMarkData}
-                                ratings={this.state.test_case.ratings}
-                                complete={this.state.complete}
-                                popupCancelHandler={this.popupCancelHandler}
-                                popupDeleteHandler={this.popupDeleteHandler}
-                                popupSaveHandler={this.popupSaveHandler}
-                                onClose={() => this.setState({isShowPopup: false})}
-                            /> :
-                            <MarkerPopupLungED
-                                attempts_id={this.state.attempts_id}
-                                test_cases_id={this.state.test_cases_id}
-                                lesion_list={this.state.test_case.modalities.lesion_list}
                                 isPostTest={this.state.isPostTest}
                                 markData={this.state.selectedMarkData}
                                 ratings={this.state.test_case.ratings}

@@ -31,6 +31,7 @@ import JSONParseDefault from 'json-parse-default';
 import validator from 'validator';
 import ExtraInfo from "./ExtraInfo";
 import ReattemptQuizModal from "./ReattemptQuizModal";
+import VideoLectureScore from './component/VideoLectureScore';
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -138,7 +139,7 @@ class Attempt extends Component {
 
             // check show quiz reattempt modal
             let reattemptQuizPercent = null;
-            if (isFirstMount && detail.complete && steps[stepIndex] === 'score' && detail.test_sets.modalities.modality_type === 'quiz') {
+            if (isFirstMount && detail.complete && steps[stepIndex] === 'score' && ['quiz', 'video_lecture', 'presentations'].indexOf(detail.test_sets.modalities.modality_type) !== -1) {
                 const percent = detail.scores[0].score === undefined ? 0 : detail.scores[0].score;
                 const param = QueryString.parse(that.props.location.search)
                 if (param && param.from === 'test' && percent < 75) {
@@ -166,7 +167,7 @@ class Attempt extends Component {
 
     onRestartTest() {
         Apis.attemptsAdd(this.state.attemptInfo.test_set_id, undefined).then(resp => {
-            let path = '/test-view/' + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+            let path = (['video_lecture', 'presentations'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
             this.props.history.replace(path);
         });
     }
@@ -757,6 +758,8 @@ class Attempt extends Component {
             return this.renderImagEDScore();
         } else if (['quiz'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
             return this.renderQuizScore();
+        } else if (['video_lecture', 'presentations'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
+            return this.renderVideoLectureScore();
         } else {
             return this.renderNormalScore();
         }
@@ -765,7 +768,7 @@ class Attempt extends Component {
     renderCertificationDown() {
         const {attemptInfo} = this.state;
         let disableDown = false;
-        if (attemptInfo.test_sets.modalities.modality_type === 'quiz') {
+        if (['quiz', 'video_lecture', 'presentations'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1) {
             const percent = attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score;
             if (percent < 75) {
                 disableDown = true;
@@ -780,7 +783,7 @@ class Attempt extends Component {
                     disableDown ?
                         <p className={'extra-desc'}>
                             {
-                                attemptInfo.test_sets.modalities.modality_type === 'quiz' ?
+                                ['quiz', 'video_lecture', 'presentations'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1 ?
                                     'The score must be greater than 75% to download the certificate.' :
                                     <IntlMessages id="test.attempt.volparaCertDisabled"/>
                             }
@@ -1107,6 +1110,43 @@ class Attempt extends Component {
         )
     }
 
+    renderVideoLectureScore() {
+        const percent = this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score;
+        return (
+            <div className={'row'}>
+                <div className={'col-md-6 score-data-container'}>
+                    <div className={'quiz-score-data'}>
+                        <div className="circle-progress">
+                            <svg viewBox="0 0 36 36">
+                                <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path className="circle" stroke-dasharray={`${percent}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            </svg>
+                        </div>
+                        <div className={'quiz-progress-info'}>
+                            <span className={'text-white fs-19'}>{percent} %</span>
+                            <span className={'text-white fs-23 fw-bold'}>Correct</span>
+                        </div>
+                    </div>
+                    <div className={'score-chart-container mt-4'}>
+                        <BoxplotChart
+                            title={'Results compared to'}
+                            score_type={this.state.attemptInfo.test_sets.modalities.modality_type === 'video_lecture' ? 'Video Lecture Result' : 'Presentations Result'}
+                            showUserSelect={true}
+                            attempt_id={this.state.attempts_id}
+                            value={percent}
+                        />
+                    </div>
+                </div>
+                <div className={'col-md-6'}>
+                    <VideoLectureScore
+                        attemptId={this.state.attempts_id}
+                        testCaseId={this.state.attemptInfo.current_test_case_id}
+                    />
+                </div>
+            </div>
+        )
+    }
+
     renderScoreDownload() {
         return (
             <div className={'d-flex flex-row justify-content-center mt-10'}>
@@ -1162,7 +1202,7 @@ class Attempt extends Component {
                             {this.renderCertificationDown()}
                             {this.renderVolparaScorePostBlock()}
                             {
-                                this.state.attemptInfo.test_sets.modalities.modality_type !== 'quiz' &&
+                                ['quiz', 'video_lecture', 'presentations'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 &&
                                 <div className={'score-extra'}>
                                     <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
                                     <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>

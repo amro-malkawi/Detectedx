@@ -155,27 +155,27 @@ class ImageOverlap extends Component {
                 <div className={'image-overlap-content'}>
                     <div className={'image-overlap-top'}>
                         <div className={'overlap-control-btn'}>
-                            {
-                                canDrawMarker &&
-                                <a className="eye" data-cy="tool-mark-info" onClick={() => this.onToggleMarkInfo()}>
-                                    <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">
-                                        <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>
-                                    </Tooltip>
-                                </a>
-                            }
+                            {/*{*/}
+                            {/*    canDrawMarker &&*/}
+                            {/*    <a className="eye" data-cy="tool-mark-info" onClick={() => this.onToggleMarkInfo()}>*/}
+                            {/*        <Tooltip title={<IntlMessages id={"testView.viewer.hideInfo"}/>} placement="bottom">*/}
+                            {/*            <i className={this.state.isShowMarkInfo ? "zmdi zmdi-eye fs-23" : "zmdi zmdi-eye-off fs-23"}/>*/}
+                            {/*        </Tooltip>*/}
+                            {/*    </a>*/}
+                            {/*}*/}
                             <a data-cy="tool-invert" onClick={() => this.onInvert()}>
                                 <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
                                     <i className={"zmdi zmdi-brightness-6 fs-23"}/>
                                 </Tooltip>
                             </a>
-                            {
-                                (!this.props.complete && canDrawMarker) &&
-                                <a data-cy="tool-clear-symbols" onClick={() => onClearSymbols()}>
-                                    <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">
-                                        <i className={"zmdi zmdi-delete fs-23 ml-2"}/>
-                                    </Tooltip>
-                                </a>
-                            }
+                            {/*{*/}
+                            {/*    (!this.props.complete && canDrawMarker) &&*/}
+                            {/*    <a data-cy="tool-clear-symbols" onClick={() => onClearSymbols()}>*/}
+                            {/*        <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">*/}
+                            {/*            <i className={"zmdi zmdi-delete fs-23 ml-2"}/>*/}
+                            {/*        </Tooltip>*/}
+                            {/*    </a>*/}
+                            {/*}*/}
                         </div>
                         {
                             this.props.modalityInfo.modality_type === 'imaged_mammo' &&

@@ -23,7 +23,7 @@ div.viewer {
 
       span {
         color: white;
-        font-size: 16px;
+        font-size: 1rem;
         white-space: nowrap;
       }
 
@@ -40,7 +40,7 @@ div.viewer {
       width: 100%;
       text-align: center;
       color: white;
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 600;
       line-height: $toolbar-height;
       height: $toolbar-height;
@@ -73,7 +73,7 @@ div.viewer {
       align-items: center;
 
       select {
-        width: 80px;
+        width: 5rem;
         background-color: black;
         color: white;
         border-color: grey;
@@ -203,7 +203,7 @@ div.viewer {
               a {
                 margin-left: 5px;
                 color: transparent;
-                font-size: 14px;
+                font-size: 0.875rem;
 
                 i {
                   padding: 2px 3px;
@@ -262,7 +262,7 @@ div.viewer {
                     padding: 10px;
                     margin-top: 5px;
                     color: white;
-                    font-size: 12.5px;
+                    font-size: 0.781rem;
                     line-height: 15px;
                     border: 2px solid white;
                     border-radius: 10px;
@@ -276,7 +276,7 @@ div.viewer {
                 //margin-left: 10px;
                 margin-bottom: 10px;
                 color: white;
-                font-size: 14px;
+                font-size: 0.875rem;
                 line-height: 17px;
 
                 & > div {
@@ -307,7 +307,7 @@ div.viewer {
                   }
 
                   select {
-                    width: 19px;
+                    width: 1.187rem;
                     height: 18px;
                     padding: 0;
                     margin: 0;
@@ -336,7 +336,7 @@ div.viewer {
             left: 5px;
             bottom: 10px;
             color: white;
-            font-size: 14px;
+            font-size: 0.875rem;
           }
 
           .invert {
@@ -356,7 +356,7 @@ div.viewer {
             right: 0;
             top: 0;
             bottom: 0;
-            width: 13px;
+            width: 0.812rem;
             display: flex;
             flex-direction: column;
             margin: 0 5px;
@@ -382,7 +382,7 @@ div.viewer {
                 top: 0;
                 left: 12px;
                 height: 12px;
-                width: 500px;
+                width: 31.25rem;
                 padding: 0;
                 transform: rotate(90deg);
                 transform-origin: top left;
@@ -397,7 +397,7 @@ div.viewer {
                   cursor: pointer;
                   height: 12px;
                   margin-top: -4px;
-                  width: 39px;
+                  width: 2.437rem;
                 }
               }
             }
@@ -416,7 +416,7 @@ div.viewer {
             }
 
             .floating-item-content::-webkit-scrollbar {
-              width: 10px;
+              width: 0.625rem;
               background-color: transparent;
             }
 
@@ -433,18 +433,24 @@ div.viewer {
           }
         }
       }
+
+      .video-container {
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff29;
+      }
     }
 
     .covid-question-container {
       display: flex;
-      width: 320px;
+      width: 20rem;
       height: 100%;
       background-color: black;
       border-top: 1px solid #00a4d9;
       overflow: auto;
 
       &.chest-data {
-        width: 370px !important;
+        width: 23.125rem !important;
       }
 
       & > div {
@@ -457,7 +463,7 @@ div.viewer {
       .covid-question-title {
         min-height: 45px;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 1.125rem;
         color: #b3b3b3;
         margin: 10px 0 0 65px;
       }
@@ -489,7 +495,7 @@ div.viewer {
         p {
           min-height: 5px;
           font-weight: bold;
-          font-size: 18px;
+          font-size: 1.125rem;
           color: #b3b3b3;
           margin: 10px 0 0 5px;
         }
@@ -501,7 +507,7 @@ div.viewer {
         p {
           min-height: 25px;
           font-weight: bold;
-          font-size: 18px;
+          font-size: 1.125rem;
           color: #b3b3b3;
           margin: 10px 0 0 5px;
         }
@@ -550,7 +556,7 @@ div.viewer {
       }
 
       i {
-        font-size: 18px;
+        font-size: 1.125rem;
         padding: 18px 10px;
         transition: all 0.3s ease;
 
@@ -561,7 +567,7 @@ div.viewer {
 
       .header-title {
         line-height: 25px;
-        font-size: 15px;
+        font-size: 0.937rem;
         font-weight: 600;
         color: white;
         text-transform: uppercase;
@@ -598,7 +604,7 @@ div.viewer {
 
           .comment-text {
             color: #aaa;
-            font-size: 14px;
+            font-size: 0.875rem;
             text-align: left;
             .ql-editor {
               padding: 5px 7px;
@@ -621,8 +627,16 @@ div.viewer {
     align-items: center;
     z-index: 2;
 
+    &.left-padding {
+      padding-left: 38.4375rem;
+    }
+
+    &.right-padding {
+      padding-right: 38.4375rem;
+    }
+
     #mark-details {
-      width: 370px;
+      width: 23.125rem;
       background-color: black;
       border: 1px solid $normal-colour;
       padding: 25px;
@@ -701,7 +715,7 @@ div.viewer {
 
     p {
       color: $normal-colour;
-      font-size: 13px;
+      font-size: 0.812rem;
       text-align: center;
       margin: 0;
     }
@@ -724,8 +738,8 @@ div.viewer {
     }
 
     .series-icon {
-      width: 63px;
-      height: 25px;
+      width: 3.937rem;
+      height: 1.562rem;
       background-color: #16202b;
       border: 2px solid #3c5d80;
       align-items: center;
@@ -733,7 +747,7 @@ div.viewer {
       color: #91b9cd;
       cursor: pointer;
       display: flex;
-      font-size: 15px;
+      font-size: 0.937rem;
       font-weight: 500;
       justify-content: center;
       line-height: 25px;
@@ -794,7 +808,7 @@ div.viewer {
   border: 1px solid #9ccef9;
 
   .quality-title {
-    font-size: 21px;
+    font-size: 1.312rem;
     font-weight: bold;
     color: white;
   }
@@ -845,7 +859,7 @@ div.viewer {
       width: 100px;
       height: 100px;
       margin-bottom: 7px;
-      font-size: 70px;
+      font-size: 4.375rem;
       font-weight: bold;
       color: white;
     }
@@ -883,14 +897,14 @@ div.viewer {
 
   .quality-icon {
     display: inline-block;
-    width: 41px;
-    height: 41px;
+    width: 2.532rem;
+    height: 2.532rem;
   }
 
   .quality-text {
     position: absolute;
     top: 7px;
-    font-size: 17px;
+    font-size: 1.062rem;
     margin-left: 5px;
     padding: 1px 7px;
     color: white;
@@ -900,9 +914,9 @@ div.viewer {
 
   .density-icon {
     display: inline-block;
-    width: 41px;
+    width: 2.532rem;
     text-align: center;
-    font-size: 41px;
+    font-size: 2.562rem;
     font-weight: bold;
     font-style: italic;
     line-height: 36px;
@@ -921,7 +935,7 @@ div.viewer {
 
     span {
       color: white;
-      font-size: 14px;
+      font-size: 0.875rem;
       white-space: nowrap;
     }
 
@@ -974,7 +988,7 @@ div.viewer {
 
     p, ul {
       color: #afafaf;
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     ul {
@@ -999,13 +1013,13 @@ div.viewer {
 
     .circle-number {
       display: inline-block;
-      width: 26px;
-      height: 26px;
+      width: 1.625rem;
+      height: 1.625rem;
       border: 1px solid red !important;
       color: red;
       border-radius: 13px;
       text-align: center;
-      font-size: 17px;
+      font-size: 1.062rem;
       margin-right: 5px;
     }
 
@@ -1110,7 +1124,7 @@ div.viewer {
     }
 
     .hanging-id-text {
-      font-size: 15px;
+      font-size: 0.937rem;
       background-color: #20a5d6;
       padding: 3px 14px;
       border-radius: 3px;
@@ -1132,10 +1146,10 @@ div.viewer {
   z-index: 1000;
   display: block;
   float: left;
-  min-width: 160px;
+  min-width: 10rem;
   padding: 5px 0;
   margin: 2px 0 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
   list-style: none;
   background-color: #fff;
@@ -1182,7 +1196,7 @@ div.viewer {
 
     .test-view-header-number {
       select {
-        width: 60px !important;
+        width: 3.75rem !important;
       }
 
       .test-case-name {
@@ -1242,9 +1256,9 @@ div.viewer {
         margin: 0 10px;
 
         div {
-          width: 70px;
-          height: 70px;
-          font-size: 50px;
+          width: 4.375rem;
+          height: 4.375rem;
+          font-size: 3.125rem;
         }
       }
     }
@@ -1255,8 +1269,8 @@ div.viewer {
     left: 52%;
 
     .quality-icon {
-      width: 32px;
-      height: 32px;
+      width: 2rem;
+      height: 2rem;
     }
 
     .quality-text {
@@ -1272,7 +1286,7 @@ div.viewer {
     .test-content {
       .covid-question-container {
         position: relative;
-        width: 150px;
+        width: 9.375rem;
 
         .covid-question-title {
           margin: 10px 3px 0 3px;
@@ -1302,7 +1316,7 @@ div.viewer {
   }
   .instruction-container {
     .MuiTab-root {
-      min-width: 100px;
+      min-width: 6.25rem;
     }
   }
 

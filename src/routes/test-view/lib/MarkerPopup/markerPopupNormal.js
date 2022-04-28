@@ -9,23 +9,31 @@ import {NotificationManager} from "react-notifications";
 import chroma from "chroma-js";
 import {connect} from "react-redux";
 
-class MarkerPopup extends Component {
+class MarkerPopupNormal extends Component {
     constructor(props) {
         super(props);
-
-        const {attempts_id, test_cases_id, markData, lesion_list, isPostTest, ratings, complete} = props;
+        const {attempts_id, test_cases_id, markData, lesion_list, isPostTest, ratings, complete, showImageList} = props;
         let isShowDeleteButton = true;
         if (markData.isNew) {
             isShowDeleteButton = false;
         }
-
         let rating = (markData.rating === undefined || isNaN(markData.rating)) ? '2' : markData.rating;
-
         let lesionList = [];
         try {
             lesionList = JSON.parse(lesion_list);
-        } catch (e) {
+        } catch (e) {}
+
+        // support multiple monitor, add padding for two monitor.
+        this.dialogSide = null;
+        if(window.innerWidth > 2000 && window.screen.width < window.outerWidth) {
+            showImageList.forEach((imgRow) => {
+                const i = imgRow.findIndex((v) => v === markData.imageId);
+                if(i !== -1) {
+                    this.dialogSide = ( i < imgRow.length / 2) ? 'left' : 'right';
+                }
+            });
         }
+
         this.state = {
             attempts_id,
             test_cases_id,
@@ -327,10 +335,11 @@ class MarkerPopup extends Component {
 
     render() {
         const {lesionList} = this.state;
+        const coverClassForDualMonitor = this.dialogSide ? (this.dialogSide === 'left' ? 'right-padding' : 'left-padding') : '';
         if (this.props.attemptInfo.attempt_sub_type === 'screening') {
             // attempt type is screening, show only "Recall" button
             return (
-                <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
+                <div id="cover" className={coverClassForDualMonitor} onClick={(e) => this.handleClosePopup('cancel')}>
                     <div id="mark-details" onClick={(e) => e.stopPropagation()}>
                         <form>
                             <div className={'text-white fs-19'}><IntlMessages id={"testView.screeningTitle"}/></div>
@@ -365,7 +374,7 @@ class MarkerPopup extends Component {
             );
         }
         return (
-            <div id="cover" onClick={(e) => this.handleClosePopup('cancel')}>
+            <div id="cover" className={coverClassForDualMonitor} onClick={(e) => this.handleClosePopup('cancel')}>
                 <div id="mark-details" onClick={(e) => e.stopPropagation()}>
                     <form>
                         {this.renderRatings()}
@@ -407,11 +416,12 @@ class MarkerPopup extends Component {
 const mapStateToProps = (state) => {
     return {
         testSetHangingIdList: state.testView.testSetHangingIdList,
-        attemptInfo: state.testView.attemptInfo
+        attemptInfo: state.testView.attemptInfo,
+        showImageList: state.testView.showImageList,
     };
 };
 
-export default connect(mapStateToProps)(MarkerPopup);
+export default connect(mapStateToProps)(MarkerPopupNormal);
 
 
 const CustomFormControlLabel = withStyles(theme => ({
