@@ -6,17 +6,16 @@ import {useDispatch} from "react-redux";
 import QueryString from 'query-string';
 import * as selectors from "Selectors";
 import {useHistory, useLocation} from "react-router-dom";
-import {setUserCompletedCount} from 'Actions';
+import {setUserCompletedCount, setUserCompletedPoint} from 'Actions';
 import TestSetItem from "./TestSetItem";
 import TestSetModal from './TestSetModal';
 import * as Apis from 'Api';
-import {testSetsCategories} from "Api";
-
 
 const filterList = [
     {id: 'sam', label: 'Self Assessment Modules', needLogin: false, valKey: 'samCount'},
     {id: 'lecture', label: 'Lecture', needLogin: false, valKey: 'lectureCount'},
     {id: 'quizzes', label: 'Quizzes', needLogin: false, valKey: 'quizCount'},
+    {id: 'presentations', label: 'Presentations', needLogin: false, valKey: 'presentationCount'},
     {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
     {id: 'saved', label: 'Saved', needLogin: true, valKey: 'savedCount'},
 ]
@@ -33,7 +32,7 @@ function Home() {
     const [categoryObj, setCategoryObj] = useState([]);
     const [selectedCategoryList, setSelectedCategoryList] = useState([]);
     const [selectedTestSet, setSelectedTestSet] = useState(null);
-    const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0});
+    const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0, presentationCount: 0});
 
     useEffect(() => {
     }, []);
@@ -48,7 +47,7 @@ function Home() {
     }, [selectedCategoryList]);
 
     const getData = (searchText) => {
-        let completed = 0;
+        let completed = 0, completedPoint = 0;
         Promise.all([
             Apis.currentTestSets(searchText),
             Apis.testSetsCategories(),
@@ -64,6 +63,7 @@ function Home() {
                     if (t.attempts.some((a) => a.complete)) {
                         t.filterKeys.push('completed');
                         completed++;
+                        completedPoint += t.test_set_point;
                     }
                 }
                 if (t.bookedTestSet) {
@@ -85,17 +85,20 @@ function Home() {
             setCategoryObj(categories);
             calcCounts(currentTestSets.modalityList, currentTestSets.testSetList);
             dispatch(setUserCompletedCount(completed));
+            dispatch(setUserCompletedPoint(completedPoint));
         });
     }
 
     const calcCounts = (modalities, testSets) => {
         if (modalities === undefined) modalities = modalityList;
         if (testSets === undefined) testSets = testSetList;
-        let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0;
-        const showList = testSets.filter((v) => (
+        let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0;
+
+        let showList = testSetList.filter((v) => (
             selectedCategoryList.length === 0 ||
-            selectedCategoryList.indexOf(v.test_set_category) !== -1
+            selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1
         ));
+
         showList.forEach((t) => {
             const modalityInfo = modalities.find((m) => m.id === t.modality_id);
             if (isLogin) {
@@ -113,7 +116,7 @@ function Home() {
             } else if (modalityInfo.modality_type === 'video_lecture') {
                 lecture++;
             } else if (modalityInfo.modality_type === 'presentations') {
-
+                presentation++;
             } else {
                 sam++;
             }
@@ -123,7 +126,8 @@ function Home() {
             savedCount: saved,
             samCount: sam,
             lectureCount: lecture,
-            quizCount: quiz
+            quizCount: quiz,
+            presentationCount: presentation,
         });
     }
 
@@ -198,13 +202,23 @@ function Home() {
         if (modalityList.length === 0) return null;
         let showList = testSetList.filter((v) => (
             selectedCategoryList.length === 0 ||
-            selectedCategoryList.indexOf(v.test_set_category) !== -1
+            selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1
         ));
         if (filter !== '') {
             showList = showList.filter((v) => v.filterKeys.indexOf(filter) !== -1);
         }
-        const completedList = showList.filter((v) => v.filterKeys.indexOf('completed') !== -1);
-        showList = showList.filter((v) => v.filterKeys.indexOf('completed') === -1);
+        const normalList = [], completedList = [], ssoList = [], clinicList = [];
+        showList.forEach((v) => {
+           if(v.ssoAssignTestSet) {
+               ssoList.push(v);
+           } else if(v.clinicAssignTestSet) {
+               clinicList.push(v);
+           } else if(v.filterKeys.indexOf('completed') !== -1) {
+               completedList.push(v);
+           } else {
+               normalList.push(v);
+           }
+        });
         return (
             <Scrollbars
                 className="test-set-items-container"
@@ -213,10 +227,10 @@ function Home() {
             >
                 <div className={'test-set-items'}>
                     {
-                        showList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                        normalList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
                     }
                 </div>
-                {(completedList.length > 0 && showList.length > 0) && <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Completed</div>}
+                {(completedList.length > 0 && normalList.length > 0) && <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Completed</div>}
                 {
                     completedList.length > 0 &&
                     <div className={'test-set-items'}>
@@ -225,6 +239,29 @@ function Home() {
                         }
                     </div>
                 }
+                {
+                    ssoList.length > 0 &&
+                    <React.Fragment>
+                        <div className={'fs-23 mb-2'} style={{marginTop: 70}}>{ssoList[0].ssoAssignName} Test Set</div>
+                        <div className={'test-set-items'}>
+                            {
+                                ssoList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                            }
+                        </div>
+                    </React.Fragment>
+                }
+                {
+                    clinicList.length > 0 &&
+                    <React.Fragment>
+                        <div className={'fs-23 mb-2'} style={{marginTop: 70}}>{clinicList[0].clinicAssignName} Clinic Test Set</div>
+                        <div className={'test-set-items'}>
+                            {
+                                clinicList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                            }
+                        </div>
+                    </React.Fragment>
+                }
+
             </Scrollbars>
         )
     }

@@ -11,6 +11,7 @@ import {
     SIGNUP_USER_SUCCESS,
     SIGNUP_USER_FAILURE,
     USER_COMPLETED_COUNT,
+    USER_COMPLETED_POINT,
 } from 'Actions/types';
 
 const cookie = new Cookies();
@@ -24,6 +25,7 @@ const INIT_STATE = {
     userEmail: cookie.get("user_email"),
     accessToken: cookie.get("access_token"),
     completedCount: 0,
+    completedPoint: 0,
     loading: false
 };
 
@@ -59,6 +61,9 @@ export default (state = INIT_STATE, action) => {
 
         case USER_COMPLETED_COUNT:
             return {...state, completedCount: action.payload}
+
+        case USER_COMPLETED_POINT:
+            return {...state, completedPoint: action.payload}
 
         default: return { ...state };
     }

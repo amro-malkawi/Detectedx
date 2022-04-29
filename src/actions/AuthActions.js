@@ -13,6 +13,7 @@ import {
     SIGNUP_USER_SUCCESS,
     SIGNUP_USER_FAILURE,
     USER_COMPLETED_COUNT,
+    USER_COMPLETED_POINT,
 } from 'Actions/types';
 import * as Apis from 'Api';
 
@@ -102,4 +103,8 @@ export const signupUserInEmail = (userData, history) => (dispatch) => {
 
 export const setUserCompletedCount = (count) => (dispatch) => {
     dispatch({type: USER_COMPLETED_COUNT, payload: count});
+}
+
+export const setUserCompletedPoint = (point) => (dispatch) => {
+    dispatch({type: USER_COMPLETED_POINT, payload: point});
 }

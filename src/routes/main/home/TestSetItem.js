@@ -30,11 +30,13 @@ function TestSetItem({data, onClick, smallSize}) {
             type = 'SELF ASSESSMENT MODULE';
         }
         setTestSetType(type);
-        const categoryList = data.test_set_category ? data.test_set_category.split(' > ') : [];
-        if(categoryList.length >= 2) {
-            categoryList.splice(0, 1);
-            setTestSetCategory(categoryList.join(' '));
-        }
+        try {
+            const categoryList = data.test_set_category ? data.test_set_category.split(',')[0].split(' > ') : [];
+            if (categoryList.length >= 2) {
+                categoryList.splice(0, 1);
+                setTestSetCategory(categoryList.join(' '));
+            }
+        } catch (e) {}
     }, [data]);
 
     const renderDifficult = (difficult) => {

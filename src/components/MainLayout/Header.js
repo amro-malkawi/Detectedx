@@ -11,6 +11,7 @@ function Header(props) {
     const isLogin = selectors.getIsLogin(null);
     const userName = useSelector((state) => state.authUser.userName);
     const userCompletedCount = useSelector((state) => state.authUser.completedCount);
+    const userCompletedPoint = useSelector((state) => state.authUser.completedPoint);
     const [searchText, setSearchText] = useState('');
 
     const getAvatarChars = () => {
@@ -80,7 +81,7 @@ function Header(props) {
                         <span>COMPLETED MODULES:</span>
                         <span className={'info-num'}>{isLogin ? userCompletedCount : ''}</span>
                         <span>THIS YEARS CME POINTS:</span>
-                        <span className={'info-num'}>{isLogin ? 3.25 : ''}</span>
+                        <span className={'info-num'}>{isLogin ? userCompletedPoint : ''}</span>
                     </div>
                 </div>
             </div>

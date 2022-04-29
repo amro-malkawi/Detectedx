@@ -22,11 +22,13 @@ function TestSetModal({data, onClose}) {
     const [, updateState] = useState();
 
     useEffect(() => {
-        const categoryList = data.test_set_category ? data.test_set_category.split(' > ') : [];
-        if(categoryList.length >= 2) {
-            categoryList.splice(0, 1);
-            setTestSetCategory(categoryList.join(' '));
-        }
+        try {
+            const categoryList = data.test_set_category ? data.test_set_category.split(',')[0].split(' > ') : [];
+            if (categoryList.length >= 2) {
+                categoryList.splice(0, 1);
+                setTestSetCategory(categoryList.join(' '));
+            }
+        } catch (e) {}
     }, [data]);
 
     const onStart = () => {
@@ -209,7 +211,10 @@ function TestSetModal({data, onClose}) {
         <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
             <div className={'main-test-set-modal'}>
                 <div className={'test-set-modal-header'} style={{backgroundColor: data.modalityInfo.modality_color || '#4f4bce'}}>
-                    <img src={require('Assets/img/main/temp_bg.png')} className={'test-set-modal-header-img'} alt={''}/>
+                    {
+                        data.modalityInfo.modality_icon_image &&
+                        <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-modal-header-img'} alt={''}/>
+                    }
                     <div className={'d-flex flex-row align-items-end'}>
                         <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                         <div className={'test-set-modal-header-tags'}>

@@ -20,7 +20,7 @@ function VideoLectureScore({attemptId, testCaseId}) {
             {
                 questionList.map((v) => (
                     <div key={v.id} className={'d-flex flex-column fs-15 border-bottom py-3'}>
-                        <span className={''}>{v.question}</span>
+                        <div dangerouslySetInnerHTML={{__html: v.question}}/>
                         <span className={'mt-1 pl-2'}>{v.truthOptionId === v.answerOptionId ? 'True' : 'False'}</span>
                     </div>
                 ))
