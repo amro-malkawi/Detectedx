@@ -61,14 +61,15 @@ function PersonalComponent() {
 
     const checkValidation = () => {
         let valid = true;
-        if(firstName.trim().length === 0) {
+        if (firstName.trim().length === 0) {
             valid = false;
             setErrorFirstName(true);
         }
-        if(lastName.trim().length === 0) {
+        if (lastName.trim().length === 0) {
             valid = false;
             setErrorLastName(true);
-        }if (email.length === 0 || !validator.isEmail(email)) {
+        }
+        if (email.length === 0 || !validator.isEmail(email)) {
             valid = false;
             setErrorEmail(true)
         }
@@ -76,11 +77,11 @@ function PersonalComponent() {
             valid = false;
             setErrorPostcode(true);
         }
-        if(jobTitle === '') {
+        if (jobTitle === '') {
             valid = false;
             setErrorJobTitle(true);
         }
-        if(institution.trim().length === 0) {
+        if (institution.trim().length === 0) {
             valid = false;
             setErrorInstitution(true);
         }
@@ -88,7 +89,7 @@ function PersonalComponent() {
     }
 
     const onSave = () => {
-        if(!checkValidation()) return;
+        if (!checkValidation()) return;
         Apis.userUpdate({
             // email: email,
             first_name: firstName,
@@ -109,20 +110,27 @@ function PersonalComponent() {
     }
 
     const onGoAttempt = (id) => {
-        if(id) history.push('/main/attempt/' + id + '/score')
+        if (id) history.push('/main/attempt/' + id + '/score')
     }
 
     return (
         <div className={'profile-content flex-row'}>
             <div className={'personal-content'}>
-                <div className={'personal-item-list'}>
+                <Scrollbars
+                    className="personal-item-list"
+                    autoHide
+                    autoHideDuration={100}
+                >
                     <div className={classNames('personal-item', {'error': errorEmail})}>
                         <span>Email *</span>
                         <Input
                             type={'email'}
                             value={email}
                             disabled
-                            onChange={(e) => {setEmail(e.target.value); setErrorEmail(false)}}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setErrorEmail(false)
+                            }}
                         />
                     </div>
                     <div className={classNames('personal-item', {'error': errorFirstName})}>
@@ -130,7 +138,10 @@ function PersonalComponent() {
                         <Input
                             type={'text'}
                             value={firstName}
-                            onChange={(e) => {setFirstName(e.target.value); setErrorFirstName(false)}}
+                            onChange={(e) => {
+                                setFirstName(e.target.value);
+                                setErrorFirstName(false)
+                            }}
                         />
                     </div>
                     <div className={classNames('personal-item', {'error': errorLastName})}>
@@ -138,7 +149,10 @@ function PersonalComponent() {
                         <Input
                             type={'text'}
                             value={lastName}
-                            onChange={(e) => {setLastName(e.target.value); setErrorLastName(false)}}
+                            onChange={(e) => {
+                                setLastName(e.target.value);
+                                setErrorLastName(false)
+                            }}
                         />
                     </div>
                     <div className={'personal-item'}>
@@ -193,7 +207,10 @@ function PersonalComponent() {
                         <Input
                             type={'text'}
                             value={postcode}
-                            onChange={(e) => {setPostcode(e.target.value); setErrorPostcode(false)}}
+                            onChange={(e) => {
+                                setPostcode(e.target.value);
+                                setErrorPostcode(false)
+                            }}
                         />
                     </div>
 
@@ -203,7 +220,10 @@ function PersonalComponent() {
                             type={'select'}
                             invalid={errorJobTitle}
                             value={jobTitle}
-                            onChange={(e) => {setJobTitle(e.target.value); setErrorJobTitle(false)}}
+                            onChange={(e) => {
+                                setJobTitle(e.target.value);
+                                setErrorJobTitle(false)
+                            }}
                         >
                             <option style={{display: 'none'}}/>
                             {
@@ -218,16 +238,19 @@ function PersonalComponent() {
                         <Input
                             type={'text'}
                             value={institution}
-                            onChange={(e) => {setInstitution(e.target.value); setErrorInstitution(false)}}
+                            onChange={(e) => {
+                                setInstitution(e.target.value);
+                                setErrorInstitution(false)
+                            }}
                         />
                     </div>
                     <div className={'d-flex flex-row mt-50'}>
-                    <Button className={'profile-save-btn'} onClick={onSave}>Save Information</Button>
+                        <Button className={'profile-save-btn'} onClick={onSave}>Save Information</Button>
                     </div>
-                </div>
+                </Scrollbars>
             </div>
             <div className={'completed-list'}>
-                <span className={'fs-15 text-primary1 mb-3'} >RECENTLY COMPLETED</span>
+                <span className={'fs-15 text-primary1 mb-3'}>RECENTLY COMPLETED</span>
                 <Scrollbars
                     autoHide
                     autoHideDuration={100}
