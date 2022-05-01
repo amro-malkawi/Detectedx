@@ -74,7 +74,7 @@ function Home() {
                 } else if (modalityInfo.modality_type === 'video_lecture') {
                     t.filterKeys.push('lecture');
                 } else if (modalityInfo.modality_type === 'presentations') {
-
+                    t.filterKeys.push('presentations');
                 } else {
                     t.filterKeys.push('sam');
                 }
@@ -94,7 +94,7 @@ function Home() {
         if (testSets === undefined) testSets = testSetList;
         let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0;
 
-        let showList = testSetList.filter((v) => (
+        let showList = testSets.filter((v) => (
             selectedCategoryList.length === 0 ||
             selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1
         ));

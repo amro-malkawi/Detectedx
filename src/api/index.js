@@ -475,7 +475,18 @@ export function paymentStripeSubscription(email, phone, name, country, address, 
     return instance.post(url, {email, phone, name, country, address, priceId}).then((response) => response.data);
 }
 
+export function paymentSubscribedInfo() {
+    const url = 'payments/user_subscribed_info?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
 
+export function paymentUpdateCardSession() {
+    const url = 'payments/update_card_session?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+
+/////////////////////// unused
 export function paymentFree(test_set_id, price, currency, couponCode) {
     const url = 'payments/free?access_token=' + getAccessToken();
     return instance.post(url, {test_set_id, price, currency, couponCode}).then((response) => response.data);

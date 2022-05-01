@@ -12,46 +12,13 @@ import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
 import {login} from "Actions";
 
-
-const planList = {
-    free: {
-        id: 'free',
-        name: 'Free',
-        price: 0,
-        access: 'LIMITED ACCESS',
-        desc: '7 Day Free Trial',
-        stripePlanId: 'price_1Kplj0LRKwvJbId7HD25ZrrD'
-    },
-    annual: {
-        id: 'annual',
-        name: 'Annual',
-        price: 499,
-        access: 'COMPLETE ACCESS',
-        desc: 'Annual Plan',
-        stripePlanId: 'price_1KpljlLRKwvJbId76Hk1uDcf'
-    },
-    monthly: {
-        id: 'monthly',
-        name: 'Monthly',
-        price: 50,
-        access: 'COMPLETE ACCESS',
-        desc: 'Monthly Plan',
-        stripePlanId: 'price_1Kplj0LRKwvJbId7HD25ZrrD'
-    },
-    enterprise: {
-        id: 'enterprise',
-        name: 'Enterprise',
-        price: 0,
-
-    }
-}
-
 function Index() {
     const history = useHistory();
     const dispatch = useDispatch();
     const isLogin = selectors.getIsLogin(null);
     const [step, setStep] = useState('info');  // info, plan, pay, enterpriseCode
-    const [selectedPlan, setSelectedPlan] = useState(planList.annual);
+    const [planList, setPlanList] = useState([]);
+    const [selectedPlan, setSelectedPlan] = useState({});
     const [signupInfo, setSignupInfo] = useState({});
 
     useEffect(() => {
@@ -65,20 +32,19 @@ function Index() {
         if (hasEnterpriseCode) {
             setStep('enterpriseCode');
         } else {
-            setStep('plan');
+            Apis.paymentInfo().then(resp => {
+                setPlanList(resp);
+                setStep('plan');
+            }).catch((e) => {
+                NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+            });
         }
     }
 
     const onSelectPlan = (plan) => {
         if (plan.id !== 'enterprise') {
-            Apis.paymentInfo().then(resp => {
-                plan.stripeKey = resp.stripeKey;
-                plan.priceId = resp.stripePriceList[plan.id]
-                setSelectedPlan(plan);
-                setStep('pay');
-            }).catch((e) => {
-                NotificationManager.error(e.response ? e.response.data.error.message : e.message);
-            });
+            setSelectedPlan(plan);
+            setStep('pay');
         } else {
             setStep('enterpriseCode');
         }

@@ -1,10 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {Button} from "@material-ui/core";
 import {Input} from "reactstrap";
-import * as Apis from "Api";
 import {NotificationManager} from "react-notifications";
+import {useDispatch} from "react-redux";
+import {useHistory} from "react-router-dom";
+import DeleteProfileModal from "./DeleteProfileModal";
+import {logoutUserFromEmail} from "Actions";
+import * as Apis from "Api";
 
 function SettingComponent() {
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const [userInfo, setUserInfo] = useState({});
     const [oldPassword, setOldPassword] = useState('');
     const [errorOldPassword, setErrorOldPassword] = useState(false);
     const [newPassword, setNewPassword] = useState('');
@@ -12,17 +19,27 @@ function SettingComponent() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
     const [enterpriseCode, setEnterpriseCode] = useState('');
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    useEffect(() => {
+        getData();
+    }, []);
+    const getData = () => {
+        Apis.userInfo().then((resp) => {
+            setUserInfo(resp);
+        });
+    }
 
     const onChangePassword = () => {
-        if(oldPassword.length < 3) {
+        if (oldPassword.length < 3) {
             setErrorOldPassword(true);
             return;
         }
-        if(newPassword.length < 3) {
+        if (newPassword.length < 3) {
             setErrorNewPassword(true);
             return;
         }
-        if(confirmPassword !== newPassword) {
+        if (confirmPassword !== newPassword) {
             setErrorConfirmPassword(true);
             return;
         }
@@ -34,7 +51,18 @@ function SettingComponent() {
 
         })
     }
-    
+
+    const onDeleteProfile = () => {
+        Apis.userDeleteProfile().then((resp) => {
+            NotificationManager.success('Your account was deleted permanently');
+            dispatch(logoutUserFromEmail());
+            history.push('/');
+        }).catch((e) => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+        }).finally(() => {
+        })
+    }
+
     return (
         <div className={'profile-content'}>
             <div className={'setting-content'}>
@@ -48,7 +76,10 @@ function SettingComponent() {
                             autoComplete="new-password"
                             value={oldPassword}
                             invalid={errorOldPassword}
-                            onChange={(e) => {setOldPassword(e.target.value); setErrorOldPassword(false)}}
+                            onChange={(e) => {
+                                setOldPassword(e.target.value);
+                                setErrorOldPassword(false)
+                            }}
                         />
                     </div>
                     <div className={'d-flex flex-row'}>
@@ -59,7 +90,10 @@ function SettingComponent() {
                             autoComplete="new-password"
                             value={newPassword}
                             invalid={errorNewPassword}
-                            onChange={(e) => {setNewPassword(e.target.value); setErrorNewPassword(false)}}
+                            onChange={(e) => {
+                                setNewPassword(e.target.value);
+                                setErrorNewPassword(false)
+                            }}
                         />
                         <Input
                             type={'password'}
@@ -67,7 +101,10 @@ function SettingComponent() {
                             className={'mr-20'}
                             value={confirmPassword}
                             invalid={errorConfirmPassword}
-                            onChange={(e) => {setConfirmPassword(e.target.value); setErrorConfirmPassword(false)}}
+                            onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                setErrorConfirmPassword(false)
+                            }}
                         />
                         <Button className={'contain-btn'} onClick={onChangePassword}>SUBMIT</Button>
                     </div>
@@ -77,13 +114,15 @@ function SettingComponent() {
                     <div className={'d-flex'}>
                         <div className={'d-flex flex-column mr-50'}>
                             <span className={'fs-16 fw-semi-bold text-primary1'}>CURRENT CLINIC</span>
-                            <span className={'fs-26 fw-semi-bold text-white mt-3'}>North Western Indiana Scans</span>
+                            <span className={'fs-26 fw-semi-bold text-white mt-3'}>{userInfo.clinicName || 'NO CLINIC'}</span>
                             <Input
                                 type={'text'}
                                 placeholder={'ENTERPRISE CODE'}
                                 className={'mt-3'}
                                 value={enterpriseCode}
-                                onChange={(e) => {setEnterpriseCode(e.target.value);}}
+                                onChange={(e) => {
+                                    setEnterpriseCode(e.target.value);
+                                }}
                             />
                         </div>
                         <div className={'d-flex flex-column ml-50'}>
@@ -100,10 +139,13 @@ function SettingComponent() {
                 <div className={'d-flex flex-column'}>
                     <span className={'fs-16 fw-semi-bold text-primary1'}>DELETE PROFILE</span>
                     <div className={'mt-3'}>
-                        <Button className={'outline-btn mb-1 px-20'}>CANCEL MEMBERSHIP</Button>
+                        <Button className={'outline-btn mb-1 px-20'} onClick={() => setOpenDeleteModal(true)}>CANCEL MEMBERSHIP</Button>
                     </div>
                 </div>
             </div>
+            {
+                openDeleteModal && <DeleteProfileModal onClose={() => setOpenDeleteModal(false)} onDelete={onDeleteProfile}/>
+            }
         </div>
     )
 }

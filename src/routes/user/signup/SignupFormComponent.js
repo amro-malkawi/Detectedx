@@ -5,7 +5,6 @@ import {withStyles} from "@material-ui/core/styles";
 import {NotificationManager} from "react-notifications";
 import validator from "validator";
 import * as Apis from "Api";
-import {userCheckEmail} from "Api";
 
 function SignupFormComponent({onComplete}) {
     const [firstName, setFirstName] = useState('');
@@ -22,7 +21,6 @@ function SignupFormComponent({onComplete}) {
     const [country, setCountry] = useState('');
     const [errorCountry, setErrorCountry] = useState(false);
     const [state, setState] = useState('');
-    const [errorState, setErrorState] = useState(false);
     const [postcode, setPostcode] = useState('');
     const [errorPostcode, setErrorPostcode] = useState(false);
     const [jobTitle, setJobTitle] = useState('');
@@ -221,9 +219,8 @@ function SignupFormComponent({onComplete}) {
                             <span>STATE</span>
                             <Input
                                 type={'text'}
-                                invalid={errorState}
                                 value={state}
-                                onChange={(e) => {setState(e.target.value); setErrorState(false)}}
+                                onChange={(e) => setState(e.target.value)}
                             />
                         </div>
                         <div className={'col-sm-12 col-md-6 input-item'}>

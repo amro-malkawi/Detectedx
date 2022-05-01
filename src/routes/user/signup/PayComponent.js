@@ -39,8 +39,8 @@ function PayComponent({plan, onPay, signupEmail}) {
                         </div>
                         <div className={'cost-content'}>
                             <span className={'cost-symbol'}>$</span>
-                            <span className={'cost-val'}>{plan.price}</span>
-                            <span className={'cost-currency'}>AUD</span>
+                            <span className={'cost-val'}>{plan.detail.amount}</span>
+                            <span className={'cost-currency'}>{plan.detail.currency.toUpperCase()}</span>
                         </div>
                         <div className={'fs-14 text-primary1'}>{plan.access}</div>
                         {
@@ -54,13 +54,13 @@ function PayComponent({plan, onPay, signupEmail}) {
                                 <div className={'d-flex flex-row justify-content-between fs-14 text-white mt-20 mb-40'}>
                                     <span>DETECTEDX {plan.desc.toUpperCase()}</span>
                                     {
-                                        plan.id === 'annual' && <span>SAVE 15%</span>
+                                        plan.id === 'yearly' && <span>SAVE 15%</span>
                                     }
                                 </div>
                         }
                         <div className={'d-flex flex-row justify-content-between fs-14 text-white'}>
                             <span>SUBTOTAL</span>
-                            <span>${plan.price}.00</span>
+                            <span>${plan.detail.amount}.00</span>
                         </div>
                         <div className={'pay-split-bar'}/>
                         <div>
@@ -101,7 +101,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                             Enter payment details
                         </div>
                         <Elements stripe={stripePromise} options={stripeOptions}>
-                            <StripeForm initialEmail={signupEmail} priceId={plan.priceId} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
+                            <StripeForm initialEmail={signupEmail} priceId={plan.detail.id} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
                         </Elements>
                     </div>
                     <div className={'pay-purchase-bottom'}>

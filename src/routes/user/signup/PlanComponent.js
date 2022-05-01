@@ -33,9 +33,9 @@ function PlanComponent({onSelectPlan, planList}) {
                     <div className={'plan-item-price'}>
                         <div className={'d-flex flex-row align-items-start'}>
                             <span className={'plan-price-currency'}>$</span>
-                            <span className={'plan-price-num'}>499</span>
+                            <span className={'plan-price-num'}>{planList.yearly.detail.amount}</span>
                         </div>
-                        <span className={'fs-14 fw-semi-bold'}>PRICES IN AUD</span>
+                        <span className={'fs-14 fw-semi-bold'}>PRICES IN {planList.yearly.detail.currency.toUpperCase()}</span>
                     </div>
                     <div className={'plan-item-content'}>
                         <div className={'plan-item-features'}>
@@ -45,7 +45,7 @@ function PlanComponent({onSelectPlan, planList}) {
                             <div>Point one here</div>
                         </div>
                         <div className={'plan-item-btn'}>
-                            <Button onClick={() => onSelectPlan(planList.annual)}>
+                            <Button onClick={() => onSelectPlan(planList.yearly)}>
                                 <i className="zmdi zmdi-arrow-right"/>
                                 Sign Up
                             </Button>
@@ -60,8 +60,9 @@ function PlanComponent({onSelectPlan, planList}) {
                     <div className={'plan-item-price'}>
                         <div className={'d-flex flex-row align-items-start'}>
                             <span className={'plan-price-currency'}>$</span>
-                            <span className={'plan-price-num'}>50</span>
+                            <span className={'plan-price-num'}>{planList.monthly.detail.amount}</span>
                         </div>
+                        <span className={'fs-14 fw-semi-bold'}>PRICES IN {planList.monthly.detail.currency.toUpperCase()}</span>
                     </div>
                     <div className={'plan-item-content'}>
                         <div className={'plan-item-features'}>
