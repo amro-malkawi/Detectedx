@@ -190,7 +190,7 @@ function SignupFormComponent({onComplete}) {
                             <span>CONFIRM PASSWORD *</span>
                             <Input
                                 name={'confirm-pass'}
-                                type={'text'}
+                                type={'password'}
                                 invalid={errorConfirmPassword}
                                 value={confirmPassword}
                                 onChange={(e) => {setConfirmPassword(e.target.value); setErrorConfirmPassword(false)}}

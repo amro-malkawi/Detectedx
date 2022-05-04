@@ -83,13 +83,16 @@ function TestSetItem({data, onClick, smallSize}) {
                     <span>{testSetCategory}</span>
                 </div>
                 {
-                    data.name.toLowerCase().indexOf('3d') !== -1 &&
+                    data.is3D &&
                     <div className={'mark-3d'}>
                         <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
                     </div>
                 }
             </div>
-            <div className={'test-set-name'}>
+            <div
+                className={'test-set-name'}
+                style={data.name.length > 50 ? (data.name.length > 70 ? {fontSize: '1.5rem', lineHeight: '1.7rem'} : {fontSize: '1.6rem', lineHeight: '1.9rem'}) : {}}
+            >
                 {data.name}
             </div>
             {
@@ -110,6 +113,9 @@ function TestSetItem({data, onClick, smallSize}) {
                         FREE DEMO
                     </div>
                 </div>
+            }
+            {
+                data.needSubscribe && <div className={'test-set-item-disable'} />
             }
         </Button>
     )

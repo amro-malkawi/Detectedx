@@ -28,7 +28,8 @@ function TestSetModal({data, onClose}) {
                 categoryList.splice(0, 1);
                 setTestSetCategory(categoryList.join(' '));
             }
-        } catch (e) {}
+        } catch (e) {
+        }
     }, [data]);
 
     const onStart = () => {
@@ -95,7 +96,7 @@ function TestSetModal({data, onClose}) {
 
     const renderLeftContent = () => {
         const {modality_type, modality_desc} = data.modalityInfo;
-        if(['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === -1) {
+        if (['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === -1) {
             const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
             let descText = '';
             if (typeof modalityDesc !== 'object') {
@@ -109,7 +110,7 @@ function TestSetModal({data, onClose}) {
             return <div dangerouslySetInnerHTML={{__html: descText}}/>
         } else {
             const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
-            if(!presenterInfo) return;
+            if (!presenterInfo) return;
             return (
                 <div className={'d-flex flex-column'}>
                     <div className={'d-flex flex-row'}>
@@ -131,19 +132,21 @@ function TestSetModal({data, onClose}) {
 
 
     const renderStartButton = () => {
-        const {id, attempts, has_post, test_set_paid, test_set_point, is_test_set_expired, demoTestSet} = data;
-        const test_set_id = id;
+        const {id, attempts, needSubscribe, demoTestSet} = data;
         let attempt = attempts[0];
-        if (!isLogin && !demoTestSet) {
+        if (needSubscribe) {
             return (
-                <Button className={'test-set-start-btn'} onClick={() => history.push('/signin')}>
-                    Login
-                </Button>
+                <React.Fragment>
+                    <Button className={'test-set-start-btn'} onClick={() => history.push('/plan')}>
+                        Subscribe To Access
+                    </Button>
+                    <span></span>
+                </React.Fragment>
             )
-        } else if ((!isLogin && demoTestSet) || attempt === undefined || attempt.complete) {
+        } else if (attempt === undefined || attempt.complete) {
             return (
                 <Button className={'test-set-start-btn'} onClick={onStart}>
-                    Start Assessment
+                    Start Module
                 </Button>
             )
         } else {
@@ -155,7 +158,7 @@ function TestSetModal({data, onClose}) {
             }
             return (
                 <Button className={'test-set-start-btn'} onClick={() => history.push(path)}>
-                    Continue Assessment
+                    Continue Module
                 </Button>
             );
         }
@@ -163,7 +166,7 @@ function TestSetModal({data, onClose}) {
 
     const renderRightContent = () => {
         const {modality_type, instruction_video, instruction_video_thumbnail} = data.modalityInfo;
-        if(['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) !== -1) {
+        if (['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) !== -1) {
             const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations'}[modality_type] + ' Overview';
             return (
                 <div className={'text-white'}>
@@ -171,7 +174,7 @@ function TestSetModal({data, onClose}) {
                     <div className={'fs-19 mt-10'}>{data.test_set_desc}</div>
                 </div>
             );
-        } else if(instruction_video && instruction_video !== '') {
+        } else if (instruction_video && instruction_video !== '') {
             return (
                 <div className={'d-flex flex-column justify-content-center align-items-center'}>
                     <div className={'test-set-modal-video'}>
@@ -219,9 +222,12 @@ function TestSetModal({data, onClose}) {
                         <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                         <div className={'test-set-modal-header-tags'}>
                             <div className={'test-category'}>{testSetCategory}</div>
-                            <div className={'mark-3d'}>
-                                <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
-                            </div>
+                            {
+                                data.is3D &&
+                                <div className={'mark-3d'}>
+                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -251,13 +257,13 @@ function TestSetModal({data, onClose}) {
                                     <div className={'test-set-save-btn'} onClick={onSave}>
                                         <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
                                         {
-                                            !data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
+                                            data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
                                         }
                                     </div>
                                 </Button>
                             }
                         </div>
-                        { renderRightContent() }
+                        {renderRightContent()}
                     </div>
                 </div>
                 <div className={'test-set-modal-close-btn'} onClick={onClose}>

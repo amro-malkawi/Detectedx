@@ -12,12 +12,11 @@ import TestSetModal from './TestSetModal';
 import * as Apis from 'Api';
 
 const filterList = [
+    {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
+    {id: 'saved', label: 'Saved', needLogin: true, valKey: 'savedCount'},
     {id: 'sam', label: 'Self Assessment Modules', needLogin: false, valKey: 'samCount'},
     {id: 'lecture', label: 'Lecture', needLogin: false, valKey: 'lectureCount'},
     {id: 'quizzes', label: 'Quizzes', needLogin: false, valKey: 'quizCount'},
-    {id: 'presentations', label: 'Presentations', needLogin: false, valKey: 'presentationCount'},
-    {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
-    {id: 'saved', label: 'Saved', needLogin: true, valKey: 'savedCount'},
 ]
 
 function Home() {
@@ -40,7 +39,7 @@ function Home() {
     useEffect(() => {
         const param = QueryString.parse(location.search);
         getData(param.search);
-    }, [location]);
+    }, [location, isLogin]);
 
     useEffect(() => {
         calcCounts();
@@ -71,13 +70,13 @@ function Home() {
                 }
                 if (modalityInfo.modality_type === 'quiz') {
                     t.filterKeys.push('quizzes');
-                } else if (modalityInfo.modality_type === 'video_lecture') {
+                } else if (modalityInfo.modality_type === 'video_lecture' || modalityInfo.modality_type === 'presentations') {
                     t.filterKeys.push('lecture');
-                } else if (modalityInfo.modality_type === 'presentations') {
-                    t.filterKeys.push('presentations');
                 } else {
                     t.filterKeys.push('sam');
                 }
+
+                t.is3D = (['BreastED - DBT 3D', 'LungED', 'CHEST CT', 'GE 3D'].indexOf(modalityInfo.name) !== -1);
             });
 
             setModalityList(currentTestSets.modalityList);
@@ -113,10 +112,8 @@ function Home() {
             }
             if (modalityInfo.modality_type === 'quiz') {
                 quiz++;
-            } else if (modalityInfo.modality_type === 'video_lecture') {
+            } else if (modalityInfo.modality_type === 'video_lecture' || modalityInfo.modality_type === 'presentations') {
                 lecture++;
-            } else if (modalityInfo.modality_type === 'presentations') {
-                presentation++;
             } else {
                 sam++;
             }
@@ -273,7 +270,7 @@ function Home() {
                     <span className={'fs-23'}>Categories</span>
                 </div>
                 <Scrollbars
-                    className="main-modalities"
+                    className="main-categories"
                     autoHide
                     autoHideDuration={100}
                 >
@@ -283,12 +280,12 @@ function Home() {
                 </Scrollbars>
             </div>
             <div className={'test-set-content'}>
-                <div className={'d-flex flex-row fs-23 mb-30'}>
+                <div className={'test-set-top-filter'}>
                     {
                         filterList.filter((f) => (!isLogin ? !f.needLogin : true)).map((f) => (
                             <span
                                 key={f.id}
-                                className={classNames('mr-50 cursor-pointer', {'text-primary1 text-underline': f.id === filter})}
+                                className={classNames('mr-50 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
                                 onClick={() => onChangeFilter(f)}
                             >
                                 {f.label}({filterValues[f.valKey]})

@@ -12,7 +12,7 @@
     padding-right: 60px;
   }
 
-  .main-modalities {
+  .main-categories {
     flex: 1;
     overflow: auto;
   }
@@ -64,6 +64,14 @@
     display: flex;
     flex-direction: column;
 
+    .test-set-top-filter {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      font-size: 1.437rem;
+      margin-bottom: 20px;
+    }
+
     .test-set-items-container {
       flex: 1;
       overflow: auto;
@@ -79,6 +87,7 @@
 .main-home, .main-profile {
   .test-set-item {
     position: relative;
+    max-width: 510px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -122,6 +131,7 @@
       color: #534ED9;
       border-radius: 7px;
       background-color: white;
+
     }
 
     .test-set-name {
@@ -133,7 +143,7 @@
       text-transform: none;
 
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -160,6 +170,20 @@
         transform: rotate(315deg);
         transform-origin: center top;
       }
+    }
+
+    .test-set-item-disable {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      background-color: #180F1588;
     }
   }
 }
@@ -379,7 +403,7 @@
 }
 
 
-@media (max-width: 1600px) {
+@media (max-width: 1700px) {
   .test-set-items {
     grid-template-columns: 1fr 1fr !important;
   }
@@ -388,5 +412,9 @@
 @media (max-width: 1260px) {
   .test-set-items {
     grid-template-columns: 1fr !important;
+    justify-items: center;
+    .test-set-item {
+      width: 100%;
+    }
   }
 }

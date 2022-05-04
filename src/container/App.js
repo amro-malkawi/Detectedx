@@ -8,13 +8,13 @@ import {NotificationContainer} from 'react-notifications';
 import {browserName, isChrome, isFirefox} from 'react-device-detect';
 import RctThemeProvider from './RctThemeProvider';
 import RctDefaultLayout from './DefaultLayout';
-import AppSignIn from 'Routes/user/Signin';
-import AppSignUp from 'Routes/user/signup';
+import AppSignIn from 'Routes/root/Signin';
+import AppSignUp from 'Routes/root/signup';
 import Terms from './Terms';
-import ForgotPassword from 'Routes/user/ForgotPassword';
+import ForgotPassword from 'Routes/root/ForgotPassword';
 import ResetPassword from './ResetPassword';
-import SendEmail from 'Routes/user/SendEmail';
-import Confirm from 'Routes/user/Confirm';
+import SendEmail from 'Routes/root/SendEmail';
+import Confirm from 'Routes/root/Confirm';
 import NoMatch from './NoMatch';
 import VideoView from 'Routes/test-view/VideoView';
 import MainPage from 'Routes/main';
@@ -72,6 +72,7 @@ class App extends Component {
                     <PrivateRoute path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" component={VideoView} authUser={isLogin}/>
                     <Route path="/signin" component={AppSignIn}/>
                     <Route path="/signup" component={AppSignUp}/>
+                    <Route path="/plan" component={AppSignUp}/>
                     <Route path="/terms" component={Terms}/>
                     <Route path="/forgot-password" component={ForgotPassword}/>
                     <Route path="/reset-password" component={ResetPassword}/>

@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from "reactstrap";
+import {Button} from '@material-ui/core';
 
 function EnterpriseComponent({onSubmit}) {
     const [code, setCode] = useState('');
@@ -8,6 +9,8 @@ function EnterpriseComponent({onSubmit}) {
             onSubmit(code);
         }
     }
+
+
     return (
         <div className={'enterprise-card'}>
             <div className={'enterprise-card-content'}>
@@ -30,6 +33,7 @@ function EnterpriseComponent({onSubmit}) {
                             onChange={(e) => setCode(e.target.value)}
                             onKeyPress={onKeyPress}
                         />
+                        <Button className={'enterprise-submit-btn'} onClick={() => onSubmit(code)}>SUBMIT</Button>
                     </div>
                     <div className={'fs-17 text-center text-white mt-50 mb-20'}>
                         FOR SUPPORT CALL

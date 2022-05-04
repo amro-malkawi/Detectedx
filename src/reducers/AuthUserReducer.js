@@ -24,8 +24,8 @@ const INIT_STATE = {
     userName: cookie.get("user_name"),
     userEmail: cookie.get("user_email"),
     accessToken: cookie.get("access_token"),
-    completedCount: 0,
-    completedPoint: 0,
+    completedCount: cookie.get("completed_count"),
+    completedPoint: cookie.get("completed_point"),
     loading: false
 };
 
@@ -60,9 +60,11 @@ export default (state = INIT_STATE, action) => {
             return { ...state, loading: false };
 
         case USER_COMPLETED_COUNT:
+            cookie.set('completed_count', action.payload, {path: '/'});
             return {...state, completedCount: action.payload}
 
         case USER_COMPLETED_POINT:
+            cookie.set('completed_point', action.payload, {path: '/'});
             return {...state, completedPoint: action.payload}
 
         default: return { ...state };

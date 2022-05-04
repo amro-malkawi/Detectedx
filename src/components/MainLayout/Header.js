@@ -75,7 +75,7 @@ function Header(props) {
                                 <span className={'fs-23 fw-semi-bold'}>{userName}</span>
                                 <span className={'fs-16 fw-semi-bold text-primary1 cursor-pointer'} onClick={onLogout}>LOGOUT</span>
                             </div> :
-                            <span className={'fs-23 fw-semi-bold'}>Login</span>
+                            <span className={'fs-23 fw-semi-bold cursor-pointer'} onClick={() => history.push('/main/profile')}>Login</span>
                     }
                     <div className={'fs-14 cursor-pointer'} onClick={() => history.push('/main/profile?tab=completed')}>
                         <span>COMPLETED MODULES:</span>

@@ -1,8 +1,10 @@
 import React from 'react';
 import {Button} from '@material-ui/core';
+import * as selectors from "Selectors";
 
 
 function PlanComponent({onSelectPlan, planList}) {
+    const isLogin = selectors.getIsLogin(null);
     return (
         <div className={'main-plan'}>
             <div className={'main-plan-container'}>
@@ -21,7 +23,7 @@ function PlanComponent({onSelectPlan, planList}) {
                         <div className={'plan-item-btn'}>
                             <Button onClick={() => onSelectPlan(planList.free)}>
                                 <i className="zmdi zmdi-arrow-right"/>
-                                Sign Up
+                                {isLogin ? 'Subscribe' : 'Sign Up'}
                             </Button>
                         </div>
                     </div>
@@ -47,7 +49,7 @@ function PlanComponent({onSelectPlan, planList}) {
                         <div className={'plan-item-btn'}>
                             <Button onClick={() => onSelectPlan(planList.yearly)}>
                                 <i className="zmdi zmdi-arrow-right"/>
-                                Sign Up
+                                {isLogin ? 'Subscribe' : 'Sign Up'}
                             </Button>
                         </div>
                     </div>
@@ -73,7 +75,7 @@ function PlanComponent({onSelectPlan, planList}) {
                         <div className={'plan-item-btn'} onClick={() => onSelectPlan(planList.monthly)}>
                             <Button>
                                 <i className="zmdi zmdi-arrow-right"/>
-                                Sign Up
+                                {isLogin ? 'Subscribe' : 'Sign Up'}
                             </Button>
                         </div>
                     </div>

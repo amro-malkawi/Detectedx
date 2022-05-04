@@ -21,6 +21,13 @@ function Signin() {
         if(isLogin) history.push('/');
     }, []);
 
+
+    const onKeyPress = (event) => {
+        if(event.key === 'Enter') {
+            onLogin();
+        }
+    }
+
     const onLogin = () => {
         if(email !== '' && password !== '') {
             setLoading(true);
@@ -42,11 +49,11 @@ function Signin() {
                     <div className={'signup-title mb-4'}>DetectedX Login</div>
                     <div className={'input-item'}>
                         <span>EMAIL</span>
-                        <Input type={'text'} value={email} onChange={(e) => setEmail(e.target.value)}/>
+                        <Input type={'text'} value={email} onChange={(e) => setEmail(e.target.value)} onKeyPress={onKeyPress}/>
                     </div>
                     <div className={'input-item'}>
                         <span>PASSWORD</span>
-                        <Input type={'password'} value={password} onChange={(e) => setPassword(e.target.value)}/>
+                        <Input type={'password'} value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={onKeyPress}/>
                     </div>
                     <div>
                         <Button className={'signup-submit'} disabled={loading} onClick={onLogin}>

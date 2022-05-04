@@ -63,6 +63,16 @@ function SettingComponent() {
         })
     }
 
+    const onApplyCoupon = () => {
+        Apis.couponApplyTestSetCoupon(enterpriseCode).then((resp) => {
+            getData();
+            setEnterpriseCode('');
+            NotificationManager.success(`You get ${resp.unlockCount} module from enterprise code.`);
+        }).catch((e) => {
+            if (e.response) NotificationManager.error(e.response.data.error.message);
+        });
+    }
+
     return (
         <div className={'profile-content'}>
             <div className={'setting-content'}>
@@ -106,7 +116,7 @@ function SettingComponent() {
                                 setErrorConfirmPassword(false)
                             }}
                         />
-                        <Button className={'contain-btn'} onClick={onChangePassword}>SUBMIT</Button>
+                        <Button className={'contain-btn px-20'} onClick={onChangePassword}>SUBMIT</Button>
                     </div>
                 </div>
                 <div className={'divide-line mt-20 mb-4'}/>
@@ -115,24 +125,30 @@ function SettingComponent() {
                         <div className={'d-flex flex-column mr-50'}>
                             <span className={'fs-16 fw-semi-bold text-primary1'}>CURRENT CLINIC</span>
                             <span className={'fs-26 fw-semi-bold text-white mt-3'}>{userInfo.clinicName || 'NO CLINIC'}</span>
-                            <Input
-                                type={'text'}
-                                placeholder={'ENTERPRISE CODE'}
-                                className={'mt-3'}
-                                value={enterpriseCode}
-                                onChange={(e) => {
-                                    setEnterpriseCode(e.target.value);
-                                }}
-                            />
                         </div>
-                        <div className={'d-flex flex-column ml-50'}>
-                            <span className={'fs-16 fw-semi-bold text-primary1'}>PLAN</span>
-                            <span className={'fs-23 fw-semi-bold text-white mt-3'}>Annual Team Plan</span>
-                            <span className={'fs-16 fw-semi-bold text-white mt-3 plan-paid'}>PAID</span>
-                        </div>
+                        {/*<div className={'d-flex flex-column ml-50'}>*/}
+                        {/*    <span className={'fs-16 fw-semi-bold text-primary1'}>PLAN</span>*/}
+                        {/*    <span className={'fs-23 fw-semi-bold text-white mt-3'}>Annual Team Plan</span>*/}
+                        {/*    <span className={'fs-16 fw-semi-bold text-white mt-3 plan-paid'}>PAID</span>*/}
+                        {/*</div>*/}
                     </div>
                     <div className={'d-flex flex-column'}>
-                        <Button className={'contain-btn mb-1 px-20'}>NEED TO CHANGE CLINICS?</Button>
+                    </div>
+                </div>
+                <div className={'divide-line mt-20 mb-4'}/>
+                <div className={'d-flex flex-column'}>
+                    <span className={'fs-16 fw-semi-bold text-primary1'}>Apply Enterprise Code</span>
+                    <div className={'d-flex flex-row mt-3'}>
+                        <Input
+                            type={'text'}
+                            placeholder={'ENTERPRISE CODE'}
+                            className={'mr-3'}
+                            value={enterpriseCode}
+                            onChange={(e) => {
+                                setEnterpriseCode(e.target.value);
+                            }}
+                        />
+                        <Button className={'contain-btn px-20'} onClick={onApplyCoupon}>SUBMIT</Button>
                     </div>
                 </div>
                 <div className={'divide-line mt-20 mb-4'}/>

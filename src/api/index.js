@@ -71,6 +71,11 @@ export function signUp(data) {
     return instance.post(url, data).then((response) => response.data);
 }
 
+export function userSubscribe(data) {
+    const url = '/users/subscribe?access_token=' + getAccessToken();
+    return instance.post(url, data).then((response) => response.data);
+}
+
 export function changePassword(curPass, newPass) {
     let url = '/users/change-password?access_token=' + getAccessToken();
     const req = {
@@ -114,6 +119,7 @@ export function userDeleteProfile() {
     const url = '/users/delete_profile?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
+
 
 /**
  * user operation
@@ -471,7 +477,7 @@ export function paymentInfo() {
 }
 
 export function paymentStripeSubscription(email, phone, name, country, address, priceId) {
-    const url = 'payments/stripe_subscription';
+    const url = 'payments/stripe_subscription?access_token=' + getAccessToken();
     return instance.post(url, {email, phone, name, country, address, priceId}).then((response) => response.data);
 }
 
@@ -482,6 +488,11 @@ export function paymentSubscribedInfo() {
 
 export function paymentUpdateCardSession() {
     const url = 'payments/update_card_session?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function paymentCancelSubscription() {
+    const url = 'payments/cancel_subscription?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

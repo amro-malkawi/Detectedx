@@ -69,9 +69,29 @@ $main-active-color: #54A9FB;
   cursor: pointer;
 }
 
+#root {
+  overflow-x: auto;
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #170F15;
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    background-color: #170F15;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #3B4071;
+  }
+}
+
 .main-layout {
   display: flex;
   flex-direction: column;
+  min-width: 990px;
   height: 100%;
   font-family: "Poppins", sans-serif;
   background-color: #180f15;

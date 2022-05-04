@@ -28,6 +28,8 @@ export const login = (userId, userName, userEmail, accessToken, history, fromUrl
         cookie.set('user_name', userName, {path: '/'});
         cookie.set('user_email', userEmail, {path: '/'});
         cookie.set('access_token', accessToken, {path: '/'});
+        cookie.set('completed_count', accessToken, {path: '/'});
+        cookie.set('completed_point', accessToken, {path: '/'});
     }
     dispatch({
         type: LOGIN_USER_SUCCESS, payload: {
