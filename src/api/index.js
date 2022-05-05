@@ -476,9 +476,9 @@ export function paymentInfo() {
     return instance.get(url).then((response) => response.data);
 }
 
-export function paymentStripeSubscription(email, phone, name, country, address, priceId) {
+export function paymentStripeSubscription(data) {
     const url = 'payments/stripe_subscription?access_token=' + getAccessToken();
-    return instance.post(url, {email, phone, name, country, address, priceId}).then((response) => response.data);
+    return instance.post(url, data).then((response) => response.data);
 }
 
 export function paymentSubscribedInfo() {

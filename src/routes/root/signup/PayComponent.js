@@ -101,7 +101,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                             Enter payment details
                         </div>
                         <Elements stripe={stripePromise} options={stripeOptions}>
-                            <StripeForm initialEmail={signupEmail} priceId={plan.detail.id} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
+                            <StripeForm initialEmail={signupEmail} priceId={plan.detail.id} isTrial={plan.id === 'free'} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
                         </Elements>
                     </div>
                     <div className={'pay-purchase-bottom'}>

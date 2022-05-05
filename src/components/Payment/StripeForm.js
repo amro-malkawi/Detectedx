@@ -14,7 +14,7 @@ import {Button, CircularProgress} from "@material-ui/core";
 import * as Apis from "Api";
 import {NotificationManager} from "react-notifications";
 
-function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId}) {
+function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isTrial}) {
     const stripe = useStripe();
     const stripeElements = useElements();
     const [completeCardNumber, setCompleteCardNumber] = useState(false);
@@ -93,21 +93,27 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId}) {
         if(!checkValidation()) return;
         setLoading(true);
         let subscriptionId, customerId;
-        Apis.paymentStripeSubscription(email, phone, cardName, contactCountry, contactAddress, priceId).then((resp) => {
+        const data = {email, phone, cardName, contactCountry, contactAddress, priceId, isTrial};
+        Apis.paymentStripeSubscription(data).then((resp) => {
             customerId = resp.customerId;
             subscriptionId = resp.subscriptionId;
-            return stripe.confirmCardPayment(resp.clientSecret, {
-                payment_method: {
-                    card: stripeElements.getElement(CardNumberElement),
-                    billing_details: {
-                        email, phone, name: cardName
+            if(!isTrial) {
+                return stripe.confirmCardPayment(resp.clientSecret, {
+                    payment_method: {
+                        card: stripeElements.getElement(CardNumberElement),
+                        billing_details: {
+                            email, phone, name: cardName
+                        }
                     }
-                }
-            })
+                })
+            }
         }).then((resp) => {
-            console.log(resp, 'stripe payment');
-            if(resp.paymentIntent && resp.paymentIntent.status === 'succeeded') {
-                onStripeSubscribe(subscriptionId, customerId, resp.paymentIntent.id);
+            if(!isTrial) {
+                if (resp.paymentIntent && resp.paymentIntent.status === 'succeeded') {
+                    onStripeSubscribe(subscriptionId, customerId, resp.paymentIntent.id);
+                }
+            } else {
+                onStripeSubscribe(subscriptionId, customerId, null);
             }
         }).catch((e) => {
             NotificationManager.error("Subscription was failed");
