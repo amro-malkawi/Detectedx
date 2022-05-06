@@ -468,7 +468,9 @@
       .enterprise-site-logo {
         width: 230px;
       }
-
+      .enterprise-input-container {
+        padding: 0 50px;
+      }
       .enterprise-input {
         padding: 23px 20px;
         font-size: 14px;
@@ -525,6 +527,182 @@
       font-size: 11px;
       font-weight: 500;
       color: #656FD0;
+    }
+  }
+}
+
+.mobile-layout {
+  .main-content {
+    padding-bottom: 20px;
+  }
+  .main-signup-content, .main-signin-content {
+    padding: 30px;
+  }
+
+  .main-plan {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 -30px;
+
+    .main-plan-container {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      .carousel-root {
+        width: 100vw;
+      }
+
+      .main-plan-item {
+        display: flex;
+        width: initial;
+        height: 100%;
+        max-height: calc( 100vh - 190px );
+        flex-direction: column;
+        align-items: stretch;
+        margin: 0 15px;
+        overflow: hidden;
+        border-radius: 30px;
+        &:hover {
+          box-shadow: none;
+        }
+
+        .plan-item-header {
+          flex: initial;
+          padding: 14px 0;
+          font-size: 20px;
+          font-weight: 500;
+        }
+
+        .plan-item-price {
+          height: 120px;
+          flex: initial;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 10px 20px;
+
+          .plan-price-currency {
+            font-size: 25px;
+            font-weight: 500;
+          }
+
+          .plan-price-num {
+            font-size: 60px;
+            font-weight: 600;
+            line-height: 80px;
+          }
+        }
+
+        .plan-item-content {
+          height: 100%;
+          min-height: initial;
+          display: flex;
+          flex-direction: column;
+          padding: 30px;
+
+          .plan-item-features {
+            max-height: calc( 100vh - 450px );
+            overflow: hidden;
+            div {
+              display: flex;
+              flex-direction: row;
+              text-align: start;
+              margin-bottom: 10px;
+              font-size: 14px;
+
+              span {
+                display: inline-block;
+                content: '';
+                height: 7px;
+                width: 7px;
+                margin-top: 5px;
+                margin-right: 12px;
+                border-radius: 50%;
+              }
+            }
+          }
+
+          .plan-item-btn {
+            display: flex;
+            flex-direction: column;
+
+            button {
+              //width: 100%;
+              height: 50px;
+              font-size: 19px;
+              font-weight: 600;
+              border-radius: 25px;
+
+              i {
+                display: none;
+                margin-right: 10px;
+                font-size: 30px;
+              }
+            }
+          }
+        }
+
+        &.enterprise {
+
+          .plan-item-price {
+            font-size: 18px;
+            font-weight: 700;
+          }
+
+          .plan-item-btn {
+            button {
+              background-color: #ffffff;
+            }
+
+            .plan-item-code {
+              text-align: center;
+              margin-top: 15px;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .main-pay {
+    .main-pay-content {
+      flex-direction: column;
+      .main-pay-info {
+        width: initial;
+        padding: 30px;
+      }
+      .main-pay-purchase {
+        width: initial;
+        padding: 30px;
+      }
+    }
+  }
+
+  .enterprise-card {
+    .enterprise-card-content {
+      padding: 30px;
+      img {
+        width: 170px !important;
+      }
+
+      .enterprise-input-container {
+        padding: 0 10px;
+      }
+      .enterprise-phone-num {
+        font-size: 20px !important;
+      }
+      .enterprise-desc {
+        font-size: 12px;
+        margin: 15px 0 20px;
+      }
+      .enterprise-card-bottom {
+        font-size: 11px;
+      }
     }
   }
 }

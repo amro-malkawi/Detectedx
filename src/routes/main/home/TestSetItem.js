@@ -3,8 +3,6 @@ import {Button} from '@material-ui/core';
 import PropTypes from "prop-types";
 import classNames from 'classnames';
 import * as Apis from 'Api';
-import * as selectors from "Selectors";
-import {apiUploadAddress} from "Api";
 
 TestSetItem.defaultProps = {
     smallSize: false
@@ -21,11 +19,9 @@ function TestSetItem({data, onClick, smallSize}) {
     useEffect(() => {
         let type = '';
         if (data.modalityInfo.modality_type === 'quiz') {
-            type = 'quiz';
-        } else if (data.modalityInfo.modality_type === 'video_lecture') {
+            type = 'Quiz';
+        } else if (data.modalityInfo.modality_type === 'video_lecture' || data.modalityInfo.modality_type === 'presentations') {
             type = 'LECTURE';
-        } else if (data.modalityInfo.modality_type === 'presentations') {
-            type = 'PRESENTATIONS';
         } else {
             type = 'SELF ASSESSMENT MODULE';
         }

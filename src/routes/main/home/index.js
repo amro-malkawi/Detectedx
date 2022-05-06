@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Button, Tooltip} from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import {Scrollbars} from 'react-custom-scrollbars';
 import classNames from 'classnames';
 import {useDispatch} from "react-redux";
@@ -35,10 +36,15 @@ function Home() {
     const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0, presentationCount: 0});
 
     useEffect(() => {
+        history.replace({pathname: location.pathname});
     }, []);
 
     useEffect(() => {
         const param = QueryString.parse(location.search);
+        console.log(location.hash)
+        if(location.hash !== '#modal' && selectedTestSet) {
+            setSelectedTestSet(null);
+        }
         getData(param.search);
     }, [location, isLogin]);
 
@@ -86,6 +92,8 @@ function Home() {
             calcCounts(currentTestSets.modalityList, currentTestSets.testSetList);
             dispatch(setUserCompletedCount(completed));
             dispatch(setUserCompletedPoint(completedPoint));
+
+            // setSelectedTestSet(currentTestSets.testSetList[2]);
         });
     }
 
@@ -130,16 +138,15 @@ function Home() {
     }
 
     const onCategoryExpand = (categoryLabel, parentIndex) => {
-        console.log(categoryLabel, parentIndex);
         const newCategoryObj = [...categoryObj];
-        if(parentIndex === undefined) {
+        if (parentIndex === undefined) {
             // root category
             const i = newCategoryObj.findIndex((v) => v.label === categoryLabel);
-            if(i !== -1) newCategoryObj[i].expand = newCategoryObj[i].expand === undefined ? true : !newCategoryObj[i].expand;
+            if (i !== -1) newCategoryObj[i].expand = newCategoryObj[i].expand === undefined ? true : !newCategoryObj[i].expand;
         } else {
             // child category
             const i = newCategoryObj[parentIndex].options.findIndex((v) => v.label === categoryLabel);
-            if(i !== -1) newCategoryObj[parentIndex].options[i].expand = newCategoryObj[parentIndex].options[i].expand === undefined ? true : !newCategoryObj[parentIndex].options[i].expand;
+            if (i !== -1) newCategoryObj[parentIndex].options[i].expand = newCategoryObj[parentIndex].options[i].expand === undefined ? true : !newCategoryObj[parentIndex].options[i].expand;
         }
         setCategoryObj(newCategoryObj);
     }
@@ -160,6 +167,16 @@ function Home() {
             setFilter('');
         } else {
             setFilter(val.id);
+        }
+    }
+
+    const onOpenTestSetModal = (value) => {
+        setSelectedTestSet(value);
+        if(value) {
+            history.push({pathname: location.pathname, hash: 'modal'});
+        } else {
+            // history.replace({pathname: location.pathname});
+            history.goBack();
         }
     }
 
@@ -202,19 +219,18 @@ function Home() {
             selectedCategoryList.length === 0 ||
             (selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1)
         ));
-        showList.forEach(((v) => console.log(v.test_set_category)))
         if (filter !== '') {
             showList = showList.filter((v) => v.filterKeys.indexOf(filter) !== -1);
         }
         const normalList = [], completedList = [], enterpriseList = [];
         showList.forEach((v) => {
-           if(v.filterKeys.indexOf('completed') !== -1) {
-               completedList.push(v);
-           } else if (v.enterpriseTestSet) {
-               enterpriseList.push(v);
-           } else {
-               normalList.push(v);
-           }
+            if (v.filterKeys.indexOf('completed') !== -1) {
+                completedList.push(v);
+            } else if (v.enterpriseTestSet) {
+                enterpriseList.push(v);
+            } else {
+                normalList.push(v);
+            }
         });
         return (
             <Scrollbars
@@ -224,7 +240,7 @@ function Home() {
             >
                 <div className={'test-set-items'}>
                     {
-                        normalList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                        normalList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => onOpenTestSetModal(v)}/>)
                     }
                 </div>
                 {
@@ -233,7 +249,7 @@ function Home() {
                         <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Enterprise Access</div>
                         <div className={'test-set-items'}>
                             {
-                                enterpriseList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                                enterpriseList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => onOpenTestSetModal(v)}/>)
                             }
                         </div>
                     </React.Fragment>
@@ -243,7 +259,7 @@ function Home() {
                     completedList.length > 0 &&
                     <div className={'test-set-items'}>
                         {
-                            completedList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                            completedList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => onOpenTestSetModal(v)}/>)
                         }
                     </div>
                 }
@@ -259,7 +275,7 @@ function Home() {
                     <span className={'fs-23'}>Categories</span>
                     <Tooltip title={'Clear'}>
                         <div className={'ml-10 cursor-pointer text-primary1'} onClick={() => setSelectedCategoryList([])}>
-                            <DeleteOutlineRoundedIcon fontSize={'small'} />
+                            <DeleteOutlineRoundedIcon fontSize={'small'}/>
                         </div>
                     </Tooltip>
                 </div>
@@ -288,17 +304,28 @@ function Home() {
                     }
                 </div>
                 <div className={'mobile-filter-bar'}>
-                    dasdfasdfasdf
+                    <div className={'d-flex flex-row align-items-center cursor-pointer'}>
+                        <span className={'fs-17 fw-semi-bold mr-2'}>Categories</span>
+                        <i className={'ti ti-angle-down'} />
+                    </div>
+                    <div className={'d-flex flex-row align-items-center ml-40 cursor-pointer'}>
+                        <span className={'fs-17 fw-semi-bold mr-2'}>Filter</span>
+                        <FilterListIcon />
+                    </div>
                 </div>
                 {
                     renderTestSetList()
                 }
             </div>
             {
-                selectedTestSet && <TestSetModal data={selectedTestSet} onClose={() => {
-                    setSelectedTestSet(null);
-                    calcCounts();
-                }}/>
+                selectedTestSet &&
+                <TestSetModal
+                    data={selectedTestSet}
+                    onClose={() => {
+                        onOpenTestSetModal(null);
+                        calcCounts();
+                    }}
+                />
             }
         </div>
     )

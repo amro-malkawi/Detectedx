@@ -24,7 +24,7 @@ function EnterpriseComponent({onSubmit}) {
                     <div className={'text-white text-center fs-26 fw-semi-bold mt-1 mb-30'}>
                         Enterprise
                     </div>
-                    <div className={'px-50'}>
+                    <div className={'enterprise-input-container'}>
                         <Input
                             type={'text'}
                             placeholder={'ENTER YOUR ENTERPRISE CODE'}
