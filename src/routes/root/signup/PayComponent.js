@@ -39,7 +39,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                         </div>
                         <div className={'cost-content'}>
                             <span className={'cost-symbol'}>$</span>
-                            <span className={'cost-val'}>{plan.detail.amount}</span>
+                            <span className={'cost-val'}>{plan.id === 'free' ? 0 : plan.detail.amount}</span>
                             <span className={'cost-currency'}>{plan.detail.currency.toUpperCase()}</span>
                         </div>
                         <div className={'fs-14 text-primary1'}>{plan.access}</div>

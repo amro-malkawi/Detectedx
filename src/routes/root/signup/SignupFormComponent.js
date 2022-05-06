@@ -22,7 +22,6 @@ function SignupFormComponent({onComplete}) {
     const [errorCountry, setErrorCountry] = useState(false);
     const [state, setState] = useState('');
     const [postcode, setPostcode] = useState('');
-    const [errorPostcode, setErrorPostcode] = useState(false);
     const [jobTitle, setJobTitle] = useState('');
     const [errorJobTitle, setErrorJobTitle] = useState(false);
     const [institution, setInstitution] = useState('');
@@ -78,10 +77,6 @@ function SignupFormComponent({onComplete}) {
         if (country === '') {
             valid = false;
             setErrorCountry(true);
-        }
-        if (postcode.trim().length === 0) {
-            valid = false;
-            setErrorPostcode(true);
         }
         if(jobTitle === '') {
             valid = false;
@@ -224,12 +219,11 @@ function SignupFormComponent({onComplete}) {
                             />
                         </div>
                         <div className={'col-sm-12 col-md-6 input-item'}>
-                            <span>POSTCODE *</span>
+                            <span>POSTCODE</span>
                             <Input
                                 type={'text'}
-                                invalid={errorPostcode}
                                 value={postcode}
-                                onChange={(e) => {setPostcode(e.target.value); setErrorPostcode(false)}}
+                                onChange={(e) => setPostcode(e.target.value)}
                             />
                         </div>
                     </div>

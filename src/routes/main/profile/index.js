@@ -10,24 +10,30 @@ import QueryString from "query-string";
 import {useHistory, useLocation} from "react-router-dom";
 
 const tabList = [
-    {value: 'personal', label: 'Personal Info', component: <PersonalComponent />},
-    {value: 'billing', label: 'Billing Info', component: <BillingComponent />},
-    {value: 'completed', label: 'Completed', component: <CompletedComponent />},
-    {value: 'settings', label: 'Settings', component: <SettingComponent />},
+    {value: 'personal', label: 'Personal Info', component: <PersonalComponent/>},
+    {value: 'billing', label: 'Billing Info', component: <BillingComponent/>},
+    {value: 'completed', label: 'Completed', component: <CompletedComponent/>},
+    {value: 'settings', label: 'Settings', component: <SettingComponent/>},
 ];
 
 function Profile() {
+    const history = useHistory();
     const location = useLocation();
     const userName = useState(useSelector((state) => state.authUser.userName));
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
     useEffect(() => {
         const param = QueryString.parse(location.search);
-        if(param.tab) {
+        if (param.tab) {
             const i = tabList.findIndex((v) => v.value === param.tab);
-            if(i !== -1) setSelectedTabIndex(i);
+            if (i !== -1 && selectedTabIndex !== i) setSelectedTabIndex(i);
         }
     }, [location])
+
+    const onChangeTab = (index) => {
+        setSelectedTabIndex(index)
+        history.replace(QueryString.stringifyUrl({url: location.pathname, query: {tab: tabList[index].value}}));
+    }
 
     return (
         <div className={'main-profile'}>
@@ -43,7 +49,7 @@ function Profile() {
                                 <Button
                                     key={v.value}
                                     className={classNames('profile-tab', {'active': i === selectedTabIndex})}
-                                    onClick={() => setSelectedTabIndex(i)}
+                                    onClick={() => onChangeTab(i)}
                                 >
                                     {v.label}
                                 </Button>

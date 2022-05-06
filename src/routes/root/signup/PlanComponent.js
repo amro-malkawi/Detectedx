@@ -17,8 +17,11 @@ function PlanComponent({onSelectPlan, planList}) {
                     </div>
                     <div className={'plan-item-content'}>
                         <div className={'plan-item-features'}>
-                            <div>Point one here</div>
-                            <div>Point one here</div>
+                            <div><span/><div>Self-assessment modules</div></div>
+                            <div><span/><div>Quizzes</div></div>
+                            <div><span/><div>On-demand lectures</div></div>
+                            <div><span/><div>Unlimited access online 24/7</div></div>
+                            <div><span/><div>Upgrade to monthly subscription at the end of your trial</div></div>
                         </div>
                         <div className={'plan-item-btn'}>
                             <Button onClick={() => onSelectPlan(planList.free)}>
@@ -41,10 +44,13 @@ function PlanComponent({onSelectPlan, planList}) {
                     </div>
                     <div className={'plan-item-content'}>
                         <div className={'plan-item-features'}>
-                            <div>Point one here</div>
-                            <div>Point one here</div>
-                            <div>Point one here</div>
-                            <div>Point one here</div>
+                            <div><span/>Instant certification</div>
+                            <div><span/>Accredited CME points</div>
+                            <div><span/>Self-assessment modules</div>
+                            <div><span/>Quizzes</div>
+                            <div><span/>On-demand lectures</div>
+                            <div><span/>Cost savings by paying annually</div>
+                            <div><span/>Unlimited access online 24/7</div>
                         </div>
                         <div className={'plan-item-btn'}>
                             <Button onClick={() => onSelectPlan(planList.yearly)}>
@@ -68,9 +74,12 @@ function PlanComponent({onSelectPlan, planList}) {
                     </div>
                     <div className={'plan-item-content'}>
                         <div className={'plan-item-features'}>
-                            <div>Point one here</div>
-                            <div>Point one here</div>
-                            <div>Point one here</div>
+                            <div><span/>Instant certification</div>
+                            <div><span/>Accredited CME / CPD points</div>
+                            <div><span/>Self-assessment modules</div>
+                            <div><span/>Quizzes</div>
+                            <div><span/>On-demand lectures</div>
+                            <div><span/>Unlimited access online 24/7</div>
                         </div>
                         <div className={'plan-item-btn'} onClick={() => onSelectPlan(planList.monthly)}>
                             <Button>

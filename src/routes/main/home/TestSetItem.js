@@ -102,7 +102,7 @@ function TestSetItem({data, onClick, smallSize}) {
                     {
                         renderDifficult(data.difficulty)
                     }
-                    <span className={'mr-40'}>{data.test_set_time || 0}MINS</span>
+                    <span className={'cme-value'}>{data.test_set_time || 0}MINS</span>
                     <span className={''}>CME: {data.test_set_point}</span>
                 </div>
             }

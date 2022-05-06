@@ -71,7 +71,9 @@
       font-size: 1.437rem;
       margin-bottom: 20px;
     }
-
+    .mobile-filter-bar {
+      display: none;
+    }
     .test-set-items-container {
       flex: 1;
       overflow: auto;
@@ -84,6 +86,7 @@
     }
   }
 }
+
 .main-home, .main-profile {
   .test-set-item {
     position: relative;
@@ -99,6 +102,7 @@
 
     &.small-test-set-item {
       aspect-ratio: unset;
+
       .test-set-name {
         padding-right: 50px !important;
       }
@@ -220,13 +224,16 @@
       width: 12px;
       height: 12px;
       margin-right: 3px;
-      border-radius: 6px;
+      border-radius: 50%;
       background-color: #ffffff30;
 
       &.active {
         background-color: white;
       }
     }
+  }
+  .cme-value {
+    padding-right: 40px;
   }
 }
 
@@ -236,6 +243,7 @@
   .MuiDialog-paper {
     box-shadow: none;
     background-color: transparent;
+
     &::-webkit-scrollbar {
       width: 0;
       background: transparent;
@@ -377,6 +385,7 @@
       height: 120px;
       border-radius: 20px;
     }
+
     .presenter-logo {
       max-width: 150px;
       max-height: 50px;
@@ -403,6 +412,62 @@
 }
 
 
+.mobile-layout {
+  .main-home {
+    margin-top: 0;
+    .main-home-side {
+      display: none;
+    }
+
+    .test-set-content {
+      .test-set-top-filter {
+        display: none;
+      }
+
+      .mobile-filter-bar {
+        display: flex
+      }
+    }
+
+    .test-set-items-container {
+      .test-set-items {
+        .test-set-item {
+          .test-category {
+            font-size: 11px;
+          }
+
+          .test-set-name {
+            font-size: 1.5rem;
+            line-height: 2rem;
+          }
+
+          .test-set-item-spec {
+            font-size: 9px;
+
+            .test-set-difficult {
+              margin-right: 5px;
+
+              & > div {
+                width: 9px;
+                height: 9px;
+              }
+            }
+
+            .cme-value {
+              padding-right: 15px;
+            }
+          }
+          .test-set-item-demo {
+            .demo-bar {
+
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 1700px) {
   .test-set-items {
     grid-template-columns: 1fr 1fr !important;
@@ -413,6 +478,7 @@
   .test-set-items {
     grid-template-columns: 1fr !important;
     justify-items: center;
+
     .test-set-item {
       width: 100%;
     }

@@ -1,6 +1,6 @@
 
 .main-signup {
-  height: 100%;
+  //height: 100%;
   flex: 1;
   display: flex;
   justify-content: center;
@@ -97,13 +97,13 @@
   .main-plan-container {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
 
     .main-plan-item {
       width: 18vw;
-      aspect-ratio: 18 / 29.5;
       display: flex;
       flex-direction: column;
+      align-items: stretch;
       margin: 0 7px;
       overflow: hidden;
       border-radius: 30px;
@@ -111,8 +111,7 @@
       transition: all .2s; /* Animation */
 
       &:hover {
-        width: 20vw;
-        aspect-ratio: 20 / 32.8;
+        box-shadow: 0 2px 10px 0 #888888;
 
         .plan-item-btn > button {
           box-shadow: 3px 3px 5px #333;
@@ -128,12 +127,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 0.7vw 0;
         font-size: 1.25vw;
         font-weight: 500;
         color: #180F15;
       }
 
       .plan-item-price {
+        height: 7vw;
         flex: 25;
         display: flex;
         flex-direction: column;
@@ -156,10 +157,10 @@
       }
 
       .plan-item-content {
-        flex: 46;
+        min-height: 24.5vw;
         display: flex;
         flex-direction: column;
-        padding: 30px 50px;
+        padding: 1.5vw 2.5vw;
 
         .plan-item-features {
           flex: 1;
@@ -167,18 +168,25 @@
           flex-direction: column;
 
           div {
+            display: flex;
+            flex-direction: row;
             margin-bottom: 10px;
             font-size: 0.88vw;
             color: #54a9fb;
 
-            &::before {
+            span {
               display: inline-block;
               content: '';
-              height: 10px;
-              width: 10px;
+              height: 9px;
+              width: 9px;
+              margin-top: 5px;
               margin-right: 12px;
               border-radius: 50%;
               background-color: #54a9fb;
+            }
+            div {
+              flex: 1;
+              margin-bottom: 0;
             }
           }
         }

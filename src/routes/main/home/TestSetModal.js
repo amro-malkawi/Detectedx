@@ -10,6 +10,7 @@ import {useHistory} from 'react-router-dom';
 import {NotificationManager} from "react-notifications";
 import * as Apis from "Api";
 import * as selectors from "Selectors";
+import {attemptsStart} from "Api";
 
 function TestSetModal({data, onClose}) {
     const history = useHistory();
@@ -36,15 +37,15 @@ function TestSetModal({data, onClose}) {
         if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
             history.push(data.id)
         } else {
-            Apis.attemptsAdd(data.id, undefined).then(resp => {
-                let path = (['video_lecture', 'presentations'].indexOf(data.modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
-                history.push(path);
+            Apis.attemptsStart(data.id, undefined).then(attempt => {
+                let path;
+                if (attempt.progress === 'test') {
+                    path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+                } else {
+                    path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
+                }
+                history.push(path)
             });
-            // if (data.modalityInfo.modality_has_sub_type) {
-            //     this.setState({isShowModalType: 'attemptSubTypeModal', selectedTestSetId: testSetId});
-            // } else {
-            //     this.onCreateAttempt(data.id, null, data.modalityInfo);
-            // }
         }
     }
 
@@ -132,7 +133,7 @@ function TestSetModal({data, onClose}) {
 
 
     const renderStartButton = () => {
-        const {id, attempts, needSubscribe, demoTestSet} = data;
+        const {attempts, needSubscribe} = data;
         let attempt = attempts[0];
         if (needSubscribe) {
             return (
@@ -150,14 +151,8 @@ function TestSetModal({data, onClose}) {
                 </Button>
             )
         } else {
-            let path;
-            if (attempt.progress === '' || attempt.progress === 'test') {
-                path = (['video_lecture', 'presentations'].indexOf(data.modalityInfo.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
-            } else {
-                path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
-            }
             return (
-                <Button className={'test-set-start-btn'} onClick={() => history.push(path)}>
+                <Button className={'test-set-start-btn'} onClick={onStart}>
                     Continue Module
                 </Button>
             );

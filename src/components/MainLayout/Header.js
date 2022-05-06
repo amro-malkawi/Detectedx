@@ -40,13 +40,13 @@ function Header(props) {
     }
 
     return (
-        <div className={'main-header d-flex flex-row align-items-center'}>
+        <div className={'main-header'}>
             <div className={'header-logo'}>
                 <a href={'https://detectedx.com'}>
                     <img src={require('Assets/img/main/header_logo.png')} alt={''}/>
                 </a>
             </div>
-            <div className={'header-searchbar d-flex flex-row align-items-center'}>
+            <div className={'header-searchbar'}>
                 <div className={'home-icon'} onClick={() => history.push('/main')}>
                     <img src={require('Assets/img/main/icon_home.svg')} alt={''}/>
                 </div>
@@ -78,9 +78,9 @@ function Header(props) {
                             <span className={'fs-23 fw-semi-bold cursor-pointer'} onClick={() => history.push('/main/profile')}>Login</span>
                     }
                     <div className={'fs-14 cursor-pointer'} onClick={() => history.push('/main/profile?tab=completed')}>
-                        <span>COMPLETED MODULES:</span>
+                        <span>COMPLETED<span className={'hide-mobile'}> MODULES</span>:</span>
                         <span className={'info-num'}>{isLogin ? userCompletedCount : ''}</span>
-                        <span>THIS YEARS CME POINTS:</span>
+                        <span><span className={'hide-mobile'}>THIS YEARS </span>CME POINTS:</span>
                         <span className={'info-num'}>{isLogin ? userCompletedPoint : ''}</span>
                     </div>
                 </div>

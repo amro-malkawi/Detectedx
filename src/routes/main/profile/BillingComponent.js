@@ -102,7 +102,7 @@ function BillingComponent() {
                                 Please subscribe to all services.
                             </span>
                             <Button className={'contain-btn mb-1 mt-50 px-3'} onClick={() => history.push('/plan')}>
-                                Subscribe Plan
+                                Subscribe Now
                             </Button>
                         </div>
                     </div> :

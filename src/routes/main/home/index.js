@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {Button} from '@material-ui/core';
+import {Button, Tooltip} from '@material-ui/core';
+import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 import {Scrollbars} from 'react-custom-scrollbars';
 import classNames from 'classnames';
 import {useDispatch} from "react-redux";
@@ -199,19 +200,18 @@ function Home() {
         if (modalityList.length === 0) return null;
         let showList = testSetList.filter((v) => (
             selectedCategoryList.length === 0 ||
-            selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1
+            (selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1)
         ));
+        showList.forEach(((v) => console.log(v.test_set_category)))
         if (filter !== '') {
             showList = showList.filter((v) => v.filterKeys.indexOf(filter) !== -1);
         }
-        const normalList = [], completedList = [], ssoList = [], clinicList = [];
+        const normalList = [], completedList = [], enterpriseList = [];
         showList.forEach((v) => {
-           if(v.ssoAssignTestSet) {
-               ssoList.push(v);
-           } else if(v.clinicAssignTestSet) {
-               clinicList.push(v);
-           } else if(v.filterKeys.indexOf('completed') !== -1) {
+           if(v.filterKeys.indexOf('completed') !== -1) {
                completedList.push(v);
+           } else if (v.enterpriseTestSet) {
+               enterpriseList.push(v);
            } else {
                normalList.push(v);
            }
@@ -227,6 +227,17 @@ function Home() {
                         normalList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
                     }
                 </div>
+                {
+                    enterpriseList.length > 0 &&
+                    <React.Fragment>
+                        <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Enterprise Access</div>
+                        <div className={'test-set-items'}>
+                            {
+                                enterpriseList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
+                            }
+                        </div>
+                    </React.Fragment>
+                }
                 {(completedList.length > 0 && normalList.length > 0) && <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Completed</div>}
                 {
                     completedList.length > 0 &&
@@ -236,28 +247,6 @@ function Home() {
                         }
                     </div>
                 }
-                {
-                    ssoList.length > 0 &&
-                    <React.Fragment>
-                        <div className={'fs-23 mb-2'} style={{marginTop: 70}}>{ssoList[0].ssoAssignName} Test Set</div>
-                        <div className={'test-set-items'}>
-                            {
-                                ssoList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
-                            }
-                        </div>
-                    </React.Fragment>
-                }
-                {
-                    clinicList.length > 0 &&
-                    <React.Fragment>
-                        <div className={'fs-23 mb-2'} style={{marginTop: 70}}>{clinicList[0].clinicAssignName} Clinic Test Set</div>
-                        <div className={'test-set-items'}>
-                            {
-                                clinicList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => setSelectedTestSet(v)}/>)
-                            }
-                        </div>
-                    </React.Fragment>
-                }
 
             </Scrollbars>
         )
@@ -266,8 +255,13 @@ function Home() {
     return (
         <div className={'main-home d-flex flex-row'}>
             <div className={'main-home-side'}>
-                <div className={'mb-30'}>
+                <div className={'d-flex flex-row align-items-end mb-30'}>
                     <span className={'fs-23'}>Categories</span>
+                    <Tooltip title={'Clear'}>
+                        <div className={'ml-10 cursor-pointer text-primary1'} onClick={() => setSelectedCategoryList([])}>
+                            <DeleteOutlineRoundedIcon fontSize={'small'} />
+                        </div>
+                    </Tooltip>
                 </div>
                 <Scrollbars
                     className="main-categories"
@@ -292,6 +286,9 @@ function Home() {
                             </span>
                         ))
                     }
+                </div>
+                <div className={'mobile-filter-bar'}>
+                    dasdfasdfasdf
                 </div>
                 {
                     renderTestSetList()

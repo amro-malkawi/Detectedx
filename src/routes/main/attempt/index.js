@@ -34,6 +34,7 @@ import ReattemptQuizModal from "./ReattemptQuizModal";
 import VideoLectureScore from './component/VideoLectureScore';
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
+import * as selectors from "Selectors";
 import {connect} from "react-redux";
 
 const darkTheme = createMuiTheme({
@@ -801,7 +802,7 @@ class Attempt extends Component {
                         variant="contained"
                         size="small"
                         className={disableDown ? "text-white grey-btn ml-10" : "text-white green-btn ml-10"}
-                        onClick={() => this.setState({sendEmailModalType: 'certificate', sendPdfEmail: ''})}
+                        onClick={() => this.setState({sendEmailModalType: 'certificate', sendPdfEmail: this.props.userEmail})}
                         disabled={disableDown}
                     >
                         <MailIcon className={'mr-1'}/>
@@ -1149,7 +1150,7 @@ class Attempt extends Component {
                 <Button variant="contained" color="primary" size="small" className="text-white mr-20" onClick={() => this.onScoreDownload()}>
                     Download Score
                 </Button>
-                <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({sendEmailModalType: 'score', sendPdfEmail: ''})}>
+                <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({sendEmailModalType: 'score', sendPdfEmail: this.props.userEmail})}>
                     Send Via Email
                 </Button>
             </div>
@@ -1409,6 +1410,7 @@ const DisableButton = withStyles((theme) => ({
 const mapStateToProps = (state) => {
     return {
         locale: state.settings.locale.locale,
+        userEmail: selectors.getUserEmail(null)
     };
 };
 

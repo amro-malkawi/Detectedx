@@ -35,6 +35,7 @@ import VideoLectureScore from './component/VideoLectureScore';
 import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
+import * as selectors from "Selectors";
 
 
 const darkTheme = createMuiTheme({
@@ -75,7 +76,7 @@ class Attempt extends Component {
             isDownCert: false,
             isHideScore: false,
             sendEmailModalType: null,
-            sendPdfEmail: '',
+            sendPdfEmail: this.props.userEmail,
             reattemptQuizPercent: null
         }
     }
@@ -1411,7 +1412,8 @@ const DisableButton = withStyles((theme) => ({
 const mapStateToProps = (state) => {
     return {
         locale: state.settings.locale.locale,
-    };
+        userEmail: selectors.getUserEmail(null)
+    }
 };
 
 export default withRouter(connect(mapStateToProps, {setDarkMode})(Attempt));

@@ -39,10 +39,10 @@ function EnterpriseComponent({onSubmit}) {
                         FOR SUPPORT CALL
                     </div>
                     <div className={'enterprise-phone-num text-primary1 text-center'}>
-                        +61 4548 4567
+                        US: 833-940-4074
                     </div>
                     <div className={'enterprise-phone-num text-primary1 text-center'}>
-                        +1 5678 7363
+                        AU: 1300 816 631
                     </div>
                     <div className={'enterprise-split-line'}/>
                     <div className={'enterprise-desc'}>

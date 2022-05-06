@@ -222,7 +222,7 @@ export function currentTestSets(searchText) {
  * attempt operation
  */
 
-export function attemptsAdd(test_set_id, attemptSubType) {
+export function attemptsStart(test_set_id, attemptSubType) {
     let url = '/attempts/start?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
     if(attemptSubType && attemptSubType.length > 0) {
        url = url + '&sub_type=' + attemptSubType;

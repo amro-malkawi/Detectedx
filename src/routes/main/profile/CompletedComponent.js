@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from 'reactstrap';
 import {Button} from '@material-ui/core';
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import moment from 'moment';
 import * as Apis from "Api";
+import QueryString from "query-string";
 
 function CompletedComponent() {
     const history = useHistory();
+    const location = useLocation();
     const [completeList, setCompleteList] = useState([]);
     const [totalAttempt, setTotalAttempt] = useState(0);
     const [totalPoint, setTotalPoint] = useState(0);
@@ -14,22 +16,25 @@ function CompletedComponent() {
     const [attemptList, setAttemptList] = useState([]);
 
     useEffect(() => {
-        getData();
+        getData(true);
     }, []);
 
     useEffect(() => {
         if(selectedTestSet) {
             Apis.attemptsCompletedList(selectedTestSet.id).then(resp => {
                 setAttemptList(resp.attempts);
+                history.replace(QueryString.stringifyUrl({url: location.pathname, query: {tab: 'completed', id: selectedTestSet.id}}));
             }).catch(e => {
 
             });
+
         } else {
             setAttemptList([]);
+            history.replace(QueryString.stringifyUrl({url: location.pathname, query: {tab: 'completed'}}));
         }
     }, [selectedTestSet]);
 
-    const getData = () => {
+    const getData = (firstLoading) => {
         Apis.testSetRecentlyCompleted().then((resp) => {
             let a = 0, p = 0;
             resp.forEach((v) => {
@@ -37,10 +42,8 @@ function CompletedComponent() {
                 p += v.test_set_point;
                 if(v.modalityInfo.modality_type === 'quiz') {
                     v.type = 'quiz';
-                } else if (v.modalityInfo.modality_type === 'video_lecture') {
+                } else if (v.modalityInfo.modality_type === 'video_lecture' || v.modalityInfo.modality_type === 'presentations') {
                     v.type = 'LECTURE';
-                } else if (v.modalityInfo.modality_type === 'presentations') {
-                    v.type = 'PRESENTATIONS';
                 } else {
                     v.type = 'SELF ASSESSMENT MODULE';
                 }
@@ -48,7 +51,26 @@ function CompletedComponent() {
             setTotalAttempt(a);
             setTotalPoint(p);
             setCompleteList(resp);
+            if(firstLoading) {
+                const param = QueryString.parse(location.search);
+                if(param.id) {
+                    const selectedItem = resp.find((v) => v.id === param.id);
+                    if(selectedItem) setSelectedTestSet(selectedItem);
+                }
+            }
         })
+    }
+
+    const onReattempt = () => {
+        Apis.attemptsStart(selectedTestSet.id, undefined).then(attempt => {
+            let path;
+            if (attempt.progress === 'test') {
+                path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+            } else {
+                path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
+            }
+            history.push(path)
+        });
     }
 
     const renderCompletedLine = (v) => {
@@ -71,7 +93,6 @@ function CompletedComponent() {
     }
 
     const renderAttemptLine = (v, i) => {
-
         return(
             <tr key={v.id} style={{backgroundColor: (selectedTestSet.modalityInfo.modality_color || '#534ed9')}}>
                 <td className={'text-center'}>{i + 1}</td>
@@ -93,8 +114,8 @@ function CompletedComponent() {
                 <div className={'profile-completed-content'}>
                     <div className={'profile-completed-top'}>
                         <div className={'d-flex flex-row align-items-center'}>
-                            <div className={'fs-15 text-primary1 mr-40'}>COMPLETED</div>
-                            <Input type={'select'}>
+                            <div className={'fs-15 text-primary1 mr-40'} style={{paddingTop: 8}}>COMPLETED</div>
+                            <Input type={'select'} className={'mt-1'}>
                                 <option>FILTER</option>
                                 <option>COMPLETED</option>
                             </Input>
@@ -155,7 +176,7 @@ function CompletedComponent() {
                             </div>
                         </div>
                         <div>
-                            <Button className={'profile-complete-reattempt'}>REATTEMPT</Button>
+                            <Button className={'profile-complete-reattempt'} onClick={onReattempt}>REATTEMPT</Button>
                         </div>
                     </div>
                     <div className={'profile-attempt-table'}>
