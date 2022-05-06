@@ -4,7 +4,6 @@ import CovidExtraInfo from "./CovidExtraInfo";
 import VolparaExtraInfo from "./VolparaExtraInfo";
 
 export default function ({open, onClose, modality_type}) {
-    console.log(modality_type, '3212341234')
     switch (modality_type) {
         case "covid":
             return <CovidExtraInfo open={open} onClose={onClose}/>

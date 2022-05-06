@@ -275,6 +275,11 @@ $main-active-color: #54A9FB;
   }
 
   .main-content {
-    margin: 0 30px 15px;
+    padding: 0 30px;
+    margin: 0;
+    ::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
   }
 }

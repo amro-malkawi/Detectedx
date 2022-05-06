@@ -28,7 +28,6 @@ const GuestLoginModal = ({open, attemptId, onClose, onComplete}) => {
     const onFinishLogin = () => {
         Apis.attemptsAssignFromGuest(attemptId).then((resp) => {
             onComplete()
-            console.log('asdfasdfasdfasdfasdfasdf')
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });

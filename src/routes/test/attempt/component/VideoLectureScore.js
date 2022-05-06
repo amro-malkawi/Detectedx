@@ -8,7 +8,6 @@ function VideoLectureScore({attemptId, testCaseId}) {
     useEffect(() => {
         Apis.getAttemptQuizAnswer(attemptId, testCaseId, false).then((resp) => {
             setQuestionList(resp);
-            console.log(resp, '//////////////////')
         }).catch((error) => {
             NotificationManager.error(error.response ? error.response.data.error.message : error.message);
         });

@@ -164,7 +164,6 @@ function prefetch(element) {
                 stackPrefetch.indicesToRequest.length > 0
             )
         ) {
-            console.log('all prefetch finish');
             triggerEvent(element, EVENTS.STACK_PREFETCH_DONE, {
                 element,
                 stackPrefetch,
