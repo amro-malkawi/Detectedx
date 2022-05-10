@@ -64,7 +64,7 @@ function SettingComponent() {
     }
 
     const onApplyCoupon = () => {
-        Apis.couponApplyTestSetCoupon(enterpriseCode).then((resp) => {
+        Apis.enterpriseApplyTestSet(enterpriseCode).then((resp) => {
             getData();
             setEnterpriseCode('');
             NotificationManager.success(`You get ${resp.unlockCount} module from enterprise code.`);

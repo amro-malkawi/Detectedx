@@ -47,7 +47,7 @@ function BillingComponent() {
         Apis.paymentCancelSubscription().then((resp) => {
             getData();
         }).catch((e) => {
-            NotificationManager.error("Cancel subscription was failed");
+            NotificationManager.error("Cancel subscription failed");
         }).finally(() => {
             setCanceling(false)
         })
@@ -120,7 +120,8 @@ function BillingComponent() {
                             </div>
                             <div className={'d-flex flex-column'}>
                                 <Button className={'contain-btn mb-1'} onClick={() => history.push('/plan')}>
-                                    {billingInfo.subscriptionInfo.status === 'active' ? 'CHANGE PLAN' : 'Subscribe Again'}
+                                    {/*{billingInfo.subscriptionInfo.status === 'active' ? 'CHANGE PLAN' : 'SUBSCRIBE AGAIN'}*/}
+                                    CHANGE PLAN
                                 </Button>
                                 {
                                     billingInfo.subscriptionInfo.status !== 'canceled' &&

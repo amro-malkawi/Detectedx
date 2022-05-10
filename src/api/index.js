@@ -535,8 +535,11 @@ export function couponInfo(couponCode, type) {
     return instance.get(url).then((response) => response.data);
 }
 
-export function couponApplyTestSetCoupon(couponCode) {
-    const url = 'coupons/apply_test_set_coupon?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
+/**
+ * enterprise functions
+ */
+export function enterpriseApplyTestSet(couponCode) {
+    const url = 'enterprises/apply_enterprise_code?code=' + couponCode + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

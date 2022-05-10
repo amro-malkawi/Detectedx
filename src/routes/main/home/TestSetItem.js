@@ -32,7 +32,8 @@ function TestSetItem({data, onClick, smallSize}) {
                 categoryList.splice(0, 1);
                 setTestSetCategory(categoryList.join(' '));
             }
-        } catch (e) {}
+        } catch (e) {
+        }
     }, [data]);
 
     const renderDifficult = (difficult) => {
@@ -93,13 +94,16 @@ function TestSetItem({data, onClick, smallSize}) {
             </div>
             {
                 !smallSize &&
-                <div className={'test-set-item-spec'}>
-                    <span>DIFFICULTY</span>
-                    {
-                        renderDifficult(data.difficulty)
-                    }
-                    <span className={'cme-value'}>{data.test_set_time || 0}MINS</span>
-                    <span className={''}>CME: {data.test_set_point}</span>
+                <div className={'d-flex flex-column align-items-start'}>
+                    <span>{data.test_set_code}</span>
+                    <div className={'test-set-item-spec'}>
+                        <span>DIFFICULTY</span>
+                        {
+                            renderDifficult(data.difficulty)
+                        }
+                        <span className={'cme-value'}>{data.test_set_time || 0}MINS</span>
+                        <span className={''}>CME: {data.test_set_point}</span>
+                    </div>
                 </div>
             }
             {
@@ -111,7 +115,7 @@ function TestSetItem({data, onClick, smallSize}) {
                 </div>
             }
             {
-                data.needSubscribe && <div className={'test-set-item-disable'} />
+                data.needSubscribe && <div className={'test-set-item-disable'}/>
             }
         </Button>
     )

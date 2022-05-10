@@ -6,6 +6,7 @@ import {CardNumberElement, Elements, useStripe} from '@stripe/react-stripe-js';
 import PaypalButton from "Components/Payment/PaypalButton";
 import StripeForm from "Components/Payment/StripeForm";
 import * as Apis from "Api";
+import moment from "moment";
 
 function PayComponent({plan, onPay, signupEmail}) {
     const [discountCode, setDiscountCode] = useState('');
@@ -22,6 +23,19 @@ function PayComponent({plan, onPay, signupEmail}) {
         onPay(subscriptionId, customerId, paymentIntentId);
     }
 
+    const renderTrialBottom = () => {
+        if(plan.id === 'free') {
+            const trialEndDate = moment().add(7, 'days').format('DD MMM, YYYY');
+            return(
+                <div className={'pay-purchase-bottom'}>
+                    After your trial ends you will be charged ${plan.detail.amount}.00 per month<br/>
+                    starting {trialEndDate}. You can always cancel before then.
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
 
     return (
         <div className={'main-pay'}>
@@ -60,7 +74,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                         }
                         <div className={'d-flex flex-row justify-content-between fs-14 text-white'}>
                             <span>SUBTOTAL</span>
-                            <span>${plan.detail.amount}.00</span>
+                            <span>${plan.id === 'free' ? 0 : plan.detail.amount}.00</span>
                         </div>
                         <div className={'pay-split-bar'}/>
                         <div>
@@ -86,17 +100,6 @@ function PayComponent({plan, onPay, signupEmail}) {
                 </div>
                 <div className={'main-pay-purchase'}>
                     <div className={'main-pay-purchase-content'}>
-                        {/*<div>*/}
-                        {/*    <PaypalButton*/}
-                        {/*        planId=''*/}
-                        {/*        paypalKey={paypalKey}*/}
-                        {/*        currency={'AUD'}*/}
-                        {/*        createOrder={onPaypalCreateOrder}*/}
-                        {/*        onApprove={onPaypalApprove}*/}
-                        {/*        onSuccess={null}*/}
-                        {/*        onCancel={onPaypalCancel}*/}
-                        {/*    />*/}
-                        {/*</div>*/}
                         <div className={'text-center fs-11 mt-2'}>
                             Enter payment details
                         </div>
@@ -104,10 +107,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                             <StripeForm initialEmail={signupEmail} priceId={plan.detail.id} isTrial={plan.id === 'free'} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
                         </Elements>
                     </div>
-                    <div className={'pay-purchase-bottom'}>
-                        After your trial ends you will be charged $xx.xx per month<br/>
-                        starting April 30, 2022. You can always cancel before then.
-                    </div>
+                    {renderTrialBottom()}
                 </div>
             </div>
         </div>

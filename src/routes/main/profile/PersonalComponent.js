@@ -22,7 +22,6 @@ function PersonalComponent() {
     const [country, setCountry] = useState('');
     const [state, setState] = useState('');
     const [postcode, setPostcode] = useState('');
-    const [errorPostcode, setErrorPostcode] = useState(false);
     const [jobTitle, setJobTitle] = useState('');
     const [errorJobTitle, setErrorJobTitle] = useState(false);
     const [institution, setInstitution] = useState('');
@@ -61,11 +60,11 @@ function PersonalComponent() {
 
     const checkValidation = () => {
         let valid = true;
-        if (firstName.trim().length === 0) {
+        if (!firstName || firstName.trim().length === 0) {
             valid = false;
             setErrorFirstName(true);
         }
-        if (lastName.trim().length === 0) {
+        if (!lastName || lastName.trim().length === 0) {
             valid = false;
             setErrorLastName(true);
         }
@@ -73,15 +72,11 @@ function PersonalComponent() {
             valid = false;
             setErrorEmail(true)
         }
-        if (postcode.trim().length === 0) {
-            valid = false;
-            setErrorPostcode(true);
-        }
-        if (jobTitle === '') {
+        if (!jobTitle || jobTitle === '') {
             valid = false;
             setErrorJobTitle(true);
         }
-        if (institution.trim().length === 0) {
+        if (!institution || institution.trim().length === 0) {
             valid = false;
             setErrorInstitution(true);
         }
@@ -118,6 +113,7 @@ function PersonalComponent() {
             <div className={'personal-content'}>
                 <Scrollbars
                     className="personal-item-list"
+                    style={{marginBottom: 1}}
                     autoHide
                     autoHideDuration={100}
                 >
@@ -202,15 +198,12 @@ function PersonalComponent() {
                             onChange={(e) => setState(e.target.value)}
                         />
                     </div>
-                    <div className={classNames('personal-item', {'error': errorPostcode})}>
-                        <span>Postcode *</span>
+                    <div className={'personal-item'}>
+                        <span>Postcode</span>
                         <Input
                             type={'text'}
                             value={postcode}
-                            onChange={(e) => {
-                                setPostcode(e.target.value);
-                                setErrorPostcode(false)
-                            }}
+                            onChange={(e) => setPostcode(e.target.value)}
                         />
                     </div>
 
@@ -252,6 +245,7 @@ function PersonalComponent() {
             <div className={'completed-list'}>
                 <span className={'fs-15 text-primary1 mb-3'}>RECENTLY COMPLETED</span>
                 <Scrollbars
+                    style={{marginBottom: 1}}
                     autoHide
                     autoHideDuration={100}
                 >

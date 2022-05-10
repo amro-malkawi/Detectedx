@@ -14,11 +14,11 @@ import TestSetModal from './TestSetModal';
 import * as Apis from 'Api';
 
 const filterList = [
-    {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
-    {id: 'saved', label: 'Saved', needLogin: true, valKey: 'savedCount'},
     {id: 'sam', label: 'Self Assessment Modules', needLogin: false, valKey: 'samCount'},
     {id: 'lecture', label: 'Lecture', needLogin: false, valKey: 'lectureCount'},
     {id: 'quizzes', label: 'Quizzes', needLogin: false, valKey: 'quizCount'},
+    {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
+    {id: 'saved', label: 'Saved', needLogin: true, valKey: 'savedCount'},
 ]
 
 function Home() {
@@ -29,7 +29,7 @@ function Home() {
     const [modalityList, setModalityList] = useState([]);
     const [filter, setFilter] = useState(''); // inProgress, saved, sam, lecture, quizzes
     const [testSetList, setTestSetList] = useState([]);
-
+    const [showMobileCategoryType, setShowMobileCategoryType] = useState(null);
     const [categoryObj, setCategoryObj] = useState([]);
     const [selectedCategoryList, setSelectedCategoryList] = useState([]);
     const [selectedTestSet, setSelectedTestSet] = useState(null);
@@ -42,7 +42,7 @@ function Home() {
     useEffect(() => {
         const param = QueryString.parse(location.search);
         console.log(location.hash)
-        if(location.hash !== '#modal' && selectedTestSet) {
+        if (location.hash !== '#modal' && selectedTestSet) {
             setSelectedTestSet(null);
         }
         getData(param.search);
@@ -172,7 +172,7 @@ function Home() {
 
     const onOpenTestSetModal = (value) => {
         setSelectedTestSet(value);
-        if(value) {
+        if (value) {
             history.push({pathname: location.pathname, hash: 'modal'});
         } else {
             // history.replace({pathname: location.pathname});
@@ -213,6 +213,33 @@ function Home() {
         )
     }
 
+    const renderCategory = () => {
+        return (
+            <Scrollbars
+                className=""
+                style={{marginBottom: 1}}
+                autoHide
+                autoHideDuration={100}
+            >
+                {
+                    categoryObj.map((c, i) => renderCategories(c, i))
+                }
+            </Scrollbars>
+        )
+    }
+
+    const renderFilter = () => {
+        return filterList.filter((f) => (!isLogin ? !f.needLogin : true)).map((f) => (
+            <span
+                key={f.id}
+                className={classNames('mr-50 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
+                onClick={() => onChangeFilter(f)}
+            >
+                                {f.label}({filterValues[f.valKey]})
+                            </span>
+        ))
+    }
+
     const renderTestSetList = () => {
         if (modalityList.length === 0) return null;
         let showList = testSetList.filter((v) => (
@@ -235,18 +262,14 @@ function Home() {
         return (
             <Scrollbars
                 className="test-set-items-container"
+                style={{marginBottom: 1}}
                 autoHide
                 autoHideDuration={100}
             >
-                <div className={'test-set-items'}>
-                    {
-                        normalList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => onOpenTestSetModal(v)}/>)
-                    }
-                </div>
                 {
                     enterpriseList.length > 0 &&
                     <React.Fragment>
-                        <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Enterprise Access</div>
+                        <div className={'fs-23 mb-2'}>Enterprise Access</div>
                         <div className={'test-set-items'}>
                             {
                                 enterpriseList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => onOpenTestSetModal(v)}/>)
@@ -254,6 +277,14 @@ function Home() {
                         </div>
                     </React.Fragment>
                 }
+                {
+                    enterpriseList.length > 0 && <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Library</div>
+                }
+                <div className={'test-set-items'}>
+                    {
+                        normalList.map((v) => <TestSetItem key={v.id} data={v} onClick={() => onOpenTestSetModal(v)}/>)
+                    }
+                </div>
                 {(completedList.length > 0 && normalList.length > 0) && <div className={'fs-23 mb-2'} style={{marginTop: 70}}>Completed</div>}
                 {
                     completedList.length > 0 &&
@@ -279,39 +310,39 @@ function Home() {
                         </div>
                     </Tooltip>
                 </div>
-                <Scrollbars
-                    className="main-categories"
-                    autoHide
-                    autoHideDuration={100}
-                >
-                    {
-                        categoryObj.map((c, i) => renderCategories(c, i))
-                    }
-                </Scrollbars>
+                {renderCategory()}
             </div>
             <div className={'test-set-content'}>
                 <div className={'test-set-top-filter'}>
-                    {
-                        filterList.filter((f) => (!isLogin ? !f.needLogin : true)).map((f) => (
-                            <span
-                                key={f.id}
-                                className={classNames('mr-50 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
-                                onClick={() => onChangeFilter(f)}
-                            >
-                                {f.label}({filterValues[f.valKey]})
-                            </span>
-                        ))
-                    }
+                    {renderFilter()}
                 </div>
                 <div className={'mobile-filter-bar'}>
-                    <div className={'d-flex flex-row align-items-center cursor-pointer'}>
-                        <span className={'fs-17 fw-semi-bold mr-2'}>Categories</span>
-                        <i className={'ti ti-angle-down'} />
+                    <div className={'d-flex flex-row align-items-center cursor-pointer'} onClick={() => setShowMobileCategoryType('category')}>
+                        <span className={'fs-17 fw-semi-bold mr-2'}>Categories{selectedCategoryList.length === 0 ? '' : `(${selectedCategoryList.length})`}</span>
+                        <i className={'ti ti-angle-down'}/>
                     </div>
-                    <div className={'d-flex flex-row align-items-center ml-40 cursor-pointer'}>
-                        <span className={'fs-17 fw-semi-bold mr-2'}>Filter</span>
-                        <FilterListIcon />
+                    <div className={'d-flex flex-row align-items-center ml-40 cursor-pointer'} onClick={() => setShowMobileCategoryType('filter')}>
+                        <span className={classNames('fs-17 fw-semi-bold mr-2', {'text-underline': filter !== ''})}>Filter</span>
+                        <FilterListIcon/>
                     </div>
+                    {
+                        showMobileCategoryType === 'category' &&
+                        <div className={'main-mobile-filter-container'} onClick={() => setShowMobileCategoryType(null)}>
+                            <div className={'main-mobile-category-content'} onClick={(e) => e.stopPropagation()}>
+                                {renderCategory()}
+                            </div>
+                        </div>
+                    }
+                    {
+                        showMobileCategoryType === 'filter' &&
+                        <div className={'main-mobile-filter-container'} onClick={() => setShowMobileCategoryType(null)}>
+                            <div className={'main-mobile-filter-content'} onClick={(e) => e.stopPropagation()}>
+                                <div className={'d-flex flex-column '}>
+                                    {renderFilter()}
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
                 {
                     renderTestSetList()

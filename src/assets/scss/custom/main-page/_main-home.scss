@@ -70,6 +70,7 @@
       flex-wrap: wrap;
       font-size: 1.437rem;
       margin-bottom: 20px;
+      zoom: 1;
     }
     .mobile-filter-bar {
       display: none;
@@ -429,7 +430,8 @@
 
       .test-set-mobile-header {
         height: 240px;
-        position: relative;
+        position: sticky;
+        top: -80px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -515,6 +517,7 @@
     }
 
     .test-set-content {
+      position: relative;
       .test-set-top-filter {
         display: none;
       }
@@ -523,10 +526,38 @@
         display: flex;
         margin-bottom: 20px;
       }
+
+      .main-mobile-filter-container {
+        position: absolute;
+        top: 30px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        padding-bottom: 90px;
+        background-color: #00000010;
+
+        .main-mobile-category-content {
+          height: 100%;
+          padding: 20px 20px 0;
+          background-color: #24254b;
+          border-radius: 10px;
+        }
+
+        .main-mobile-filter-content {
+          width: 100%;
+          padding: 20px;
+          background-color: #24254b;
+          border-radius: 10px;
+        }
+      }
     }
 
     .test-set-items-container {
       .test-set-items {
+        grid-template-columns: 1fr !important;
+        zoom: 1 !important;
+
         .test-set-item {
           .test-category {
             font-size: 11px;
@@ -565,18 +596,50 @@
 }
 
 @media (max-width: 1700px) {
+  .test-set-top-filter {
+    zoom: 0.8 !important;
+  }
+  .test-set-items {
+    //grid-template-columns: 1fr 1fr !important;
+    zoom: 0.8
+  }
+}
+
+@media (max-width: 1500px) {
+  .test-set-top-filter {
+    zoom: 0.7 !important;
+  }
+  .test-set-items {
+    zoom: 0.7
+  }
+}
+
+@media (max-width: 1350px) {
+  .test-set-top-filter {
+    zoom: 0.6 !important;
+  }
+  .test-set-items {
+    zoom: 0.6
+  }
+}
+
+@media (max-width: 1300px) {
+  .test-set-top-filter {
+    zoom: 0.8 !important;
+  }
   .test-set-items {
     grid-template-columns: 1fr 1fr !important;
+    zoom: 0.8
   }
 }
 
 @media (max-width: 1260px) {
   .test-set-items {
-    grid-template-columns: 1fr !important;
-    justify-items: center;
+    //grid-template-columns: 1fr !important;
+    //justify-items: center;
 
     .test-set-item {
-      width: 100%;
+      //width: 100%;
     }
   }
 }
