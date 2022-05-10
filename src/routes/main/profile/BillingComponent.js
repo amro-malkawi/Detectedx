@@ -3,6 +3,8 @@ import {Button, CircularProgress} from "@material-ui/core";
 import moment from 'moment';
 import {loadStripe} from '@stripe/stripe-js';
 import {useHistory} from "react-router-dom";
+import classNames from 'classnames';
+import {isMobile} from 'react-device-detect';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 
@@ -107,7 +109,7 @@ function BillingComponent() {
                         </div>
                     </div> :
                     <div className={'billing-info'}>
-                        <div className={'d-flex flex-row justify-content-between'}>
+                        <div className={classNames('d-flex', {'flex-row justify-content-between' : !isMobile}, {'flex-column': isMobile})}>
                             <div className={'d-flex'}>
                                 <div className={'d-flex flex-column mr-50'}>
                                     <span className={'fs-16 fw-semi-bold text-primary1'}>BILLING PLAN</span>
@@ -118,7 +120,7 @@ function BillingComponent() {
                                     <span className={'fs-23 fw-semi-bold text-white mt-3'}>${billingInfo.subscriptionInfo.planAmount}/{billingInfo.subscriptionInfo.planName.split(' ')[0]}</span>
                                 </div>
                             </div>
-                            <div className={'d-flex flex-column'}>
+                            <div className={classNames('d-flex flex-column', {'mt-3': isMobile})}>
                                 <Button className={'contain-btn mb-1'} onClick={() => history.push('/plan')}>
                                     {/*{billingInfo.subscriptionInfo.status === 'active' ? 'CHANGE PLAN' : 'SUBSCRIBE AGAIN'}*/}
                                     CHANGE PLAN
@@ -136,7 +138,7 @@ function BillingComponent() {
                             {renderPeriod()}
                         </div>
                         <div className={'divide-line mt-10 mb-4'}/>
-                        <div className={'d-flex flex-row justify-content-between'}>
+                        <div className={classNames('d-flex', {'flex-row justify-content-between' : !isMobile}, {'flex-column': isMobile})}>
                             <div className={'d-flex flex-column mr-50'}>
                                 <span className={'fs-16 fw-semi-bold text-primary1'}>PAYMENT METHOD</span>
                                 <div className={'d-flex flex-row align-items-end fs-23 fw-semi-bold text-white mt-3'}>
@@ -144,16 +146,16 @@ function BillingComponent() {
                                     <img src={require('Assets/img/main/stripe.png')} alt={''} width={25} className={'ml-2'}/>
                                 </div>
                             </div>
-                            <div className={'d-flex flex-column'}>
+                            <div className={classNames('d-flex flex-column', {'mt-3': isMobile})}>
                                 <Button className={'contain-btn mb-1 px-30'} onClick={onUpdateCard}>UPDATE PAYMENT DETAILS</Button>
                             </div>
                         </div>
                         <div className={'divide-line mt-10 mb-4'}/>
-                        <div className={'d-flex flex-row justify-content-between'}>
+                        <div className={classNames('d-flex', {'flex-row justify-content-between' : !isMobile}, {'flex-column': isMobile})}>
                             <div className={'d-flex flex-column mr-50'}>
                                 <span className={'fs-16 fw-semi-bold text-primary1'}>INVOICES</span>
                             </div>
-                            <div className={'d-flex flex-column'}>
+                            <div className={classNames('d-flex flex-column', {'mt-3': isMobile})}>
                                 <Button className={'contain-btn mb-1 px-30'}>PRINT LAST FINANCIAL YEARS INVOICES</Button>
                             </div>
                         </div>

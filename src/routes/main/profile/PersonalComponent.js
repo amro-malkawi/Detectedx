@@ -6,9 +6,11 @@ import classNames from 'classnames';
 import {useHistory} from "react-router-dom";
 import {useSelector} from "react-redux";
 import TestSetItem from "Routes/main/home/TestSetItem";
-import * as Apis from "Api";
+import ScrollContainer from './ScrollContainer';
 import {NotificationManager} from "react-notifications";
 import validator from "validator";
+import * as Apis from "Api";
+
 
 function PersonalComponent() {
     const history = useHistory();
@@ -111,7 +113,7 @@ function PersonalComponent() {
     return (
         <div className={'profile-content flex-row'}>
             <div className={'personal-content'}>
-                <Scrollbars
+                <ScrollContainer
                     className="personal-item-list"
                     style={{marginBottom: 1}}
                     autoHide
@@ -240,11 +242,11 @@ function PersonalComponent() {
                     <div className={'d-flex flex-row mt-50'}>
                         <Button className={'profile-save-btn'} onClick={onSave}>Save Information</Button>
                     </div>
-                </Scrollbars>
+                </ScrollContainer>
             </div>
             <div className={'completed-list'}>
                 <span className={'fs-15 text-primary1 mb-3'}>RECENTLY COMPLETED</span>
-                <Scrollbars
+                <ScrollContainer
                     style={{marginBottom: 1}}
                     autoHide
                     autoHideDuration={100}
@@ -256,7 +258,7 @@ function PersonalComponent() {
                             ))
                         }
                     </div>
-                </Scrollbars>
+                </ScrollContainer>
             </div>
         </div>
     )

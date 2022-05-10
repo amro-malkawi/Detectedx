@@ -44,6 +44,10 @@
     }
   }
 
+  .profile-mobile-tab {
+    display: none;
+  }
+
   .profile-content {
     display: flex;
     flex: 1;
@@ -466,5 +470,79 @@
     font-weight: 600;
     color: #2894FA;
     cursor: pointer;
+  }
+}
+
+.mobile-layout {
+  .main-profile-content {
+    flex-direction: column;
+    .profile-tab-container {
+      display: none;
+    }
+    .profile-mobile-tab {
+      display: block;
+      margin-bottom: 10px;
+      border-radius: 7px;
+      overflow: hidden;
+
+      .MuiTab-textColorPrimary {
+        font-family: "Poppins", sans-serif;
+        font-size: 17px;
+        color: white;
+        background-color: #1e213e;
+        &.Mui-selected {
+          background-color: #2f367b;
+          border-bottom: 3px solid #54a9fb;
+        }
+      }
+      .MuiTabs-indicator {
+        display: none;
+      }
+    }
+    .profile-content {
+      flex-direction: column !important;
+      padding: 20px;
+      border-radius: 15px;
+      overflow: auto;
+
+      .personal-content {
+        min-width: initial;
+        margin-right: 0;
+        .personal-item {
+          span {
+            font-size: 13px;
+          }
+          input, select {
+            font-size: 19px;
+          }
+        }
+      }
+
+      .billing-info {
+        margin-right: 0;
+      }
+      .billing-history {
+        width: initial;
+        margin-top: 50px;
+        .billing-history-data {
+          padding: 0;
+          .billing-history-items {
+            background-color: #1e213e;
+            .billing-history-item {
+              border-bottom: 2px solid #777275;
+            }
+          }
+        }
+      }
+      .setting-content {
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .completed-list {
+    width: 100%;
+    margin-top: 50px;
   }
 }

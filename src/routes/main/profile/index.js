@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button} from '@material-ui/core';
+import {Button, Tabs, Tab} from '@material-ui/core';
 import classNames from "classnames";
 import {useSelector} from "react-redux";
 import PersonalComponent from "./PersonalComponent";
@@ -56,6 +56,27 @@ function Profile() {
                             ))
                         }
                     </div>
+                </div>
+                <div className={'profile-mobile-tab'}>
+                    <Tabs
+                        value={selectedTabIndex}
+                        onChange={(e, v) => onChangeTab(v)}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        variant="scrollable"
+                        scrollButtons="auto"
+                        aria-label="scrollable auto tabs example"
+                    >
+                        {
+                            tabList.map((v, i) => (
+                                <Tab label={v.label} />
+                            ))
+                        }
+                        {/*<Tab label="Personal Info" />*/}
+                        {/*<Tab label="Billing Info"  />*/}
+                        {/*<Tab label="Completed" />*/}
+                        {/*<Tab label="Settings" />*/}
+                    </Tabs>
                 </div>
                 {
                     tabList[selectedTabIndex].component

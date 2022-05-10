@@ -4,6 +4,8 @@ import {Input} from "reactstrap";
 import {NotificationManager} from "react-notifications";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
+import classNames from 'classnames';
+import {isMobile} from 'react-device-detect';
 import DeleteProfileModal from "./DeleteProfileModal";
 import {logoutUserFromEmail} from "Actions";
 import * as Apis from "Api";
@@ -82,7 +84,7 @@ function SettingComponent() {
                         <Input
                             type={'password'}
                             placeholder={'CURRENT PASSWORD'}
-                            className={'mr-20'}
+                            className={!isMobile ? 'mr-20' : ''}
                             autoComplete="new-password"
                             value={oldPassword}
                             invalid={errorOldPassword}
@@ -92,11 +94,11 @@ function SettingComponent() {
                             }}
                         />
                     </div>
-                    <div className={'d-flex flex-row'}>
+                    <div className={classNames('d-flex', {'flex-column': isMobile})}>
                         <Input
                             type={'password'}
                             placeholder={'NEW PASSWORD'}
-                            className={'mr-20'}
+                            className={!isMobile ? 'mr-20' : ''}
                             autoComplete="new-password"
                             value={newPassword}
                             invalid={errorNewPassword}
@@ -108,7 +110,7 @@ function SettingComponent() {
                         <Input
                             type={'password'}
                             placeholder={'CONFIRM PASSWORD'}
-                            className={'mr-20'}
+                            className={!isMobile ? 'mr-20' : 'mt-2'}
                             value={confirmPassword}
                             invalid={errorConfirmPassword}
                             onChange={(e) => {
@@ -116,7 +118,7 @@ function SettingComponent() {
                                 setErrorConfirmPassword(false)
                             }}
                         />
-                        <Button className={'contain-btn px-20'} onClick={onChangePassword}>SUBMIT</Button>
+                        <Button className={classNames('contain-btn px-20', {'mt-2': isMobile})} onClick={onChangePassword}>SUBMIT</Button>
                     </div>
                 </div>
                 <div className={'divide-line mt-20 mb-4'}/>

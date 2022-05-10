@@ -75,22 +75,22 @@ function Signin() {
                         <span>or</span>
                         <div className={'signin-sso-bar'}/>
                     </div>
-                    <div className={'d-flex justify-content-center mt-4'}>
-                        <div className={'sso-button'}>
-                            <Button onClick={() => window.location.href = "/sso/siemens_login"}>
-                                <Tooltip title={'Sign in with Siemens'}>
-                                    <img src={require('Assets/img/sso/siemens_healthineers_logo.png')} className="" alt=""/>
-                                </Tooltip>
-                            </Button>
-                        </div>
-                        <div className={'sso-button'}>
-                            <Button onClick={() => window.location.href = "/sso/ge_login"}>
-                                <Tooltip title={'Sign in with GE Healthcare'}>
-                                    <img src={require('Assets/img/sso/ge_healthineers_logo.png')} className="" alt=""/>
-                                </Tooltip>
-                            </Button>
-                        </div>
-                    </div>
+                    {/*<div className={'d-flex justify-content-center mt-4'}>*/}
+                    {/*    <div className={'sso-button'}>*/}
+                    {/*        <Button onClick={() => window.location.href = "/sso/siemens_login"}>*/}
+                    {/*            <Tooltip title={'Sign in with Siemens'}>*/}
+                    {/*                <img src={require('Assets/img/sso/siemens_healthineers_logo.png')} className="" alt=""/>*/}
+                    {/*            </Tooltip>*/}
+                    {/*        </Button>*/}
+                    {/*    </div>*/}
+                    {/*    <div className={'sso-button'}>*/}
+                    {/*        <Button onClick={() => window.location.href = "/sso/ge_login"}>*/}
+                    {/*            <Tooltip title={'Sign in with GE Healthcare'}>*/}
+                    {/*                <img src={require('Assets/img/sso/ge_healthineers_logo.png')} className="" alt=""/>*/}
+                    {/*            </Tooltip>*/}
+                    {/*        </Button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                     <div className={'d-flex justify-content-center mt-30 fs-14'}>
                         <span>Don't you have account? <Link to="/signup">Register</Link></span>
                     </div>
