@@ -288,7 +288,13 @@ function SignupFormComponent({onComplete}) {
                                     value=""
                                 />
                             }
-                            label={<span className={'signup-checkbox-label'}>I have read and agree to the <strong>terms and conditions</strong> and <strong>consent statements</strong>*</span>}
+                            label={
+                            <span className={'signup-checkbox-label'}>I have read and agree to the
+                                <strong onClick={() => window.open('https://detectedx.com/website-terms/', "_self")}>terms and conditions</strong>
+                                and
+                                <strong onClick={() => window.open('https://detectedx.com/privacy-policy/', "_self")}>consent statements</strong>
+                                *</span>
+                        }
                         />
                     </div>
                     <div>

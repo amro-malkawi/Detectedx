@@ -114,7 +114,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      padding: 10px 20px;
+      padding: 5px 20px;
 
       & > div {
         width: 100%;
@@ -234,7 +234,7 @@
     }
   }
   .cme-value {
-    padding-right: 40px;
+    padding-right: 30px;
   }
 }
 
@@ -592,6 +592,16 @@
         }
       }
     }
+  }
+}
+
+@media (max-width: 1800px) {
+  .test-set-top-filter {
+    zoom: 0.9 !important;
+  }
+  .test-set-items {
+    //grid-template-columns: 1fr 1fr !important;
+    zoom: 0.9
   }
 }
 

@@ -125,7 +125,7 @@ function PlanComponent({onSelectPlan, planList}) {
                 <div className={'plan-item-content'}>
                     <div className={'plan-item-features'}/>
                     <div className={'plan-item-btn'}>
-                        <Button>
+                        <Button onClick={() => window.open('https://detectedx.com/contact/', "_self")}>
                             <i className="zmdi zmdi-arrow-right"/>
                             Contact Us
                         </Button>
