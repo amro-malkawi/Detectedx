@@ -64,7 +64,7 @@ class App extends Component {
             <RctThemeProvider>
                 <NotificationContainer/>
                 <Switch>
-                    <Route path={`${match.url}app`} component={RctDefaultLayout} />
+                    {/*<Route path={`${match.url}app`} component={RctDefaultLayout} />*/}
                     <Route path="/main" component={MainPage}/>
                     <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
                     <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
