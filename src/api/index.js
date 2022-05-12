@@ -271,7 +271,7 @@ export function attemptsQuestionnaireAnswer(id, data, type) {
 }
 
 export function attemptsCertificatePdf(id, type, email, testSetName) {
-    const url = '/attempts/' + id + '/certificate/?type=' + type + '&email=' + email + '&access_token=' + getAccessToken();
+    const url = '/attempts/' + id + '/certificate?type=' + type + '&email=' + email + '&access_token=' + getAccessToken();
     if(email && email.length > 0) {
         return instance.get(url).then((response) => response.data);
     } else {
@@ -289,6 +289,10 @@ export function attemptsCertificatePdf(id, type, email, testSetName) {
                 link.click();
                 resolve();
             }).catch((e) => {
+                return e.response.data.text();
+            }).then((errorMsg) => {
+                reject({response: {data: JSON.parse(errorMsg)}});
+            }).catch((e) => {
                 reject(e);
             });
         });
@@ -296,7 +300,7 @@ export function attemptsCertificatePdf(id, type, email, testSetName) {
 }
 
 export function attemptsScorePdf(id, email, testSetName) {
-    const url = '/attempts/' + id + '/scorepdf/?email=' + email + '&access_token=' + getAccessToken();
+    const url = '/attempts/' + id + '/scorepdf?email=' + email + '&access_token=' + getAccessToken();
     if(email && email.length > 0) {
         return instance.get(url).then((response) => response.data);
     } else {

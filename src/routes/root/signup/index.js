@@ -37,21 +37,29 @@ function Index() {
         });
     }, []);
 
-    const onCompleteInfo = (info, hasEnterpriseCode) => {
+    const onSignUp = (info, hasEnterpriseCode) => {
         setSignupInfo(info);
-        if(!selectedPlan) {
-            if (hasEnterpriseCode) {
-                setStep('enterpriseCode');
+        Apis.signUp(info).then((result) => {
+            NotificationManager.success("Register succeeded.");
+            return Apis.login(info.email, info.password);
+        }).then((result) => {
+            dispatch(login(result.userId, result.userName, result.userEmail, result.id, history, null));
+            if(!selectedPlan) {
+                if (hasEnterpriseCode) {
+                    setStep('enterpriseCode');
+                } else {
+                    setStep('plan');
+                }
             } else {
-                setStep('plan');
+                if (selectedPlan.id !== 'enterprise') {
+                    setStep('pay');
+                } else {
+                    setStep('enterpriseCode');
+                }
             }
-        } else {
-            if (selectedPlan.id !== 'enterprise') {
-                setStep('pay');
-            } else {
-                setStep('enterpriseCode');
-            }
-        }
+        }).catch((e) => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+        })
     }
 
     const onSelectPlan = (plan) => {
@@ -76,10 +84,7 @@ function Index() {
     }
 
     const onFinishPayment = (type, value) => {
-        if(!isLogin && signupInfo) {
-            // signup
-            onSignUp(type, value);
-        } else if(isLogin) {
+        if(isLogin) {
             // user subscribe
             onUserSubscribe(type, value);
         } else {
@@ -87,25 +92,25 @@ function Index() {
         }
     }
 
-    const onSignUp = (type, value) => {
-        const data = {signupInfo};
-        if (type === 'enterpriseCode') {
-            data.enterpriseCode = value
-        } else if (type === 'pay') {
-            data.paymentInfo = value
-        } else {
-            return;
-        }
-
-        Apis.signUp(data).then((result) => {
-            NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
-            return Apis.login(signupInfo.email, signupInfo.password);
-        }).then((result) => {
-            dispatch(login(result.userId, result.userName, result.userEmail, result.id, history, '/'));
-        }).catch((e) => {
-            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
-        })
-    }
+    // const onSignUp = (type, value) => {
+    //     const data = {signupInfo};
+    //     if (type === 'enterpriseCode') {
+    //         data.enterpriseCode = value
+    //     } else if (type === 'pay') {
+    //         data.paymentInfo = value
+    //     } else {
+    //         return;
+    //     }
+    //
+    //     Apis.signUp(data).then((result) => {
+    //         NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
+    //         return Apis.login(signupInfo.email, signupInfo.password);
+    //     }).then((result) => {
+    //         dispatch(login(result.userId, result.userName, result.userEmail, result.id, history, '/'));
+    //     }).catch((e) => {
+    //         NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+    //     })
+    // }
 
     const onUserSubscribe = (type, value) => {
         const data = {};
@@ -118,7 +123,11 @@ function Index() {
         }
         Apis.userSubscribe(data).then((result) => {
             NotificationManager.success('Subscription was succeeded');
-            history.push('/main/profile?tab=billing');
+            if(history.location.pathname === '/plan') {
+                history.push('/main/profile?tab=billing');
+            } else {
+                history.push('/');
+            }
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         })
@@ -131,7 +140,7 @@ function Index() {
         }
         switch (step) {
             case 'info':
-                return <SignupFormComponent onComplete={onCompleteInfo}/>;
+                return <SignupFormComponent onComplete={onSignUp}/>;
             case 'plan':
                 return <PlanComponent onSelectPlan={onSelectPlan} planList={planList}/>;
             case 'pay':

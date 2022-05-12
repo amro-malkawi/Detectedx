@@ -135,10 +135,6 @@ const RegisterForm = ({ onFinish}) => {
             valid = false;
             inValidObj.postcodeInvalid = true;
         }
-        if (state.position === undefined) {
-            valid = false;
-            inValidObj.positionInvalid = true;
-        }
         if (state.employer.trim().length === 0) {
             valid = false;
             inValidObj.employerInvalid = true;
@@ -164,7 +160,7 @@ const RegisterForm = ({ onFinish}) => {
     const onUserSignUp = () => {
         if (validate()) {
             setState({...state, loading: true});
-            Apis.singUp({
+            Apis.signUp({
                 email: state.email,
                 password: state.password,
                 first_name: state.firstName,
@@ -180,38 +176,19 @@ const RegisterForm = ({ onFinish}) => {
                 NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
                 return Apis.login(state.email, state.password);
             }).then((result) => {
-                dispatch(login(result.userId, result.userName, result.userEmail, result.id, () => {
+                dispatch(login(result.userId, result.userName, result.userEmail, result.id, null, null, () => {
                     onFinish()
                 }));
             }).catch((e) => {
                 setState({...state, loading: false});
                 NotificationManager.error(e.response ? e.response.data.error.message : e.message);
             });
-
-            // signupUserInEmail({
-            //     email: state.email,
-            //     password: state.password,
-            //     first_name: state.firstName,
-            //     last_name: state.lastName,
-            //     country: state.country,
-            //     state: state.state,
-            //     postcode: state.postcode,
-            //     position: state.position,
-            //     employer: state.employer,
-            //     allow_contact_me: state.allowContactMe,
-            // }, history).then((result) => {
-            //     NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
-            //     signinUserInEmail(state, history);
-            // }).catch((error) => {
-            //     setState({...state, loading: false});
-            //     NotificationManager.error(error.response ? error.response.data.error.message : error.message);
-            // });
         }
     }
 
     return (
         <ThemeProvider theme={theme}>
-        <div className="session-inner-wrapper pt-10">
+        <div className="session-inner-wrapper pt-10" style={{width: 720}}>
             <div className="container">
                 <div className="row row-eq-height">
                     <div className={"col-sm-12 col-md-12 col-lg-10"} style={{margin: 'auto'}}>
@@ -412,8 +389,8 @@ const RegisterForm = ({ onFinish}) => {
                                         label={
                                             <span>
                                 <IntlMessages id={"user.signup.agreeTerm"}/>
-                                <Link to='/terms' target="_blank"><IntlMessages id={"user.signup.term"}/></Link>&nbsp;and&nbsp;
-                                                <Link to="#" onClick={() => setState({...state, showConsentModal: true})}><IntlMessages id={"user.signup.consentStatements"}/></Link>
+                                <a href='https://detectedx.com/website-terms/' target="_blank"><IntlMessages id={"user.signup.term"}/></a>&nbsp;and&nbsp;
+                                                <a href="https://detectedx.com/privacy-policy/" target="_blank"><IntlMessages id={"user.signup.consentStatements"}/></a>
                                                 &nbsp;*
                             </span>
                                         }

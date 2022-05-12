@@ -9,8 +9,6 @@ import {NotificationManager} from "react-notifications";
 
 const MyDialog = withStyles({
     paper: {
-        width: 550,
-        // width: 730,
         color: 'white',
         padding: '30px 10px',
         backgroundColor: 'black',
@@ -35,7 +33,7 @@ const GuestLoginModal = ({open, attemptId, onClose, onComplete}) => {
 
     const renderContent = () => {
         return (
-            <div className={''}>
+            <div className={''} style={{width: 450}}>
                 <div className={'fs-19 text-white mb-30 ml-10'}>You have to login site to get score.</div>
                 <div className={'d-flex flex-row justify-content-center'}>
                     <Button onClick={() => setStatus('login')} variant="contained" color="primary" className={'mr-20'}>

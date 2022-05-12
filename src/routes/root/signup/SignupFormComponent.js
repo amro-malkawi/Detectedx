@@ -299,7 +299,8 @@ function SignupFormComponent({onComplete}) {
                     </div>
                     <div>
                         <Button className={'signup-submit'} onClick={onFinish}>
-                            {hasEnterpriseCode ? 'Register' : 'Proceed To Payment'}
+                            {/*{hasEnterpriseCode ? 'Register' : 'Proceed To Payment'}*/}
+                            Register
                         </Button>
                     </div>
                 </div>

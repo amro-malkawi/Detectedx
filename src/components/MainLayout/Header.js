@@ -79,9 +79,9 @@ function Header(props) {
                     }
                     <div className={'fs-14 cursor-pointer'} onClick={() => history.push('/main/profile?tab=completed')}>
                         <span>COMPLETED<span className={'hide-mobile'}> MODULES</span>:</span>
-                        <span className={'info-num'}>{isLogin ? userCompletedCount : ''}</span>
+                        <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedCount) ? userCompletedCount : 0) : ''}</span>
                         <span><span className={'hide-mobile'}>THIS YEARS </span>CME POINTS:</span>
-                        <span className={'info-num'}>{isLogin ? userCompletedPoint : ''}</span>
+                        <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedPoint) ? userCompletedPoint : 0) : ''}</span>
                     </div>
                 </div>
             </div>

@@ -37,7 +37,7 @@ const LoginForm = ({open, onFinish}) => {
     const onUserLogin = () => {
         if (email !== '' && password !== '') {
             Apis.login(email, password).then((result) => {
-                dispatch(login(result.userId, result.userName, result.userEmail, result.id, () => {
+                dispatch(login(result.userId, result.userName, result.userEmail, result.id, null, null, () => {
                     onFinish();
                 }));
             }).catch((e) => {
@@ -48,7 +48,7 @@ const LoginForm = ({open, onFinish}) => {
 
     return (
         <ThemeProvider theme={theme}>
-        <div className={'session-inner-wrapper p-40'}>
+        <div className={'session-inner-wrapper p-40'} style={{width: 550}}>
             <div className="session-body text-center">
                 <div className="session-head mb-30">
                     <h1 className="font-weight-bold">{AppConfig.brandName} <IntlMessages id={"user.login"}/></h1>
