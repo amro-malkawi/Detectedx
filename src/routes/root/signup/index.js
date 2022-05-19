@@ -12,7 +12,6 @@ import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
 import {login} from "Actions";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import {userSubscribe} from "Api";
 
 function Index() {
     const history = useHistory();

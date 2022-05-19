@@ -1,16 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from "reactstrap";
-import {NotificationManager} from "react-notifications";
 import {loadStripe} from '@stripe/stripe-js';
-import {CardNumberElement, Elements, useStripe} from '@stripe/react-stripe-js';
+import {Elements} from '@stripe/react-stripe-js';
+import {IconButton} from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import PaypalButton from "Components/Payment/PaypalButton";
 import StripeForm from "Components/Payment/StripeForm";
-import * as Apis from "Api";
 import moment from "moment";
+import * as Apis from "Api";
 
 function PayComponent({plan, onPay, signupEmail}) {
     const [discountCode, setDiscountCode] = useState('');
     const [stripePromise, setStripePromise] = useState(() => loadStripe(plan.stripeKey))
+    const [showDiscountApply, setShowDiscountApply] = useState(false);
+    const [allowedCouponInfo, setAllowedCouponInfo] = useState(null);
+
     const stripeOptions = {
         // passing the client secret obtained from the server
         // clientSecret: '{{CLIENT_SECRET}}',
@@ -19,19 +24,68 @@ function PayComponent({plan, onPay, signupEmail}) {
     useEffect(() => {
     }, []);
 
+    useEffect(() => {
+        setShowDiscountApply(discountCode !== '');
+    }, [discountCode])
+
+    const onDiscountApply = () => {
+        setDiscountCode('');
+        setAllowedCouponInfo({code: 'JGOEWWDQ', discountValue: 10});
+    }
+
     const onStripeSubscribe = (subscriptionId, customerId, paymentIntentId) => {
         onPay(subscriptionId, customerId, paymentIntentId);
     }
 
     const renderTrialBottom = () => {
-        if(plan.id === 'free') {
+        if (plan.id === 'free') {
             const trialEndDate = moment().add(7, 'days').format('DD MMM, YYYY');
-            return(
+            return (
                 <div className={'pay-purchase-bottom'}>
                     After your trial ends you will be charged ${plan.detail.amount}.00 per month<br/>
                     starting {trialEndDate}. You can always cancel before then.
                 </div>
             )
+        } else {
+            return null;
+        }
+    }
+
+    const renderDiscount = () => {
+        if (plan.id !== 'free') {
+            if (!allowedCouponInfo) {
+                return (
+                    <div className={'pay-coupon-code'}>
+                        <Input
+                            type={'text'}
+                            placeholder={'ADD DISCOUNT CODE'}
+                            value={discountCode}
+                            onChange={(e) => setDiscountCode(e.target.value)}
+                        />
+                        {
+                            showDiscountApply &&
+                            <div className={'pay-coupon-apply'} onClick={() => onDiscountApply()}>
+                                Apply
+                            </div>
+                        }
+                    </div>
+                )
+            } else {
+                const discountPrice = Number(plan.detail.amount) * Number(allowedCouponInfo.discountValue) / 100;
+                return (
+                    <div className={'pay-allow-coupon-info'}>
+                        <div className={'d-flex flex-row justify-content-between align-items-center'}>
+                            <div className={'d-flex flex-row align-items-center'}>
+                                <LocalOfferIcon fontSize={'small'} />
+                                <span>{allowedCouponInfo.code}</span>
+                                <IconButton onClick={() => setAllowedCouponInfo(null)}><CloseIcon fontSize={'small'}/></IconButton>
+                            </div>
+                            <span className={'fs-14'}>-${discountPrice}</span>
+                        </div>
+                        <span className={'fs-12'}>{allowedCouponInfo.discountValue}% off</span>
+                    </div>
+                )
+            }
         } else {
             return null;
         }
@@ -53,7 +107,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                         </div>
                         <div className={'cost-content'}>
                             <span className={'cost-symbol'}>$</span>
-                            <span className={'cost-val'}>{plan.id === 'free' ? 0 : plan.detail.amount}</span>
+                            <span className={'cost-val'}>{plan.id === 'free' ? 0 : (!allowedCouponInfo ? plan.detail.amount : (plan.detail.amount * (100 - allowedCouponInfo.discountValue) / 100))}</span>
                             <span className={'cost-currency'}>{plan.detail.currency.toUpperCase()}</span>
                         </div>
                         <div className={'fs-14 text-primary1'}>{plan.access}</div>
@@ -77,15 +131,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                             <span>${plan.id === 'free' ? 0 : plan.detail.amount}.00</span>
                         </div>
                         <div className={'pay-split-bar'}/>
-                        <div>
-                            <Input
-                                type={'text'}
-                                className={'pay-coupon-code'}
-                                placeholder={'ADD DISCOUNT CODE'}
-                                value={discountCode}
-                                onChange={(e) => setDiscountCode(e.target.value)}
-                            />
-                        </div>
+                        {renderDiscount()}
                         <div className={'d-flex flex-row justify-content-between fs-14 text-white mt-30'}>
                             <span>SALES TAX</span>
                             <span>$0 (INCLUDED)</span>

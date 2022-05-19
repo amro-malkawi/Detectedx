@@ -64,7 +64,7 @@ function Signin() {
                     </div>
                     <div className={'d-flex justify-content-center mt-1'} style={{height: 22}}>
                         {
-                            errorMsg !== '' && <span className={'text-red'}>Can not find password</span>
+                            errorMsg !== '' && <span className={'text-red'}>Username or password is not correct!</span>
                         }
                     </div>
                     <div className={'d-flex justify-content-end mt-1 fs-14'}>

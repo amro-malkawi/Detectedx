@@ -312,16 +312,53 @@
           background-color: #777275;
         }
 
-        .pay-coupon-code {
-          padding: 15px 20px;
-          font-size: 14px;
-          border: none;
-          border-radius: 7px;
-          color: white;
-          background-color: #1d203c;
 
-          &::placeholder {
-            color: #444C96;
+        .pay-coupon-code {
+          position: relative;
+          input {
+            padding: 15px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 7px;
+            color: white;
+            background-color: #1d203c;
+
+            &::placeholder {
+              color: #444C96;
+            }
+          }
+
+          .pay-coupon-apply {
+            position: absolute;
+            top: 13px;
+            right: 17px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #54a9fb;
+            cursor: pointer;
+          }
+        }
+
+        .pay-allow-coupon-info {
+          & > div {
+            div {
+              padding-left: 10px;
+              color: white;
+              background-color: #ffffff1a;
+              border-radius: 5px;
+              & > svg {
+                font-size: 15px;
+                margin-right: 5px;
+              }
+
+              button {
+                margin-left: 10px;
+                padding: 5px;
+              }
+            }
+          }
+          span {
+            color: #ffffff80;
           }
         }
       }

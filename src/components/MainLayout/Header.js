@@ -25,8 +25,13 @@ function Header(props) {
     }
 
     const onSearchKeyPress = (event) => {
-        if (event.key === 'Enter' && searchText.length > 0) {
-            const path = '/main/home?search=' + searchText;
+        if (event.key === 'Enter') {
+            let path;
+            if(searchText.length > 0) {
+                path = '/main/home?search=' + searchText;
+            } else {
+                path = '/main/home';
+            }
             if (history.location.pathname.indexOf('/main/home')) {
                 history.replace(path);
             } else {
