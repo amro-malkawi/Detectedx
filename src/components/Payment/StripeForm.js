@@ -93,7 +93,7 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isT
         if(!checkValidation()) return;
         setLoading(true);
         let subscriptionId, customerId;
-        const data = {email, phone, cardName, contactCountry, contactAddress, priceId, isTrial};
+        const data = {email, phone, cardName, contactCountry, contactAddress, priceId, isTrial, discountCode};
         Apis.paymentStripeSubscription(data).then((resp) => {
             customerId = resp.customerId;
             subscriptionId = resp.subscriptionId;

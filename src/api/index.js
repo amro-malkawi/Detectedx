@@ -534,8 +534,8 @@ export function paymentHistoryReceipt(id) {
 /**
  * coupons functions
  */
-export function couponInfo(couponCode, type) {
-    const url = 'coupons/info?coupon_code=' + couponCode + '&type=' + type + '&access_token=' + getAccessToken();
+export function couponInfo(couponCode) {
+    const url = 'coupons/info?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 

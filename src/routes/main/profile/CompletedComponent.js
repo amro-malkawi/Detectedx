@@ -146,7 +146,7 @@ function CompletedComponent() {
                     </div>
                     <div className={'profile-completed-bottom fs-15'}>
                         <div className={'profile-completed-bottom-title'}>
-                            <span>LAST 12 MONTH TOTAL</span>
+                            <span>TOTAL</span>
                             <div className={'d-flex flex-row mr-50'}>
                                 <div className={'mr-40 text-center'} style={{width: 70}}>POINTS</div>
                                 <div className={'mr-50 text-center'} style={{width: 70}}>ATTEMPTS</div>

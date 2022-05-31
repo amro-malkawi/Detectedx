@@ -69,7 +69,7 @@ function SettingComponent() {
         Apis.enterpriseApplyTestSet(enterpriseCode).then((resp) => {
             getData();
             setEnterpriseCode('');
-            NotificationManager.success(`You get ${resp.unlockCount} module from enterprise code.`);
+            NotificationManager.success(`The enterprise code was applied.`);
         }).catch((e) => {
             if (e.response) NotificationManager.error(e.response.data.error.message);
         });

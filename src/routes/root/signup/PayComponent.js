@@ -15,6 +15,7 @@ function PayComponent({plan, onPay, signupEmail}) {
     const [stripePromise, setStripePromise] = useState(() => loadStripe(plan.stripeKey))
     const [showDiscountApply, setShowDiscountApply] = useState(false);
     const [allowedCouponInfo, setAllowedCouponInfo] = useState(null);
+    const [couponErrorMsg, setCouponErrorMsg] = useState(null);
 
     const stripeOptions = {
         // passing the client secret obtained from the server
@@ -26,11 +27,21 @@ function PayComponent({plan, onPay, signupEmail}) {
 
     useEffect(() => {
         setShowDiscountApply(discountCode !== '');
+        setCouponErrorMsg(null);
     }, [discountCode])
 
     const onDiscountApply = () => {
-        setDiscountCode('');
-        setAllowedCouponInfo({code: 'JGOEWWDQ', discountValue: 10});
+        setCouponErrorMsg(null);
+        Apis.couponInfo(discountCode).then((resp) => {
+            if (resp.valid) {
+                setDiscountCode('');
+                setAllowedCouponInfo({code: resp.coupon_code, discountValue: resp.coupon_discount_value});
+            } else {
+                setCouponErrorMsg(resp.errorMsg)
+            }
+        }).catch((e) => {
+            setCouponErrorMsg("This code is invalid.");
+        })
     }
 
     const onStripeSubscribe = (subscriptionId, customerId, paymentIntentId) => {
@@ -55,20 +66,26 @@ function PayComponent({plan, onPay, signupEmail}) {
         if (plan.id !== 'free') {
             if (!allowedCouponInfo) {
                 return (
-                    <div className={'pay-coupon-code'}>
-                        <Input
-                            type={'text'}
-                            placeholder={'ADD DISCOUNT CODE'}
-                            value={discountCode}
-                            onChange={(e) => setDiscountCode(e.target.value)}
-                        />
+                    <React.Fragment>
+                        <div className={'pay-coupon-code'}>
+                            <Input
+                                type={'text'}
+                                placeholder={'ADD DISCOUNT CODE'}
+                                value={discountCode}
+                                onChange={(e) => setDiscountCode(e.target.value)}
+                            />
+                            {
+                                showDiscountApply &&
+                                <div className={'pay-coupon-apply'} onClick={() => onDiscountApply()}>
+                                    Apply
+                                </div>
+                            }
+                        </div>
                         {
-                            showDiscountApply &&
-                            <div className={'pay-coupon-apply'} onClick={() => onDiscountApply()}>
-                                Apply
-                            </div>
+                            couponErrorMsg &&
+                            <div className={'fs-12 ml-2 mt-1 text-red'}>{couponErrorMsg}</div>
                         }
-                    </div>
+                    </React.Fragment>
                 )
             } else {
                 const discountPrice = Number(plan.detail.amount) * Number(allowedCouponInfo.discountValue) / 100;
@@ -76,7 +93,7 @@ function PayComponent({plan, onPay, signupEmail}) {
                     <div className={'pay-allow-coupon-info'}>
                         <div className={'d-flex flex-row justify-content-between align-items-center'}>
                             <div className={'d-flex flex-row align-items-center'}>
-                                <LocalOfferIcon fontSize={'small'} />
+                                <LocalOfferIcon fontSize={'small'}/>
                                 <span>{allowedCouponInfo.code}</span>
                                 <IconButton onClick={() => setAllowedCouponInfo(null)}><CloseIcon fontSize={'small'}/></IconButton>
                             </div>
@@ -107,7 +124,8 @@ function PayComponent({plan, onPay, signupEmail}) {
                         </div>
                         <div className={'cost-content'}>
                             <span className={'cost-symbol'}>$</span>
-                            <span className={'cost-val'}>{plan.id === 'free' ? 0 : (!allowedCouponInfo ? plan.detail.amount : (plan.detail.amount * (100 - allowedCouponInfo.discountValue) / 100))}</span>
+                            <span
+                                className={'cost-val'}>{plan.id === 'free' ? 0 : (!allowedCouponInfo ? plan.detail.amount : (plan.detail.amount * (100 - allowedCouponInfo.discountValue) / 100))}</span>
                             <span className={'cost-currency'}>{plan.detail.currency.toUpperCase()}</span>
                         </div>
                         <div className={'fs-14 text-primary1'}>{plan.access}</div>
@@ -150,7 +168,13 @@ function PayComponent({plan, onPay, signupEmail}) {
                             Enter payment details
                         </div>
                         <Elements stripe={stripePromise} options={stripeOptions}>
-                            <StripeForm initialEmail={signupEmail} priceId={plan.detail.id} isTrial={plan.id === 'free'} discountCode={discountCode} onStripeSubscribe={onStripeSubscribe}/>
+                            <StripeForm
+                                initialEmail={signupEmail}
+                                priceId={plan.detail.id}
+                                isTrial={plan.id === 'free'}
+                                discountCode={allowedCouponInfo ? allowedCouponInfo.code : ''}
+                                onStripeSubscribe={onStripeSubscribe}
+                            />
                         </Elements>
                     </div>
                     {renderTrialBottom()}
