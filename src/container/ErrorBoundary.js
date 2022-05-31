@@ -30,7 +30,7 @@ export default class ErrorBoundary extends Component {
                                 <div className="d-flex justify-content-between">
                                     <div className="session-logo">
                                         <a href="https://www.detectedx.com">
-                                            <img src={require('Assets/img/site-logo.png')} alt="session-logo" className="img-fluid" width="110" height="35"/>
+                                            <img src={require('Assets/img/main/header_logo.png')} alt="session-logo" className="img-fluid" width="150"/>
                                         </a>
                                     </div>
                                 </div>

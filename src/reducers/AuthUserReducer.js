@@ -9,7 +9,9 @@ import {
     LOGOUT_USER,
     SIGNUP_USER,
     SIGNUP_USER_SUCCESS,
-    SIGNUP_USER_FAILURE
+    SIGNUP_USER_FAILURE,
+    USER_COMPLETED_COUNT,
+    USER_COMPLETED_POINT,
 } from 'Actions/types';
 
 const cookie = new Cookies();
@@ -22,6 +24,8 @@ const INIT_STATE = {
     userName: cookie.get("user_name"),
     userEmail: cookie.get("user_email"),
     accessToken: cookie.get("access_token"),
+    completedCount: cookie.get("completed_count"),
+    completedPoint: cookie.get("completed_point"),
     loading: false
 };
 
@@ -54,6 +58,14 @@ export default (state = INIT_STATE, action) => {
 
         case SIGNUP_USER_FAILURE:
             return { ...state, loading: false };
+
+        case USER_COMPLETED_COUNT:
+            cookie.set('completed_count', action.payload, {path: '/'});
+            return {...state, completedCount: action.payload}
+
+        case USER_COMPLETED_POINT:
+            cookie.set('completed_point', action.payload, {path: '/'});
+            return {...state, completedPoint: action.payload}
 
         default: return { ...state };
     }

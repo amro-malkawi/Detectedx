@@ -24,6 +24,8 @@ import JSONParseDefault from 'json-parse-default';
 import {connect} from "react-redux";
 import VideoModal from "Routes/instructions/VideoModal";
 import AttemptSubTypeModal from "./AttemptSubTypeModal";
+import * as selectors from "Selectors";
+import {apiUploadAddress} from "Api";
 
 // import NetSpeedMeter from "Components/NetSpeedMeter";
 
@@ -206,7 +208,7 @@ class List extends Component {
                 label={
                     <div data-cy="modality-tab-item" className={'modality-tab-item'}>
                         <p>{modality_info.name}</p>
-                        <img src={Apis.apiHost + modality_info.modality_icon_image} alt="site logo"/>
+                        <img src={Apis.apiUploadAddress + modality_info.modality_icon_image} alt="site logo"/>
                         {
                             modality_info.instruction_type !== null ?
                                 <MuiButton data-cy="instruction-button" variant="outlined" size="small" color="default" startIcon={<MenuBookIcon/>} onClick={() => this.onInstruction(modality_info)}>
@@ -311,11 +313,14 @@ class List extends Component {
     render() {
         return (
             <div className="test-list-container news-dashboard-wrapper mb-20">
-                <div className={'test-set-coupon'}>
-                    <MuiButton data-cy="test-set-coupon-button" variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
-                        <IntlMessages id={"test.testSetCoupon"}/>
-                    </MuiButton>
-                </div>
+                {
+                    this.props.isLogin &&
+                    <div className={'test-set-coupon'}>
+                        <MuiButton data-cy="test-set-coupon-button" variant="outlined" size="small" color="primary" startIcon={<i className="ti-gift"/>} onClick={() => this.onShowTestSetCouponModal()}>
+                            <IntlMessages id={"test.testSetCoupon"}/>
+                        </MuiButton>
+                    </div>
+                }
                 <AppBar position="static" color="default">
                     <ModalityTabs
                         data-cy="modality-tabs"
@@ -390,39 +395,28 @@ class List extends Component {
 }
 
 // map state to props
-const mapStateToProps = (state) => {
-        return {
-            locale: state.settings.locale.locale,
-        };
-    }
-;
+const mapStateToProps = (state) => ({
+    locale: state.settings.locale.locale,
+    isLogin: selectors.getIsLogin(state),
+});
 
 export default withRouter(connect(mapStateToProps)(List));
 
-const ModalityTabs = withStyles(
-    {
-        root: {}
-        ,
-        indicator: {
-            height: 3,
-        }
-        ,
-    }
-)(Tabs);
+const ModalityTabs = withStyles({
+    root: {},
+    indicator: {
+        height: 3,
+    },
+})(Tabs);
 
-const ModalityTab = withStyles((theme) => (
-    {
-        root: {
-            '&$selected':
-                {
-                    fontWeight: 'bold',
-                }
-            ,
-        }
-        ,
-        selected: {
-            fontWeight: 'bold',
-        }
-        ,
-    }
-))(Tab);
+const ModalityTab = withStyles((theme) => ({
+    root: {
+        '&$selected':
+            {
+                fontWeight: 'bold',
+            },
+    },
+    selected: {
+        fontWeight: 'bold',
+    },
+}))(Tab);

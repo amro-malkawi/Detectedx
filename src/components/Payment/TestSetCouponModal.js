@@ -31,7 +31,7 @@ export default class TestSetCouponModal extends Component {
     }
 
     onApplyCouponCode() {
-        Apis.couponApplyTestSetCoupon(this.state.couponCode).then((resp) => {
+        Apis.enterpriseApplyTestSet(this.state.couponCode).then((resp) => {
             this.setState({applyResult: resp});
         }).catch((e) => {
             if (e.response) NotificationManager.error(e.response.data.error.message);

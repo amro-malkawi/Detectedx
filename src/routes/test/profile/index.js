@@ -46,7 +46,7 @@ export default class Profile extends Component {
                 first_name: '',
                 last_name: '',
                 gender: '',
-                year_of_birth: '',
+                birthday: '',
                 country: '',
                 address1: '',
                 address2: '',
@@ -266,8 +266,8 @@ export default class Profile extends Component {
                                     </FormGroup>
                                     <TextField
                                         id="birthday"
-                                        value={this.state.userInfo.year_of_birth}
-                                        onChange={(event) => this.onChangeData('year_of_birth', event.target.value)}
+                                        value={this.state.userInfo.birthday}
+                                        onChange={(event) => this.onChangeData('birthday', event.target.value)}
                                         label={<IntlMessages id={"profile.birthday"}/>}
                                         className={'mb-10'}
                                         margin="dense"

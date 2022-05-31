@@ -1,15 +1,12 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import scriptLoader from 'react-async-script-loader';
 import Script from 'react-load-script'
 import {CircularProgress} from "@material-ui/core";
 
-const PAYPAL_CLIENT_ID = 'ASNlAmrUflaRXLfCF_Y3Tg5JwkdQfFxC3f4VlVrhxD9LiTdRQIrjtSvZ45FdKUhlRQPNwCcdjrSNh3qA';
-
 
 export default class PaypalButton extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             scriptLoaded: false,
             scriptError: false

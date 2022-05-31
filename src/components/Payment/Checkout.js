@@ -127,7 +127,6 @@ class _OrderForm extends Component {
                 }).then((token) => {
                     // return Apis.orderChargeCard(this.props.plan.id, token);
                     if(discountPrice !== 0) {
-                        console.log('bdddd');
                         return this.props.onStripeOrder(price, currency, couponCode, token);
                     } else {
                         return this.props.onFreeOrder(price, currency, couponCode, token);

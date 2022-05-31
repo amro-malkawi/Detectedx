@@ -1,0 +1,745 @@
+
+.main-signup {
+  //height: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .main-signup-content, .main-signin-content {
+    width: 1100px;
+    max-height: 800px;
+    padding: 50px;
+    border-radius: 30px;
+    color: #180F15;
+    background-color: white;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+
+    .signup-title {
+      font-size: 30px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .input-item {
+      margin-bottom: 15px;
+
+      span {
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      input, select {
+        border-radius: 7px;
+      }
+    }
+
+    .signup-checkbox {
+      & > label {
+        margin-left: -3px;
+
+        .signup-checkbox-label {
+          font-family: "Poppins", sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+
+          strong {
+            font-size: inherit;
+            color: #2894FA;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .signup-submit {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 0;
+      font-family: "Poppins", sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #180F15;
+      background-color: #54A9FB;
+      border-radius: 7px;
+    }
+
+    .signin-sso-bar {
+      flex: 1;
+      height: 1px;
+      background-color: #d0d0d0;
+      margin: 0 20px;
+    }
+
+    .sso-button {
+      display: flex;
+      justify-content: center;
+      width: 143px;
+
+      img {
+        height: 35px;
+      }
+    }
+  }
+}
+
+.main-plan {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .main-plan-container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    .main-plan-item {
+      width: 18vw;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      margin: 0 7px;
+      overflow: hidden;
+      border-radius: 30px;
+      background-color: white;
+      transition: all .2s; /* Animation */
+
+      &:hover {
+        box-shadow: 0 2px 10px 0 #888888;
+
+        .plan-item-btn > button {
+          box-shadow: 3px 3px 5px #333;
+
+          i {
+            display: inline-block !important;
+          }
+        }
+      }
+
+      .plan-item-header {
+        flex: 11;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.7vw 0;
+        font-size: 1.25vw;
+        font-weight: 500;
+        color: #180F15;
+      }
+
+      .plan-item-price {
+        height: 7vw;
+        flex: 25;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 20px;
+        color: #54A9FB;
+        background-color: #eaeef4;
+
+        .plan-price-currency {
+          font-size: 1.67vw;
+          font-weight: 500;
+        }
+
+        .plan-price-num {
+          font-size: 4.16vw;  // 80px
+          font-weight: 600;
+          line-height: 5.2rem;
+        }
+      }
+
+      .plan-item-content {
+        min-height: 24.5vw;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5vw 2.5vw;
+
+        .plan-item-features {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+
+          div {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
+            font-size: 0.88vw;
+            color: #54a9fb;
+
+            span {
+              display: inline-block;
+              content: '';
+              height: 9px;
+              width: 9px;
+              margin-top: 5px;
+              margin-right: 12px;
+              border-radius: 50%;
+              background-color: #54a9fb;
+            }
+            div {
+              flex: 1;
+              margin-bottom: 0;
+            }
+          }
+        }
+
+        .plan-item-btn {
+          display: flex;
+          flex-direction: column;
+
+          button {
+            width: 100%;
+            height: 3.65vw;
+            font-family: "Poppins", sans-serif;
+            font-size: 1.3vw;
+            font-weight: 600;
+            border-radius: 1.8vw;
+            background-color: #8dc7ff;
+
+            i {
+              display: none;
+              margin-right: 10px;
+              font-size: 1.56vw;
+              font-weight: 700;
+            }
+          }
+        }
+      }
+
+      &.enterprise {
+        background-color: #54a9fb;
+
+        .plan-item-price {
+          text-align: center;
+          font-size: 1.25vw;
+          font-weight: 700;
+          color: #180F15;
+          background-color: #6ebaff;
+        }
+
+        .plan-item-btn {
+          button {
+            color: #180f15;
+            background-color: #ffffff;
+          }
+
+          .plan-item-code {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.72vw;
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+.main-pay {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .main-pay-content {
+    display: flex;
+    flex-direction: row;
+    border-radius: 30px;
+    overflow: hidden;
+
+    .main-pay-info {
+      width: 470px;
+      display: flex;
+      flex-direction: column;
+      padding: 50px 70px 30px;
+      background-color: #2F367B;
+
+      .main-pay-info-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .pay-site-logo {
+          width: 200px;
+        }
+
+        .pay-plan-name {
+          text-align: center;
+          margin-top: 10px;
+          font-size: 22px;
+          font-weight: 500;
+          color: white;
+        }
+
+        .cost-content {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: flex-start;
+          margin-bottom: 20px;
+          color: white;
+
+          .cost-symbol {
+            font-size: 28px;
+            font-weight: 500;
+          }
+
+          .cost-val {
+            font-size: 75px;
+            font-weight: 600;
+            line-height: 90px;
+          }
+
+          .cost-currency {
+            margin: 10px 0 0 5px;
+            font-size: 15px;
+          }
+        }
+
+        .pay-split-bar {
+          margin: 15px 0 20px;
+          height: 2px;
+          background-color: #777275;
+        }
+
+
+        .pay-coupon-code {
+          position: relative;
+          input {
+            padding: 15px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 7px;
+            color: white;
+            background-color: #1d203c;
+
+            &::placeholder {
+              color: #444C96;
+            }
+          }
+
+          .pay-coupon-apply {
+            position: absolute;
+            top: 13px;
+            right: 17px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #54a9fb;
+            cursor: pointer;
+          }
+        }
+
+        .pay-allow-coupon-info {
+          & > div {
+            div {
+              padding-left: 10px;
+              color: white;
+              background-color: #ffffff1a;
+              border-radius: 5px;
+              & > svg {
+                font-size: 15px;
+                margin-right: 5px;
+              }
+
+              button {
+                margin-left: 10px;
+                padding: 5px;
+              }
+            }
+          }
+          span {
+            color: #ffffff80;
+          }
+        }
+      }
+
+      .main-pay-info-bottom {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin-top: 45px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #656FD0;
+      }
+    }
+
+    .main-pay-purchase {
+      width: 470px;
+      flex: 1;
+      flex-direction: column;
+      padding: 40px;
+      background-color: white;
+
+      .main-pay-purchase-content {
+        flex: 1;
+        color: #AAAAAA;
+
+        .pay-form-container {
+          padding-top: 12px;
+
+          .pay-form-title {
+            font-weight: 600;
+            color: #180F15;
+          }
+
+          .pay-form {
+            border: 2px solid #B2B2B288;
+            border-radius: 7px;
+
+            &.error {
+              border: 2px solid #ff4747;
+            }
+
+            div {
+              padding: 3px 5px;
+            }
+
+            & > div:last-child {
+              border-top: 2px solid #B2B2B288;
+            }
+
+            i {
+              display: inline-block;
+              margin-left: 9px;
+              font-size: 19px;
+            }
+
+            input {
+              font-size: 14px;
+              color: #180F15;
+              border: none;
+              box-shadow: none;
+
+              &::placeholder {
+                color: #B2B2B2;
+              }
+            }
+
+            .StripeElement {
+              flex: 1;
+              height: 100%;
+            }
+
+            .card-img {
+              width: 132px;
+            }
+
+            .pay-form-row {
+              min-height: 36px;
+              display: flex;
+              flex-direction: row;
+              padding: 0;
+
+              & > div {
+                flex: 1;
+                padding: 5px 12px;
+                overflow: hidden;
+              }
+
+              & > div:last-child {
+                border-left: 2px solid #B2B2B288;
+              }
+            }
+          }
+        }
+
+        .pay-button {
+          flex: 1;
+          margin-top: 20px;
+          padding: 9px;
+          color: #180F15;
+          background-color: #54A9FB;
+          border-radius: 7px;
+
+          span {
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .pay-purchase-bottom {
+        padding-top: 15px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 500;
+        color: #888888;
+      }
+    }
+  }
+}
+
+.enterprise-card {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .enterprise-card-content {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    padding: 50px 30px 30px;
+    border-radius: 30px;
+    overflow: hidden;
+    background-color: #2F367B;
+
+    .enterprise-card-data {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .enterprise-site-logo {
+        width: 230px;
+      }
+      .enterprise-input-container {
+        padding: 0 50px;
+      }
+      .enterprise-input {
+        padding: 23px 20px;
+        font-size: 14px;
+        border: none;
+        border-radius: 7px;
+        color: white;
+        background-color: #1d203c;
+
+        &::placeholder {
+          color: #444C96;
+        }
+      }
+
+      .enterprise-submit-btn {
+        width: 100%;
+        margin-top: 7px;
+        padding: 10px 0;
+        background-color: #54a9fb;
+
+        .MuiButton-label {
+          font-family: "Poppins", sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          color: #180F15;
+        }
+      }
+
+      .enterprise-phone-num {
+        font-size: 25px;
+        font-weight: 600;
+        letter-spacing: 2px;
+      }
+
+      .enterprise-split-line {
+        height: 1px;
+        margin-top: 40px;
+        background-color: #656FD0;
+      }
+
+      .enterprise-desc {
+        text-align: center;
+        margin: 20px 0 40px;
+        text-decoration: underline;
+        letter-spacing: 1px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #656FD0;
+      }
+    }
+
+    .enterprise-card-bottom {
+      padding-top: 15px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #656FD0;
+    }
+  }
+}
+
+.mobile-layout {
+  .main-content {
+    padding-bottom: 20px;
+  }
+  .main-signup-content, .main-signin-content {
+    padding: 30px;
+  }
+
+  .main-plan {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 -30px;
+
+    .main-plan-container {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      .carousel-root {
+        width: 100vw;
+      }
+
+      .main-plan-item {
+        display: flex;
+        width: initial;
+        height: 100%;
+        max-height: calc( 100vh - 190px );
+        flex-direction: column;
+        align-items: stretch;
+        margin: 0 15px;
+        overflow: hidden;
+        border-radius: 30px;
+        &:hover {
+          box-shadow: none;
+        }
+
+        .plan-item-header {
+          flex: initial;
+          padding: 14px 0;
+          font-size: 20px;
+          font-weight: 500;
+        }
+
+        .plan-item-price {
+          height: 120px;
+          flex: initial;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 10px 20px;
+
+          .plan-price-currency {
+            font-size: 25px;
+            font-weight: 500;
+          }
+
+          .plan-price-num {
+            font-size: 60px;
+            font-weight: 600;
+            line-height: 80px;
+          }
+        }
+
+        .plan-item-content {
+          height: 100%;
+          min-height: initial;
+          display: flex;
+          flex-direction: column;
+          padding: 30px;
+
+          .plan-item-features {
+            max-height: calc( 100vh - 450px );
+            overflow: hidden;
+            div {
+              display: flex;
+              flex-direction: row;
+              text-align: start;
+              margin-bottom: 10px;
+              font-size: 14px;
+
+              span {
+                display: inline-block;
+                content: '';
+                height: 7px;
+                width: 7px;
+                margin-top: 5px;
+                margin-right: 12px;
+                border-radius: 50%;
+              }
+            }
+          }
+
+          .plan-item-btn {
+            display: flex;
+            flex-direction: column;
+
+            button {
+              //width: 100%;
+              height: 50px;
+              font-size: 19px;
+              font-weight: 600;
+              border-radius: 25px;
+
+              i {
+                display: none;
+                margin-right: 10px;
+                font-size: 30px;
+              }
+            }
+          }
+        }
+
+        &.enterprise {
+
+          .plan-item-price {
+            font-size: 18px;
+            font-weight: 700;
+          }
+
+          .plan-item-btn {
+            button {
+              background-color: #ffffff;
+            }
+
+            .plan-item-code {
+              text-align: center;
+              margin-top: 15px;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .main-pay {
+    .main-pay-content {
+      flex-direction: column;
+      .main-pay-info {
+        width: initial;
+        padding: 30px;
+      }
+      .main-pay-purchase {
+        width: initial;
+        padding: 30px;
+      }
+    }
+  }
+
+  .enterprise-card {
+    .enterprise-card-content {
+      padding: 30px;
+      img {
+        width: 170px !important;
+      }
+
+      .enterprise-input-container {
+        padding: 0 10px;
+      }
+      .enterprise-phone-num {
+        font-size: 20px !important;
+      }
+      .enterprise-desc {
+        font-size: 12px;
+        margin: 15px 0 20px;
+      }
+      .enterprise-card-bottom {
+        font-size: 11px;
+      }
+    }
+  }
+}

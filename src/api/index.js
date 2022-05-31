@@ -20,6 +20,7 @@ function getApiHost()
 export const apiHost = getApiHost();
 
 export const apiAddress = apiHost + '/api/';
+export const apiUploadAddress = apiHost + '/upload';
 
 const instance = axios.create({
     baseURL: apiAddress,
@@ -60,8 +61,18 @@ export function logout() {
     return instance.post(url, {}).then((response) => response.data);
 }
 
-export function singUp(data) {
-    const url = '/users';
+export function userCheckEmail(email) {
+    const url = '/users/check_email?email=' + email;
+    return instance.get(url).then((response) => response.data);
+}
+
+export function signUp(data) {
+    const url = '/users/signup';
+    return instance.post(url, data).then((response) => response.data);
+}
+
+export function userSubscribe(data) {
+    const url = '/users/subscribe?access_token=' + getAccessToken();
     return instance.post(url, data).then((response) => response.data);
 }
 
@@ -108,6 +119,7 @@ export function userDeleteProfile() {
     const url = '/users/delete_profile?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
+
 
 /**
  * user operation
@@ -167,6 +179,15 @@ export function testSetsCaseList(id, isPost) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function testSetRecentlyCompleted() {
+    const url = '/test_sets/recently_completed?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function testSetsCategories() {
+    const url = '/test_sets/categories?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
 /**
  * test_set_cases operation
  */
@@ -189,8 +210,11 @@ export function testCasesAnswers(id, attempt_id, isPostTest) {
  * test-set-assignments operation
  */
 
-export function currentTestSets() {
-    const url = '/test_set_assignments/current_test_sets?access_token=' + getAccessToken();
+export function currentTestSets(searchText) {
+    let url = `/test_set_assignments/current_test_sets?access_token=` + getAccessToken();
+    if(searchText) {
+        url += `&search=${searchText}`;
+    }
     return instance.get(url).then((response) => response.data);
 }
 
@@ -198,7 +222,7 @@ export function currentTestSets() {
  * attempt operation
  */
 
-export function attemptsAdd(test_set_id, attemptSubType) {
+export function attemptsStart(test_set_id, attemptSubType) {
     let url = '/attempts/start?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
     if(attemptSubType && attemptSubType.length > 0) {
        url = url + '&sub_type=' + attemptSubType;
@@ -247,7 +271,7 @@ export function attemptsQuestionnaireAnswer(id, data, type) {
 }
 
 export function attemptsCertificatePdf(id, type, email, testSetName) {
-    const url = '/attempts/' + id + '/certificate/?type=' + type + '&email=' + email + '&access_token=' + getAccessToken();
+    const url = '/attempts/' + id + '/certificate?type=' + type + '&email=' + email + '&access_token=' + getAccessToken();
     if(email && email.length > 0) {
         return instance.get(url).then((response) => response.data);
     } else {
@@ -265,6 +289,10 @@ export function attemptsCertificatePdf(id, type, email, testSetName) {
                 link.click();
                 resolve();
             }).catch((e) => {
+                return e.response.data.text();
+            }).then((errorMsg) => {
+                reject({response: {data: JSON.parse(errorMsg)}});
+            }).catch((e) => {
                 reject(e);
             });
         });
@@ -272,7 +300,7 @@ export function attemptsCertificatePdf(id, type, email, testSetName) {
 }
 
 export function attemptsScorePdf(id, email, testSetName) {
-    const url = '/attempts/' + id + '/scorepdf/?email=' + email + '&access_token=' + getAccessToken();
+    const url = '/attempts/' + id + '/scorepdf?email=' + email + '&access_token=' + getAccessToken();
     if(email && email.length > 0) {
         return instance.get(url).then((response) => response.data);
     } else {
@@ -339,6 +367,11 @@ export function attemptsSetProgress(id, progress) {
 
 export function attemptsStartVideo(id) {
     let url = '/attempts/' + id + '/start_video?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function attemptsAssignFromGuest(id) {
+    let url = '/attempts/' + id + '/assign_from_guest?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -447,6 +480,28 @@ export function paymentInfo() {
     return instance.get(url).then((response) => response.data);
 }
 
+export function paymentStripeSubscription(data) {
+    const url = 'payments/stripe_subscription?access_token=' + getAccessToken();
+    return instance.post(url, data).then((response) => response.data);
+}
+
+export function paymentSubscribedInfo() {
+    const url = 'payments/user_subscribed_info?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function paymentUpdateCardSession() {
+    const url = 'payments/update_card_session?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function paymentCancelSubscription() {
+    const url = 'payments/cancel_subscription?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+
+/////////////////////// unused
 export function paymentFree(test_set_id, price, currency, couponCode) {
     const url = 'payments/free?access_token=' + getAccessToken();
     return instance.post(url, {test_set_id, price, currency, couponCode}).then((response) => response.data);
@@ -479,13 +534,16 @@ export function paymentHistoryReceipt(id) {
 /**
  * coupons functions
  */
-export function couponInfo(couponCode, type) {
-    const url = 'coupons/info?coupon_code=' + couponCode + '&type=' + type + '&access_token=' + getAccessToken();
+export function couponInfo(couponCode) {
+    const url = 'coupons/info?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
-export function couponApplyTestSetCoupon(couponCode) {
-    const url = 'coupons/apply_test_set_coupon?coupon_code=' + couponCode + '&access_token=' + getAccessToken();
+/**
+ * enterprise functions
+ */
+export function enterpriseApplyTestSet(couponCode) {
+    const url = 'enterprises/apply_enterprise_code?code=' + couponCode + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
 
@@ -523,4 +581,17 @@ export function setAttemptChestAnswer(attempt_id, test_case_id, chest_rating, ch
 export function getAttemptChestAnswer(attempt_id, test_case_id, is_post_test) {
     const url = 'answers_chests/get_chest_answer?access_token=' + getAccessToken();
     return instance.post(url, {attempt_id, test_case_id, is_post_test}).then((response) => response.data);
+}
+
+/**
+ * book(save) test set functions
+ */
+export function bookTestSet(test_set_id) {
+    const url = 'test_set_books/book?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
+export function bookTestSetCancel(test_set_id) {
+    const url = 'test_set_books/book_cancel?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
 }

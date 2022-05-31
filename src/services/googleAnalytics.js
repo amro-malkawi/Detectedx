@@ -5,7 +5,7 @@ ReactGA.initialize("UA-133482385-3");
 
 const withGoogleTracker = (WrappedComponent, options = {}) => {
     const trackPage = (location, page) => {
-        if(window.location.href.indexOf('rivelato') > -1) {
+        if(window.location.href.indexOf('app.detectedx.com') > -1) {
             ReactGA.set({
                 page,
                 ...options

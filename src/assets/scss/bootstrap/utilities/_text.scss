@@ -10,6 +10,7 @@
 .text-center  { text-align: center; }
 .text-nowrap   { white-space: nowrap !important; }
 .text-truncate { @include text-truncate; }
+.text-underline {text-decoration: underline}
 
 // Responsive alignment
 
@@ -39,6 +40,8 @@
 // Contextual colors
 
 .text-white { color: #fff !important; }
+
+.text-primary1 { color: #54A9FB}
 
 @each $color, $value in $theme-colors {
   @include text-emphasis-variant(".text-#{$color}", $value);

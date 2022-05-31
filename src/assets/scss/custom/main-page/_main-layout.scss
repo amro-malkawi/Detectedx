@@ -1,0 +1,285 @@
+//--- Main page Font ---//
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 100;
+  src: url("../fonts/Poppins-Thin.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 200;
+  src: url("../fonts/Poppins-ExtraLight.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  src: url("../fonts/Poppins-Light.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/Poppins-Regular.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  src: url("../fonts/Poppins-Medium.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  src: url("../fonts/Poppins-SemiBold.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  src: url("../fonts/Poppins-Bold.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  src: url("../fonts/Poppins-ExtraBold.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  src: url("../fonts/Poppins-Black.ttf") format('truetype');
+}
+
+$main-primary-color: #1E213E;
+$main-active-color: #54A9FB;
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+#root {
+  overflow-x: auto;
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #170F15;
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    background-color: #170F15;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #3B4071;
+  }
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-width: 990px;
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  background-color: #180f15;
+  background-image: radial-gradient(ellipse at 95% 95%, #4260d877, #180f15 55%);
+
+  .main-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 120px;
+    padding: 0 60px;
+
+    .header-logo {
+      width: 360px;
+
+      img {
+        width: 200px;
+      }
+    }
+
+    .header-searchbar {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-right: 70px;
+
+      .home-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 70px;
+        height: 70px;
+        margin-right: 30px;
+        border-radius: 35px;
+        background-color: $main-primary-color;
+        cursor: pointer;
+
+        img {
+          width: 45%;
+          height: 45%;
+        }
+      }
+
+      .search-input {
+        position: relative;
+        display: flex;
+        flex: 1;
+        max-width: 800px;
+
+        input {
+          flex: 1;
+          height: 70px;
+          padding: 0 70px 0 37px;
+          font-size: 20px;
+          border-radius: 35px;
+          border: none;
+          color: white;
+          background-color: $main-primary-color;
+        }
+
+        img {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          width: 27px;
+          height: 27px;
+        }
+      }
+    }
+
+    .header-user-info {
+      margin-right: 50px;
+      color: white;
+
+      .header-user-avatar {
+        display: flex;
+        width: 70px;
+        height: 70px;
+        justify-content: center;
+        align-items: center;
+        margin-right: 20px;
+        overflow: hidden;
+        border-radius: 35px;
+        background-color: #1E213E;
+        cursor: pointer;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+
+        span {
+          font-size: 27px;
+          font-weight: 600;
+          letter-spacing: 2px;
+          color: #54A9FB;
+        }
+
+        i {
+          font-size: 55px;
+          color: #4a4d6c;
+        }
+      }
+
+      .info-num {
+        margin: 0 15px 0 3px;
+        padding: 2px 10px;
+        border-radius: 5px;
+        background-color: $main-primary-color;;
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 0 60px;
+    margin-bottom: 15px;
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+  }
+}
+
+.mobile-layout {
+  min-width: initial;
+
+  .main-header {
+    height: initial;
+    flex-direction: column;
+    align-items: start;
+    padding: 30px;
+
+    .header-logo {
+      width: initial;
+
+      img {
+        width: 160px;
+      }
+    }
+
+    .header-searchbar {
+      display: none;
+    }
+
+    .header-user-info {
+      width: 100%;
+      margin-top: 30px;
+      margin-right: 0;
+      .header-user-avatar {
+        i {
+          font-size: 40px;
+        }
+      }
+      .header-user-avatar {
+        width: 50px;
+        height: 50px;
+
+        span {
+          font-size: 20px;
+        }
+      }
+
+      .info-block {
+        flex: 1;
+
+        .info-num {
+          margin-right: 7px;
+          padding: 2px 5px;
+        }
+
+        .hide-mobile {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    padding: 0 30px;
+    margin: 0;
+    ::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+  }
+}

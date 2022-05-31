@@ -59,15 +59,16 @@
 
 .error-wrapper {
   @extend .session-wrapper;
-  background: $info;
-  background-image: none;
+  background: #180f15;
+  background-image: radial-gradient(ellipse at 95% 95%, #4260d877, #180f15 55%);
   overflow-x: hidden;
 }
 
 .error-body {
+  color: white;
   h2 {
     font-weight: 900;
-    text-shadow: 9px 10px 1px rgba(0, 0, 0, 0.08);
+    text-shadow: 9px 10px 1px #ffffff10;
   }
 }
 

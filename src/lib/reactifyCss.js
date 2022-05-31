@@ -5,6 +5,8 @@ import 'Assets/themify-icons/themify-icons.css';
 import 'react-notifications/lib/notifications.css';
 // tour
 import 'react-joyride/lib/react-joyride-compiled.css';
+// carousel
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 //Algolia css
 import 'instantsearch.css/themes/algolia.css';
 // Custom Style File
