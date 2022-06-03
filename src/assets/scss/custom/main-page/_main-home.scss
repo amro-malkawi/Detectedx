@@ -372,6 +372,24 @@
   }
 }
 
+.main-test-subtype-modal {
+  .MuiDialog-paper {
+    padding: 10px 25px;
+    font-family: "Poppins", sans-serif;
+    border: 2px solid #569ee7;
+    border-radius: 7px;
+    color: white;
+    background-color: #171015;
+
+    button {
+      padding: 6px 20px;
+      font-family: "Poppins", sans-serif;
+      color: white;
+      background-color: #5242d6;
+    }
+  }
+}
+
 .test-set-modal-video {
   position: relative;
   overflow: hidden;

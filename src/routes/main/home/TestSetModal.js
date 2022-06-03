@@ -20,6 +20,7 @@ function TestSetModal({data, onClose}) {
     const [isVideoPlay, setIsVideoPlay] = useState(false);
     const [isFirstPlay, setIsFirstPlay] = useState(true);
     const [testSetCategory, setTestSetCategory] = useState('');
+    const [isShowSubTypeModal, setIsShowSubTypeModal] = useState(false);
     const [, updateState] = useState();
 
     useEffect(() => {
@@ -33,11 +34,11 @@ function TestSetModal({data, onClose}) {
         }
     }, [data]);
 
-    const onStart = () => {
+    const onStart = (subType) => {
         if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
             history.push(data.id)
         } else {
-            Apis.attemptsStart(data.id, undefined).then(attempt => {
+            Apis.attemptsStart(data.id, subType).then(attempt => {
                 let path;
                 if (attempt.progress === 'test') {
                     path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
@@ -146,7 +147,7 @@ function TestSetModal({data, onClose}) {
             )
         } else if (attempt === undefined || attempt.complete) {
             return (
-                <Button className={'test-set-start-btn'} onClick={onStart}>
+                <Button className={'test-set-start-btn'} onClick={data.modalityInfo.modality_has_sub_type ? () => setIsShowSubTypeModal(true) : () => onStart()}>
                     Start Module
                 </Button>
             )
@@ -202,6 +203,19 @@ function TestSetModal({data, onClose}) {
         } else {
             return null;
         }
+    }
+
+    const renderSubTypeModal = () => {
+        if(!isShowSubTypeModal) return null;
+        return (
+            <Dialog open={true} maxWidth={'xl'} className={'main-test-subtype-modal'} onClose={() => setIsShowSubTypeModal(false)}>
+                <span className={'fs-19'}>What type of test would you like?</span>
+                <div className={'d-flex flex-row justify-content-between mt-20 mx-20'}>
+                    <Button onClick={() => onStart()}>Diagnostic</Button>
+                    <Button onClick={() => onStart('screening')}>Screening</Button>
+                </div>
+            </Dialog>
+        )
     }
 
     if(!isMobile) {
@@ -265,6 +279,7 @@ function TestSetModal({data, onClose}) {
                         <i className={'ti ti-close'}/>
                     </div>
                 </div>
+                {renderSubTypeModal()}
             </Dialog>
         )
     } else {
@@ -326,9 +341,9 @@ function TestSetModal({data, onClose}) {
                             }
                         </div>
                         {renderRightContent()}
-
                     </div>
                 </div>
+                {renderSubTypeModal()}
             </Dialog>
         )
     }
