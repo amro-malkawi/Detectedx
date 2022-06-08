@@ -104,10 +104,14 @@ function VideoView(props) {
     const renderNav = () => {
         return (
             <nav className={'test-view-action-buttons'}>
-                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => onFinish()}>
-                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
-                    <CheckCircleOutlineIcon size="small"/>
-                </Button>
+                {
+                    // can not submit "presentations" test because there is no questions. it's for only show
+                    testCaseInfo.modalities.modality_type !== 'presentations' &&
+                    <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => onFinish()}>
+                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
+                        <CheckCircleOutlineIcon size="small"/>
+                    </Button>
+                }
                 {
                     complete &&
                     <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"

@@ -26,7 +26,7 @@ const SideQuestions = React.forwardRef((props, ref) => {
             return <ChestCTQuestions ref={ref} {...props} />
         case 'quiz':
         case 'video_lecture':
-        case 'presentations':
+        // case 'presentations':
             return <QuizQuestions ref={ref} {...props} />
         case 'wb_ct':
             return <WBCTQuestions ref={ref} {...props} />

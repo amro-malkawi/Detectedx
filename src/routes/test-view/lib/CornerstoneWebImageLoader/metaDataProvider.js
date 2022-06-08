@@ -179,7 +179,8 @@ function metaDataProvider(type, imageId) {
     if (type === 'age') {
         const ageStr = getValue(recursiveFindTags('00101010', metaData)[0]);
         if (ageStr === undefined) return 0;
-        return Number(ageStr.match(/\d+/)[0]);
+        const numberMatch = ageStr.match(/\d+/);
+        return numberMatch ? Number(numberMatch[0]) : 0;
     }
 
     if (type === 'imagePosition') {

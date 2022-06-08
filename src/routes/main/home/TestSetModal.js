@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {Button, Dialog} from '@material-ui/core';
+import {Button, Dialog, Tooltip} from '@material-ui/core';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -20,6 +20,7 @@ function TestSetModal({data, onClose}) {
     const [isVideoPlay, setIsVideoPlay] = useState(false);
     const [isFirstPlay, setIsFirstPlay] = useState(true);
     const [testSetCategory, setTestSetCategory] = useState('');
+    const [isShowSubTypeModal, setIsShowSubTypeModal] = useState(false);
     const [, updateState] = useState();
 
     useEffect(() => {
@@ -33,11 +34,11 @@ function TestSetModal({data, onClose}) {
         }
     }, [data]);
 
-    const onStart = () => {
+    const onStart = (subType) => {
         if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
             history.push(data.id)
         } else {
-            Apis.attemptsStart(data.id, undefined).then(attempt => {
+            Apis.attemptsStart(data.id, subType).then(attempt => {
                 let path;
                 if (attempt.progress === 'test') {
                     path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
@@ -146,7 +147,7 @@ function TestSetModal({data, onClose}) {
             )
         } else if (attempt === undefined || attempt.complete) {
             return (
-                <Button className={'test-set-start-btn'} onClick={onStart}>
+                <Button className={'test-set-start-btn'} onClick={data.modalityInfo.modality_has_sub_type ? () => setIsShowSubTypeModal(true) : () => onStart()}>
                     Start Module
                 </Button>
             )
@@ -204,7 +205,45 @@ function TestSetModal({data, onClose}) {
         }
     }
 
-    if(!isMobile) {
+    const renderSubTypeModal = () => {
+        if (!isShowSubTypeModal) return null;
+        return (
+            <Dialog open={true} maxWidth={'xl'} className={'main-test-subtype-modal'} onClose={() => setIsShowSubTypeModal(false)}>
+                <span className={'fs-19'}>What type of test would you like?</span>
+                <div className={'d-flex flex-row justify-content-between mt-20 mx-20'}>
+                    <Tooltip
+                        title={
+                            <div className={'fs-13'}>
+                                <div className={'fs-14 fw-bold'}>Allows you to assign either:</div>
+                                <div className={'ml-2 mt-1'}>• BIRADS assessment category</div>
+                                <div className={'ml-2 mt-1'}>• 3-Probably benign, 4-Suspicious<br/>&nbsp;&nbsp; or 5-Highly suspicious</div>
+                                <div className={'ml-2 mt-1'}>• Abnormality appearances</div>
+                                <div className={'ml-2 mt-1'}>• BIRADS assessment category</div>
+                                <div className={'ml-2 mt-1'}>• 2-benign</div>
+                                <div className={'ml-2 mt-1'}>• Next case (1-Normal)</div>
+                            </div>
+                        }
+                        placement="bottom"
+                    >
+                        <Button onClick={() => onStart()}>Diagnostic</Button>
+                    </Tooltip>
+                    <Tooltip
+                        title={
+                            <div className={'fs-13'}>
+                                <div className={'fs-14 fw-bold'}>Allows you to choose either:</div>
+                                <div className={'ml-2 mt-1'}>• Recall (BIRADS 0)</div>
+                                <div className={'ml-2 mt-1'}>• Next case (Normal)</div>
+                            </div>}
+                        placement="bottom"
+                    >
+                        <Button onClick={() => onStart('screening')}>Screening</Button>
+                    </Tooltip>
+                </div>
+            </Dialog>
+        )
+    }
+
+    if (!isMobile) {
         return (
             <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
                 <div className={'main-test-set-modal'}>
@@ -265,6 +304,7 @@ function TestSetModal({data, onClose}) {
                         <i className={'ti ti-close'}/>
                     </div>
                 </div>
+                {renderSubTypeModal()}
             </Dialog>
         )
     } else {
@@ -284,19 +324,19 @@ function TestSetModal({data, onClose}) {
                             data.modalityInfo.modality_icon_image &&
                             <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-mobile-header-img'} alt={''}/>
                         }
-                            <div className={'d-flex flex-row'}>
-                                <div className={'test-set-mobile-header-tags'}>
-                                    <div className={'test-category'}>{testSetCategory}</div>
-                                    {
-                                        data.is3D &&
-                                        <div className={'mark-3d'}>
-                                            <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
-                                        </div>
-                                    }
-                                </div>
-                                <div className={'fs-14'}>{type}</div>
+                        <div className={'d-flex flex-row'}>
+                            <div className={'test-set-mobile-header-tags'}>
+                                <div className={'test-category'}>{testSetCategory}</div>
+                                {
+                                    data.is3D &&
+                                    <div className={'mark-3d'}>
+                                        <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                    </div>
+                                }
                             </div>
-                            <div className={'test-set-mobile-header-title fs-23 fw-semi-bold'}>{data.name}</div>
+                            <div className={'fs-14'}>{type}</div>
+                        </div>
+                        <div className={'test-set-mobile-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                     </div>
                     <div className={'test-set-mobile-content'}>
                         <div className={'test-set-item-spec'}>
@@ -326,9 +366,9 @@ function TestSetModal({data, onClose}) {
                             }
                         </div>
                         {renderRightContent()}
-
                     </div>
                 </div>
+                {renderSubTypeModal()}
             </Dialog>
         )
     }

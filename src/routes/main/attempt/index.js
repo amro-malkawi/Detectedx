@@ -875,7 +875,10 @@ class Attempt extends Component {
                         </div>
                     </div>
                 </div>
-                <div className={'col-md-6 score-chart-container'}>
+                <div
+                    className={'col-md-6 score-chart-container'}
+                    style={this.state.attemptInfo.attempt_sub_type === 'screening' ? {marginTop: 26, marginBottom: 40} : {}}
+                >
                     <BoxplotChart
                         title={'Sensitivity compared to'}
                         score_type={'Sensitivity'}
@@ -890,13 +893,16 @@ class Attempt extends Component {
                         attempt_id={this.state.attempts_id}
                         value={specitifity}
                     />
-                    <BoxplotChart
-                        title={'ROC compared to'}
-                        score_type={'ROC'}
-                        showUserSelect={true}
-                        attempt_id={this.state.attempts_id}
-                        value={roc}
-                    />
+                    {
+                        this.state.attemptInfo.attempt_sub_type !== 'screening' &&
+                        <BoxplotChart
+                            title={'ROC compared to'}
+                            score_type={'ROC'}
+                            showUserSelect={true}
+                            attempt_id={this.state.attempts_id}
+                            value={roc}
+                        />
+                    }
                 </div>
             </div>
         )
