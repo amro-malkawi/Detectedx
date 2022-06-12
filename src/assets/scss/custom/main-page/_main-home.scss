@@ -339,6 +339,15 @@
         font-size: 15px;
         color: #54A9FB;
       }
+
+      .learning-obj-back-btn {
+        padding: 3px 15px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: "Poppins", sans-serif;
+        background-color: #54A9FB;
+        color: #180F15;
+      }
     }
 
     .presenter-photo {
@@ -458,6 +467,7 @@
         color: white;
         border-bottom-left-radius: 25px;
         border-bottom-right-radius: 25px;
+        z-index: 1;
 
 
         .test-set-mobile-header-img {
@@ -523,7 +533,15 @@
         }
       }
     }
+  }
 
+  .learning-obj-back-btn {
+    padding: 3px 15px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
+    background-color: #54A9FB;
+    color: #180F15;
   }
 }
 

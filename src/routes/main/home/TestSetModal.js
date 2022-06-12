@@ -11,6 +11,7 @@ import {NotificationManager} from "react-notifications";
 import {isMobile} from 'react-device-detect';
 import * as Apis from "Api";
 import * as selectors from "Selectors";
+import classnames from "classnames";
 
 function TestSetModal({data, onClose}) {
     const history = useHistory();
@@ -21,6 +22,8 @@ function TestSetModal({data, onClose}) {
     const [isFirstPlay, setIsFirstPlay] = useState(true);
     const [testSetCategory, setTestSetCategory] = useState('');
     const [isShowSubTypeModal, setIsShowSubTypeModal] = useState(false);
+    const [learningObjectives, setLearningObjectives] = useState(null);
+    const [isShoWLearningObj, setIsShoWLearningObj] = useState(false);
     const [, updateState] = useState();
 
     useEffect(() => {
@@ -30,6 +33,12 @@ function TestSetModal({data, onClose}) {
                 categoryList.splice(0, 1);
                 setTestSetCategory(categoryList.join(' '));
             }
+        } catch (e) {
+        }
+        try {
+            console.log(data.test_set_learning_obj, data.modalityInfo.modality_learning_obj)
+            const learningObjStr = data.test_set_learning_obj || data.modalityInfo.modality_learning_obj || null;
+            setLearningObjectives(JSON.parse(learningObjStr));
         } catch (e) {
         }
     }, [data]);
@@ -243,6 +252,33 @@ function TestSetModal({data, onClose}) {
         )
     }
 
+    const renderLearningObj = () => {
+        return (
+            <div className={classnames('flex-column text-white', !isMobile ? 'test-set-modal-content' : 'test-set-mobile-content')}>
+                <div className={'d-flex flex-row align-items-center'}>
+                    <div>
+                        {
+                            !isMobile ?
+                                <Button className={'learning-obj-back-btn'} onClick={() => setIsShoWLearningObj(false)}><i className="zmdi zmdi-chevron-left fs-20 mr-10"/>BACK</Button> :
+                                <i className="zmdi zmdi-chevron-left fs-20 text-primary1 p-2 fs-23" onClick={() => setIsShoWLearningObj(false)}/>
+                        }
+                    </div>
+                    <div className={'flex-fill text-center fs-26 fw-bold pr-40'} style={{flex: 1}}>Learning Objectives</div>
+                </div>
+                <div className={'mt-20 mb-40 fs-19'}>At the end of this module, the user will be able to:</div>
+                <div className={'fs-19'} style={{whiteSpace: 'pre-line'}}>
+                    {learningObjectives.learningObj}
+                </div>
+                <div className={'mt-40 fs-13'}>
+                    disclosures:
+                </div>
+                <div className={'fs-13 fw-light'} style={{whiteSpace: 'pre-line'}}>
+                    {learningObjectives.disclosure}
+                </div>
+            </div>
+        )
+    }
+
     if (!isMobile) {
         return (
             <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
@@ -265,41 +301,51 @@ function TestSetModal({data, onClose}) {
                             </div>
                         </div>
                     </div>
-                    <div className={'test-set-modal-content'}>
-                        <div className={'pr-20'}>
-                            <div className={'test-set-item-spec'}>
-                                <span>DIFFICULTY</span>
-                                {
-                                    renderDifficult(data.difficulty)
-                                }
-                                <span className={'mr-20'}>{data.test_set_time || 0}MINS</span>
-                                <span className={'mr-20'}>CME: {data.test_set_point}</span>
-                                <span className={''}>{data.test_set_code}</span>
+
+                    {!isShoWLearningObj ?
+                        <div className={'test-set-modal-content'}>
+                            <div className={'pr-20'}>
+                                <div className={'test-set-item-spec'}>
+                                    <span>DIFFICULTY</span>
+                                    {
+                                        renderDifficult(data.difficulty)
+                                    }
+                                    <span className={'mr-20'}>{data.test_set_time || 0}MINS</span>
+                                    <span className={'mr-20'}>CME: {data.test_set_point}</span>
+                                    <span className={''}>{data.test_set_code}</span>
+                                </div>
+                                <div className={'text-white fs-18 my-20'}>
+                                    {renderLeftContent()}
+                                </div>
                             </div>
-                            <div className={'text-white fs-18 my-20'}>
-                                {renderLeftContent()}
-                            </div>
-                        </div>
-                        <div className={'pl-20'}>
-                            <div className={'d-flex flex-row align-items-center'}>
+                            <div className={'pl-20'}>
+                                <div className={'d-flex flex-row align-items-center'}>
+                                    {
+                                        renderStartButton()
+                                    }
+                                    {
+                                        isLogin &&
+                                        <Button>
+                                            <div className={'test-set-save-btn'} onClick={onSave}>
+                                                <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
+                                                {
+                                                    data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
+                                                }
+                                            </div>
+                                        </Button>
+                                    }
+                                </div>
+                                {renderRightContent()}
                                 {
-                                    renderStartButton()
-                                }
-                                {
-                                    isLogin &&
-                                    <Button>
-                                        <div className={'test-set-save-btn'} onClick={onSave}>
-                                            <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
-                                            {
-                                                data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
-                                            }
-                                        </div>
-                                    </Button>
+                                    learningObjectives &&
+                                    <div className={'w-100 d-flex flex-row justify-content-end mt-20'}>
+                                        <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShoWLearningObj(true)}>LEARNING OBJECTIVES</span>
+                                    </div>
                                 }
                             </div>
-                            {renderRightContent()}
-                        </div>
-                    </div>
+                        </div> :
+                        renderLearningObj()
+                    }
                     <div className={'test-set-modal-close-btn'} onClick={onClose}>
                         <i className={'ti ti-close'}/>
                     </div>
@@ -338,35 +384,44 @@ function TestSetModal({data, onClose}) {
                         </div>
                         <div className={'test-set-mobile-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                     </div>
-                    <div className={'test-set-mobile-content'}>
-                        <div className={'test-set-item-spec'}>
-                            <span>DIFFICULTY</span>
+                    {!isShoWLearningObj ?
+                        <div className={'test-set-mobile-content'}>
+                            <div className={'test-set-item-spec'}>
+                                <span>DIFFICULTY</span>
+                                {
+                                    renderDifficult(data.difficulty)
+                                }
+                                <span className={'mr-10'}>{data.test_set_time || 0}MINS</span>
+                                <span className={'mr-20'}>CME: {data.test_set_point}</span>
+                                <span className={''}>{data.test_set_code}</span>
+                            </div>
+                            {renderLeftContent()}
+                            <div className={'d-flex flex-row align-items-center'}>
+                                {
+                                    renderStartButton()
+                                }
+                                {
+                                    isLogin &&
+                                    <Button>
+                                        <div className={'test-set-save-btn'} onClick={onSave}>
+                                            <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
+                                            {
+                                                data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
+                                            }
+                                        </div>
+                                    </Button>
+                                }
+                            </div>
+                            {renderRightContent()}
                             {
-                                renderDifficult(data.difficulty)
+                                learningObjectives &&
+                                <div className={'w-100 d-flex flex-row justify-content-end mt-20'}>
+                                    <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShoWLearningObj(true)}>LEARNING OBJECTIVES</span>
+                                </div>
                             }
-                            <span className={'mr-10'}>{data.test_set_time || 0}MINS</span>
-                            <span className={'mr-20'}>CME: {data.test_set_point}</span>
-                            <span className={''}>{data.test_set_code}</span>
-                        </div>
-                        {renderLeftContent()}
-                        <div className={'d-flex flex-row align-items-center'}>
-                            {
-                                renderStartButton()
-                            }
-                            {
-                                isLogin &&
-                                <Button>
-                                    <div className={'test-set-save-btn'} onClick={onSave}>
-                                        <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
-                                        {
-                                            data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
-                                        }
-                                    </div>
-                                </Button>
-                            }
-                        </div>
-                        {renderRightContent()}
-                    </div>
+                        </div> :
+                        renderLearningObj()
+                    }
                 </div>
                 {renderSubTypeModal()}
             </Dialog>
