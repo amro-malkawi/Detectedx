@@ -11651,6 +11651,11 @@
   "resolved" "https://registry.npmjs.org/react-ga/-/react-ga-2.7.0.tgz"
   "version" "2.7.0"
 
+"react-ga4@^1.4.1":
+  "integrity" "sha512-ioBMEIxd4ePw4YtaloTUgqhQGqz5ebDdC4slEpLgy2sLx1LuZBC9iYCwDymTXzcntw6K1dHX183ulP32nNdG7w=="
+  "resolved" "https://registry.npmjs.org/react-ga4/-/react-ga4-1.4.1.tgz"
+  "version" "1.4.1"
+
 "react-hot-loader@^4.6.5":
   "integrity" "sha512-p8AnA4QE2GtrvkdmqnKrEiijtVlqdTIDCHZOwItkI9kW51bt5XnQ/4Anz8giiWf9kqBpEQwsmnChDCAFBRyR/Q=="
   "resolved" "https://registry.npmjs.org/react-hot-loader/-/react-hot-loader-4.12.19.tgz"
