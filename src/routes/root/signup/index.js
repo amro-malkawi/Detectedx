@@ -1,17 +1,18 @@
 import React, {useState, useEffect} from 'react';
+import {useHistory} from "react-router-dom";
+import ReactGA from "react-ga4";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import MainLayout from "Components/MainLayout";
 import SignupFormComponent from "./SignupFormComponent";
 import PlanComponent from "./PlanComponent";
 import EnterpriseComponent from "./EnterpriseComponent";
 import PayComponent from "./PayComponent";
-import {useHistory} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import * as selectors from "Selectors";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
 import {login} from "Actions";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 function Index() {
     const history = useHistory();
@@ -39,6 +40,7 @@ function Index() {
     const onSignUp = (info, hasEnterpriseCode) => {
         setSignupInfo(info);
         Apis.signUp(info).then((result) => {
+            ReactGA.event('sign_up');
             NotificationManager.success("Register succeeded.");
             return Apis.login(info.email, info.password);
         }).then((result) => {
@@ -62,6 +64,18 @@ function Index() {
     }
 
     const onSelectPlan = (plan) => {
+        if(plan.detail) {
+            ReactGA.event('add_to_cart', {
+                currency: plan.detail.currency,
+                value: plan.detail.amount,
+                items: [{
+                    item_id: plan.detail.id,
+                    item_name: plan.name,
+                    currency: plan.detail.currency,
+                    price: plan.detail.amount
+                }]
+            });
+        }
         setSelectedPlan(plan);
         if(isLogin) {
             if (plan.id !== 'enterprise') {
@@ -82,7 +96,21 @@ function Index() {
         }
     }
 
-    const onFinishPayment = (type, value) => {
+    const onFinishPayment = (type, value, discountCode) => {
+        if(selectedPlan.detail) {
+            ReactGA.event('purchase', {
+                currency: selectedPlan.detail.currency,
+                transaction_id: value.paymentIntentId,
+                value: selectedPlan.detail.amount,
+                coupon: discountCode,
+                items: [{
+                    item_id: selectedPlan.detail.id,
+                    item_name: selectedPlan.name,
+                    currency: selectedPlan.detail.currency,
+                    price: selectedPlan.detail.amount
+                }]
+            });
+        }
         if(isLogin) {
             // user subscribe
             onUserSubscribe(type, value);
@@ -147,7 +175,7 @@ function Index() {
                     <PayComponent
                         signupEmail={!isLogin ? signupInfo.email : userEmail}
                         plan={selectedPlan}
-                        onPay={(subscriptionId, customerId, paymentIntentId) => onFinishPayment('pay', {subscriptionId, customerId, paymentIntentId, plan: selectedPlan.id})}
+                        onPay={(subscriptionId, customerId, paymentIntentId, discountCode) => onFinishPayment('pay', {subscriptionId, customerId, paymentIntentId, plan: selectedPlan.id}, discountCode)}
                     />
                 );
             case 'enterpriseCode':

@@ -3,6 +3,7 @@ import {Link, useHistory} from "react-router-dom";
 import {Input} from "reactstrap";
 import {Button, Tooltip, CircularProgress} from "@material-ui/core";
 import * as selectors from "Selectors";
+import ReactGA from "react-ga4";
 import MainLayout from "Components/MainLayout";
 import {login} from 'Actions';
 import {useDispatch} from "react-redux";
@@ -34,6 +35,7 @@ function Signin() {
             // const fromUrl = (history.location.state && history.location.state.from) ? history.location.state.from.pathname : '/';
             const fromUrl = '/';
             Apis.login(email, password).then((result) => {
+                ReactGA.event('login');
                 dispatch(login(result.userId, result.userName, result.userEmail, result.id, history, fromUrl));
             }).catch((e) => {
                 setErrorMsg(e.response.data.error.message);

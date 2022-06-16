@@ -9,6 +9,7 @@ import {useSelector} from "react-redux";
 import {useHistory} from 'react-router-dom';
 import {NotificationManager} from "react-notifications";
 import {isMobile} from 'react-device-detect';
+import ReactGA from "react-ga4";
 import * as Apis from "Api";
 import * as selectors from "Selectors";
 import classnames from "classnames";
@@ -44,6 +45,9 @@ function TestSetModal({data, onClose}) {
     }, [data]);
 
     const onStart = (subType) => {
+        ReactGA.event('level_start', {
+            level_name: data.name
+        });
         if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
             history.push(data.id)
         } else {

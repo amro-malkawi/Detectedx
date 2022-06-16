@@ -6,7 +6,6 @@ import {Provider} from 'react-redux';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import MomentUtils from '@date-io/moment';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
-import GoogleAnalyticsTracker from './services/googleAnalytics';
 import {PersistGate} from 'redux-persist/integration/react';
 import './lib/reactifyCss';
 import App from './container/App';
@@ -23,7 +22,7 @@ const MainApp = () => (
                 <Router>
                     <Switch>
                         <ErrorBoundary>
-                            <Route path="/" component={GoogleAnalyticsTracker(App)}/>
+                            <Route path="/" component={App}/>
                         </ErrorBoundary>
                     </Switch>
                 </Router>
