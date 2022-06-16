@@ -36,10 +36,10 @@ function EnterpriseComponent({onSubmit}) {
                         <Button className={'enterprise-submit-btn'} onClick={() => onSubmit(code)}>SUBMIT</Button>
                     </div>
                     <div className={'fs-17 text-center text-white mt-50 mb-20'}>
-                        FOR SUPPORT CALL
+                        FOR SUPPORT
                     </div>
-                    <div className={'enterprise-phone-num text-primary1 text-center'}>
-                        US: 833-940-4074
+                    <div className={'fs-23 fw-semi-bold text-primary1 text-center'}>
+                        support@detectedx.com
                     </div>
                     <div className={'enterprise-phone-num text-primary1 text-center'}>
                         AU: 1300 816 631

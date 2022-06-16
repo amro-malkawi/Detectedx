@@ -45,7 +45,7 @@ function PayComponent({plan, onPay, signupEmail}) {
     }
 
     const onStripeSubscribe = (subscriptionId, customerId, paymentIntentId) => {
-        onPay(subscriptionId, customerId, paymentIntentId);
+        onPay(subscriptionId, customerId, paymentIntentId, allowedCouponInfo ? allowedCouponInfo.code : null);
     }
 
     const renderTrialBottom = () => {

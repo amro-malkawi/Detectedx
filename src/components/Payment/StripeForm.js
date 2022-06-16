@@ -106,6 +106,15 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isT
                         }
                     }
                 })
+            } else {
+                return stripe.confirmCardSetup(resp.clientSecret, {
+                    payment_method: {
+                        card: stripeElements.getElement(CardNumberElement),
+                        billing_details: {
+                            email, phone, name: cardName
+                        }
+                    }
+                })
             }
         }).then((resp) => {
             if(!isTrial) {
@@ -113,7 +122,9 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isT
                     onStripeSubscribe(subscriptionId, customerId, resp.paymentIntent.id);
                 }
             } else {
-                onStripeSubscribe(subscriptionId, customerId, null);
+                if(resp.setupIntent && resp.setupIntent.status === 'succeeded' ) {
+                    onStripeSubscribe(subscriptionId, customerId, null);
+                }
             }
         }).catch((e) => {
             NotificationManager.error("Subscription failed");

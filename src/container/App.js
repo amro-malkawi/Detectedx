@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {NotificationContainer} from 'react-notifications';
 import {browserName, isChrome, isFirefox, isSafari} from 'react-device-detect';
+import ReactGA from "react-ga4";
 import RctThemeProvider from './RctThemeProvider';
 import RctDefaultLayout from './DefaultLayout';
 import AppSignIn from 'Routes/root/Signin';
@@ -48,6 +49,8 @@ const PrivateRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
     render() {
+        ReactGA.initialize('G-JHV7X81227');
+
         if(!isChrome && !isFirefox && !isSafari) {
             return (<Route component={ChromeError}/>);
         }
