@@ -16,15 +16,22 @@ import * as Apis from 'Api';
 import AppConfig from 'Constants/AppConfig';
 import {NotificationManager} from "react-notifications";
 import IntlMessages from "Util/IntlMessages";
+import MainLayout from "Components/MainLayout";
+import {CircularProgress, Tooltip} from "@material-ui/core";
 
 
 export default class ResetPassword extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             password: '',
-            confirmPassword: ''
+            errorPassword: false,
+            confirmPassword: '',
+            errorConfirmPassword: false,
+            loading: false,
+            errorMsg: '',
+            accessToken: '',
         };
     }
 
@@ -42,18 +49,87 @@ export default class ResetPassword extends Component {
     /**
      * On User Login
      */
+    checkValidation() {
+        let valid = true;
+        if(this.state.password === '') {
+            this.setState({errorPassword: true});
+            valid = false;
+        }
+        if(this.state.password !== this.state.confirmPassword) {
+            this.setState({errorConfirmPassword: true});
+            valid = false;
+        }
+        return valid;
+    }
+
     onResetPassword() {
-        if (this.state.password !== '' && this.state.password === this.state.confirmPassword) {
+        if (this.checkValidation()) {
+            this.setState({loading: true});
             Apis.resetPassword(this.state.password, this.state.accessToken).then(resp => {
                 NotificationManager.success(<IntlMessages id={"user.resetPassword.success"}/>);
                 this.props.history.push('/signin');
             }).catch(error => {
-                NotificationManager.error(error.response ? error.response.data.error.message : error.message);
+                this.setState({errorMsg: (error.response ? error.response.data.error.message : error.message)});
+            }).finally(() => {
+                this.setState({loading: false});
             });
         }
     }
 
+
+    onKeyPress (event) {
+        if(event.key === 'Enter') {
+            this.onResetPassword();
+        }
+    }
+
     render() {
+        return (
+            <MainLayout>
+                <div className={'main-signup'}>
+                    <div className={'main-signup-content'} style={{width: 800, marginBottom: 150}}>
+                        <div className={'signup-title mb-4'}><IntlMessages id={"user.resetPassword.title"}/></div>
+                        <div className={'input-item'}>
+                            <span>NEW PASSWORD</span>
+                            <Input
+                                type={'password'}
+                                autoComplete="new-password"
+                                value={this.state.password}
+                                invalid={this.state.errorPassword}
+                                onChange={(event) => this.setState({password: event.target.value, errorPassword: false,})}
+                                onKeyPress={this.onKeyPress.bind(this)}
+                            />
+                        </div>
+                        <div className={'input-item'}>
+                            <span>CONFIRM PASSWORD</span>
+                            <Input
+                                type={'password'}
+                                autoComplete="new-password"
+                                value={this.state.confirmPassword}
+                                invalid={this.state.errorConfirmPassword}
+                                onChange={(event) => this.setState({confirmPassword: event.target.value, errorConfirmPassword: false})}
+                                onKeyPress={this.onKeyPress.bind(this)}
+                            />
+                        </div>
+                        <div>
+                            <Button className={'signup-submit'} disabled={this.state.loading} onClick={this.onResetPassword.bind(this)}>
+                                {
+                                    !this.state.loading ? 'Reset Password' : <CircularProgress size={28}/>
+                                }
+                            </Button>
+                        </div>
+                        <div className={'d-flex justify-content-center mt-1'} style={{height: 22}}>
+                            {
+                                this.state.errorMsg !== '' && <span className={'text-red'}>{this.state.errorMsg}</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </MainLayout>
+        )
+    }
+
+    render1() {
         const {password, confirmPassword} = this.state;
         return (
             <QueueAnim type="bottom" duration={2000}>

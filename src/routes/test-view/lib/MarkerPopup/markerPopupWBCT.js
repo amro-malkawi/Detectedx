@@ -232,8 +232,7 @@ class MarkerPopupWBCT extends Component {
                         childrenLesionList && childrenLesionList.map((v, i) => this.renderSubLesion(selectedLesionObj.name, v)) :
                         <Select
                             isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> :
-                                <IntlMessages id={"testView.selectChildLesion"}/>}
+                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : 'Select option'}
                             isSearchable={false}
                             options={childrenOptions}
                             value={selectedChildrenOption}

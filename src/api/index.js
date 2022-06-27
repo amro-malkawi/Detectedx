@@ -1,17 +1,15 @@
 import axios from 'axios';
-import { Cookies } from 'react-cookie';
+import {Cookies} from 'react-cookie';
 
 const cookie = new Cookies();
 
 
-function getApiHost()
-{
+function getApiHost() {
     let hostname = window.location.hostname;
     if (
         hostname === 'localhost' ||
         /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(hostname)
-    )
-    {
+    ) {
         hostname = hostname + ':3000';
     }
     return window.location.protocol + '//' + hostname;
@@ -97,7 +95,7 @@ export function userVerify(id) {
 
 export function userConfirm(id, token) {
     const url = '/users/confirm?uid=' + id + '&token=' + token;
-    return instance.get(url, ).then((response) => response.data);
+    return instance.get(url,).then((response) => response.data);
 }
 
 export function forgotPassword(email) {
@@ -188,6 +186,33 @@ export function testSetsCategories() {
     const url = '/test_sets/categories?access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
+
+export function testSetsCompletedPdf() {
+    return;
+    const url = '/test_sets/export-completed?access_token=' + getAccessToken();
+    return new Promise(function (resolve, reject) {
+        instance({
+            url: url,
+            method: 'GET',
+            responseType: 'blob', // important
+        }).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Completed modules.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            resolve();
+        }).catch((e) => {
+            return e.response.data.text();
+        }).then((errorMsg) => {
+            reject({response: {data: JSON.parse(errorMsg)}});
+        }).catch((e) => {
+            reject(e);
+        });
+    });
+}
+
 /**
  * test_set_cases operation
  */
@@ -212,7 +237,7 @@ export function testCasesAnswers(id, attempt_id, isPostTest) {
 
 export function currentTestSets(searchText) {
     let url = `/test_set_assignments/current_test_sets?access_token=` + getAccessToken();
-    if(searchText) {
+    if (searchText) {
         url += `&search=${searchText}`;
     }
     return instance.get(url).then((response) => response.data);
@@ -224,8 +249,8 @@ export function currentTestSets(searchText) {
 
 export function attemptsStart(test_set_id, attemptSubType) {
     let url = '/attempts/start?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
-    if(attemptSubType && attemptSubType.length > 0) {
-       url = url + '&sub_type=' + attemptSubType;
+    if (attemptSubType && attemptSubType.length > 0) {
+        url = url + '&sub_type=' + attemptSubType;
     }
     return instance.get(url).then((response) => response.data);
 }
@@ -272,7 +297,7 @@ export function attemptsQuestionnaireAnswer(id, data, type) {
 
 export function attemptsCertificatePdf(id, type, email, testSetName) {
     const url = '/attempts/' + id + '/certificate?type=' + type + '&email=' + email + '&access_token=' + getAccessToken();
-    if(email && email.length > 0) {
+    if (email && email.length > 0) {
         return instance.get(url).then((response) => response.data);
     } else {
         return new Promise(function (resolve, reject) {
@@ -301,7 +326,7 @@ export function attemptsCertificatePdf(id, type, email, testSetName) {
 
 export function attemptsScorePdf(id, email, testSetName) {
     const url = '/attempts/' + id + '/scorepdf?email=' + email + '&access_token=' + getAccessToken();
-    if(email && email.length > 0) {
+    if (email && email.length > 0) {
         return instance.get(url).then((response) => response.data);
     } else {
         return new Promise(function (resolve, reject) {

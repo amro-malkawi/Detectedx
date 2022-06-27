@@ -11,48 +11,48 @@ import IntlMessages from "Util/IntlMessages";
 
 
 const question = [
-    {
-        id: 'chestQ1',
-        label: '1. Image Quality',
-        options: ['Acceptable', 'Unacceptable'],
-        // child: {
-        //     q1Options: [['Overexposed', 'Underexposed', 'Artifacts', 'Improper position', 'Poor contrast'], ['Poor processing', 'Underinflation', 'Mottle', 'Other']]
-        // }
-    },
+    // {
+    //     id: 'chestQ1',
+    //     label: '1. Image Quality',
+    //     options: ['Acceptable', 'Unacceptable'],
+    //     // child: {
+    //     //     q1Options: [['Overexposed', 'Underexposed', 'Artifacts', 'Improper position', 'Poor contrast'], ['Poor processing', 'Underinflation', 'Mottle', 'Other']]
+    //     // }
+    // },
     {
         id: 'chestQ2a',
-        label: '2A. Classifiable paranchymal abnormality:',
+        label: '1A. Classifiable paranchymal abnormality:',
         options: ['Yes', 'No'],
         child: {
             chestQ2b: {
                 id: 'chestQ2b',
-                label: '2B. Small opacities',
+                label: '1B. Small opacities',
                 aOptions: ['p', 'q', 'r', 's', 't', 'u'],
                 bOptions: {labels: ['Upper', 'Middle', 'Lower'], values: ['R', 'L']},
                 cOptions: [['0/-', '0/0', '0/1'], ['1/0', '1/1', '1/2'], ['2/1', '2/2', '2/3'], ['3/2', '3/3', '3/+']]
             },
             chestQ2c: {
                 id: 'chestQ2c',
-                label: '2C. Large opacities',
+                label: '1C. Large opacities',
                 options: ['0', 'A', 'B', 'C']
             }
         }
     },
     {
         id: 'chestQ3a',
-        label: '3A. Any Classifiable pleural abnormalities?',
+        label: '2A. Any Classifiable pleural abnormalities?',
         options: ['Yes', 'No'],
         child: {
             chestQ3b: {
                 id: 'chestQ3b',
-                label: '3B. Pleural plaques',
+                label: '2B. Pleural plaques',
                 options: {labels: ['In profile', 'Face on', 'Diaphragm', 'Other site(s)'], values: ['0', 'R', 'L']},
                 extendOptions: [['0', 'R'], ['0', 'L'], ['1', '2', '3']],
                 widthOptions: [['0', 'R'], ['0', 'L'], ['a', 'b', 'c']],
             },
             chestQ3c: {
                 id: 'chestQ3c',
-                label: '3C. Costophrenic angle obliteration',
+                label: '2C. Costophrenic angle obliteration',
                 options: ['0', 'R', 'L'],
                 addOptions: {labels: ['In profile', 'Face on'], values: ['0', 'R', 'L']},
                 extendOptions: [['0', 'R'], ['0', 'L'], ['1', '2', '3']],
@@ -62,12 +62,12 @@ const question = [
     },
     {
         id: 'chestQ4a',
-        label: '4A. Any other abnormalities?',
+        label: '3A. Any other abnormalities?',
         options: ['Yes', 'No'],
         child: {
             chestQ4b: {
                 id: 'chestQ4b',
-                label: '4B. Other symbols (Obligatory)',
+                label: '3B. Other symbols (Obligatory)',
                 options: [
                     [
                         {value: 'aa', label: 'aa', hover: 'atherosclerotic aorta'},
@@ -855,11 +855,12 @@ export default class ChestQuestions extends Component {
         if (answerValue[questionObj.id] === undefined && truthValue[questionObj.id] === undefined) return null;
         const answerExist = answerValue[questionObj.id] !== undefined && answerValue[questionObj.id].value !== undefined;
         const truthExist = truthValue[questionObj.id] !== undefined && truthValue[questionObj.id].value !== undefined;
+        // if (
+        //     questionObj.id === 'chestQ1' && ((answerExist && answerValue[questionObj.id].value !== 'Acceptable') || (truthExist && truthValue[questionObj.id].value !== 'Acceptable'))
+        // ) {
+        //     // return this.renderQuestion1Additional(questionObj, disabled);
+        // } else
         if (
-            questionObj.id === 'chestQ1' && ((answerExist && answerValue[questionObj.id].value !== 'Acceptable') || (truthExist && truthValue[questionObj.id].value !== 'Acceptable'))
-        ) {
-            // return this.renderQuestion1Additional(questionObj, disabled);
-        } else if (
             questionObj.id === 'chestQ2a' && ((answerExist && answerValue[questionObj.id].value === 'Yes') || (truthExist && truthValue[questionObj.id].value === 'Yes'))
         ) {
             return this.renderQuestion2Additional(questionObj, disabled);
@@ -938,7 +939,11 @@ export default class ChestQuestions extends Component {
                         }
                     </div>
                     <div className={'covid-confidence'}>
-                        <p><IntlMessages id={"testView.chestQuestion.ratingTitle"}/></p>
+                        {
+                            this.props.modalityInfo.name !== 'CHESTsi' ?
+                                <p><IntlMessages id={"testView.chestQuestion.ratingTitle"}/></p> :
+                                <p>Confidence that the subject has Silicosis</p>
+                        }
                         <RadioGroup
                             data-cy="chest-confidence-position"
                             disabled

@@ -13,7 +13,7 @@ import AppSignIn from 'Routes/root/Signin';
 import AppSignUp from 'Routes/root/signup';
 import Terms from './Terms';
 import ForgotPassword from 'Routes/root/ForgotPassword';
-import ResetPassword from './ResetPassword';
+import ResetPassword from 'Routes/root/ResetPassword';
 import SendEmail from 'Routes/root/SendEmail';
 import Confirm from 'Routes/root/Confirm';
 import NoMatch from './NoMatch';

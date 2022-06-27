@@ -269,7 +269,7 @@ class TestView extends Component {
 
     validateForNext() {
         let valid = true;
-        if(!this.state.complete) {
+        if (!this.state.complete) {
             if (['covid', 'chest', 'imaged_chest', 'imaged_mammo', 'chest_ct', 'quiz'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
                 if (this.sideQuestionRef.current && this.sideQuestionRef.current.checkQuestionValidate) {
                     valid = this.sideQuestionRef.current.checkQuestionValidate();
@@ -328,7 +328,7 @@ class TestView extends Component {
             level_name: this.state.attemptDetail.test_sets.name,
             success: true
         });
-        if(!this.props.isLogin) {
+        if (!this.props.isLogin) {
             this.setState({isShowLoginModal: true});
         } else {
             this.setState({loading: true}, () => {
@@ -446,10 +446,17 @@ class TestView extends Component {
                 }
                 {
                     (this.state.complete || this.state.testCaseIndex + 1 !== test_case_length) ? null :
-                        <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
-                            <CheckCircleOutlineIcon size="small"/>
-                        </Button>
+                        (
+                            this.state.test_case.modalities.modality_type === 'viewer' ?
+                                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onSeek(0)}>
+                                    <span className={'test-action-btn-label'}>Finish</span>
+                                    <CheckCircleOutlineIcon size="small"/>
+                                </Button> :
+                                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
+                                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
+                                    <CheckCircleOutlineIcon size="small"/>
+                                </Button>
+                        )
                 }
                 {
                     this.state.testCaseIndex + 1 < test_case_length ?
@@ -501,10 +508,10 @@ class TestView extends Component {
             if (this.state.test_case.modalities.modality_type === 'covid') {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>
             } else if (['chest', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
-                if(this.state.test_case.modalities.name !== 'LinED') {
+                if (this.state.test_case.modalities.name !== 'LinED') {
                     resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.abnormalChest"}/> : <IntlMessages id={"testView.truth.normalChest"}/>
                 } else {
-                    resultStr = isTruthCancer ? 'Incorrect Position': 'Correct Position';
+                    resultStr = isTruthCancer ? 'Incorrect Position' : 'Correct Position';
                 }
             } else {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
