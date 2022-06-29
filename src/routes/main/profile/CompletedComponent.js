@@ -5,6 +5,7 @@ import {useHistory, useLocation} from "react-router-dom";
 import moment from 'moment';
 import * as Apis from "Api";
 import QueryString from "query-string";
+import {testSetsCompletedPdf} from "Api";
 
 function CompletedComponent() {
     const history = useHistory();
@@ -120,7 +121,7 @@ function CompletedComponent() {
                                 <option>COMPLETED</option>
                             </Input>
                         </div>
-                        <div className={'fs-15 text-primary1 cursor-pointer'}>
+                        <div className={'fs-15 text-primary1 cursor-pointer'} onClick={() => Apis.testSetsCompletedPdf()}>
                             EXPORT TO PDF
                         </div>
                     </div>

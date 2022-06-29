@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {NotificationContainer} from 'react-notifications';
-import {browserName, isChrome, isFirefox, isSafari} from 'react-device-detect';
+import {browserName, isChrome, isFirefox, isSafari, isEdge} from 'react-device-detect';
 import ReactGA from "react-ga4";
 import RctThemeProvider from './RctThemeProvider';
 import RctDefaultLayout from './DefaultLayout';
@@ -13,7 +13,7 @@ import AppSignIn from 'Routes/root/Signin';
 import AppSignUp from 'Routes/root/signup';
 import Terms from './Terms';
 import ForgotPassword from 'Routes/root/ForgotPassword';
-import ResetPassword from './ResetPassword';
+import ResetPassword from 'Routes/root/ResetPassword';
 import SendEmail from 'Routes/root/SendEmail';
 import Confirm from 'Routes/root/Confirm';
 import NoMatch from './NoMatch';
@@ -51,7 +51,7 @@ class App extends Component {
     render() {
         ReactGA.initialize('G-JHV7X81227');
 
-        if(!isChrome && !isFirefox && !isSafari) {
+        if(!isChrome && !isFirefox && !isSafari && !isEdge) {
             return (<Route component={ChromeError}/>);
         }
         const {isLogin, location, match} = this.props;

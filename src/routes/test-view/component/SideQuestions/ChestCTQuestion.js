@@ -584,7 +584,11 @@ export default class ChestCTQuestion extends Component {
                         }
                     </div>
                     <div className={'covid-confidence'}>
-                        <p><IntlMessages id={"testView.chestCTQuestion.ratingTitle"}/></p>
+                        {
+                            this.props.modalityInfo.name !== 'CHESTsi CT' ?
+                                <p><IntlMessages id={"testView.chestCTQuestion.ratingTitle"}/></p> :
+                                <p>Confidence that the subject has Silicosis</p>
+                        }
                         <RadioGroup
                             data-cy="chest-ct-confidence-position"
                             disabled

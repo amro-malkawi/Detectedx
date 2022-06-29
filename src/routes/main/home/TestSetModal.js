@@ -139,7 +139,11 @@ function TestSetModal({data, onClose}) {
                         </div>
                     </div>
                     <div className={'fs-26 mt-30'}>Speaker</div>
-                    <div className={'fs-19 mt-10'}>{presenterInfo.presenterDesc}</div>
+                    <div className={classnames('fs-19 mt-10', {'presenter-info': !isMobile})} style={{textAlign: 'justify'}}>
+                        <div>
+                        {presenterInfo.presenterDesc}
+                        </div>
+                    </div>
                 </div>
             )
         }

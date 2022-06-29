@@ -172,7 +172,6 @@ function VideoView(props) {
             <div id="toolbar">
                 {renderHeaderNumber()}
                 {renderNav()}
-                <div className={'test-view-header-admintxt'}>ADMIN MODE</div>
             </div>
             <div className={'test-content'}>
                 {

@@ -168,7 +168,7 @@ export default class MarkerFreehandTool extends FreehandMouseTool{
 
 
                 // if attempt is screening, don't need to show info
-                if(Object.keys(data.lesionList)[0] === 'screening') {
+                if(!data.lesionList || Object.keys(data.lesionList)[0] === 'screening') {
                     isShowInfo = false;
                 }
 
