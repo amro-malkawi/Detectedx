@@ -503,9 +503,7 @@ class ImageViewer extends Component {
             const markHandlesData = JSON.parse(mark.marker_data);
             const isTruth = mark.isTruth;
             const lesionNumber = mark.number;
-            const isCancerMarker = mark.is_cancer_marker;
             const rating = mark.rating;
-            const lesionList = mark.lesionList;
             if (
                 mark.stack === this.state.currentStackIndex &&
                 (
@@ -541,11 +539,18 @@ class ImageViewer extends Component {
                 infoHtml += `<div class='overlap-marker-info'>`;
                 infoHtml += `<span class="fs-14 b-2"><u>${(isTruth ? "Truth" : "Your answer")}</u></span>`;
                 if(this.props.modalityInfo.modality_type !== 'wb_ct') {
+                    // hide rating when wb-ct-ss modality
                     infoHtml += isTruth ? `<span>Lesion Number: ${lesionNumber}</span>` : `<span>Rate: ${rating}</span>`;
                 }
                 lesionNames.forEach((v, i) => {
                     infoHtml += `<span>${v}</span>`;
                 });
+                if(this.props.modalityInfo.modality_type === 'wb_ct') {
+                    // show other text when wb-ct-ss modality
+                    if(mark.lesionList['otherText'] && mark.lesionList['otherText'].text) {
+                        infoHtml += `<span>${mark.lesionList['otherText'].text}</span>`;
+                    }
+                }
                 infoHtml += "</div>"
             }
         });

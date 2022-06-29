@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Col, FormGroup, Label} from "reactstrap";
+import {Col, FormGroup, Label, Input} from "reactstrap";
 import IntlMessages from "Util/IntlMessages";
 import {Button, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import Select from "react-select";
@@ -21,15 +21,16 @@ class MarkerPopupWBCT extends Component {
         let lesionList = [];
         try {
             lesionList = JSON.parse(lesion_list);
-        } catch (e) {}
+        } catch (e) {
+        }
 
         // support multiple monitor, add padding for two monitor.
         this.dialogSide = null;
-        if(window.innerWidth > 2000 && window.screen.width < window.outerWidth) {
+        if (window.innerWidth > 2000 && window.screen.width < window.outerWidth) {
             showImageList.forEach((imgRow) => {
                 const i = imgRow.findIndex((v) => v === markData.imageId);
-                if(i !== -1) {
-                    this.dialogSide = ( i < imgRow.length / 2) ? 'left' : 'right';
+                if (i !== -1) {
+                    this.dialogSide = (i < imgRow.length / 2) ? 'left' : 'right';
                 }
             });
         }
@@ -213,7 +214,6 @@ class MarkerPopupWBCT extends Component {
             }
         }
 
-
         return (
             <div>
                 <Select
@@ -240,6 +240,17 @@ class MarkerPopupWBCT extends Component {
                             onChange={(option) => this.onChangeLesionList(selectedLesionObj.name, '', option)}
                             defaultMenuIsOpen={selectedChildrenOption.length === 0}
                         />)
+                }
+                {
+                    // add input text when selected other option
+                    selectedChildrenOption.length > 0 && selectedChildrenOption[0].label.indexOf('Other') === 0 &&
+                    <Input
+                        type={'text'}
+                        style={{backgroundColor: 'transparent', color: 'yellow'}}
+                        placeholder={'other option'}
+                        value={selectedLesionList['otherText'] ? selectedLesionList['otherText'].text : ''}
+                        onChange={(e) => this.onChangeLesionList('otherText', 'text', {label: e.target.value})}
+                    />
                 }
             </div>
         );

@@ -11,7 +11,6 @@ import {useDispatch} from "react-redux";
 import * as selectors from "Selectors";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 import {login} from "Actions";
 
 function Index() {
@@ -97,7 +96,7 @@ function Index() {
     }
 
     const onFinishPayment = (type, value, discountCode) => {
-        if(selectedPlan.detail) {
+        if(selectedPlan && selectedPlan.detail) {
             ReactGA.event('purchase', {
                 currency: selectedPlan.detail.currency,
                 transaction_id: value.paymentIntentId,

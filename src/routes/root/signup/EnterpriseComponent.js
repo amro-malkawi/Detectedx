@@ -10,7 +10,6 @@ function EnterpriseComponent({onSubmit}) {
         }
     }
 
-
     return (
         <div className={'enterprise-card'}>
             <div className={'enterprise-card-content'}>
