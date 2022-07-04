@@ -367,6 +367,8 @@ function TestSetModal({data, onClose}) {
             type = 'Quiz';
         } else if (data.modalityInfo.modality_type === 'video_lecture' || data.modalityInfo.modality_type === 'presentations') {
             type = 'LECTURE';
+        } else if (data.modalityInfo.modality_type === 'viewer') {
+            type = 'IMAGE VIEWER';
         } else {
             type = 'SELF ASSESSMENT MODULE';
         }

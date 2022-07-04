@@ -15,8 +15,9 @@ import * as Apis from 'Api';
 
 const filterList = [
     {id: 'sam', label: 'Self Assessment Modules', needLogin: false, valKey: 'samCount'},
-    {id: 'lecture', label: 'Lecture', needLogin: false, valKey: 'lectureCount'},
+    {id: 'lecture', label: 'Lectures', needLogin: false, valKey: 'lectureCount'},
     {id: 'quizzes', label: 'Quizzes', needLogin: false, valKey: 'quizCount'},
+    {id: 'imageViewer', label: 'Image viewers', needLogin: false, valKey: 'viewerCount'},
     {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
     {id: 'saved', label: 'Saved', needLogin: true, valKey: 'savedCount'},
 ]
@@ -33,7 +34,7 @@ function Home() {
     const [categoryObj, setCategoryObj] = useState([]);
     const [selectedCategoryList, setSelectedCategoryList] = useState([]);
     const [selectedTestSet, setSelectedTestSet] = useState(null);
-    const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0, presentationCount: 0});
+    const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0, presentationCount: 0, viewerCount: 0});
 
     useEffect(() => {
         history.replace({pathname: location.pathname});
@@ -79,6 +80,8 @@ function Home() {
                     t.filterKeys.push('quizzes');
                 } else if (modalityInfo.modality_type === 'video_lecture' || modalityInfo.modality_type === 'presentations') {
                     t.filterKeys.push('lecture');
+                } else if (modalityInfo.modality_type === 'viewer') {
+                    t.filterKeys.push('imageViewer');
                 } else {
                     t.filterKeys.push('sam');
                 }
@@ -100,7 +103,7 @@ function Home() {
     const calcCounts = (modalities, testSets) => {
         if (modalities === undefined) modalities = modalityList;
         if (testSets === undefined) testSets = testSetList;
-        let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0;
+        let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0, viewer = 0;
 
         let showList = testSets.filter((v) => (
             selectedCategoryList.length === 0 ||
@@ -123,6 +126,8 @@ function Home() {
                 quiz++;
             } else if (modalityInfo.modality_type === 'video_lecture' || modalityInfo.modality_type === 'presentations') {
                 lecture++;
+            } else if(modalityInfo.modality_type === 'viewer') {
+                viewer++;
             } else {
                 sam++;
             }
@@ -134,6 +139,7 @@ function Home() {
             lectureCount: lecture,
             quizCount: quiz,
             presentationCount: presentation,
+            viewerCount: viewer,
         });
     }
 
@@ -173,7 +179,7 @@ function Home() {
     const onOpenTestSetModal = (value) => {
         setSelectedTestSet(value);
         if (value) {
-            history.push({pathname: location.pathname, hash: 'modal'});
+            history.push({pathname: location.pathname, hash: 'modal', search: location.search});
         } else {
             // history.replace({pathname: location.pathname});
             history.goBack();

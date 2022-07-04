@@ -1393,7 +1393,7 @@ class Attempt extends Component {
                                         variant="contained"
                                         onClick={() => this.onSendPdfEmail()}
                                         color="primary"
-                                        disabled={!validator.isEmail(this.state.sendPdfEmail)}
+                                        disabled={!this.state.sendPdfEmail || !validator.isEmail(this.state.sendPdfEmail)}
                                     >
                                         Send
                                     </Button>

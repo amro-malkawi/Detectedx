@@ -45,6 +45,8 @@ function CompletedComponent() {
                     v.type = 'quiz';
                 } else if (v.modalityInfo.modality_type === 'video_lecture' || v.modalityInfo.modality_type === 'presentations') {
                     v.type = 'LECTURE';
+                } else if (v.modalityInfo.modality_type === 'viewer') {
+                    v.type = 'IMAGE VIEWER';
                 } else {
                     v.type = 'SELF ASSESSMENT MODULE';
                 }

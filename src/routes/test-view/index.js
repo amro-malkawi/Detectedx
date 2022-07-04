@@ -448,7 +448,7 @@ class TestView extends Component {
                     (this.state.complete || this.state.testCaseIndex + 1 !== test_case_length) ? null :
                         (
                             this.state.test_case.modalities.modality_type === 'viewer' ?
-                                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onSeek(0)}>
+                                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.props.history.replace('/main/home')}>
                                     <span className={'test-action-btn-label'}>Finish</span>
                                     <CheckCircleOutlineIcon size="small"/>
                                 </Button> :
