@@ -42,7 +42,7 @@ function CompletedComponent() {
                 a += v.attemptCount;
                 p += v.test_set_point;
                 if(v.modalityInfo.modality_type === 'quiz') {
-                    v.type = 'quiz';
+                    v.type = 'Quiz';
                 } else if (v.modalityInfo.modality_type === 'video_lecture' || v.modalityInfo.modality_type === 'presentations') {
                     v.type = 'LECTURE';
                 } else if (v.modalityInfo.modality_type === 'viewer') {

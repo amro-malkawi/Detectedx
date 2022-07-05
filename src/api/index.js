@@ -188,7 +188,6 @@ export function testSetsCategories() {
 }
 
 export function testSetsCompletedPdf() {
-    return;
     const url = '/test_sets/export-completed?access_token=' + getAccessToken();
     return new Promise(function (resolve, reject) {
         instance({

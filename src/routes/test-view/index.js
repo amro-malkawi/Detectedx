@@ -428,7 +428,10 @@ class TestView extends Component {
                     }
                 </Input>
                 <span>&nbsp;&nbsp;/ {this.state.test_set_cases.length}</span>
-                <span className={'test-case-name'}>&nbsp;&nbsp;( {this.state.test_case.name} )</span>
+                {
+                    ['chest', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) === -1 &&
+                    <span className={'test-case-name'}>&nbsp;&nbsp;( {this.state.test_case.name} )</span>
+                }
             </h1>
         )
     }
