@@ -8,7 +8,6 @@ import {NotificationContainer} from 'react-notifications';
 import {browserName, isChrome, isFirefox, isSafari, isEdge} from 'react-device-detect';
 import ReactGA from "react-ga4";
 import RctThemeProvider from './RctThemeProvider';
-import RctDefaultLayout from './DefaultLayout';
 import AppSignIn from 'Routes/root/Signin';
 import AppSignUp from 'Routes/root/signup';
 import Terms from './Terms';
