@@ -127,7 +127,7 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isT
                 }
             }
         }).catch((e) => {
-            NotificationManager.error("Subscription failed");
+            NotificationManager.error(e.response ? e.response.data.error.message : "Subscription failed");
         }).finally(() => {
             setLoading(false);
         });

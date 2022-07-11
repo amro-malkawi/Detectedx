@@ -72,9 +72,11 @@
       margin-bottom: 20px;
       zoom: 1;
     }
+
     .mobile-filter-bar {
       display: none;
     }
+
     .test-set-items-container {
       flex: 1;
       overflow: auto;
@@ -233,6 +235,7 @@
       }
     }
   }
+
   .cme-value {
     padding-right: 30px;
   }
@@ -365,6 +368,7 @@
       max-height: 20rem;
       overflow-y: auto;
       scroll-padding-right: 10px;
+
       &::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         background-color: #333333;
@@ -381,6 +385,7 @@
         background-color: #525252;
         border-radius: 3px;
       }
+
       div {
         margin-right: 5px;
       }
@@ -466,6 +471,7 @@
 
 .main-test-set-mobile-modal {
   font-family: "Poppins", sans-serif;
+
   .MuiDialog-paper {
     width: 100%;
     height: 100%;
@@ -527,10 +533,12 @@
       .test-set-mobile-content {
         color: white;
         padding: 10px 30px 50px;
+
         .test-set-item-spec {
           margin-bottom: 30px;
           font-size: 11px;
           font-weight: 600;
+
           .test-set-difficult {
             margin-right: 10px;
           }
@@ -547,6 +555,7 @@
           background-color: #54A9FB;
           border-radius: 20px;
         }
+
         .test-set-save-btn {
           display: flex;
           flex-direction: column;
@@ -573,12 +582,14 @@
 .mobile-layout {
   .main-home {
     margin-top: 0;
+
     .main-home-side {
       display: none;
     }
 
     .test-set-content {
       position: relative;
+
       .test-set-top-filter {
         display: none;
       }
@@ -645,12 +656,71 @@
               padding-right: 15px;
             }
           }
+
           .test-set-item-demo {
             .demo-bar {
 
             }
           }
         }
+      }
+    }
+  }
+}
+
+.main-series-list {
+  display: flex;
+  flex-direction: column;
+
+  &.scroll {
+    max-height: 32rem;
+    padding-right: 5px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: #333333;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      background-color: #170F15;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #525252;
+      border-radius: 3px;
+    }
+  }
+
+  .series-test-set {
+    margin-bottom: 10px;
+    padding: 0;
+
+    .MuiButton-label {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      text-align: start;
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: 1px solid #333333;
+      font-family: "Poppins", sans-serif;
+      color: white;
+
+      .series-test-set-desc {
+        display: block; /* Fallback for non-webkit */
+        display: -webkit-box;
+        height: 14 * 1.4 * 2; /* $font-size*$line-height*$lines-to-show */
+        margin: 0 auto;
+        font-size: 14px;
+        line-height: 1.4; /*$line-height*/
+        -webkit-line-clamp: 2; /*$lines-to-show*/
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }

@@ -95,7 +95,7 @@ function TestSetItem({data, onClick, smallSize}) {
                 {data.name}
             </div>
             {
-                !smallSize &&
+                !smallSize && data.tileType !== 'series' &&
                 <div className={'d-flex flex-column align-items-start'}>
                     <span>{data.test_set_code}</span>
                     <div className={'test-set-item-spec'}>

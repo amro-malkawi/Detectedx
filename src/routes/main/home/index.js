@@ -60,10 +60,17 @@ function Home() {
             Apis.testSetsCategories(),
         ]).then(([currentTestSets, categories]) => {
             currentTestSets.testSetList.forEach((t) => {
-                const modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.modality_id);
-                t.modalityInfo = modalityInfo;
+                let modalityInfo;
+                if(t.tileType === 'series') {
+                    modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.seriesTestSets[0].modality_id);
+                    t.modalityInfo = modalityInfo;
+                    t.seriesTestSets.forEach((v) => v.modalityInfo = modalityInfo);
+                } else {
+                    modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.modality_id);
+                    t.modalityInfo = modalityInfo;
+                }
                 t.filterKeys = [];
-                if (isLogin) {
+                if (isLogin && t.tileType !== 'series') {
                     if (t.attempts.some((a) => !a.complete)) {
                         t.filterKeys.push('inProgress');
                     }
@@ -111,8 +118,13 @@ function Home() {
         ));
 
         showList.forEach((t) => {
-            const modalityInfo = modalities.find((m) => m.id === t.modality_id);
-            if (isLogin) {
+            let modalityInfo;
+            if(t.tileType === 'series') {
+                modalityInfo = modalities.find((m) => m.id === t.seriesTestSets[0].modality_id);
+            } else {
+                modalityInfo = modalities.find((m) => m.id === t.modality_id);
+            }
+            if (isLogin && t.tileType !== 'series') {
                 if (t.attempts.some((a) => !a.complete)) {
                     inProgress++;
                 }
