@@ -308,7 +308,7 @@ export function attemptsCertificatePdf(id, type, email, testSetName) {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', `certificate of ${testSetName}.pdf`);
+                link.setAttribute('download', `Certificate of ${testSetName}.pdf`);
                 document.body.appendChild(link);
                 link.click();
                 resolve();
@@ -337,7 +337,7 @@ export function attemptsScorePdf(id, email, testSetName) {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', `score of ${testSetName}.pdf`);
+                link.setAttribute('download', `Score sheet of ${testSetName}.pdf`);
                 document.body.appendChild(link);
                 link.click();
                 resolve();

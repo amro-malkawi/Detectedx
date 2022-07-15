@@ -16,7 +16,7 @@ const question = [
         options: ['Yes', 'No'],
         child: {
             q1Sub1: {
-                aOptions: ['P =< 1.5mm', 'Q = 1.3-3mm', 'R => 3-10mm'],
+                aOptions: ['P =< 1.5mm', 'Q = 1.5-3mm', 'R => 3-10mm'],
                 bOptions: ['NO', 'YES'],
             },
             q1Sub2: {

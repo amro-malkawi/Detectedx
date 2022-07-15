@@ -247,26 +247,32 @@ const getImageHangingType = (images) => {
         return 'breastHangings';
     }
 
+
     // check chest hangings
+    const isChestHanging = images.length > 2 && images.some((image) => {
+        const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
+        return !!chestProfusion;
+    });
     // check exist chest main image
     const isExistCaseImage = images.some((image) => {
         const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
         return chestProfusion === 'Case';
     });
-    if (isExistCaseImage) {
-        let isChestHanging = false;
-        images.forEach((image) => {
+
+    if(isChestHanging) {
+        // reset chest hanging list
+        hangingIdList.chestHangings = [];
+        images.forEach((image, index) => {
             const chestProfusion = cornerstone.metaData.get('chestProfusion', image.id)
             if (chestProfusion) {
-                // reset chest hanging list
-                if (!isChestHanging) {
-                    hangingIdList.chestHangings = [];
-                    isChestHanging = true;
-                }
                 hangingIdList.chestHangings.push(chestProfusion !== 'Case' ? 'Case_' + chestProfusion : chestProfusion);
+            } else if(!isExistCaseImage && index === 0) {
+                // set first image hangingId to "Case"
+                image.hangingId = 'Case';
+                hangingIdList.chestHangings.push('Case');
             }
         });
-        if (isChestHanging) return 'chestHangings';
+        return 'chestHangings';
     }
 
     // no hangings

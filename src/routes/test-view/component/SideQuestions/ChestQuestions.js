@@ -27,7 +27,7 @@ const question = [
             chestQ2b: {
                 id: 'chestQ2b',
                 label: '1B. Small opacities',
-                aOptions: ['p', 'q', 'r', 's', 't', 'u'],
+                aOptions: ['p', 's', 'q', 't', 'r', 'u'],
                 bOptions: {labels: ['Upper', 'Middle', 'Lower'], values: ['R', 'L']},
                 cOptions: [['0/-', '0/0', '0/1'], ['1/0', '1/1', '1/2'], ['2/1', '2/2', '2/3'], ['3/2', '3/3', '3/+']]
             },
@@ -114,7 +114,6 @@ const question = [
                         {value: 'ra', label: 'ra', hover: 'rounded atelectasis'},
                         {value: 'rp', label: 'rp', hover: 'rheumatoid pneumoconiosis'},
                         {value: 'tb', label: 'tb', hover: 'tuberculosis'},
-                        {value: 'OD', label: 'OD', hover: 'tuberculosis'},
                     ]
                 ]
             }
@@ -351,7 +350,8 @@ export default class ChestQuestions extends Component {
                             </div>
 
                             <RadioGroup
-                                className={'ml-3 mt-1'}
+                                className={'ml-3 mt-1 d-flex justify-content-center'}
+                                style={{width: 110}}
                                 aria-label="position"
                                 name="position"
                                 value={questionAnswer['q2aPValues'] !== undefined ? questionAnswer['q2aPValues'] : ''}
@@ -369,7 +369,8 @@ export default class ChestQuestions extends Component {
                                 Secondary
                             </div>
                             <RadioGroup
-                                className={'ml-3 mt-1'}
+                                className={'ml-3 mt-1 d-flex justify-content-center'}
+                                style={{width: 110}}
                                 aria-label="position"
                                 name="position"
                                 value={questionAnswer['q2aSValues'] !== undefined ? questionAnswer['q2aSValues'] : ''}
