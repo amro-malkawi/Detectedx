@@ -62,9 +62,12 @@ function Home() {
             currentTestSets.testSetList.forEach((t) => {
                 let modalityInfo;
                 if(t.tileType === 'series') {
+                    t.isSeriesSameModality = t.seriesTestSets.every((v) => v.modality_id === t.seriesTestSets[0].modality_id);
                     modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.seriesTestSets[0].modality_id);
                     t.modalityInfo = modalityInfo;
-                    t.seriesTestSets.forEach((v) => v.modalityInfo = modalityInfo);
+                    t.seriesTestSets.forEach((v) => {
+                        v.modalityInfo = currentTestSets.modalityList.find((m) => m.id === v.modality_id);
+                    });
                 } else {
                     modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.modality_id);
                     t.modalityInfo = modalityInfo;

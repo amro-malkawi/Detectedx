@@ -210,6 +210,7 @@
   }
 }
 
+
 .test-set-item-spec {
   display: flex;
   flex-direction: row;
@@ -240,6 +241,7 @@
     padding-right: 30px;
   }
 }
+
 
 .main-test-set-modal-container {
   font-family: "Poppins", sans-serif;
@@ -671,6 +673,7 @@
 .main-series-list {
   display: flex;
   flex-direction: column;
+  margin-top: 10px;
 
   &.scroll {
     max-height: 32rem;
@@ -695,6 +698,18 @@
     }
   }
 
+  &.two-column {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    button.series-test-set {
+      width: 49%;
+      .MuiButton-label {
+        height: 100%;
+      }
+    }
+  }
+
   .series-test-set {
     margin-bottom: 10px;
     padding: 0;
@@ -710,7 +725,23 @@
       font-family: "Poppins", sans-serif;
       color: white;
 
+      .series-test-set-name {
+        flex: 1;
+        margin-right: 10px;
+        display: block; /* Fallback for non-webkit */
+        display: -webkit-box;
+        height: 16 * 1.4 * 2; /* $font-size*$line-height*$lines-to-show */
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 1.4; /*$line-height*/
+        -webkit-line-clamp: 2; /*$lines-to-show*/
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       .series-test-set-desc {
+        width: 100%;
         display: block; /* Fallback for non-webkit */
         display: -webkit-box;
         height: 14 * 1.4 * 2; /* $font-size*$line-height*$lines-to-show */

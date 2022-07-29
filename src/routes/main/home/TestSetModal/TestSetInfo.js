@@ -14,7 +14,7 @@ import * as Apis from "Api";
 import * as selectors from "Selectors";
 import classnames from "classnames";
 
-function TestSetInfo({data, onClose}) {
+function TestSetInfo({data, onClose, onBackSeries}) {
     const history = useHistory();
     const isLogin = selectors.getIsLogin(null);
     const locale = useSelector((state) => state.settings.locale.locale);
@@ -287,6 +287,18 @@ function TestSetInfo({data, onClose}) {
         )
     }
 
+    const renderBackSeries = () => {
+        if(onBackSeries) {
+            return (
+                <Button className={'px-0 my-2'} onClick={onBackSeries}>
+                    <span className={'text-primary1 fs-18 ff-Poppins'}><i className="zmdi zmdi-arrow-left"/> Back to series</span>
+                </Button>
+            )
+        } else {
+            return null;
+        }
+    }
+
     if (!isMobile) {
         return (
             <div className={'main-test-set-modal'}>
@@ -312,6 +324,7 @@ function TestSetInfo({data, onClose}) {
                 {!isShoWLearningObj ?
                     <div className={'test-set-modal-content'}>
                         <div className={'pr-20'}>
+                            {renderBackSeries()}
                             <div className={'test-set-item-spec'}>
                                 <span>DIFFICULTY</span>
                                 {
@@ -393,6 +406,7 @@ function TestSetInfo({data, onClose}) {
                 </div>
                 {!isShoWLearningObj ?
                     <div className={'test-set-mobile-content'}>
+                        {renderBackSeries()}
                         <div className={'test-set-item-spec'}>
                             <span>DIFFICULTY</span>
                             {

@@ -28,9 +28,10 @@ import MarkerTool from "../lib/tools/MarkerTool";
 import MarkerFreehandTool from "../lib/tools/MarkerFreehandTool";
 import LengthTool from "../lib/tools/LengthTool";
 import AngleTool from "../lib/tools/AngleTool";
-import TruthArrowTool from "Routes/test-view/lib/tools/TruthArrowTool";
+import TruthArrowTool from "../lib/tools/TruthArrowTool";
+import ZoomMouseWheelTool from "../lib/tools/ZoomMouseWheelTool";
 
-const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
+// const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
 const WwwcTool = cornerstoneTools.WwwcTool;
 const PanTool = cornerstoneTools.PanTool;

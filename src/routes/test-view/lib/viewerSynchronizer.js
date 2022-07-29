@@ -45,7 +45,8 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
     const targetRatio = getTargetRatio(sourceElement, targetElement);
     if (
         targetHangingId !== undefined && sourceHangingId !== undefined &&
-        targetHangingId.split('-')[1] !== undefined && sourceHangingId.split('-') !== undefined) {
+        targetHangingId.split('-')[1] !== undefined && sourceHangingId.split('-') !== undefined
+    ) {
         if (targetHangingId.split('-')[1] !== sourceHangingId.split('-')[1]) {
             targetViewport.translation.x = -sourceViewport.translation.x / targetRatio
         } else {

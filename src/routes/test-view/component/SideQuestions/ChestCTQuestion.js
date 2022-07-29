@@ -48,7 +48,11 @@ const question = [
         options: ['Yes', 'No'],
         child: {
             q3Sub1: {
-                options: ['A', 'B', 'C']
+                options: [
+                    {label: 'A', value: 'A', hover: 'one or more opacities greater than 10 mm but less than 50 mm in diameter'},
+                    {label: 'B', value: 'B', hover: 'one or more opacities greater than 50 mm in diameter but not exceeding the upper right zone'},
+                    {label: 'C', value: 'C', hover: 'one or more opacities in diameter exceeding the right upper zone'},
+                ],
             },
             q3Sub2: {
                 aOptions: ['U', 'M', 'L'],
@@ -232,19 +236,39 @@ export default class ChestCTQuestion extends Component {
         const qTruths = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
         let checkValues = (answerValue[qId] !== undefined && answerValue[qId][childQId] !== undefined) ? answerValue[qId][childQId] : [];
         if (checkValues === undefined) checkValues = [];
-        return values.map((v, i) => (
-            <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
-                <QuestionCheckbox
-                    icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
-                    checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
-                    disableRipple
-                    checked={checkValues.indexOf(v.value) !== -1}
-                    onChange={() => this.onChangeCheck(qId, childQId, v.value)}
-                    name={childQId}
-                />
-            } label={v.label}
-            />
-        ));
+        return values.map((v, i) => {
+            if (!v.hover) {
+                return (
+                    <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
+                        <QuestionCheckbox
+                            icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                            checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                            disableRipple
+                            checked={checkValues.indexOf(v.value) !== -1}
+                            onChange={() => this.onChangeCheck(qId, childQId, v.value)}
+                            name={childQId}
+                        />
+                    } label={v.label}
+                    />
+                )
+            } else {
+                return (
+                    <CheckboxTooltip title={v.hover} key={i}>
+                        <QuestionLabel className={checkClass} disabled={disabled} control={
+                            <QuestionCheckbox
+                                icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                                checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                                disableRipple
+                                checked={checkValues.indexOf(v.value) !== -1}
+                                onChange={() => this.onChangeCheck(qId, childQId, v.value)}
+                                name={childQId}
+                            />
+                        } label={v.label}
+                        />
+                    </CheckboxTooltip>
+                )
+            }
+        })
     }
 
     renderCheckGroup(qId, childQId, disabled, aOptions, bOptions, cOptions) {
@@ -409,7 +433,7 @@ export default class ChestCTQuestion extends Component {
                 <div className={'col-4 d-flex flex-column'}>
                     <span>Size</span>
                     {
-                        this.renderCheckList(q3Sub1Obj.options.map((v) => ({label: v, value: v})), 'mt-1 mb-0', disabled, questionObj.id, 'q1Sub1Values')
+                        this.renderCheckList(q3Sub1Obj.options, 'mt-1 mb-0', disabled, questionObj.id, 'q1Sub1Values')
                     }
                 </div>
                 <div className={'col-8'}>

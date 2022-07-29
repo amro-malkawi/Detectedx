@@ -27,6 +27,9 @@ function TestSetItem({data, onClick, smallSize}) {
         } else {
             type = 'SELF ASSESSMENT MODULE';
         }
+        if(data.tileType === 'series') {
+            type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
+        }
         setTestSetType(type);
         try {
             const categoryList = data.test_set_category ? data.test_set_category.split(',')[0].split(' > ') : [];
