@@ -14,6 +14,7 @@ export default function ({open, onClose, modality_type}) {
         case 'quiz':
         case 'video_lecture':
         case 'presentations':
+        case 'interactive_video':
             return null;
         default:
             return <MammoExtraInfo open={open} onClose={onClose}/>

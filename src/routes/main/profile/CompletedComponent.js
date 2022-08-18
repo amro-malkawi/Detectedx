@@ -43,7 +43,7 @@ function CompletedComponent() {
                 p += v.test_set_point;
                 if(v.modalityInfo.modality_type === 'quiz') {
                     v.type = 'Quiz';
-                } else if (v.modalityInfo.modality_type === 'video_lecture' || v.modalityInfo.modality_type === 'presentations') {
+                } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(v.modalityInfo.modality_type) !== -1) {
                     v.type = 'LECTURE';
                 } else if (v.modalityInfo.modality_type === 'viewer') {
                     v.type = 'IMAGE VIEWER';
@@ -68,7 +68,7 @@ function CompletedComponent() {
         Apis.attemptsStart(selectedTestSet.id, undefined).then(attempt => {
             let path;
             if (attempt.progress === 'test') {
-                path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+                path = (['video_lecture', 'presentations', 'interactive_video'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
             } else {
                 path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
             }

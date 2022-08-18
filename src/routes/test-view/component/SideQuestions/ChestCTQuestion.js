@@ -98,13 +98,14 @@ const question = [
     {
         id: 'chestCTQ8',
         label: 'Predominant Parenchymal Abnormality?',
-        options: [
-            {value: 'RO', tooltip: 'Rounded Opacities'},
-            {value: 'IR', tooltip: 'Irregular Opacities'},
-            {value: 'GGO', tooltip: 'Ground Glass Opacities'},
-            {value: 'HC', tooltip: 'Honeycombing'},
-            {value: 'EM', tooltip: 'Emphysema'},
-            {value: 'LO', tooltip: 'Large Opacities'},
+        options: ['Yes', 'No'],
+        child: [
+            {value: 'RO', hover: 'Rounded Opacities'},
+            {value: 'IR', hover: 'Irregular Opacities'},
+            {value: 'GGO', hover: 'Ground Glass Opacities'},
+            {value: 'HC', hover: 'Honeycombing'},
+            {value: 'EM', hover: 'Emphysema'},
+            {value: 'LO', hover: 'Large Opacities'},
         ]
     },
     {
@@ -264,6 +265,52 @@ export default class ChestCTQuestion extends Component {
                                 name={childQId}
                             />
                         } label={v.label}
+                        />
+                    </CheckboxTooltip>
+                )
+            }
+        })
+    }
+
+    renderOptionList(values, optionClass = '', disabled, qId, childQId, iconClass='chest-question-radio-icon') {
+        const {truthValue} = this.state;
+        const qTruth = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : '';
+        return values.map((v, i) => {
+            if (!v.hover) {
+                return (
+                    <QuestionLabel
+                        key={i}
+                        className={optionClass}
+                        value={v.value}
+                        control={
+                            <QuestionRadio
+                                icon={<span className={ iconClass + ' ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                disableRipple
+                            />
+                        }
+                        label={v.label}
+                        labelPlacement="end"
+                        disabled={disabled}
+                    />
+                )
+            } else {
+                return (
+                    <CheckboxTooltip title={v.hover} key={i}>
+                        <QuestionLabel
+                            key={i}
+                            className={optionClass}
+                            value={v.value}
+                            control={
+                                <QuestionRadio
+                                    icon={<span className={ iconClass + ' ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                    checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                    disableRipple
+                                />
+                            }
+                            label={v.label}
+                            labelPlacement="end"
+                            disabled={disabled}
                         />
                     </CheckboxTooltip>
                 )
@@ -467,6 +514,27 @@ export default class ChestCTQuestion extends Component {
         )
     }
 
+    renderQuestion8Additional(questionObj, disabled) {
+        const qChildObj = questionObj.child;
+        return (
+            <div className={'ml-2'}>
+                <RadioGroup
+                    className={'ml-1 mt-1'}
+                    aria-label="position"
+                    name="position"
+                    value={this.state.answerValue[questionObj.id]['qSubValues'] || ''}
+                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'qSubValues', event.target.value)}
+                    disabled={false}
+                    row
+                >
+                    {
+                        this.renderOptionList(qChildObj.map((v) => ({label: v.value, value: v.value, hover: v.hover})), 'mb-0', disabled, questionObj.id, 'qSubValues')
+                    }
+                </RadioGroup>
+            </div>
+        )
+    }
+
     renderQuestion9Additional(questionObj, disabled) {
         const qChildObj = questionObj.child;
         return (
@@ -527,7 +595,9 @@ export default class ChestCTQuestion extends Component {
                 return this.renderQuestion3Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ4' || questionObj.id === 'chestCTQ5' || questionObj.id === 'chestCTQ6') {
                 return this.renderQuestion4Additional(questionObj, disabled);
-            } else if (questionObj.id === 'chestCTQ9') {
+            } else if (questionObj.id === 'chestCTQ8') {
+                return this.renderQuestion8Additional(questionObj, disabled);
+            }  else if (questionObj.id === 'chestCTQ9') {
                 return this.renderQuestion9Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ10' || questionObj.id === 'chestCTQ11') {
                 return this.renderQuestion10Additional(questionObj, disabled);

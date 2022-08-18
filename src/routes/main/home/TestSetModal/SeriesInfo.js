@@ -24,7 +24,7 @@ function SeriesInfo({data, onClose, onSelect}) {
         let type = '';
         if (data.modalityInfo.modality_type === 'quiz') {
             type = 'Quiz';
-        } else if (data.modalityInfo.modality_type === 'video_lecture' || data.modalityInfo.modality_type === 'presentations') {
+        } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
             type = 'LECTURE';
         } else if (data.modalityInfo.modality_type === 'viewer') {
             type = 'IMAGE VIEWER';

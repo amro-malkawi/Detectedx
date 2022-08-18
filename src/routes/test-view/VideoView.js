@@ -25,6 +25,7 @@ function VideoView(props) {
     const [testCaseInfo, setTestCaseInfo] = useState({});
     const [complete, setComplete] = useState(true);
     const [allowSkip, setAllowSkip] = useState(false);
+    const [playing, setPlaying] = useState(true);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -56,6 +57,9 @@ function VideoView(props) {
         } else {
             playedSeconds.current = e.playedSeconds;
         }
+        if (sideQuestionRef.current && sideQuestionRef.current.handleVideoProgress) {
+            sideQuestionRef.current.handleVideoProgress(e.playedSeconds);
+        }
     }
 
     const handleVideoSeek = (seekTime) => {
@@ -66,11 +70,11 @@ function VideoView(props) {
 
     const validateForNext = () => {
         let valid = true;
-        if (!allowSkip) {
+        if (!allowSkip && testCaseInfo.modalities.modality_type !== 'interactive_video') {
             valid = false;
             NotificationManager.error('You have to watch the video until the end.');
         } else if (!complete) {
-            if (['video_lecture', 'presentations'].indexOf(testCaseInfo.modalities.modality_type) !== -1) {
+            if (['video_lecture', 'presentations', 'interactive_video'].indexOf(testCaseInfo.modalities.modality_type) !== -1) {
                 if (sideQuestionRef.current && sideQuestionRef.current.checkQuestionValidate) {
                     valid = sideQuestionRef.current.checkQuestionValidate();
                 } else {
@@ -94,7 +98,13 @@ function VideoView(props) {
 
     const handleVideoEnded = () => {
         setAllowSkip(true);
-
+        if(testCaseInfo.modalities.modality_type === 'interactive_video') {
+            if (sideQuestionRef.current && sideQuestionRef.current.onSubmitAnswer) {
+                sideQuestionRef.current.onSubmitAnswer().then(() => {
+                    onFinish();
+                })
+            }
+        }
     }
 
     const renderHeaderNumber = () => {
@@ -143,7 +153,7 @@ function VideoView(props) {
                 <ReactPlayer
                     ref={playerRef}
                     url={testSetInfo.test_set_discussion}
-                    playing
+                    playing={playing}
                     controls
                     width={'100%'}
                     height={'100%'}
@@ -191,7 +201,7 @@ function VideoView(props) {
                     </div>
                 </div>
                 {
-                    allowSkip &&
+                    (testCaseInfo.modalities.modality_type === 'interactive_video' || allowSkip) &&
                     <SideQuestions
                         modalityInfo={testCaseInfo.modalities}
                         test_case_id={testCaseId}
@@ -200,6 +210,8 @@ function VideoView(props) {
                         complete={complete}
                         isTruth={false}  // for covid question(truth left panel or answer right panel)
                         isPostTest={false}
+                        playerRef={playerRef} // for interactive video
+                        onChangePlaying={(v) => setPlaying(v)}  // for interactive video
                     />
                 }
             </div>

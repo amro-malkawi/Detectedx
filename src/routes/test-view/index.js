@@ -208,13 +208,14 @@ class TestView extends Component {
                         v.image_url_path
                     );
                 })
+                const isShowImageBrowser = (window.innerWidth < 2560 && testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo'].indexOf(testCaseViewInfo.modalities.modality_type) === -1);
                 that.props.setImageListAction(
                     testCaseViewInfo.images,
                     testCasesAnswers.images,
                     testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
                     testCaseViewInfo.modalities.number_of_slides,
                     complete,
-                    (testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo'].indexOf(testCaseViewInfo.modalities.modality_type) === -1),
+                    isShowImageBrowser,
                     testCaseViewInfo.test_case_grid_info
                 );
                 if (testCaseViewInfo.modalities.modality_type === 'volpara') {
@@ -448,18 +449,11 @@ class TestView extends Component {
                         </Button> : null
                 }
                 {
-                    (this.state.complete || this.state.testCaseIndex + 1 !== test_case_length) ? null :
-                        (
-                            this.state.test_case.modalities.modality_type === 'viewer' ?
-                                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.props.history.replace('/main/home')}>
-                                    <span className={'test-action-btn-label'}>Finish</span>
-                                    <CheckCircleOutlineIcon size="small"/>
-                                </Button> :
-                                <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
-                                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
-                                    <CheckCircleOutlineIcon size="small"/>
-                                </Button>
-                        )
+                    (this.state.test_case.modalities.modality_type === 'viewer' || this.state.complete || this.state.testCaseIndex + 1 !== test_case_length) ? null :
+                        <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
+                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
+                            <CheckCircleOutlineIcon size="small"/>
+                        </Button>
                 }
                 {
                     this.state.testCaseIndex + 1 < test_case_length ?
@@ -467,6 +461,13 @@ class TestView extends Component {
                             <span className={'test-action-btn-label'}><IntlMessages id={"testView.next"}/></span>
                             <SkipNextOutlinedIcon size="small"/>
                         </Button> : null
+                }
+                {
+                    this.state.test_case.modalities.modality_type === 'viewer' &&
+                    <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.props.history.replace('/main/home')}>
+                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.finish"}/></span>
+                        <CheckCircleOutlineIcon size="small"/>
+                    </Button>
                 }
                 {
                     (!this.state.complete && !this.state.possiblePostTestReattempt) &&

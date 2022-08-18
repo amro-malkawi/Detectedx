@@ -37,7 +37,6 @@ function TestSetInfo({data, onClose, onBackSeries}) {
         } catch (e) {
         }
         try {
-            console.log(data.test_set_learning_obj, data.modalityInfo.modality_learning_obj)
             const learningObjStr = data.test_set_learning_obj || data.modalityInfo.modality_learning_obj || null;
             setLearningObjectives(JSON.parse(learningObjStr));
         } catch (e) {
@@ -54,7 +53,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
             Apis.attemptsStart(data.id, subType).then(attempt => {
                 let path;
                 if (attempt.progress === 'test') {
-                    path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+                    path = (['video_lecture', 'presentations', 'interactive_video'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
                 } else {
                     path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
                 }
@@ -111,7 +110,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
 
     const renderLeftContent = () => {
         const {modality_type, modality_desc} = data.modalityInfo;
-        if (['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === -1) {
+        if (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(modality_type) === -1) {
             const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
             let descText = '';
             if (typeof modalityDesc !== 'object') {
@@ -122,7 +121,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
             } else if (modalityDesc['en'] !== undefined) {
                 descText = modalityDesc['en'];
             }
-            return <div dangerouslySetInnerHTML={{__html: descText}}/>
+            return <div dangerouslySetInnerHTML={{__html: (data.test_set_desc || descText)}}/>
         } else {
             const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
             if (!presenterInfo) return;
@@ -179,21 +178,22 @@ function TestSetInfo({data, onClose, onBackSeries}) {
 
     const renderRightContent = () => {
         const {modality_type, instruction_video, instruction_video_thumbnail} = data.modalityInfo;
-        if (['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) !== -1) {
-            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations'}[modality_type] + ' Overview';
+        const {test_set_inst_video, test_set_inst_video_thumbnail} = data;
+        if (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(modality_type) !== -1) {
+            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations', interactive_video: 'Interactive Video'}[modality_type] + ' Overview';
             return (
                 <div className={'text-white'}>
                     <div className={'fs-26 mt-30'}>{title}</div>
                     <div className={'fs-19 mt-10'}>{data.test_set_desc}</div>
                 </div>
             );
-        } else if (instruction_video && instruction_video !== '') {
+        } else if (test_set_inst_video || instruction_video) {
             return (
                 <div className={'d-flex flex-column justify-content-center align-items-center'}>
                     <div className={'test-set-modal-video'}>
                         <ReactPlayer
                             ref={videoRef}
-                            url={instruction_video}
+                            url={test_set_inst_video || instruction_video}
                             playing={isVideoPlay}
                             controls
                             onPause={() => setIsVideoPlay(false)}
@@ -201,8 +201,8 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                             height={'100%'}
                         />
                         {
-                            (isFirstPlay && instruction_video_thumbnail && instruction_video_thumbnail !== '') &&
-                            <img src={instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
+                            (isFirstPlay && (test_set_inst_video_thumbnail || instruction_video_thumbnail)) &&
+                            <img src={test_set_inst_video_thumbnail || instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
                         }
                         {
                             !isVideoPlay &&
@@ -376,7 +376,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
         let type = '';
         if (data.modalityInfo.modality_type === 'quiz') {
             type = 'Quiz';
-        } else if (data.modalityInfo.modality_type === 'video_lecture' || data.modalityInfo.modality_type === 'presentations') {
+        } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
             type = 'LECTURE';
         } else if (data.modalityInfo.modality_type === 'viewer') {
             type = 'IMAGE VIEWER';

@@ -15,7 +15,7 @@ import * as Apis from 'Api';
 
 const filterList = [
     {id: 'sam', label: 'Self Assessment Modules', needLogin: false, valKey: 'samCount'},
-    {id: 'lecture', label: 'Lectures', needLogin: false, valKey: 'lectureCount'},
+    {id: 'lecture', label: 'Lectures Series', needLogin: false, valKey: 'lectureCount'},
     {id: 'quizzes', label: 'Quizzes', needLogin: false, valKey: 'quizCount'},
     {id: 'imageViewer', label: 'Image viewers', needLogin: false, valKey: 'viewerCount'},
     {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
@@ -42,7 +42,6 @@ function Home() {
 
     useEffect(() => {
         const param = QueryString.parse(location.search);
-        console.log(location.hash)
         if (location.hash !== '#modal' && selectedTestSet) {
             setSelectedTestSet(null);
         }
@@ -61,42 +60,27 @@ function Home() {
         ]).then(([currentTestSets, categories]) => {
             currentTestSets.testSetList.forEach((t) => {
                 let modalityInfo;
-                if(t.tileType === 'series') {
+                if (t.tileType === 'series') {
                     t.isSeriesSameModality = t.seriesTestSets.every((v) => v.modality_id === t.seriesTestSets[0].modality_id);
                     modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.seriesTestSets[0].modality_id);
                     t.modalityInfo = modalityInfo;
                     t.seriesTestSets.forEach((v) => {
                         v.modalityInfo = currentTestSets.modalityList.find((m) => m.id === v.modality_id);
+                        const {filterKeys, is3D, isComplete} = getFilterKeys(v);
+                        v.filterKeys = filterKeys;
+                        v.is3D = is3D;
+                        if (isComplete) completed++;
+                        completedPoint += v.test_set_point;
                     });
                 } else {
                     modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.modality_id);
                     t.modalityInfo = modalityInfo;
+                    const {filterKeys, is3D, isComplete} = getFilterKeys(t);
+                    t.filterKeys = filterKeys;
+                    t.is3D = is3D;
+                    if (isComplete) completed++;
+                    completedPoint += t.test_set_point;
                 }
-                t.filterKeys = [];
-                if (isLogin && t.tileType !== 'series') {
-                    if (t.attempts.some((a) => !a.complete)) {
-                        t.filterKeys.push('inProgress');
-                    }
-                    if (t.attempts.some((a) => a.complete)) {
-                        t.filterKeys.push('completed');
-                        completed++;
-                        completedPoint += t.test_set_point;
-                    }
-                }
-                if (t.bookedTestSet) {
-                    t.filterKeys.push('saved');
-                }
-                if (modalityInfo.modality_type === 'quiz') {
-                    t.filterKeys.push('quizzes');
-                } else if (modalityInfo.modality_type === 'video_lecture' || modalityInfo.modality_type === 'presentations') {
-                    t.filterKeys.push('lecture');
-                } else if (modalityInfo.modality_type === 'viewer') {
-                    t.filterKeys.push('imageViewer');
-                } else {
-                    t.filterKeys.push('sam');
-                }
-
-                t.is3D = (['BreastED - DBT 3D', 'LungED', 'CHEST CT', 'GE 3D'].indexOf(modalityInfo.name) !== -1);
             });
 
             setModalityList(currentTestSets.modalityList);
@@ -110,19 +94,57 @@ function Home() {
         });
     }
 
+    const getFilterKeys = (t) => {
+        const filterKeys = [];
+        let isComplete = false;
+        if (isLogin && t.tileType !== 'series') {
+            if (t.attempts.some((a) => !a.complete)) {
+                filterKeys.push('inProgress');
+            }
+            if (t.attempts.some((a) => a.complete)) {
+                filterKeys.push('completed');
+                isComplete = true;
+            }
+        }
+        if (t.bookedTestSet) {
+            filterKeys.push('saved');
+        }
+        if (t.modalityInfo.modality_type === 'quiz') {
+            filterKeys.push('quizzes');
+        } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(t.modalityInfo.modality_type) !== -1) {
+            filterKeys.push('lecture');
+        } else if (t.modalityInfo.modality_type === 'viewer') {
+            filterKeys.push('imageViewer');
+        } else {
+            filterKeys.push('sam');
+        }
+        if (!Array.isArray(filterKeys)) console.log(filterKeys, t)
+        const is3D = (['BreastED - DBT 3D', 'LungED', 'CHEST CT', 'GE 3D'].indexOf(t.modalityInfo.name) !== -1);
+        return {filterKeys, is3D, isComplete};
+    }
+
     const calcCounts = (modalities, testSets) => {
         if (modalities === undefined) modalities = modalityList;
         if (testSets === undefined) testSets = testSetList;
         let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0, viewer = 0;
-
-        let showList = testSets.filter((v) => (
-            selectedCategoryList.length === 0 ||
-            selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1
-        ));
+        const showList = [];
+        testSets.forEach((t) => {
+            if (t.tileType === 'series') {
+                t.seriesTestSets.forEach((v) => {
+                    if(selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1) {
+                        showList.push(v);
+                    }
+                })
+            } else {
+                if(selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (t.test_set_category && t.test_set_category.indexOf(c) !== -1)) !== -1) {
+                    showList.push(t);
+                }
+            }
+        });
 
         showList.forEach((t) => {
             let modalityInfo;
-            if(t.tileType === 'series') {
+            if (t.tileType === 'series') {
                 modalityInfo = modalities.find((m) => m.id === t.seriesTestSets[0].modality_id);
             } else {
                 modalityInfo = modalities.find((m) => m.id === t.modality_id);
@@ -139,9 +161,9 @@ function Home() {
             }
             if (modalityInfo.modality_type === 'quiz') {
                 quiz++;
-            } else if (modalityInfo.modality_type === 'video_lecture' || modalityInfo.modality_type === 'presentations') {
+            } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(modalityInfo.modality_type) !== -1) {
                 lecture++;
-            } else if(modalityInfo.modality_type === 'viewer') {
+            } else if (modalityInfo.modality_type === 'viewer') {
                 viewer++;
             } else {
                 sam++;
@@ -253,26 +275,54 @@ function Home() {
         return filterList.filter((f) => (!isLogin ? !f.needLogin : true)).map((f) => (
             <span
                 key={f.id}
-                className={classNames('mr-50 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
+                className={classNames('mr-40 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
                 onClick={() => onChangeFilter(f)}
             >
-                                {f.label}({filterValues[f.valKey]})
-                            </span>
+                {f.label}({filterValues[f.valKey]})
+            </span>
         ))
     }
 
     const renderTestSetList = () => {
         if (modalityList.length === 0) return null;
-        let showList = testSetList.filter((v) => (
-            selectedCategoryList.length === 0 ||
-            (selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1)
-        ));
-        if (filter !== '') {
-            showList = showList.filter((v) => v.filterKeys.indexOf(filter) !== -1);
-        }
+        const testSets = JSON.parse(JSON.stringify(testSetList));
+        const showList = [];
+
+        testSets.forEach((t) => {
+            if (t.tileType === 'series') {
+                const seriesTestSets = [];
+                t.seriesTestSets.some((v) => {
+                    if(
+                        (selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1) &&
+                        (filter === '' || (v.filterKeys && v.filterKeys.indexOf(filter) !== -1))
+                    ) {
+                        seriesTestSets.push(v);
+                    }
+                });
+                if(seriesTestSets.length > 0) {
+                    t.seriesTestSets = seriesTestSets;
+                    showList.push(t);
+                }
+            } else {
+                if(
+                    (selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (t.test_set_category && t.test_set_category.indexOf(c) !== -1)) !== -1) &&
+                    (filter === '' || (t.filterKeys && t.filterKeys.indexOf(filter) !== -1))
+                ) {
+                    showList.push(t);
+                }
+            }
+        });
+
+        // let showList = testSetList.filter((v) => (
+        //     selectedCategoryList.length === 0 ||
+        //     (selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1)
+        // ));
+        // if (filter !== '') {
+        //     showList = showList.filter((v) => v.filterKeys && v.filterKeys.indexOf(filter) !== -1);
+        // }
         const normalList = [], completedList = [], enterpriseList = [];
         showList.forEach((v) => {
-            if (v.filterKeys.indexOf('completed') !== -1) {
+            if (v.filterKeys && v.filterKeys.indexOf('completed') !== -1) {
                 completedList.push(v);
             } else if (v.enterpriseTestSet) {
                 enterpriseList.push(v);

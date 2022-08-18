@@ -8,6 +8,7 @@ import ChestCTQuestions from "./ChestCTQuestion";
 import LinEDQuestions from "./LinEDQuestions";
 import QuizQuestions from './QuizQuestions';
 import WBCTQuestions from './WBCTQuestions';
+import InteractiveVideoQuestion from './InteractiveVideoQuestion';
 
 const SideQuestions = React.forwardRef((props, ref) => {
     const {modality_type, name} = props.modalityInfo;
@@ -30,6 +31,8 @@ const SideQuestions = React.forwardRef((props, ref) => {
             return <QuizQuestions ref={ref} {...props} />
         case 'wb_ct':
             return <WBCTQuestions ref={ref} {...props} />
+        case 'interactive_video':
+            return <InteractiveVideoQuestion ref={ref} {...props} />
         default:
             return null;
     }
