@@ -8,7 +8,21 @@ import * as selectors from "Selectors";
 function PlanComponent({onSelectPlan, planList}) {
     const isLogin = selectors.getIsLogin(null);
 
+    const getDiscountValue = (planDetail) => {
+        const isDiscount = (planDetail.nickname && planDetail.nickname.toLowerCase().indexOf('discount') !== -1);
+        let discountPrice = planDetail.amount;
+        if(isDiscount) {
+            const reg = /discount([\d]+)/;
+            const match = planDetail.nickname.match(reg);
+            if(match && match.length === 2) {
+                discountPrice = match[1];
+            }
+        }
+        return {isDiscount, discountPrice};
+    }
+
     const renderFreePlan = () => {
+        console.log(planList.free)
         return (
             <div className={'main-plan-item'}>
                 <div className={'plan-item-header'}>
@@ -38,7 +52,7 @@ function PlanComponent({onSelectPlan, planList}) {
                     <div className={'plan-item-btn'}>
                         <Button onClick={() => onSelectPlan(planList.free)}>
                             <i className="zmdi zmdi-arrow-right"/>
-                            {isLogin ? 'Subscribe' : 'Sign Up'}
+                            {isLogin ? 'Register' : 'Sign Up'}
                         </Button>
                     </div>
                 </div>
@@ -47,13 +61,23 @@ function PlanComponent({onSelectPlan, planList}) {
     }
 
     const renderAnnual = () => {
+        const {isDiscount, discountPrice} = getDiscountValue(planList.yearly.detail);
         return (
-            <div className={'main-plan-item'}>
+            <div className={'main-plan-item charged'}>
                 <div className={'plan-item-header'}>
                     <span>Annual</span>
                 </div>
                 <div className={'plan-item-price'}>
                     <div className={'d-flex flex-row align-items-start'}>
+                        {
+                            isDiscount &&
+                            <div className={'plan-price-discount'}>
+                                <div>
+                                    <span className={'fs-23'}>$</span>{discountPrice}
+                                    <div className={'diagonal-line'}/>
+                                </div>
+                            </div>
+                        }
                         <span className={'plan-price-currency'}>$</span>
                         <span className={'plan-price-num'}>{planList.yearly.detail.amount}</span>
                     </div>
@@ -61,6 +85,7 @@ function PlanComponent({onSelectPlan, planList}) {
                 </div>
                 <div className={'plan-item-content'}>
                     <div className={'plan-item-features'}>
+                        <div className={'fw-bold'}><span/>Save two months fee</div>
                         <div><span/>Instant certification</div>
                         <div><span/>Accredited CME points</div>
                         <div><span/>Self-assessment modules</div>
@@ -81,13 +106,23 @@ function PlanComponent({onSelectPlan, planList}) {
     }
 
     const renderMonthlyPlan = () => {
+        const {isDiscount, discountPrice} = getDiscountValue(planList.monthly.detail);
         return (
-            <div className={'main-plan-item'}>
+            <div className={'main-plan-item charged'}>
                 <div className={'plan-item-header'}>
                     <span>Monthly</span>
                 </div>
                 <div className={'plan-item-price'}>
                     <div className={'d-flex flex-row align-items-start'}>
+                        {
+                            isDiscount &&
+                            <div className={'plan-price-discount'}>
+                                <div>
+                                    <span className={'fs-23'}>$</span>{discountPrice}
+                                    <div className={'diagonal-line'}/>
+                                </div>
+                            </div>
+                        }
                         <span className={'plan-price-currency'}>$</span>
                         <span className={'plan-price-num'}>{planList.monthly.detail.amount}</span>
                     </div>

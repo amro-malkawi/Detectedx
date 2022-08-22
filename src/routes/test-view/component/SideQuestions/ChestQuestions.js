@@ -23,18 +23,32 @@ const question = [
         id: 'chestQ2a',
         label: '1A. Classifiable paranchymal abnormality:',
         options: ['Yes', 'No'],
+        hover: 'interstitial lung disease: nodules or fibrosis',
         child: {
             chestQ2b: {
                 id: 'chestQ2b',
                 label: '1B. Small opacities',
-                aOptions: ['p', 's', 'q', 't', 'r', 'u'],
+                aOptions: [
+                    {value: 'p', hover: '<1.5mm defined nodules'},
+                    {value: 's', hover: '<1.5mm width of irregular opacity'},
+                    {value: 'q', hover: '1.5mm to 3mm defined nodules'},
+                    {value: 't', hover: '1.5mm to 3mm width of irregular opacity'},
+                    {value: 'r', hover: '>3mm defined nodules'},
+                    {value: 'u', hover: '>3mm width of irregular opacity'},
+                ],
                 bOptions: {labels: ['Upper', 'Middle', 'Lower'], values: ['R', 'L']},
                 cOptions: [['0/-', '0/0', '0/1'], ['1/0', '1/1', '1/2'], ['2/1', '2/2', '2/3'], ['3/2', '3/3', '3/+']]
             },
             chestQ2c: {
                 id: 'chestQ2c',
                 label: '1C. Large opacities',
-                options: ['0', 'A', 'B', 'C']
+                options: [
+                    {value: '0', hover: 'none'},
+                    {value: 'A', hover: '>10mm but <5cm'},
+                    {value: 'B', hover: 'summed >5cm but less than the total area of RUZ'},
+                    {value: 'C', hover: 'summed opacities greater than the RUZ'},
+                ],
+                hover: "densities consistent with Progressive Massive Fibrosis, see 'Reference images' drop-down for standard images"
             }
         }
     },
@@ -64,6 +78,7 @@ const question = [
         id: 'chestQ4a',
         label: '3A. Any other abnormalities?',
         options: ['Yes', 'No'],
+        hover: 'this list is limited to the standard codes for ILO reporting',
         child: {
             chestQ4b: {
                 id: 'chestQ4b',
@@ -119,6 +134,24 @@ const question = [
             }
         }
     }
+]
+
+const chestConfidence = [
+    {value: 0, tooltip: 'No features of occupational lung disease'},
+    {value: 1, tooltip: 'Abnormalities very unlikely due to occupational disease'},
+    {value: 2, tooltip: 'Abnormalities only remotely related to occupational lung disease'},
+    {value: 3, tooltip: 'Abnormalities related to occupational lung disease which are very nonspecific or atypical'},
+    {value: 4, tooltip: 'Abnormalities that represent typical changes of occupational lung disease'},
+    {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for occupational lung disease'}
+];
+
+const chestSiConfidence = [
+    {value: 0, tooltip: 'No features of occupational silicosis'},
+    {value: 1, tooltip: 'Abnormalities very unlikely due to silicosis'},
+    {value: 2, tooltip: 'Abnormalities only remotely related to silicosis'},
+    {value: 3, tooltip: 'Abnormalities related to silicosis which are very nonspecific or atypical'},
+    {value: 4, tooltip: 'Abnormalities that represent typical changes of silicosis'},
+    {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for silicosis'}
 ]
 
 export default class ChestQuestions extends Component {
@@ -279,23 +312,46 @@ export default class ChestQuestions extends Component {
     renderOptionList(values, optionClass = '', disabled, qId, childQId, iconClass='chest-question-radio-icon') {
         const {truthValue} = this.state;
         const qTruth = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
-        return values.map((v, i) =>
-            <QuestionLabel
-                key={i}
-                className={optionClass}
-                value={v}
-                control={
-                    <QuestionRadio
-                        icon={<span className={ iconClass + ' ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                        checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                        disableRipple
+        return values.map((v, i) => {
+            if(!v.hover) {
+                return (
+                    <QuestionLabel
+                        key={i}
+                        className={optionClass}
+                        value={v}
+                        control={
+                            <QuestionRadio
+                                icon={<span className={iconClass + ' ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                disableRipple
+                            />
+                        }
+                        label={v}
+                        labelPlacement="end"
+                        disabled={disabled}
                     />
-                }
-                label={v}
-                labelPlacement="end"
-                disabled={disabled}
-            />
-        )
+                )
+            } else {
+                return (
+                    <CheckboxTooltip title={v.hover} key={i}>
+                        <QuestionLabel
+                            className={optionClass}
+                            value={v.value}
+                            control={
+                                <QuestionRadio
+                                    icon={<span className={iconClass + ' ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                    checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                    disableRipple
+                                />
+                            }
+                            label={v.value}
+                            labelPlacement="end"
+                            disabled={disabled}
+                        />
+                    </CheckboxTooltip>
+                )
+            }
+            })
     }
 
     renderQuestion1Additional(questionObj, disabled) {
@@ -345,10 +401,7 @@ export default class ChestQuestions extends Component {
                     <div className={'chest-question-sub-desc ml-4'}>(mark one primary and one secondary)</div>
                     <div className={'d-flex'}>
                         <div className={'col d-flex align-items-center flex-column'}>
-                            <div className={'fs-14'}>
-                                Primary
-                            </div>
-
+                            <div className={'fs-14'}><CheckboxTooltip title="Predominant type"><span>Primary</span></CheckboxTooltip></div>
                             <RadioGroup
                                 className={'ml-3 mt-1 d-flex justify-content-center'}
                                 style={{width: 110}}
@@ -365,9 +418,7 @@ export default class ChestQuestions extends Component {
                             </RadioGroup>
                         </div>
                         <div className={'col d-flex align-items-center flex-column'}>
-                            <div className={'fs-14'}>
-                                Secondary
-                            </div>
+                            <div className={'fs-14'}><CheckboxTooltip title="Other type if present, otherwise the same as primary"><span>Secondary</span></CheckboxTooltip></div>
                             <RadioGroup
                                 className={'ml-3 mt-1 d-flex justify-content-center'}
                                 style={{width: 110}}
@@ -399,7 +450,7 @@ export default class ChestQuestions extends Component {
                             </div>
                         )
                     }
-                    <div className={'chest-question-sub-title'}>c. Profusion</div>
+                    <div className={'chest-question-sub-title'}><CheckboxTooltip title={"see 'Reference images' drop-down for standard images"}><span>c. Profusion</span></CheckboxTooltip></div>
                     <div>
                         <RadioGroup
                             className={'ml-3 mt-1'}
@@ -421,7 +472,7 @@ export default class ChestQuestions extends Component {
                         </RadioGroup>
                     </div>
                 </div>
-                <div className={'chest-question-title'}>{question2cObj.label}</div>
+                <div className={'chest-question-title'}><CheckboxTooltip title={question2cObj.hover}><span>{question2cObj.label}</span></CheckboxTooltip></div>
                 <div className={'d-flex ml-3'}>
                     <span className={'chest-question-sub-title'} style={{paddingTop: 4}}>Size</span>
                     <RadioGroup
@@ -881,7 +932,9 @@ export default class ChestQuestions extends Component {
         const qTruth = truthValue[questionObj.id] !== undefined ? truthValue[questionObj.id].value : '';
         return (
             <div key={questionObj.id} className={'chest-question'}>
-                <div className={'chest-question-title'}>{questionObj.label}</div>
+                <div className={'chest-question-title'}>
+                    {questionObj.hover ? <CheckboxTooltip title={questionObj.hover}><span>{questionObj.label}</span></CheckboxTooltip>: questionObj.label}
+                </div>
                 <RadioGroup
                     className={'ml-4'}
                     aria-label="position"
@@ -956,14 +1009,7 @@ export default class ChestQuestions extends Component {
                             className={'justify-content-center mt-0'}
                         >
                             {
-                                [
-                                    {value: 0, tooltip: 'Normal, no abnormality attributable to OLD'},
-                                    {value: 1, tooltip: 'Some abnormalities present that maybe associated with OLD, either very nonspecific or equivocal'},
-                                    {value: 2, tooltip: 'Nonspecific features of OLD, remains nonspecific even with exposure history'},
-                                    {value: 3, tooltip: 'Nonspecific features of OLD, woulfd support diagnosis with appropriate exposure history'},
-                                    {value: 4, tooltip: 'Suggestive features of OLD. More specific for OLD, perhaps in top 3 differential'},
-                                    {value: 5, tooltip: 'Pathonomic features, OLD main differential even without exposure history'}
-                                ].map((v, i) => {   // [0, 1, 2, 3...]
+                                (this.props.modalityInfo.name !== 'CHESTsi' ? chestConfidence : chestSiConfidence).map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
                                         <CheckboxTooltip title={v.tooltip} key={i}>
                                             <RatingLabel

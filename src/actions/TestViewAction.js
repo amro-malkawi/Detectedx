@@ -272,6 +272,9 @@ const getImageHangingType = (images) => {
                 hangingIdList.chestHangings.push('Case');
             }
         });
+        hangingIdList.chestHangings = hangingIdList.chestHangings.map((v) => {
+            return v === 'Case' ? 'Reference images' : v;
+        });
         return 'chestHangings';
     }
 
