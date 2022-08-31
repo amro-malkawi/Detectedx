@@ -22,7 +22,12 @@ const question = [
             q1Sub2: {
                 aOptions: ['U', 'M', 'L'],
                 bOptions: ['R', 'L'],
-                cOptions: ['0', '1', '2', '3']
+                cOptions: [
+                    {value: '0', hover: 'No definite Abnormality'},
+                    {value: '1', hover: 'Mild, definitely present but few in number'},
+                    {value: '2', hover: 'Moderate, numerous opacities'},
+                    {value: '3', hover: 'Severe, obscuring normal anatomy'},
+                ]
             }
         }
     },
@@ -38,7 +43,12 @@ const question = [
             q2Sub2: {
                 aOptions: ['U', 'M', 'L'],
                 bOptions: ['R', 'L'],
-                cOptions: ['0', '1', '2', '3']
+                cOptions: [
+                    {value: '0', hover: 'No definite Abnormality'},
+                    {value: '1', hover: 'Mild, definitely present but few in number'},
+                    {value: '2', hover: 'Moderate, numerous opacities'},
+                    {value: '3', hover: 'Severe, obscuring normal anatomy'},
+                ]
             }
         }
     },
@@ -67,7 +77,12 @@ const question = [
         child: {
             aOptions: ['U', 'M', 'L'],
             bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
+            cOptions: [
+                {value: '0', hover: 'No definite Abnormality'},
+                {value: '1', hover: 'Focal'},
+                {value: '2', hover: 'Patchy'},
+                {value: '3', hover: 'Diffuse'},
+            ]
         }
     },
     {
@@ -77,7 +92,12 @@ const question = [
         child: {
             aOptions: ['U', 'M', 'L'],
             bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
+            cOptions: [
+                {value: '0', hover: 'No definite Abnormality'},
+                {value: '1', hover: 'Mild <10mm subpleural'},
+                {value: '2', hover: 'Moderate 10mm to 30mm subpleural'},
+                {value: '3', hover: 'Severe, > 30mm subpleural'},
+            ]
         }
     },
     {
@@ -87,7 +107,12 @@ const question = [
         child: {
             aOptions: ['U', 'M', 'L'],
             bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
+            cOptions: [
+                {value: '0', hover: 'No definite Abnormality'},
+                {value: '1', hover: 'Mild <15% of one zone'},
+                {value: '2', hover: 'Moderate 15 – 30% of one zone'},
+                {value: '3', hover: 'Severe >30%'},
+            ]
         }
     },
     {
@@ -122,25 +147,22 @@ const question = [
     },
 ]
 
-const ratings = [
-    {value: 0, tooltip: 'Normal'},
-    {value: 1, tooltip: <span>Shows abnormalities for which occupational disease is not a differential <br/>eg. Pneumonia, CCF</span>},
-    {
-        value: 2,
-        tooltip: <span>Abnormalities are present that may occur with occupational lung disease, however this would not become the key differential, even with a history of occupational exposure. <br/>eg. Sparse or isolated granulomas, focal postinfectious scarring, pleural effusions, enlarged noncalcified mediastinal lymph nodes</span>
-    },
-    {
-        value: 3,
-        tooltip: <span>Abnormalities are present that will occur with occupational lung disease, but are not highly specific. A suggestive exposure history would support the diagnosis in the appropriate setting, although other differential considerations would remain. <br/>eg. Nonspecific pulmonary fibrosis, emphysema, bronchitis, bronchiolitis/small airways disease, bronchogenic malignancy</span>
-    },
-    {
-        value: 4,
-        tooltip: <span>Abnormalities are present that would be typical of occupational lung disease, which would be the first differential in the appropriate clinical setting. <br/>eg. Classical silicosis, Coal Workers’ Pneumoconiosis</span>
-    },
-    {
-        value: 5,
-        tooltip: <span>Features present which are highly specific for occupational lung disease, which would be the key differential even without available history. <br/>eg Typical asbestos plaques with or without fibrosis. Classical silicosis with eggshell calcification of lymph nodes, Complicated silicosis or CWP with PMF. Mesothelioma.</span>
-    }
+const chestCTConfidence = [
+    {value: 0, tooltip: 'No features of occupational lung disease'},
+    {value: 1, tooltip: 'Abnormalities very unlikely due to occupational disease'},
+    {value: 2, tooltip: 'Abnormalities only remotely related to occupational lung disease'},
+    {value: 3, tooltip: 'Abnormalities related to occupational lung disease which are very nonspecific or atypical'},
+    {value: 4, tooltip: 'Abnormalities that represent typical changes of occupational lung disease'},
+    {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for occupational lung disease'}
+]
+
+const chestCTSiConfidence = [
+    {value: 0, tooltip: 'No features of silicosis'},
+    {value: 1, tooltip: 'Abnormalities very unlikely due to silicosis'},
+    {value: 2, tooltip: 'Abnormalities only remotely related to silicosis'},
+    {value: 3, tooltip: 'Abnormalities related to silicosis which are very nonspecific or atypical'},
+    {value: 4, tooltip: 'Abnormalities that represent typical changes of silicosis'},
+    {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for silicosis'}
 ]
 
 export default class ChestCTQuestion extends Component {
@@ -350,9 +372,9 @@ export default class ChestCTQuestion extends Component {
                                 >
                                     {
                                         cOptions.map((vv) => (
+                                            <CheckboxTooltip title={vv.hover} key={vv.value}>
                                             <QuestionLabel
-                                                key={vv}
-                                                value={v + vv}
+                                                value={v + vv.value}
                                                 control={
                                                     <QuestionRadio
                                                         icon={<span className={'chest-question-checkbox-icon' + getTruthIconClass(childQId, v, 'R', v + vv)}/>}
@@ -360,11 +382,12 @@ export default class ChestCTQuestion extends Component {
                                                         disableRipple
                                                     />
                                                 }
-                                                label={vv}
+                                                label={vv.value}
                                                 style={{marginRight: 5}}
                                                 labelPlacement="end"
                                                 disabled={disabled}
                                             />
+                                            </CheckboxTooltip>
                                         ))
                                     }
                                 </RadioGroup>
@@ -378,9 +401,9 @@ export default class ChestCTQuestion extends Component {
                                 >
                                     {
                                         cOptions.map((vv) => (
+                                            <CheckboxTooltip title={vv.hover} key={vv.value}>
                                             <QuestionLabel
-                                                key={vv}
-                                                value={v + vv}
+                                                value={v + vv.value}
                                                 control={
                                                     <QuestionRadio
                                                         icon={<span className={'chest-question-checkbox-icon' + getTruthIconClass(childQId, v, 'L', v + vv)}/>}
@@ -388,11 +411,12 @@ export default class ChestCTQuestion extends Component {
                                                         disableRipple
                                                     />
                                                 }
-                                                label={vv}
+                                                label={vv.value}
                                                 style={{marginRight: 5}}
                                                 labelPlacement="end"
                                                 disabled={disabled}
                                             />
+                                            </CheckboxTooltip>
                                         ))
                                     }
                                 </RadioGroup>
@@ -429,7 +453,7 @@ export default class ChestCTQuestion extends Component {
                     }
                 </div>
                 <div className={'ml-1'}>
-                    <div className={'mt-3'}>Zone Profusion</div>
+                    <div className={'mt-3'}>Zone Grade/Profusion</div>
                     {
                         this.renderCheckGroup(questionObj.id, 'q1Sub2', disabled, q1Sub2Obj.aOptions, q1Sub2Obj.bOptions, q1Sub2Obj.cOptions)
                     }
@@ -694,7 +718,7 @@ export default class ChestCTQuestion extends Component {
                             className={'justify-content-center mt-0'}
                         >
                             {
-                                ratings.map((v, i) => {   // [0, 1, 2, 3...]
+                                (this.props.modalityInfo.name !== 'CHESTsi CT' ? chestCTConfidence : chestCTSiConfidence).map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
                                         <CheckboxTooltip title={v.tooltip} key={i}>
                                             <RatingLabel

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {Button, Tooltip} from '@material-ui/core';
+import React, {useState, useEffect, useRef} from 'react';
+import {Button, IconButton, Tooltip} from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {Scrollbars} from 'react-custom-scrollbars';
@@ -15,7 +15,7 @@ import * as Apis from 'Api';
 
 const filterList = [
     {id: 'sam', label: 'Self Assessment Modules', needLogin: false, valKey: 'samCount'},
-    {id: 'lecture', label: 'Lectures Series', needLogin: false, valKey: 'lectureCount'},
+    {id: 'lecture', label: 'Lecture Series', needLogin: false, valKey: 'lectureCount'},
     {id: 'quizzes', label: 'Quizzes', needLogin: false, valKey: 'quizCount'},
     {id: 'imageViewer', label: 'Image viewers', needLogin: false, valKey: 'viewerCount'},
     {id: 'inProgress', label: 'In Progress', needLogin: true, valKey: 'inProgressCount'},
@@ -27,6 +27,7 @@ function Home() {
     const location = useLocation();
     const dispatch = useDispatch();
     const isLogin = selectors.getIsLogin(null);
+    const searchTextRef = useRef();
     const [modalityList, setModalityList] = useState([]);
     const [filter, setFilter] = useState(''); // inProgress, saved, sam, lecture, quizzes
     const [testSetList, setTestSetList] = useState([]);
@@ -37,16 +38,31 @@ function Home() {
     const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0, presentationCount: 0, viewerCount: 0});
 
     useEffect(() => {
-        history.replace({pathname: location.pathname});
+        // history.replace({pathname: location.pathname});
+        const param = QueryString.parse(location.search);
+        if (param.filter) {
+            setFilter(param.filter);
+        }
+        if (param.categories) {
+            setSelectedCategoryList(param.categories.split(','));
+        }
     }, []);
 
     useEffect(() => {
-        const param = QueryString.parse(location.search);
         if (location.hash !== '#modal' && selectedTestSet) {
             setSelectedTestSet(null);
         }
+        const param = QueryString.parse(location.search);
+        if(param.search !== searchTextRef.current) {
+            searchTextRef.current = param.search;
+            getData(param.search);
+        }
+    }, [location]);
+
+    useEffect(() => {
+        const param = QueryString.parse(location.search);
         getData(param.search);
-    }, [location, isLogin]);
+    }, [isLogin]);
 
     useEffect(() => {
         calcCounts();
@@ -128,15 +144,16 @@ function Home() {
         if (testSets === undefined) testSets = testSetList;
         let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0, viewer = 0;
         const showList = [];
+        console.log(selectedCategoryList, 'selectedCategoryList')
         testSets.forEach((t) => {
             if (t.tileType === 'series') {
                 t.seriesTestSets.forEach((v) => {
-                    if(selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1) {
+                    if (selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1) {
                         showList.push(v);
                     }
                 })
             } else {
-                if(selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (t.test_set_category && t.test_set_category.indexOf(c) !== -1)) !== -1) {
+                if (selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (t.test_set_category && t.test_set_category.indexOf(c) !== -1)) !== -1) {
                     showList.push(t);
                 }
             }
@@ -180,7 +197,8 @@ function Home() {
         });
     }
 
-    const onCategoryExpand = (categoryLabel, parentIndex) => {
+    const onCategoryExpand = (categoryInfo, parentIndex) => {
+        const categoryLabel = categoryInfo.label;
         const newCategoryObj = [...categoryObj];
         if (parentIndex === undefined) {
             // root category
@@ -188,29 +206,49 @@ function Home() {
             if (i !== -1) newCategoryObj[i].expand = newCategoryObj[i].expand === undefined ? true : !newCategoryObj[i].expand;
         } else {
             // child category
-            const i = newCategoryObj[parentIndex].options.findIndex((v) => v.label === categoryLabel);
+            let i = newCategoryObj[parentIndex].options.findIndex((v) => v.label === categoryLabel);
             if (i !== -1) newCategoryObj[parentIndex].options[i].expand = newCategoryObj[parentIndex].options[i].expand === undefined ? true : !newCategoryObj[parentIndex].options[i].expand;
+            // add or remove child category
+            // onSelectCategory(categoryInfo.id);
         }
         setCategoryObj(newCategoryObj);
     }
 
     const onSelectCategory = (categoryId) => {
-        const i = selectedCategoryList.indexOf(categoryId);
-
+        let i = selectedCategoryList.indexOf(categoryId);
+        let newSelected = [...selectedCategoryList];
         if (i === -1) {
-            setSelectedCategoryList([...selectedCategoryList, categoryId]);
+            newSelected.push(categoryId);
         } else {
-            selectedCategoryList.splice(i, 1);
-            setSelectedCategoryList([...selectedCategoryList]);
+            newSelected.splice(i, 1);
         }
+
+        // remove parent
+        i = categoryId.lastIndexOf(' > ');
+        const parentId = categoryId.substring(0, i);
+        i = newSelected.indexOf(parentId);
+        if (i !== -1) {
+            newSelected.splice(i, 1);
+        }
+        // remove child
+        newSelected = newSelected.filter((v) => (v === categoryId || v.indexOf(categoryId) !== 0));
+
+        setSelectedCategoryList(newSelected);
+        const param = QueryString.parse(location.search);
+        param.categories = newSelected.join(',');
+        history.replace({pathname: location.pathname, search: QueryString.stringify(param)});
     }
 
     const onChangeFilter = (val) => {
+        const param = QueryString.parse(location.search);
         if (filter === val.id) {
             setFilter('');
+            delete param.filter;
         } else {
             setFilter(val.id);
+            param.filter = val.id;
         }
+        history.replace({pathname: location.pathname, search: QueryString.stringify(param)});
     }
 
     const onOpenTestSetModal = (value) => {
@@ -229,7 +267,7 @@ function Home() {
             <div key={subCategory.label}>
                 <Button className={classNames('category-item sub-item', {active: selected})} onClick={() => onSelectCategory(subCategory.id)}>
                     <i className={classNames('zmdi fs-23', (selected ? 'zmdi-check' : 'zmdi-close'))}/>
-                    <span className={'fs-18'}>{subCategory.label}</span>
+                    <span className={'fs-17'}>{subCategory.label}</span>
                 </Button>
                 {
                     subCategory.options && subCategory.options.map((v, i) => renderCategoryItem(subCategory, v))
@@ -239,12 +277,17 @@ function Home() {
     }
 
     const renderCategories = (category, selfIndex, parentIndex) => {
+        const selected = parentIndex !== undefined && selectedCategoryList.indexOf(category.id) !== -1;
         return (
             <div key={category.label}>
                 <div>
-                    <Button className={'category-item'} onClick={() => onCategoryExpand(category.label, parentIndex)}>
-                        <i className={classNames('zmdi fs-23', (category.expand ? 'zmdi-chevron-down' : 'zmdi-chevron-right'))}/>
-                        <span className={'fs-18'}>{category.label}</span>
+                    <Button className={classNames('category-item', {active: selected})}>
+                        <IconButton className={'category-expand-btn'} onClick={() => onCategoryExpand(category, parentIndex)}>
+                            <i className={classNames('zmdi fs-23', (category.expand ? 'zmdi-chevron-down' : 'zmdi-chevron-right'))}/>
+                        </IconButton>
+                        <span className={'fs-18 sub-category-item'} onClick={() => parentIndex !== undefined && onSelectCategory(category.id)}>
+                            {category.label}
+                        </span>
                     </Button>
                 </div>
                 <div className={'pl-3'}>
@@ -292,19 +335,19 @@ function Home() {
             if (t.tileType === 'series') {
                 const seriesTestSets = [];
                 t.seriesTestSets.some((v) => {
-                    if(
+                    if (
                         (selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (v.test_set_category && v.test_set_category.indexOf(c) !== -1)) !== -1) &&
                         (filter === '' || (v.filterKeys && v.filterKeys.indexOf(filter) !== -1))
                     ) {
                         seriesTestSets.push(v);
                     }
                 });
-                if(seriesTestSets.length > 0) {
+                if (seriesTestSets.length > 0) {
                     t.seriesTestSets = seriesTestSets;
                     showList.push(t);
                 }
             } else {
-                if(
+                if (
                     (selectedCategoryList.length === 0 || selectedCategoryList.findIndex((c) => (t.test_set_category && t.test_set_category.indexOf(c) !== -1)) !== -1) &&
                     (filter === '' || (t.filterKeys && t.filterKeys.indexOf(filter) !== -1))
                 ) {

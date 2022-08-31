@@ -222,6 +222,7 @@ class TestView extends Component {
                     that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
                 }
             });
+            document.title = attemptsDetail.test_sets.name + (attemptsDetail.test_sets.test_set_code ? ` (${attemptsDetail.test_sets.test_set_code})` : '');
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
