@@ -559,7 +559,6 @@ class ImageViewer extends Component {
     }
 
     handleMeasureCompleteEvent(event) {
-        if (this.props.modalityInfo.modality_type === 'viewer') return;
         if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
             this.tempMeasureToolData = null;
             if (event.detail.measurementData.id === undefined) {

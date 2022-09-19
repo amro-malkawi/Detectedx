@@ -300,6 +300,14 @@ class TestView extends Component {
         }
     }
 
+    onViewerReset() {
+        Apis.attemptsViewerReset(this.state.attempts_id).then((nextStep) => {
+            this.props.history.replace('/main/home');
+        }).catch((e) => {
+            NotificationManager.error(e.response ? e.response.data.error.message : e.message);
+        });
+    }
+
     onMove(step) { // previous -1, next 1
         this.onSeek(this.state.testCaseIndex + step);
     }
@@ -465,7 +473,7 @@ class TestView extends Component {
                 }
                 {
                     this.state.test_case.modalities.modality_type === 'viewer' &&
-                    <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.props.history.replace('/main/home')}>
+                    <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onViewerReset()}>
                         <span className={'test-action-btn-label'}><IntlMessages id={"testView.finish"}/></span>
                         <CheckCircleOutlineIcon size="small"/>
                     </Button>

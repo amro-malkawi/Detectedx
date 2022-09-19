@@ -149,8 +149,8 @@ const question = [
 
 const chestCTConfidence = [
     {value: 0, tooltip: 'No features of occupational lung disease'},
-    {value: 1, tooltip: 'Abnormalities very unlikely due to occupational disease'},
-    {value: 2, tooltip: 'Abnormalities only remotely related to occupational lung disease'},
+    {value: 1, tooltip: 'Abnormalities present but not due to occupational disease'},
+    {value: 2, tooltip: 'Abnormalities present but very unlikely due to occupational disease'},
     {value: 3, tooltip: 'Abnormalities related to occupational lung disease which are very nonspecific or atypical'},
     {value: 4, tooltip: 'Abnormalities that represent typical changes of occupational lung disease'},
     {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for occupational lung disease'}
@@ -158,8 +158,8 @@ const chestCTConfidence = [
 
 const chestCTSiConfidence = [
     {value: 0, tooltip: 'No features of silicosis'},
-    {value: 1, tooltip: 'Abnormalities very unlikely due to silicosis'},
-    {value: 2, tooltip: 'Abnormalities only remotely related to silicosis'},
+    {value: 1, tooltip: 'Abnormalities present but not due to silicosis'},
+    {value: 2, tooltip: 'Abnormalities present but very unlikely due to silicosis'},
     {value: 3, tooltip: 'Abnormalities related to silicosis which are very nonspecific or atypical'},
     {value: 4, tooltip: 'Abnormalities that represent typical changes of silicosis'},
     {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for silicosis'}

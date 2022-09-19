@@ -390,7 +390,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                         data.modalityInfo.modality_icon_image &&
                         <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-mobile-header-img'} alt={''}/>
                     }
-                    <div className={'d-flex flex-row'}>
+                    <div className={'d-flex flex-row test-set-mobile-header-row'}>
                         <div className={'test-set-mobile-header-tags'}>
                             <div className={'test-category'}>{testSetCategory}</div>
                             {
@@ -401,6 +401,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                             }
                         </div>
                         <div className={'fs-14'}>{type}</div>
+                        <div className={'test-set-mobile-header-close'} onClick={onClose}><i className={'ti-close'} /></div>
                     </div>
                     <div className={'test-set-mobile-header-title fs-23 fw-semi-bold'}>{data.name}</div>
                 </div>

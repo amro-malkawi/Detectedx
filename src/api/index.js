@@ -399,6 +399,11 @@ export function attemptsAssignFromGuest(id) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsViewerReset(id) {
+    let url = '/attempts/' + id + '/viewer_reset?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 /**
  * score operation
  */

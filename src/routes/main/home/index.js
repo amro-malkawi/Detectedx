@@ -49,10 +49,11 @@ function Home() {
     }, []);
 
     useEffect(() => {
-        if (location.hash !== '#modal' && selectedTestSet) {
-            setSelectedTestSet(null);
-        }
+        // if (location.hash !== '#modal' && selectedTestSet) {
+        //     setSelectedTestSet(null);
+        // }
         const param = QueryString.parse(location.search);
+        if(!param.selectedId) setSelectedTestSet(null);
         if(param.search !== searchTextRef.current) {
             searchTextRef.current = param.search;
             getData(param.search);
@@ -85,8 +86,10 @@ function Home() {
                         const {filterKeys, is3D, isComplete} = getFilterKeys(v);
                         v.filterKeys = filterKeys;
                         v.is3D = is3D;
-                        if (isComplete) completed++;
-                        completedPoint += v.test_set_point;
+                        if (isComplete) {
+                            completed++;
+                            completedPoint += v.test_set_point;
+                        }
                     });
                 } else {
                     modalityInfo = currentTestSets.modalityList.find((m) => m.id === t.modality_id);
@@ -94,14 +97,21 @@ function Home() {
                     const {filterKeys, is3D, isComplete} = getFilterKeys(t);
                     t.filterKeys = filterKeys;
                     t.is3D = is3D;
-                    if (isComplete) completed++;
-                    completedPoint += t.test_set_point;
+                    if (isComplete) {
+                        completed++;
+                        completedPoint += t.test_set_point;
+                    }
                 }
             });
-
             setModalityList(currentTestSets.modalityList);
             setTestSetList(currentTestSets.testSetList);
             setCategoryObj(categories);
+            const param = QueryString.parse(location.search);
+            if(param.selectedId) {
+                console.log(param.selectedId, 'param.selectedId')
+                const item = currentTestSets.testSetList.find((v) => v.id === param.selectedId);
+                if(item) setSelectedTestSet(item);
+            }
             calcCounts(currentTestSets.modalityList, currentTestSets.testSetList);
             dispatch(setUserCompletedCount(completed));
             dispatch(setUserCompletedPoint(completedPoint));
@@ -144,7 +154,6 @@ function Home() {
         if (testSets === undefined) testSets = testSetList;
         let inProgress = 0, saved = 0, sam = 0, lecture = 0, quiz = 0, presentation = 0, viewer = 0;
         const showList = [];
-        console.log(selectedCategoryList, 'selectedCategoryList')
         testSets.forEach((t) => {
             if (t.tileType === 'series') {
                 t.seriesTestSets.forEach((v) => {
@@ -253,12 +262,21 @@ function Home() {
 
     const onOpenTestSetModal = (value) => {
         setSelectedTestSet(value);
+        // if (value) {
+        //     history.push({pathname: location.pathname, hash: 'modal', search: location.search});
+        // } else {
+        //     // history.replace({pathname: location.pathname});
+        //     history.goBack();
+        // }
+        const param = QueryString.parse(location.search);
         if (value) {
-            history.push({pathname: location.pathname, hash: 'modal', search: location.search});
+            param.selectedId = value.id;
         } else {
+            delete param.selectedId;
             // history.replace({pathname: location.pathname});
-            history.goBack();
+            // history.goBack();
         }
+        history.replace({pathname: location.pathname, search: QueryString.stringify(param)});
     }
 
     const renderCategoryItem = (subCategory) => {

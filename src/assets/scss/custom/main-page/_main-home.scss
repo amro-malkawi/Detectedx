@@ -543,6 +543,23 @@
             border-radius: 5px;
           }
         }
+
+        .test-set-mobile-header-row {
+          position: relative;
+        }
+
+        .test-set-mobile-header-close {
+          position: absolute;
+          top: -15px;
+          right: -15px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 23px;
+          height: 23px;
+          border-radius: 50%;
+          border: 1px solid white;
+        }
       }
 
       .test-set-mobile-content {
