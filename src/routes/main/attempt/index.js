@@ -36,6 +36,7 @@ import {setDarkMode} from 'Actions';
 import {withRouter} from "react-router-dom";
 import * as selectors from "Selectors";
 import {connect} from "react-redux";
+import {attemptsStart} from "Api";
 
 const darkTheme = createMuiTheme({
     palette: {
@@ -136,7 +137,7 @@ class Attempt extends Component {
 
             // check show quiz reattempt modal
             let reattemptQuizPercent = null;
-            if (isFirstMount && detail.complete && steps[stepIndex] === 'score' && ['quiz', 'video_lecture', 'presentations'].indexOf(detail.test_sets.modalities.modality_type) !== -1) {
+            if (isFirstMount && detail.complete && steps[stepIndex] === 'score' && ['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(detail.test_sets.modalities.modality_type) !== -1) {
                 const percent = detail.scores[0].score === undefined ? 0 : detail.scores[0].score;
                 const param = QueryString.parse(that.props.location.search)
                 if (param && param.from === 'test' && percent < 75) {
@@ -163,8 +164,8 @@ class Attempt extends Component {
     }
 
     onRestartTest() {
-        Apis.attemptsAdd(this.state.attemptInfo.test_set_id, undefined).then(resp => {
-            let path = (['video_lecture', 'presentations'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
+        Apis.attemptsStart(this.state.attemptInfo.test_set_id, undefined).then(resp => {
+            let path = (['video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
             this.props.history.replace(path);
         });
     }
@@ -755,7 +756,7 @@ class Attempt extends Component {
             return this.renderImagEDScore();
         } else if (['quiz'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
             return this.renderQuizScore();
-        } else if (['video_lecture', 'presentations'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
+        } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
             return this.renderVideoLectureScore();
         } else {
             return this.renderNormalScore();
@@ -765,7 +766,7 @@ class Attempt extends Component {
     renderCertificationDown() {
         const {attemptInfo} = this.state;
         let disableDown = false;
-        if (['quiz', 'video_lecture', 'presentations'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1) {
+        if (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1) {
             const percent = attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score;
             if (percent < 75) {
                 disableDown = true;
@@ -780,7 +781,7 @@ class Attempt extends Component {
                     disableDown ?
                         <p className={'extra-desc'}>
                             {
-                                ['quiz', 'video_lecture', 'presentations'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1 ?
+                                ['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1 ?
                                     'The score must be greater than 75% to download the certificate.' :
                                     <IntlMessages id="test.attempt.volparaCertDisabled"/>
                             }
@@ -1136,7 +1137,9 @@ class Attempt extends Component {
                     <div className={'score-chart-container mt-4'}>
                         <BoxplotChart
                             title={'Results compared to'}
-                            score_type={this.state.attemptInfo.test_sets.modalities.modality_type === 'video_lecture' ? 'Video Lecture Result' : 'Presentations Result'}
+                            score_type={
+                            ['video_lecture', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1 ? 'Video Lecture Result' : 'Presentations Result'
+                        }
                             showUserSelect={true}
                             attempt_id={this.state.attempts_id}
                             value={percent}
@@ -1208,7 +1211,7 @@ class Attempt extends Component {
                             {this.renderCertificationDown()}
                             {this.renderVolparaScorePostBlock()}
                             {
-                                ['quiz', 'video_lecture', 'presentations'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 &&
+                                ['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 &&
                                 <div className={'score-extra'}>
                                     <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
                                     <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
@@ -1393,7 +1396,7 @@ class Attempt extends Component {
                                         variant="contained"
                                         onClick={() => this.onSendPdfEmail()}
                                         color="primary"
-                                        disabled={!validator.isEmail(this.state.sendPdfEmail)}
+                                        disabled={!this.state.sendPdfEmail || !validator.isEmail(this.state.sendPdfEmail)}
                                     >
                                         Send
                                     </Button>

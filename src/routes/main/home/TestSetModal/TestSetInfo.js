@@ -14,7 +14,7 @@ import * as Apis from "Api";
 import * as selectors from "Selectors";
 import classnames from "classnames";
 
-function TestSetModal({data, onClose}) {
+function TestSetInfo({data, onClose, onBackSeries}) {
     const history = useHistory();
     const isLogin = selectors.getIsLogin(null);
     const locale = useSelector((state) => state.settings.locale.locale);
@@ -37,7 +37,6 @@ function TestSetModal({data, onClose}) {
         } catch (e) {
         }
         try {
-            console.log(data.test_set_learning_obj, data.modalityInfo.modality_learning_obj)
             const learningObjStr = data.test_set_learning_obj || data.modalityInfo.modality_learning_obj || null;
             setLearningObjectives(JSON.parse(learningObjStr));
         } catch (e) {
@@ -54,7 +53,7 @@ function TestSetModal({data, onClose}) {
             Apis.attemptsStart(data.id, subType).then(attempt => {
                 let path;
                 if (attempt.progress === 'test') {
-                    path = (['video_lecture', 'presentations'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
+                    path = (['video_lecture', 'presentations', 'interactive_video'].indexOf(attempt.modality_type) === -1 ? '/test-view/' : '/video-view/') + attempt.test_set_id + '/' + attempt.id + '/' + attempt.current_test_case_id;
                 } else {
                     path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
                 }
@@ -111,7 +110,7 @@ function TestSetModal({data, onClose}) {
 
     const renderLeftContent = () => {
         const {modality_type, modality_desc} = data.modalityInfo;
-        if (['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) === -1) {
+        if (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(modality_type) === -1) {
             const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
             let descText = '';
             if (typeof modalityDesc !== 'object') {
@@ -122,7 +121,7 @@ function TestSetModal({data, onClose}) {
             } else if (modalityDesc['en'] !== undefined) {
                 descText = modalityDesc['en'];
             }
-            return <div dangerouslySetInnerHTML={{__html: descText}}/>
+            return <div dangerouslySetInnerHTML={{__html: (data.test_set_desc || descText)}}/>
         } else {
             const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
             if (!presenterInfo) return;
@@ -141,7 +140,7 @@ function TestSetModal({data, onClose}) {
                     <div className={'fs-26 mt-30'}>Speaker</div>
                     <div className={classnames('fs-19 mt-10', {'presenter-info': !isMobile})} style={{textAlign: 'justify'}}>
                         <div>
-                        {presenterInfo.presenterDesc}
+                            {presenterInfo.presenterDesc}
                         </div>
                     </div>
                 </div>
@@ -179,21 +178,22 @@ function TestSetModal({data, onClose}) {
 
     const renderRightContent = () => {
         const {modality_type, instruction_video, instruction_video_thumbnail} = data.modalityInfo;
-        if (['quiz', 'video_lecture', 'presentations'].indexOf(modality_type) !== -1) {
-            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations'}[modality_type] + ' Overview';
+        const {test_set_inst_video, test_set_inst_video_thumbnail} = data;
+        if (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(modality_type) !== -1) {
+            const title = {quiz: 'Quiz', video_lecture: 'Lecture', presentations: 'Presentations', interactive_video: 'Interactive Video'}[modality_type] + ' Overview';
             return (
                 <div className={'text-white'}>
                     <div className={'fs-26 mt-30'}>{title}</div>
                     <div className={'fs-19 mt-10'}>{data.test_set_desc}</div>
                 </div>
             );
-        } else if (instruction_video && instruction_video !== '') {
+        } else if (test_set_inst_video || instruction_video) {
             return (
                 <div className={'d-flex flex-column justify-content-center align-items-center'}>
                     <div className={'test-set-modal-video'}>
                         <ReactPlayer
                             ref={videoRef}
-                            url={instruction_video}
+                            url={test_set_inst_video || instruction_video}
                             playing={isVideoPlay}
                             controls
                             onPause={() => setIsVideoPlay(false)}
@@ -201,8 +201,8 @@ function TestSetModal({data, onClose}) {
                             height={'100%'}
                         />
                         {
-                            (isFirstPlay && instruction_video_thumbnail && instruction_video_thumbnail !== '') &&
-                            <img src={instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
+                            (isFirstPlay && (test_set_inst_video_thumbnail || instruction_video_thumbnail)) &&
+                            <img src={test_set_inst_video_thumbnail || instruction_video_thumbnail} className={'video-thumbnail'} alt={''}/>
                         }
                         {
                             !isVideoPlay &&
@@ -287,123 +287,58 @@ function TestSetModal({data, onClose}) {
         )
     }
 
+    const renderBackSeries = () => {
+        if(onBackSeries) {
+            return (
+                <Button className={'px-0 my-2'} onClick={onBackSeries}>
+                    <span className={'text-primary1 fs-18 ff-Poppins'}><i className="zmdi zmdi-arrow-left"/> Back to series</span>
+                </Button>
+            )
+        } else {
+            return null;
+        }
+    }
+
     if (!isMobile) {
         return (
-            <Dialog open={true} maxWidth={'xl'} className={'main-test-set-modal-container'} onClose={onClose}>
-                <div className={'main-test-set-modal'}>
-                    <div className={'test-set-modal-header'} style={{backgroundColor: data.modalityInfo.modality_color || '#4f4bce'}}>
-                        {
-                            data.modalityInfo.modality_icon_image &&
-                            <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-modal-header-img'} alt={''}/>
-                        }
-                        <div className={'d-flex flex-row align-items-end'}>
-                            <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
-                            <div className={'test-set-modal-header-tags'}>
-                                <div className={'test-category'}>{testSetCategory}</div>
-                                {
-                                    data.is3D &&
-                                    <div className={'mark-3d'}>
-                                        <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    {!isShoWLearningObj ?
-                        <div className={'test-set-modal-content'}>
-                            <div className={'pr-20'}>
-                                <div className={'test-set-item-spec'}>
-                                    <span>DIFFICULTY</span>
-                                    {
-                                        renderDifficult(data.difficulty)
-                                    }
-                                    <span className={'mr-20'}>{data.test_set_time || 0}MINS</span>
-                                    <span className={'mr-20'}>CME: {data.test_set_point}</span>
-                                    <span className={''}>{data.test_set_code}</span>
-                                </div>
-                                <div className={'text-white fs-18 my-20'}>
-                                    {renderLeftContent()}
-                                </div>
-                            </div>
-                            <div className={'pl-20'}>
-                                <div className={'d-flex flex-row align-items-center'}>
-                                    {
-                                        renderStartButton()
-                                    }
-                                    {
-                                        isLogin &&
-                                        <Button>
-                                            <div className={'test-set-save-btn'} onClick={onSave}>
-                                                <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
-                                                {
-                                                    data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
-                                                }
-                                            </div>
-                                        </Button>
-                                    }
-                                </div>
-                                {renderRightContent()}
-                                {
-                                    learningObjectives &&
-                                    <div className={'w-100 d-flex flex-row justify-content-end mt-20'}>
-                                        <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShoWLearningObj(true)}>LEARNING OBJECTIVES</span>
-                                    </div>
-                                }
-                            </div>
-                        </div> :
-                        renderLearningObj()
+            <div className={'main-test-set-modal'}>
+                <div className={'test-set-modal-header'} style={{backgroundColor: data.modalityInfo.modality_color || '#4f4bce'}}>
+                    {
+                        data.modalityInfo.modality_icon_image &&
+                        <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-modal-header-img'} alt={''}/>
                     }
-                    <div className={'test-set-modal-close-btn'} onClick={onClose}>
-                        <i className={'ti ti-close'}/>
+                    <div className={'d-flex flex-row align-items-end'}>
+                        <div className={'test-set-modal-header-title fs-23 fw-semi-bold'}>{data.name}</div>
+                        <div className={'test-set-modal-header-tags'}>
+                            <div className={'test-category'}>{testSetCategory}</div>
+                            {
+                                data.is3D &&
+                                <div className={'mark-3d'}>
+                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-                {renderSubTypeModal()}
-            </Dialog>
-        )
-    } else {
-        let type = '';
-        if (data.modalityInfo.modality_type === 'quiz') {
-            type = 'Quiz';
-        } else if (data.modalityInfo.modality_type === 'video_lecture' || data.modalityInfo.modality_type === 'presentations') {
-            type = 'LECTURE';
-        } else {
-            type = 'SELF ASSESSMENT MODULE';
-        }
-        return (
-            <Dialog open={true} maxWidth={'xl'} className={'main-test-set-mobile-modal'} onClose={onClose}>
-                <div className={'test-set-mobile-modal-content'}>
-                    <div className={'test-set-mobile-header'} style={{backgroundColor: data.modalityInfo.modality_color || '#4f4bce'}}>
-                        {
-                            data.modalityInfo.modality_icon_image &&
-                            <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-mobile-header-img'} alt={''}/>
-                        }
-                        <div className={'d-flex flex-row'}>
-                            <div className={'test-set-mobile-header-tags'}>
-                                <div className={'test-category'}>{testSetCategory}</div>
-                                {
-                                    data.is3D &&
-                                    <div className={'mark-3d'}>
-                                        <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
-                                    </div>
-                                }
-                            </div>
-                            <div className={'fs-14'}>{type}</div>
-                        </div>
-                        <div className={'test-set-mobile-header-title fs-23 fw-semi-bold'}>{data.name}</div>
-                    </div>
-                    {!isShoWLearningObj ?
-                        <div className={'test-set-mobile-content'}>
+
+                {!isShoWLearningObj ?
+                    <div className={'test-set-modal-content'}>
+                        <div className={'pr-20'}>
+                            {renderBackSeries()}
                             <div className={'test-set-item-spec'}>
                                 <span>DIFFICULTY</span>
                                 {
                                     renderDifficult(data.difficulty)
                                 }
-                                <span className={'mr-10'}>{data.test_set_time || 0}MINS</span>
+                                <span className={'mr-20'}>{data.test_set_time || 0}MINS</span>
                                 <span className={'mr-20'}>CME: {data.test_set_point}</span>
                                 <span className={''}>{data.test_set_code}</span>
                             </div>
-                            {renderLeftContent()}
+                            <div className={'text-white fs-18 my-20'}>
+                                {renderLeftContent()}
+                            </div>
+                        </div>
+                        <div className={'pl-20'}>
                             <div className={'d-flex flex-row align-items-center'}>
                                 {
                                     renderStartButton()
@@ -427,14 +362,92 @@ function TestSetModal({data, onClose}) {
                                     <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShoWLearningObj(true)}>LEARNING OBJECTIVES</span>
                                 </div>
                             }
-                        </div> :
-                        renderLearningObj()
-                    }
+                        </div>
+                    </div> :
+                    renderLearningObj()
+                }
+                <div className={'test-set-modal-close-btn'} onClick={onClose}>
+                    <i className={'ti ti-close'}/>
                 </div>
                 {renderSubTypeModal()}
-            </Dialog>
+            </div>
+        )
+    } else {
+        let type = '';
+        if (data.modalityInfo.modality_type === 'quiz') {
+            type = 'Quiz';
+        } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
+            type = 'LECTURE';
+        } else if (data.modalityInfo.modality_type === 'viewer') {
+            type = 'IMAGE VIEWER';
+        } else {
+            type = 'SELF ASSESSMENT MODULE';
+        }
+        return (
+            <div className={'test-set-mobile-modal-content'}>
+                <div className={'test-set-mobile-header'} style={{backgroundColor: data.modalityInfo.modality_color || '#4f4bce'}}>
+                    {
+                        data.modalityInfo.modality_icon_image &&
+                        <img src={Apis.apiUploadAddress + data.modalityInfo.modality_icon_image} className={'test-set-mobile-header-img'} alt={''}/>
+                    }
+                    <div className={'d-flex flex-row test-set-mobile-header-row'}>
+                        <div className={'test-set-mobile-header-tags'}>
+                            <div className={'test-category'}>{testSetCategory}</div>
+                            {
+                                data.is3D &&
+                                <div className={'mark-3d'}>
+                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                </div>
+                            }
+                        </div>
+                        <div className={'fs-14'}>{type}</div>
+                        <div className={'test-set-mobile-header-close'} onClick={onClose}><i className={'ti-close'} /></div>
+                    </div>
+                    <div className={'test-set-mobile-header-title fs-23 fw-semi-bold'}>{data.name}</div>
+                </div>
+                {!isShoWLearningObj ?
+                    <div className={'test-set-mobile-content'}>
+                        {renderBackSeries()}
+                        <div className={'test-set-item-spec'}>
+                            <span>DIFFICULTY</span>
+                            {
+                                renderDifficult(data.difficulty)
+                            }
+                            <span className={'mr-10'}>{data.test_set_time || 0}MINS</span>
+                            <span className={'mr-20'}>CME: {data.test_set_point}</span>
+                            <span className={''}>{data.test_set_code}</span>
+                        </div>
+                        {renderLeftContent()}
+                        <div className={'d-flex flex-row align-items-center'}>
+                            {
+                                renderStartButton()
+                            }
+                            {
+                                isLogin &&
+                                <Button>
+                                    <div className={'test-set-save-btn'} onClick={onSave}>
+                                        <span>{!data.bookedTestSet ? 'Save' : 'Remove'}</span>
+                                        {
+                                            data.bookedTestSet ? <BookmarkIcon/> : <BookmarkBorderIcon/>
+                                        }
+                                    </div>
+                                </Button>
+                            }
+                        </div>
+                        {renderRightContent()}
+                        {
+                            learningObjectives &&
+                            <div className={'w-100 d-flex flex-row justify-content-end mt-20'}>
+                                <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShoWLearningObj(true)}>LEARNING OBJECTIVES</span>
+                            </div>
+                        }
+                    </div> :
+                    renderLearningObj()
+                }
+                {renderSubTypeModal()}
+            </div>
         )
     }
 }
 
-export default TestSetModal;
+export default TestSetInfo;

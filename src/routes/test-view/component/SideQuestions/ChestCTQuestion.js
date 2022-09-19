@@ -16,13 +16,18 @@ const question = [
         options: ['Yes', 'No'],
         child: {
             q1Sub1: {
-                aOptions: ['P =< 1.5mm', 'Q = 1.3-3mm', 'R => 3-10mm'],
+                aOptions: ['P =< 1.5mm', 'Q = 1.5-3mm', 'R => 3-10mm'],
                 bOptions: ['NO', 'YES'],
             },
             q1Sub2: {
                 aOptions: ['U', 'M', 'L'],
                 bOptions: ['R', 'L'],
-                cOptions: ['0', '1', '2', '3']
+                cOptions: [
+                    {value: '0', hover: 'No definite Abnormality'},
+                    {value: '1', hover: 'Mild, definitely present but few in number'},
+                    {value: '2', hover: 'Moderate, numerous opacities'},
+                    {value: '3', hover: 'Severe, obscuring normal anatomy'},
+                ]
             }
         }
     },
@@ -38,7 +43,12 @@ const question = [
             q2Sub2: {
                 aOptions: ['U', 'M', 'L'],
                 bOptions: ['R', 'L'],
-                cOptions: ['0', '1', '2', '3']
+                cOptions: [
+                    {value: '0', hover: 'No definite Abnormality'},
+                    {value: '1', hover: 'Mild, definitely present but few in number'},
+                    {value: '2', hover: 'Moderate, numerous opacities'},
+                    {value: '3', hover: 'Severe, obscuring normal anatomy'},
+                ]
             }
         }
     },
@@ -48,7 +58,11 @@ const question = [
         options: ['Yes', 'No'],
         child: {
             q3Sub1: {
-                options: ['A', 'B', 'C']
+                options: [
+                    {label: 'A', value: 'A', hover: 'one or more opacities greater than 10 mm but less than 50 mm in diameter'},
+                    {label: 'B', value: 'B', hover: 'one or more opacities greater than 50 mm in diameter but not exceeding the upper right zone'},
+                    {label: 'C', value: 'C', hover: 'one or more opacities in diameter exceeding the right upper zone'},
+                ],
             },
             q3Sub2: {
                 aOptions: ['U', 'M', 'L'],
@@ -63,7 +77,12 @@ const question = [
         child: {
             aOptions: ['U', 'M', 'L'],
             bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
+            cOptions: [
+                {value: '0', hover: 'No definite Abnormality'},
+                {value: '1', hover: 'Focal'},
+                {value: '2', hover: 'Patchy'},
+                {value: '3', hover: 'Diffuse'},
+            ]
         }
     },
     {
@@ -73,7 +92,12 @@ const question = [
         child: {
             aOptions: ['U', 'M', 'L'],
             bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
+            cOptions: [
+                {value: '0', hover: 'No definite Abnormality'},
+                {value: '1', hover: 'Mild <10mm subpleural'},
+                {value: '2', hover: 'Moderate 10mm to 30mm subpleural'},
+                {value: '3', hover: 'Severe, > 30mm subpleural'},
+            ]
         }
     },
     {
@@ -83,7 +107,12 @@ const question = [
         child: {
             aOptions: ['U', 'M', 'L'],
             bOptions: ['R', 'L'],
-            cOptions: ['0', '1', '2', '3']
+            cOptions: [
+                {value: '0', hover: 'No definite Abnormality'},
+                {value: '1', hover: 'Mild <15% of one zone'},
+                {value: '2', hover: 'Moderate 15 – 30% of one zone'},
+                {value: '3', hover: 'Severe >30%'},
+            ]
         }
     },
     {
@@ -94,13 +123,14 @@ const question = [
     {
         id: 'chestCTQ8',
         label: 'Predominant Parenchymal Abnormality?',
-        options: [
-            {value: 'RO', tooltip: 'Rounded Opacities'},
-            {value: 'IR', tooltip: 'Irregular Opacities'},
-            {value: 'GGO', tooltip: 'Ground Glass Opacities'},
-            {value: 'HC', tooltip: 'Honeycombing'},
-            {value: 'EM', tooltip: 'Emphysema'},
-            {value: 'LO', tooltip: 'Large Opacities'},
+        options: ['Yes', 'No'],
+        child: [
+            {value: 'RO', hover: 'Rounded Opacities'},
+            {value: 'IR', hover: 'Irregular Opacities'},
+            {value: 'GGO', hover: 'Ground Glass Opacities'},
+            {value: 'HC', hover: 'Honeycombing'},
+            {value: 'EM', hover: 'Emphysema'},
+            {value: 'LO', hover: 'Large Opacities'},
         ]
     },
     {
@@ -117,25 +147,22 @@ const question = [
     },
 ]
 
-const ratings = [
-    {value: 0, tooltip: 'Normal'},
-    {value: 1, tooltip: <span>Shows abnormalities for which occupational disease is not a differential <br/>eg. Pneumonia, CCF</span>},
-    {
-        value: 2,
-        tooltip: <span>Abnormalities are present that may occur with occupational lung disease, however this would not become the key differential, even with a history of occupational exposure. <br/>eg. Sparse or isolated granulomas, focal postinfectious scarring, pleural effusions, enlarged noncalcified mediastinal lymph nodes</span>
-    },
-    {
-        value: 3,
-        tooltip: <span>Abnormalities are present that will occur with occupational lung disease, but are not highly specific. A suggestive exposure history would support the diagnosis in the appropriate setting, although other differential considerations would remain. <br/>eg. Nonspecific pulmonary fibrosis, emphysema, bronchitis, bronchiolitis/small airways disease, bronchogenic malignancy</span>
-    },
-    {
-        value: 4,
-        tooltip: <span>Abnormalities are present that would be typical of occupational lung disease, which would be the first differential in the appropriate clinical setting. <br/>eg. Classical silicosis, Coal Workers’ Pneumoconiosis</span>
-    },
-    {
-        value: 5,
-        tooltip: <span>Features present which are highly specific for occupational lung disease, which would be the key differential even without available history. <br/>eg Typical asbestos plaques with or without fibrosis. Classical silicosis with eggshell calcification of lymph nodes, Complicated silicosis or CWP with PMF. Mesothelioma.</span>
-    }
+const chestCTConfidence = [
+    {value: 0, tooltip: 'No features of occupational lung disease'},
+    {value: 1, tooltip: 'Abnormalities present but not due to occupational disease'},
+    {value: 2, tooltip: 'Abnormalities present but very unlikely due to occupational disease'},
+    {value: 3, tooltip: 'Abnormalities related to occupational lung disease which are very nonspecific or atypical'},
+    {value: 4, tooltip: 'Abnormalities that represent typical changes of occupational lung disease'},
+    {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for occupational lung disease'}
+]
+
+const chestCTSiConfidence = [
+    {value: 0, tooltip: 'No features of silicosis'},
+    {value: 1, tooltip: 'Abnormalities present but not due to silicosis'},
+    {value: 2, tooltip: 'Abnormalities present but very unlikely due to silicosis'},
+    {value: 3, tooltip: 'Abnormalities related to silicosis which are very nonspecific or atypical'},
+    {value: 4, tooltip: 'Abnormalities that represent typical changes of silicosis'},
+    {value: 5, tooltip: 'Abnormalities which are typical and are highly specific for silicosis'}
 ]
 
 export default class ChestCTQuestion extends Component {
@@ -232,19 +259,85 @@ export default class ChestCTQuestion extends Component {
         const qTruths = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : [];
         let checkValues = (answerValue[qId] !== undefined && answerValue[qId][childQId] !== undefined) ? answerValue[qId][childQId] : [];
         if (checkValues === undefined) checkValues = [];
-        return values.map((v, i) => (
-            <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
-                <QuestionCheckbox
-                    icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
-                    checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
-                    disableRipple
-                    checked={checkValues.indexOf(v.value) !== -1}
-                    onChange={() => this.onChangeCheck(qId, childQId, v.value)}
-                    name={childQId}
-                />
-            } label={v.label}
-            />
-        ));
+        return values.map((v, i) => {
+            if (!v.hover) {
+                return (
+                    <QuestionLabel key={i} className={checkClass} disabled={disabled} control={
+                        <QuestionCheckbox
+                            icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                            checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                            disableRipple
+                            checked={checkValues.indexOf(v.value) !== -1}
+                            onChange={() => this.onChangeCheck(qId, childQId, v.value)}
+                            name={childQId}
+                        />
+                    } label={v.label}
+                    />
+                )
+            } else {
+                return (
+                    <CheckboxTooltip title={v.hover} key={i}>
+                        <QuestionLabel className={checkClass} disabled={disabled} control={
+                            <QuestionCheckbox
+                                icon={<span className={'chest-question-checkbox-icon ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                                checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruths.indexOf(v.value) !== -1 ? 'truth-icon' : '')}/>}
+                                disableRipple
+                                checked={checkValues.indexOf(v.value) !== -1}
+                                onChange={() => this.onChangeCheck(qId, childQId, v.value)}
+                                name={childQId}
+                            />
+                        } label={v.label}
+                        />
+                    </CheckboxTooltip>
+                )
+            }
+        })
+    }
+
+    renderOptionList(values, optionClass = '', disabled, qId, childQId, iconClass='chest-question-radio-icon') {
+        const {truthValue} = this.state;
+        const qTruth = (truthValue[qId] !== undefined && truthValue[qId][childQId] !== undefined) ? truthValue[qId][childQId] : '';
+        return values.map((v, i) => {
+            if (!v.hover) {
+                return (
+                    <QuestionLabel
+                        key={i}
+                        className={optionClass}
+                        value={v.value}
+                        control={
+                            <QuestionRadio
+                                icon={<span className={ iconClass + ' ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                disableRipple
+                            />
+                        }
+                        label={v.label}
+                        labelPlacement="end"
+                        disabled={disabled}
+                    />
+                )
+            } else {
+                return (
+                    <CheckboxTooltip title={v.hover} key={i}>
+                        <QuestionLabel
+                            key={i}
+                            className={optionClass}
+                            value={v.value}
+                            control={
+                                <QuestionRadio
+                                    icon={<span className={ iconClass + ' ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                    checkedIcon={<span className={iconClass + ' checked ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                    disableRipple
+                                />
+                            }
+                            label={v.label}
+                            labelPlacement="end"
+                            disabled={disabled}
+                        />
+                    </CheckboxTooltip>
+                )
+            }
+        })
     }
 
     renderCheckGroup(qId, childQId, disabled, aOptions, bOptions, cOptions) {
@@ -279,9 +372,9 @@ export default class ChestCTQuestion extends Component {
                                 >
                                     {
                                         cOptions.map((vv) => (
+                                            <CheckboxTooltip title={vv.hover} key={vv.value}>
                                             <QuestionLabel
-                                                key={vv}
-                                                value={v + vv}
+                                                value={v + vv.value}
                                                 control={
                                                     <QuestionRadio
                                                         icon={<span className={'chest-question-checkbox-icon' + getTruthIconClass(childQId, v, 'R', v + vv)}/>}
@@ -289,11 +382,12 @@ export default class ChestCTQuestion extends Component {
                                                         disableRipple
                                                     />
                                                 }
-                                                label={vv}
+                                                label={vv.value}
                                                 style={{marginRight: 5}}
                                                 labelPlacement="end"
                                                 disabled={disabled}
                                             />
+                                            </CheckboxTooltip>
                                         ))
                                     }
                                 </RadioGroup>
@@ -307,9 +401,9 @@ export default class ChestCTQuestion extends Component {
                                 >
                                     {
                                         cOptions.map((vv) => (
+                                            <CheckboxTooltip title={vv.hover} key={vv.value}>
                                             <QuestionLabel
-                                                key={vv}
-                                                value={v + vv}
+                                                value={v + vv.value}
                                                 control={
                                                     <QuestionRadio
                                                         icon={<span className={'chest-question-checkbox-icon' + getTruthIconClass(childQId, v, 'L', v + vv)}/>}
@@ -317,11 +411,12 @@ export default class ChestCTQuestion extends Component {
                                                         disableRipple
                                                     />
                                                 }
-                                                label={vv}
+                                                label={vv.value}
                                                 style={{marginRight: 5}}
                                                 labelPlacement="end"
                                                 disabled={disabled}
                                             />
+                                            </CheckboxTooltip>
                                         ))
                                     }
                                 </RadioGroup>
@@ -358,7 +453,7 @@ export default class ChestCTQuestion extends Component {
                     }
                 </div>
                 <div className={'ml-1'}>
-                    <div className={'mt-3'}>Zone Profusion</div>
+                    <div className={'mt-3'}>Zone Grade/Profusion</div>
                     {
                         this.renderCheckGroup(questionObj.id, 'q1Sub2', disabled, q1Sub2Obj.aOptions, q1Sub2Obj.bOptions, q1Sub2Obj.cOptions)
                     }
@@ -409,7 +504,7 @@ export default class ChestCTQuestion extends Component {
                 <div className={'col-4 d-flex flex-column'}>
                     <span>Size</span>
                     {
-                        this.renderCheckList(q3Sub1Obj.options.map((v) => ({label: v, value: v})), 'mt-1 mb-0', disabled, questionObj.id, 'q1Sub1Values')
+                        this.renderCheckList(q3Sub1Obj.options, 'mt-1 mb-0', disabled, questionObj.id, 'q1Sub1Values')
                     }
                 </div>
                 <div className={'col-8'}>
@@ -439,6 +534,27 @@ export default class ChestCTQuestion extends Component {
                 {
                     this.renderCheckGroup(questionObj.id, 'qSub', disabled, qChildObj.aOptions, qChildObj.bOptions, qChildObj.cOptions)
                 }
+            </div>
+        )
+    }
+
+    renderQuestion8Additional(questionObj, disabled) {
+        const qChildObj = questionObj.child;
+        return (
+            <div className={'ml-2'}>
+                <RadioGroup
+                    className={'ml-1 mt-1'}
+                    aria-label="position"
+                    name="position"
+                    value={this.state.answerValue[questionObj.id]['qSubValues'] || ''}
+                    onChange={(event) => this.onChangeChildValue(questionObj.id, 'qSubValues', event.target.value)}
+                    disabled={false}
+                    row
+                >
+                    {
+                        this.renderOptionList(qChildObj.map((v) => ({label: v.value, value: v.value, hover: v.hover})), 'mb-0', disabled, questionObj.id, 'qSubValues')
+                    }
+                </RadioGroup>
             </div>
         )
     }
@@ -503,7 +619,9 @@ export default class ChestCTQuestion extends Component {
                 return this.renderQuestion3Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ4' || questionObj.id === 'chestCTQ5' || questionObj.id === 'chestCTQ6') {
                 return this.renderQuestion4Additional(questionObj, disabled);
-            } else if (questionObj.id === 'chestCTQ9') {
+            } else if (questionObj.id === 'chestCTQ8') {
+                return this.renderQuestion8Additional(questionObj, disabled);
+            }  else if (questionObj.id === 'chestCTQ9') {
                 return this.renderQuestion9Additional(questionObj, disabled);
             } else if (questionObj.id === 'chestCTQ10' || questionObj.id === 'chestCTQ11') {
                 return this.renderQuestion10Additional(questionObj, disabled);
@@ -600,7 +718,7 @@ export default class ChestCTQuestion extends Component {
                             className={'justify-content-center mt-0'}
                         >
                             {
-                                ratings.map((v, i) => {   // [0, 1, 2, 3...]
+                                (this.props.modalityInfo.name !== 'CHESTsi CT' ? chestCTConfidence : chestCTSiConfidence).map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
                                         <CheckboxTooltip title={v.tooltip} key={i}>
                                             <RatingLabel

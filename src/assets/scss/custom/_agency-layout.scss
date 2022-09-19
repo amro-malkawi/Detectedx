@@ -370,8 +370,6 @@
 }
 
 .app-boxed.app-boxed-v2 {
-   background-image: url("../img/bg-5.jpg");
-   //animation: changeBg 25s linear infinite;
    background-size: cover;
    background-position: center center;
    background-repeat: no-repeat;
@@ -389,28 +387,5 @@
       .agency-bg{
          display:none !important;
       }
-   }
-}
-
-/*================= Change Bg ===================*/
-
-@keyframes changeBg {
-   0% {
-      background-image: url("../img/bg-1.jpg");
-   }
-   20% {
-      background-image: url("../img/bg-2.jpg");
-   }
-   40% {
-      background-image: url("../img/bg-3.jpg");
-   }
-   60% {
-      background-image: url("../img/bg-4.jpg");
-   }
-   80% {
-      background-image: url("../img/bg-5.jpg");
-   }
-   100% {
-      background-image: url("../img/bg-1.jpg");
    }
 }

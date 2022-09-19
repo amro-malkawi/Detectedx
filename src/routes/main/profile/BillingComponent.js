@@ -76,8 +76,12 @@ function BillingComponent() {
                 <div className={'d-flex flex-column mr-50'}>
                     <span className={'fs-16 fw-semi-bold text-primary1'}>Expired Date</span>
                     <span className={'fs-23 fw-semi-bold text-white mt-3'}>
-                        The subscription was canceled. <br/>
-                        So the plan will be expired on <span className={'text-underline'}>{moment(billingInfo.subscriptionInfo.expiredDate).format('DD MMM YYYY')}</span>
+                        Your subscription was cancelled, <br />
+                        {
+                            moment(billingInfo.subscriptionInfo.expiredDate) > moment() ?
+                                <span>your access will expire on <span className={'text-underline'}>{moment(billingInfo.subscriptionInfo.expiredDate).format('DD MMM YYYY')}</span></span> :
+                                <span>your access expired on <span className={'text-underline'}>{moment(billingInfo.subscriptionInfo.expiredDate).format('DD MMM YYYY')}</span></span>
+                        }
                     </span>
                 </div>
             )

@@ -16,7 +16,7 @@ import {withStyles, createMuiTheme, ThemeProvider} from '@material-ui/core/style
 import {NotificationManager} from 'react-notifications';
 import {FormControl, TextField, Divider, CircularProgress} from '@material-ui/core';
 import PropTypes from 'prop-types';
-import ConsentModal from "Routes/test/attempt/ConsentModal";
+import ConsentModal from "Routes/main/attempt/ConsentModal";
 import * as Apis from 'Api';
 import AppConfig from 'Constants/AppConfig';
 import IntlMessages from "Util/IntlMessages";

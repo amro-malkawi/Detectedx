@@ -144,13 +144,35 @@
         color: #54A9FB;
         background-color: #eaeef4;
 
+        .plan-price-discount {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          font-size: 38px;
+          font-weight: bold;
+          color: #a3a4ad;
+
+          & > div {
+            position: relative;
+
+            .diagonal-line {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              border-bottom: 3px solid white;
+              -webkit-transform: translateY(28px) translateX(4px) rotate(141deg);
+            }
+          }
+        }
+
         .plan-price-currency {
           font-size: 1.67vw;
           font-weight: 500;
         }
 
         .plan-price-num {
-          font-size: 4.16vw;  // 80px
+          font-size: 4.16vw; // 80px
           font-weight: 600;
           line-height: 5.2rem;
         }
@@ -179,11 +201,12 @@
               content: '';
               height: 9px;
               width: 9px;
-              margin-top: 5px;
+              margin-top: 7px;
               margin-right: 12px;
               border-radius: 50%;
               background-color: #54a9fb;
             }
+
             div {
               flex: 1;
               margin-bottom: 0;
@@ -214,15 +237,45 @@
         }
       }
 
-      &.enterprise {
-        background-color: #54a9fb;
+      &.charged {
+        background-color: #524ed9;
+
+        .plan-item-header {
+          color: white;
+        }
 
         .plan-item-price {
+          background-color: #33336f;
+          color: white;
+        }
+
+        .plan-item-content > .plan-item-features > div {
+          color: white;
+          span {
+            background-color: white;
+          }
+        }
+      }
+
+      &.enterprise {
+        background-color: transparent;
+        border: 2px solid #6ebaff;
+
+        .plan-item-header {
+          color: #6ebaff;
+        }
+
+        .plan-item-price {
+          margin-top: 30px;
           text-align: center;
           font-size: 1.25vw;
           font-weight: 700;
-          color: #180F15;
-          background-color: #6ebaff;
+          color: white;
+          background-color: transparent;
+        }
+
+        .plan-item-content {
+          min-height: 17vw;
         }
 
         .plan-item-btn {
@@ -234,7 +287,7 @@
           .plan-item-code {
             text-align: center;
             margin-top: 15px;
-            font-size: 0.72vw;
+            font-size: 0.62vw;
             color: white;
             text-decoration: underline;
             cursor: pointer;
@@ -315,6 +368,7 @@
 
         .pay-coupon-code {
           position: relative;
+
           input {
             padding: 15px 20px;
             font-size: 14px;
@@ -346,6 +400,7 @@
               color: white;
               background-color: #ffffff1a;
               border-radius: 5px;
+
               & > svg {
                 font-size: 15px;
                 margin-right: 5px;
@@ -357,6 +412,7 @@
               }
             }
           }
+
           span {
             color: #ffffff80;
           }
@@ -454,21 +510,6 @@
             }
           }
         }
-
-        .pay-button {
-          flex: 1;
-          margin-top: 20px;
-          padding: 9px;
-          color: #180F15;
-          background-color: #54A9FB;
-          border-radius: 7px;
-
-          span {
-            font-family: "Poppins", sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-          }
-        }
       }
 
       .pay-purchase-bottom {
@@ -477,6 +518,21 @@
         font-size: 11px;
         font-weight: 500;
         color: #888888;
+      }
+    }
+
+    .pay-button {
+      flex: 1;
+      margin-top: 20px;
+      padding: 9px;
+      color: #180F15;
+      background-color: #54A9FB;
+      border-radius: 7px;
+
+      span {
+        font-family: "Poppins", sans-serif;
+        font-size: 16px;
+        font-weight: 600;
       }
     }
   }
@@ -505,9 +561,11 @@
       .enterprise-site-logo {
         width: 230px;
       }
+
       .enterprise-input-container {
         padding: 0 50px;
       }
+
       .enterprise-input {
         padding: 23px 20px;
         font-size: 14px;
@@ -572,6 +630,7 @@
   .main-content {
     padding-bottom: 20px;
   }
+
   .main-signup-content, .main-signin-content {
     padding: 30px;
   }
@@ -596,12 +655,13 @@
         display: flex;
         width: initial;
         height: 100%;
-        max-height: calc( 100vh - 190px );
+        max-height: calc(100vh - 190px);
         flex-direction: column;
         align-items: stretch;
         margin: 0 15px;
         overflow: hidden;
         border-radius: 30px;
+
         &:hover {
           box-shadow: none;
         }
@@ -642,8 +702,9 @@
           padding: 30px;
 
           .plan-item-features {
-            max-height: calc( 100vh - 450px );
+            max-height: calc(100vh - 450px);
             overflow: hidden;
+
             div {
               display: flex;
               flex-direction: row;
@@ -698,7 +759,7 @@
             .plan-item-code {
               text-align: center;
               margin-top: 15px;
-              font-size: 14px;
+              font-size: 12px;
             }
           }
         }
@@ -709,10 +770,12 @@
   .main-pay {
     .main-pay-content {
       flex-direction: column;
+
       .main-pay-info {
         width: initial;
         padding: 30px;
       }
+
       .main-pay-purchase {
         width: initial;
         padding: 30px;
@@ -723,6 +786,7 @@
   .enterprise-card {
     .enterprise-card-content {
       padding: 30px;
+
       img {
         width: 170px !important;
       }
@@ -730,13 +794,16 @@
       .enterprise-input-container {
         padding: 0 10px;
       }
+
       .enterprise-phone-num {
         font-size: 20px !important;
       }
+
       .enterprise-desc {
         font-size: 12px;
         margin: 15px 0 20px;
       }
+
       .enterprise-card-bottom {
         font-size: 11px;
       }

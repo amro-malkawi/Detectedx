@@ -20,10 +20,15 @@ function TestSetItem({data, onClick, smallSize}) {
         let type = '';
         if (data.modalityInfo.modality_type === 'quiz') {
             type = 'Quiz';
-        } else if (data.modalityInfo.modality_type === 'video_lecture' || data.modalityInfo.modality_type === 'presentations') {
+        } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
             type = 'LECTURE';
+        } else if (data.modalityInfo.modality_type === 'viewer') {
+            type = 'IMAGE VIEWER';
         } else {
             type = 'SELF ASSESSMENT MODULE';
+        }
+        if(data.tileType === 'series') {
+            type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
         }
         setTestSetType(type);
         try {
@@ -93,7 +98,7 @@ function TestSetItem({data, onClick, smallSize}) {
                 {data.name}
             </div>
             {
-                !smallSize &&
+                !smallSize && data.tileType !== 'series' &&
                 <div className={'d-flex flex-column align-items-start'}>
                     <span>{data.test_set_code}</span>
                     <div className={'test-set-item-spec'}>

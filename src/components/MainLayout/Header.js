@@ -1,18 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from 'reactstrap';
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import {logoutUserFromEmail} from "Actions";
 import * as selectors from "Selectors";
+import QueryString from "query-string";
 
 function Header(props) {
     const history = useHistory();
+    const location = useLocation();
     const dispatch = useDispatch();
     const isLogin = selectors.getIsLogin(null);
     const userName = useSelector((state) => state.authUser.userName);
     const userCompletedCount = useSelector((state) => state.authUser.completedCount);
     const userCompletedPoint = useSelector((state) => state.authUser.completedPoint);
     const [searchText, setSearchText] = useState('');
+
+    useEffect(() => {
+        const param = QueryString.parse(location.search);
+        if(param.search) {
+            setSearchText(param.search);
+        }
+    }, []);
 
     const getAvatarChars = () => {
         if (!userName) return '';
@@ -86,7 +95,7 @@ function Header(props) {
                         <span>COMPLETED<span className={'hide-mobile'}> MODULES</span>:</span>
                         <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedCount) ? userCompletedCount : 0) : ''}</span>
                         <span><span className={'hide-mobile'}>THIS YEARS </span>CME POINTS:</span>
-                        <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedPoint) ? userCompletedPoint : 0) : ''}</span>
+                        <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedPoint) ? Number(userCompletedPoint).toFixed(2) : 0) : ''}</span>
                     </div>
                 </div>
             </div>

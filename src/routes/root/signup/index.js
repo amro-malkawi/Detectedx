@@ -12,6 +12,7 @@ import * as selectors from "Selectors";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 import {login} from "Actions";
+import moment from "moment";
 
 function Index() {
     const history = useHistory();
@@ -77,17 +78,21 @@ function Index() {
         }
         setSelectedPlan(plan);
         if(isLogin) {
-            if (plan.id !== 'enterprise') {
-                setStep('pay');
-            } else {
+            if(plan.id === 'enterprise') {
                 setStep('enterpriseCode');
+            } else if(plan.id === 'free') {
+                onUserSubscribe('free', {});
+            } else {
+                setStep('pay');
             }
         } else {
             if(signupInfo) {
-                if (plan.id !== 'enterprise') {
-                    setStep('pay');
-                } else {
+                if(plan.id === 'enterprise') {
                     setStep('enterpriseCode');
+                } else if(plan.id === 'free') {
+                    onUserSubscribe('free', {});
+                } else {
+                    setStep('pay');
                 }
             } else {
                 setStep('info');
@@ -144,11 +149,18 @@ function Index() {
             data.enterpriseCode = value
         } else if (type === 'pay') {
             data.paymentInfo = value
+        } else if (type === 'free') {
+            data.paymentInfo = {amount: 0};
         } else {
             return;
         }
         Apis.userSubscribe(data).then((result) => {
-            NotificationManager.success('Subscription was succeeded');
+            if(type === 'free') {
+                const expiredDate = moment().add(7, 'days');
+                NotificationManager.success('Thank you for subscribing, your trial ends on ' + expiredDate.format('MMM Do YYYY'));
+            } else {
+                NotificationManager.success('Subscription was succeeded');
+            }
             if(history.location.pathname === '/plan') {
                 history.push('/main/profile?tab=billing');
             } else {
