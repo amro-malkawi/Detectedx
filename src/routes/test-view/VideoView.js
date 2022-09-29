@@ -12,6 +12,7 @@ import PowerPointViewer from "./component/PowerPointViewer";
 import * as Apis from 'Api';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import {NotificationManager} from "react-notifications";
+import {attemptsUpdateComment} from "Api";
 
 function VideoView(props) {
     const history = useHistory();
@@ -60,6 +61,8 @@ function VideoView(props) {
         if (sideQuestionRef.current && sideQuestionRef.current.handleVideoProgress) {
             sideQuestionRef.current.handleVideoProgress(e.playedSeconds);
         }
+        const playSecond = Math.floor(playedSeconds.current);
+        if(playSecond % 2 === 0) Apis.attemptsUpdateComment(attemptId, {duration: Math.floor(playerRef.current.getDuration()), played: playSecond}).then(() => null);
     }
 
     const handleVideoSeek = (seekTime) => {

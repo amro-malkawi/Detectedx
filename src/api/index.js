@@ -404,6 +404,11 @@ export function attemptsViewerReset(id) {
     return instance.get(url).then((response) => response.data);
 }
 
+export function attemptsUpdateComment(id, data) {
+    const url = `/attempts/${id}/update_comment?access_token=` + getAccessToken();
+    return instance.post(url, data).then((response) => response.data);
+}
+
 /**
  * score operation
  */
