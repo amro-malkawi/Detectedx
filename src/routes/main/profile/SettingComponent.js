@@ -155,9 +155,9 @@ function SettingComponent() {
                 </div>
                 <div className={'divide-line mt-20 mb-4'}/>
                 <div className={'d-flex flex-column'}>
-                    <span className={'fs-16 fw-semi-bold text-primary1'}>DELETE PROFILE</span>
+                    <span className={'fs-16 fw-semi-bold text-primary1'}>Personal Data</span>
                     <div className={'mt-3'}>
-                        <Button className={'outline-btn mb-1 px-20'} onClick={() => setOpenDeleteModal(true)}>CANCEL MEMBERSHIP</Button>
+                        <Button className={'outline-btn mb-1 px-20'} onClick={() => setOpenDeleteModal(true)}>DELETE PROFILE</Button>
                     </div>
                 </div>
             </div>

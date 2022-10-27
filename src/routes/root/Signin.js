@@ -92,13 +92,13 @@ function Signin() {
                                 </Tooltip>
                             </Button>
                         </div>
-                        <div className={'sso-button'}>
-                            <Button onClick={() => window.location.href = "/sso/sydney_uni_login"}>
-                                <Tooltip title={'Sign in with Sydney University'}>
-                                    <img src={require('Assets/img/sso/sydney_uni_logo.png')} className="" alt=""/>
-                                </Tooltip>
-                            </Button>
-                        </div>
+                        {/*<div className={'sso-button'}>*/}
+                        {/*    <Button onClick={() => window.location.href = "/sso/sydney_uni_login"}>*/}
+                        {/*        <Tooltip title={'Sign in with Sydney University'}>*/}
+                        {/*            <img src={require('Assets/img/sso/sydney_uni_logo.png')} className="" alt=""/>*/}
+                        {/*        </Tooltip>*/}
+                        {/*    </Button>*/}
+                        {/*</div>*/}
                     </div>
                     <div className={'d-flex justify-content-center mt-30 fs-14'}>
                         <span>You don't have an account? <Link to="/signup">Register</Link></span>

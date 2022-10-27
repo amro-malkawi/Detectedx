@@ -62,7 +62,8 @@ function VideoView(props) {
             sideQuestionRef.current.handleVideoProgress(e.playedSeconds);
         }
         const playSecond = Math.floor(playedSeconds.current);
-        if(playSecond % 2 === 0) Apis.attemptsUpdateComment(attemptId, {duration: Math.floor(playerRef.current.getDuration()), played: playSecond}).then(() => null);
+        const duration = Math.floor(playerRef.current.getDuration());
+        if(playSecond % 2 === 0 || playSecond === duration) Apis.attemptsUpdateComment(attemptId, {duration: duration, played: playSecond}).then(() => null);
     }
 
     const handleVideoSeek = (seekTime) => {
