@@ -19,6 +19,75 @@ const question = [
         ]
     },
     {
+        id: 'wbctQ3',
+        label: 'Q2: Scoring of the following features on a five-point scale ranging from 1 (very poor) to 5 (excellent)',
+        child: [
+            {
+                id: 'wbctQ3_C1',
+                label: 'visualization of cortical bone structures',
+                options: [
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C2',
+                label: 'visualization of  trabecular bone structures',
+                options: [
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C3',
+                label: 'visualization of metaphyseal bone structures',
+                options: [
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C4',
+                label: 'visualization of joints',
+                options: [
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C5',
+                label: 'visualization of acute fracture/s (if present)',
+                options: [
+                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C6',
+                label: 'visualization of old fracture/s (if present)',
+                options: [
+                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C7',
+                label: 'visualization of callus formation or healing fracture/s (if present)',
+                options: [
+                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C8',
+                label: 'noise texture (to determine noise interference with image interpretation)',
+                options: [
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+            {
+                id: 'wbctQ3_C9',
+                label: 'overall image quality',
+                options: [
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                ]
+            },
+        ]
+    },
+    {
         id: 'wbctQ2',
         label: 'Q2: Findings suggestive of: ',
         options: [
@@ -93,12 +162,15 @@ export default class WBCTQuestions extends Component {
         }
     }
 
-    onChangeQuestion(qId, value) {
+    onChangeQuestion(qId, qChildId, value) {
         const {answerValue} = this.state;
-        if (answerValue[qId] === undefined || answerValue[qId].value !== value) {
-            answerValue[qId] = {};
+        if(!answerValue[qId]) answerValue[qId] = {};
+        if(qChildId && !answerValue[qId][qChildId]) answerValue[qId][qChildId] = {};
+        if(!qChildId) {
+            answerValue[qId].value = value;
+        } else {
+            answerValue[qId][qChildId].value = value;
         }
-        answerValue[qId].value = value;
         this.setState({answerValue: {...answerValue}}, () => {
             this.saveChestAnswer();
         });
@@ -121,7 +193,7 @@ export default class WBCTQuestions extends Component {
                     aria-label="position"
                     name="position"
                     value={answerValue[questionObj.id] ? answerValue[questionObj.id].value : ''}
-                    onChange={(event) => (disabled ? null : this.onChangeQuestion(questionObj.id, event.target.value))}
+                    onChange={(event) => (disabled ? null : this.onChangeQuestion(questionObj.id, null, event.target.value))}
                     row
                     disabled={disabled}
                 >
@@ -149,6 +221,56 @@ export default class WBCTQuestions extends Component {
         )
     }
 
+    renderQuestion2(questionObj, disabled) {
+        const {answerValue, truthValue} = this.state;
+        const qTruth = truthValue[questionObj.id] || {};
+        console.log(qTruth, 'qTruth')
+        const questionAnswer = answerValue[questionObj.id];
+        return (
+            <div key={questionObj.id} className={'chest-question'}>
+                <div className={'chest-question-title'}>{questionObj.label}</div>
+                {
+                    questionObj.child.map((c, i) => (
+                        <div className={c.id} key={c.id}>
+                            <div className={'mt-2 ml-4 fs-14'}>{c.label}</div>
+                            <RadioGroup
+                                className={'ml-40'}
+                                aria-label="position"
+                                name="position"
+                                value={(questionAnswer && questionAnswer[c.id]) ? questionAnswer[c.id].value : ''}
+                                onChange={(e) => (disabled ? null : this.onChangeQuestion(questionObj.id, c.id, e.target.value))}
+                                row
+                                disabled={false}
+                            >
+                                {
+                                    c.options.map((v) => (
+                                        <CheckboxTooltip title={v.hover} key={v.value}>
+                                            <QuestionLabel
+                                                value={v.value}
+                                                control={
+                                                    <QuestionRadio
+                                                        icon={<span className={'chest-question-radio-icon ' + ((qTruth[c.id] && qTruth[c.id].value === v.value) ? 'truth-icon' : '')}/>}
+                                                        checkedIcon={<span className={'chest-question-radio-icon checked ' + ((qTruth[c.id] && qTruth[c.id].value === v.value) ? 'truth-icon' : '')}/>}
+                                                        disableRipple
+                                                    />
+                                                }
+                                                label={v.value}
+                                                labelPlacement="end"
+                                                className='align-items-start mb-0'
+                                                disabled={disabled}
+                                            />
+                                        </CheckboxTooltip>
+                                    ))
+                                }
+                            </RadioGroup>
+                        </div>
+                    ))
+                }
+            </div>
+        )
+
+    }
+
     render() {
         const {answerRating1, truthRating1, answerRating2, truthRating2} = this.state;
         const disabled = this.props.complete;
@@ -160,7 +282,7 @@ export default class WBCTQuestions extends Component {
                     </p>
                     <div className={'covid-questions'}>
                         {
-                            question.map((v) => this.renderQuestion(v, disabled))
+                            question.map((v, i) => (i !== 1 ? this.renderQuestion(v, disabled) : this.renderQuestion2(v, disabled)))
                         }
                     </div>
                     <div className={'covid-confidence'}>
