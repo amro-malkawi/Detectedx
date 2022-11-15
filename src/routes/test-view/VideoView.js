@@ -67,9 +67,9 @@ function VideoView(props) {
     }
 
     const handleVideoSeek = (seekTime) => {
-        if (!allowSkip && (seekTime - playedSeconds.current) > 0.1) {
-            playerRef.current.seekTo(parseFloat(playedSeconds.current), 'seconds');
-        }
+        // if (!allowSkip && (seekTime - playedSeconds.current) > 0.1) {
+        //     playerRef.current.seekTo(parseFloat(playedSeconds.current), 'seconds');
+        // }
     }
 
     const validateForNext = () => {
