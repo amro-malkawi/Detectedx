@@ -13,6 +13,8 @@ import * as Apis from 'Api';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import {NotificationManager} from "react-notifications";
 import {attemptsUpdateComment} from "Api";
+import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+import InstructionModal from "Routes/instructions";
 
 function VideoView(props) {
     const history = useHistory();
@@ -28,6 +30,7 @@ function VideoView(props) {
     const [allowSkip, setAllowSkip] = useState(false);
     const [playing, setPlaying] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [isShowInstructionModal, setIsShowInstructionModal] = useState(false);
 
     useEffect(() => {
         getData();
@@ -43,6 +46,7 @@ function VideoView(props) {
             setTestCaseInfo(testCaseViewInfo);
             setComplete(attemptsDetail.complete);
             setAllowSkip(completeList.attempts.filter((v) => v.complete).length > 0);
+            // setAllowSkip(true);
             setLoading(false);
 
             const fileExt = attemptsDetail.test_sets.test_set_discussion.split('.').pop();
@@ -67,9 +71,9 @@ function VideoView(props) {
     }
 
     const handleVideoSeek = (seekTime) => {
-        // if (!allowSkip && (seekTime - playedSeconds.current) > 0.1) {
-        //     playerRef.current.seekTo(parseFloat(playedSeconds.current), 'seconds');
-        // }
+        if (!allowSkip && (seekTime - playedSeconds.current) > 0.1) {
+            playerRef.current.seekTo(parseFloat(playedSeconds.current), 'seconds');
+        }
     }
 
     const validateForNext = () => {
@@ -132,6 +136,13 @@ function VideoView(props) {
                             onClick={() => history.push('/main/attempt/' + attemptId + '/score')}>
                         <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
                         <HistoryOutlinedIcon size="small"/>
+                    </Button>
+                }
+                {
+                    (!complete && ['LBLT2202', 'LBLT22 04', 'LBLT22 01', 'LBLT22 03'].indexOf(testSetInfo.test_set_code) !== -1) &&
+                    <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => setIsShowInstructionModal(true)}>
+                        <span className={'test-action-btn-label'}>LT Classification</span>
+                        <InfoOutlinedIcon size="small"/>
                     </Button>
                 }
                 <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => history.push('/main/home')}>
@@ -222,7 +233,13 @@ function VideoView(props) {
             <div className={'rotate-error'}>
                 <img src={require('Assets/img/rotate.png')} alt=''/>
             </div>
-
+            <InstructionModal
+                isOpen={isShowInstructionModal}
+                onClose={() => setIsShowInstructionModal(false)}
+                theme={'black'}
+                type={testCaseInfo.modalities.instruction_type}
+                video={{thumbnail: testCaseInfo.modalities.instruction_video_thumbnail, link: testCaseInfo.modalities.instruction_video}}
+            />
         </div>
     )
 }
