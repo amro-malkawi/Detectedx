@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button} from "@material-ui/core";
+import {Button, FormControlLabel, Checkbox} from "@material-ui/core";
 import {Input} from "reactstrap";
 import {NotificationManager} from "react-notifications";
 import {useDispatch} from "react-redux";
@@ -9,6 +9,7 @@ import {isMobile} from 'react-device-detect';
 import DeleteProfileModal from "./DeleteProfileModal";
 import {logoutUserFromEmail} from "Actions";
 import * as Apis from "Api";
+import {withStyles} from "@material-ui/core/styles";
 
 function SettingComponent() {
     const dispatch = useDispatch();
@@ -73,6 +74,18 @@ function SettingComponent() {
         }).catch((e) => {
             if (e.response) NotificationManager.error(e.response.data.error.message);
         });
+    }
+
+    const onChangeContactMe = (value) => {
+        setUserInfo({...userInfo, allow_contact_me: value});
+        Apis.userUpdate({
+            allow_contact_me: value,
+        }).then(resp => {
+        }).catch(e => {
+            NotificationManager.error(e.response.data.error.message);
+        }).finally(() => {
+
+        })
     }
 
     return (
@@ -154,6 +167,18 @@ function SettingComponent() {
                     </div>
                 </div>
                 <div className={'divide-line mt-20 mb-4'}/>
+                <div className={'ml-2'}>
+                    <FormControlLabel
+                        control={
+                            <GreenCheckbox
+                                checked={!!userInfo.allow_contact_me}
+                                onChange={(e) => onChangeContactMe(e.target.checked)}
+                            />
+                        }
+                        label={<span>I allow DetectedX to send me relevant marketing information about its products and services </span>}
+                    />
+                </div>
+                <div className={'divide-line mt-20 mb-4'}/>
                 <div className={'d-flex flex-column'}>
                     <span className={'fs-16 fw-semi-bold text-primary1'}>Personal Data</span>
                     <div className={'mt-3'}>
@@ -169,3 +194,15 @@ function SettingComponent() {
 }
 
 export default SettingComponent;
+
+const GreenCheckbox = withStyles({
+    root: {
+        color: '#B2B2B2',
+        margin: 0,
+        padding: 3,
+        '&$checked': {
+            color: '#54a9fb',
+        },
+    },
+    checked: {},
+})(props => <Checkbox color="default" {...props} />);
