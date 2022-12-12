@@ -26,63 +26,72 @@ const question = [
                 id: 'wbctQ3_C1',
                 label: 'visualization of cortical bone structures',
                 options: [
-                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {value: "5", hover: 'excellent'}
                 ]
             },
             {
                 id: 'wbctQ3_C2',
                 label: 'visualization of  trabecular bone structures',
                 options: [
-                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {value: "5", hover: 'excellent'}
                 ]
             },
             {
                 id: 'wbctQ3_C3',
                 label: 'visualization of metaphyseal bone structures',
                 options: [
-                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {value: "5", hover: 'excellent'}
                 ]
             },
             {
                 id: 'wbctQ3_C4',
                 label: 'visualization of joints',
                 options: [
-                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {value: "5", hover: 'excellent'}
                 ]
             },
             {
                 id: 'wbctQ3_C5',
                 label: 'visualization of acute fracture/s (if present)',
                 options: [
-                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {
+                        value: "5",
+                        hover: 'excellent'
+                    }
                 ]
             },
             {
                 id: 'wbctQ3_C6',
                 label: 'visualization of old fracture/s (if present)',
                 options: [
-                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {
+                        value: "5",
+                        hover: 'excellent'
+                    }
                 ]
             },
             {
                 id: 'wbctQ3_C7',
                 label: 'visualization of callus formation or healing fracture/s (if present)',
                 options: [
-                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "0", hover: '(N/A)'}, {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {
+                        value: "5",
+                        hover: 'excellent'
+                    }
                 ]
             },
             {
                 id: 'wbctQ3_C8',
                 label: 'noise texture (to determine noise interference with image interpretation)',
                 options: [
-                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {value: "5", hover: 'excellent'}
                 ]
             },
             {
                 id: 'wbctQ3_C9',
                 label: 'overall image quality',
                 options: [
-                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'},{value: "3", hover: 'acceptable'},{value: "4", hover: 'very good'},{value: "5", hover: 'excellent'}
+                    {value: "1", hover: 'very poor'}, {value: "2", hover: 'poor'}, {value: "3", hover: 'acceptable'}, {value: "4", hover: 'very good'}, {value: "5", hover: 'excellent'}
                 ]
             },
         ]
@@ -102,6 +111,30 @@ const question = [
             'NAI / SPA / inflicted abuse',
         ]
     },
+    {
+        id: 'wbctQ3',
+        label: 'Q4: Confidence this case is suspicious for NAI',
+        options: [
+            {value: "0", hover: 'Absolutely confident that this case is NOT suspicious for NAI'},
+            {value: "1", hover: 'Very confident that this case is NOT suspicious for NAI'},
+            {value: "2", hover: 'Quite confident that this case is NOT suspicious for NAI'},
+            {value: "3", hover: 'Quite confident that this case is suspicious for NAI'},
+            {value: "4", hover: 'Very confident that this case is suspicious for NAI'},
+            {value: "5", hover: 'Absolutely confident that this case is suspicious for NAI'}
+        ]
+    },
+    {
+        id: 'wbctQ4',
+        label: 'Q5: Confidence that no bony enjuries have been missed due to excessive noise',
+        options: [
+            {value: "0", hover: 'Absolutely confident that I have missed any bony enjuries due to excessive noise present in the bony images'},
+            {value: "1", hover: 'Very confident that I have missed any bony enjuries due to excessive noise present in the bony images'},
+            {value: "2", hover: 'Quite confident that I have missed bony enjuries due to excessive noise present in the bony images'},
+            {value: "3", hover: 'Quite confident that I havent missed any bony enjuries due to excessive noise present in the bony images'},
+            {value: "4", hover: 'Very confident that I havent missed any bony enjuries due to excessive noise present in the bony images'},
+            {value: "5", hover: 'Absolutely confident that I havent missed any bony enjuries due to excessive noise present in the bony images'}
+        ]
+    },
 ]
 
 export default class WBCTQuestions extends Component {
@@ -109,11 +142,7 @@ export default class WBCTQuestions extends Component {
         super(props);
         this.state = {
             answerValue: {},  // example: {'Ground-Glass Opacity': {0: 'Upper', 1: 'Anterior'}, 'Consolidation': {}}
-            answerRating1: -1,
-            answerRating2: -1,
             truthValue: {},
-            truthRating1: -1,
-            truthRating2: -1,
         }
     }
 
@@ -125,11 +154,7 @@ export default class WBCTQuestions extends Component {
         Apis.getAttemptChestAnswer(this.props.attempts_id, this.props.test_case_id, this.props.isPostTest).then(resp => {
             this.setState({
                 answerValue: resp.chest_answer,
-                answerRating1: resp.chest_answer.answerRating1 !== undefined ? resp.chest_answer.answerRating1 : -1,
-                answerRating2: resp.chest_answer.answerRating2 !== undefined ? resp.chest_answer.answerRating2 : -1,
                 truthValue: resp.chest_truth,
-                truthRating1: resp.chest_truth.truthRating1 !== undefined ? Number(resp.chest_truth.truthRating1) : -1,
-                truthRating2: resp.chest_truth.truthRating2 !== undefined ? Number(resp.chest_truth.truthRating2) : -1,
             });
         }).catch(error => {
 
@@ -138,10 +163,8 @@ export default class WBCTQuestions extends Component {
 
     saveChestAnswer() {
         const answerValue = {...this.state.answerValue};
-        answerValue.answerRating1 = this.state.answerRating1;
-        answerValue.answerRating2 = this.state.answerRating2;
         if (!this.props.complete) {
-            Apis.setAttemptChestAnswer(this.props.attempts_id, this.props.test_case_id, this.state.answerRating1, answerValue, this.props.isPostTest).then(resp => {
+            Apis.setAttemptChestAnswer(this.props.attempts_id, this.props.test_case_id, 0, answerValue, this.props.isPostTest).then(resp => {
 
             }).catch(error => {
                 NotificationManager.error(error.response ? error.response.data.error.message : error.message);
@@ -150,23 +173,14 @@ export default class WBCTQuestions extends Component {
     }
 
     checkQuestionValidate() {
-        const {answerRating1, answerRating2} = this.state;
-        if (
-            isNaN(answerRating1) || Number(answerRating1) < 0 || Number(answerRating1) > 5 ||
-            isNaN(answerRating2) || Number(answerRating2) < 0 || Number(answerRating2) > 5
-        ) {
-            NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     onChangeQuestion(qId, qChildId, value) {
         const {answerValue} = this.state;
-        if(!answerValue[qId]) answerValue[qId] = {};
-        if(qChildId && !answerValue[qId][qChildId]) answerValue[qId][qChildId] = {};
-        if(!qChildId) {
+        if (!answerValue[qId]) answerValue[qId] = {};
+        if (qChildId && !answerValue[qId][qChildId]) answerValue[qId][qChildId] = {};
+        if (!qChildId) {
             answerValue[qId].value = value;
         } else {
             answerValue[qId][qChildId].value = value;
@@ -189,7 +203,7 @@ export default class WBCTQuestions extends Component {
             <div key={questionObj.id} className={'chest-question'}>
                 <div className={'chest-question-title mb-2'}>{questionObj.label}</div>
                 <RadioGroup
-                    className={'ml-4 flex-column'}
+                    className={'ml-4 ' + (questionObj.options.length !== 6 ? 'flex-column' : 'flex-row')}
                     aria-label="position"
                     name="position"
                     value={answerValue[questionObj.id] ? answerValue[questionObj.id].value : ''}
@@ -198,23 +212,40 @@ export default class WBCTQuestions extends Component {
                     disabled={disabled}
                 >
                     {
-                        questionObj.options.map((v) => (
-                            <QuestionLabel
-                                key={v}
-                                value={v}
-                                control={
-                                    <QuestionRadio
-                                        icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                        checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
-                                        disableRipple
+                        questionObj.options.map((v) =>
+                            !v.hover ?
+                                <QuestionLabel
+                                    key={v}
+                                    value={v}
+                                    control={
+                                        <QuestionRadio
+                                            icon={<span className={'chest-question-radio-icon ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                            checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v ? 'truth-icon' : '')}/>}
+                                            disableRipple
+                                        />
+                                    }
+                                    label={v}
+                                    labelPlacement="end"
+                                    className='align-items-start'
+                                    disabled={disabled}
+                                /> :
+                                <CheckboxTooltip title={v.hover} key={v.value}>
+                                    <QuestionLabel
+                                        value={v.value}
+                                        control={
+                                            <QuestionRadio
+                                                icon={<span className={'chest-question-radio-icon ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                                checkedIcon={<span className={'chest-question-radio-icon checked ' + (qTruth === v.value ? 'truth-icon' : '')}/>}
+                                                disableRipple
+                                            />
+                                        }
+                                        label={v.value}
+                                        labelPlacement="end"
+                                        className='align-items-start'
+                                        disabled={disabled}
                                     />
-                                }
-                                label={v}
-                                labelPlacement="end"
-                                className='align-items-start'
-                                disabled={disabled}
-                            />
-                        ))
+                                </CheckboxTooltip>
+                        )
                     }
                 </RadioGroup>
             </div>
@@ -272,7 +303,6 @@ export default class WBCTQuestions extends Component {
     }
 
     render() {
-        const {answerRating1, truthRating1, answerRating2, truthRating2} = this.state;
         const disabled = this.props.complete;
         return (
             <div className={'pl-10 covid-question-container chest-data'}>
@@ -284,78 +314,6 @@ export default class WBCTQuestions extends Component {
                         {
                             question.map((v, i) => (i !== 1 ? this.renderQuestion(v, disabled) : this.renderQuestion2(v, disabled)))
                         }
-                    </div>
-                    <div className={'covid-confidence'}>
-                        <p>How confident this case is suspicious <br />for NAI</p>
-                        <RadioGroup
-                            disabled
-                            aria-label="position"
-                            name="position"
-                            value={answerRating1 !== undefined ? answerRating1.toString() : ''}
-                            onChange={(event) => this.onChangeRating('answerRating1', event.target.value)}
-                            row
-                            className={'justify-content-center mt-0'}
-                        >
-                            {
-                                [
-                                    {value: 0, tooltip: 'Absolutely confident that this case is NOT suspicious for NAI'}, {value: 1, tooltip: 'Very confident that this case is NOT suspicious for NAI'}, {value: 2, tooltip: 'Quite confident that this case is NOT suspicious for NAI'},
-                                    {value: 3, tooltip: 'Quite confident that this case is suspicious for NAI'}, {value: 4, tooltip: 'Very confident that this case is suspicious for NAI'}, {value: 5, tooltip: 'Absolutely confident that this case is suspicious for NAI'}
-                                ].map((v, i) => {   // [0, 1, 2, 3...]
-                                    return (
-                                        <CheckboxTooltip title={v.tooltip} key={i}>
-                                            <RatingLabel
-                                                key={i}
-                                                value={v.value.toString()}
-                                                control={
-                                                    <RatingRadio
-                                                        icon={<span className={'chest-question-rating-radio-icon ' + (truthRating1 === v.value ? 'truth-icon' : '')}/>}
-                                                        checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating1 === v.value ? 'truth-icon' : '')}/>}
-                                                        disableRipple
-                                                    />
-                                                }
-                                                label={v.value}
-                                                disabled={disabled}
-                                            />
-                                        </CheckboxTooltip>
-                                    )
-                                })
-                            }
-                        </RadioGroup>
-                        <p>How confident are you that may have missed any bony injuries due to excessive noise in the bony images</p>
-                        <RadioGroup
-                            disabled
-                            aria-label="position"
-                            name="position"
-                            value={answerRating2 !== undefined ? answerRating2.toString() : ''}
-                            onChange={(event) => this.onChangeRating('answerRating2', event.target.value)}
-                            row
-                            className={'justify-content-center mt-0'}
-                        >
-                            {
-                                [
-                                    {value: 0, tooltip: 'Absolutely confident that there is NOT excessive noise present in the bony images'}, {value: 1, tooltip: 'Very confident that there is NOT excessive noise present in the bony images'}, {value: 2, tooltip: 'Quite confident that there is NOT excessive noise present in the bony images'},
-                                    {value: 3, tooltip: 'Quite confident that there IS excessive noise present in the bony images'}, {value: 4, tooltip: 'Very confident that there IS excessive noise present in the bony images'}, {value: 5, tooltip: 'Absolutely confident that there IS excessive noise present in the bony images'}
-                                ].map((v, i) => {   // [0, 1, 2, 3...]
-                                    return (
-                                        <CheckboxTooltip title={v.tooltip} key={i}>
-                                            <RatingLabel
-                                                key={i}
-                                                value={v.value.toString()}
-                                                control={
-                                                    <RatingRadio
-                                                        icon={<span className={'chest-question-rating-radio-icon ' + (truthRating2 === v.value ? 'truth-icon' : '')}/>}
-                                                        checkedIcon={<span className={'chest-question-rating-radio-icon checked ' + (truthRating2 === v.value ? 'truth-icon' : '')}/>}
-                                                        disableRipple
-                                                    />
-                                                }
-                                                label={v.value}
-                                                disabled={disabled}
-                                            />
-                                        </CheckboxTooltip>
-                                    )
-                                })
-                            }
-                        </RadioGroup>
                     </div>
                 </div>
             </div>

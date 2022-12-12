@@ -141,7 +141,7 @@ function VideoView(props) {
                 {
                     (!complete && ['LBLT2202', 'LBLT22 04', 'LBLT22 01', 'LBLT22 03'].indexOf(testSetInfo.test_set_code) !== -1) &&
                     <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => setIsShowInstructionModal(true)}>
-                        <span className={'test-action-btn-label'}>LT Classification</span>
+                        <span className={'test-action-btn-label'}>LT Pathology Classification</span>
                         <InfoOutlinedIcon size="small"/>
                     </Button>
                 }
