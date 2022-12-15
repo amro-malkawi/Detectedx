@@ -139,37 +139,6 @@ class MarkerPopupWBCT extends Component {
         }
     }
 
-    renderSubLesion(parent, item) {
-        const {selectedLesionList} = this.state;
-        const options = item.children.map((v) => ({value: v.id, label: v.name}));
-        const selectedOptionObj = item.children.find((v) => v.name === selectedLesionList[parent][item.name]);
-        const selectedOption = selectedOptionObj !== undefined ? [{value: selectedOptionObj.id, label: selectedOptionObj.name}] : [];
-        let placeholder;
-        if (this.state.complete || Number(this.state.selectedRating) < 3) {
-            placeholder = <IntlMessages id={"testView.cannotSelectLesion"}/>;
-        } else {
-            if (item.name === 'Present') {
-                // when drop down is "Present", change placeholder to "Associated features"
-                placeholder = 'Select Associated features';
-            } else {
-                placeholder = 'Select ' + item.name;
-            }
-        }
-        return (
-            <Select
-                key={item.id}
-                isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                placeholder={placeholder}
-                name="lesions"
-                isSearchable={false}
-                options={options}
-                value={selectedOption}
-                styles={selectStyles}
-                onChange={(option) => this.onChangeLesionList(parent, item.name, option)}
-                defaultMenuIsOpen={selectedOption.length === 0}
-            />
-        )
-    }
 
     renderLesion() {
         // value example {Mass: {Shape: 'Oval', Margin: 'Circumscribed}}
@@ -181,38 +150,6 @@ class MarkerPopupWBCT extends Component {
         });
         let selectedLesionObj = lesionList.find((v) => v.name === Object.keys(selectedLesionList)[0]);
         const selectedOption = selectedLesionObj === undefined ? [] : [{value: selectedLesionObj.id, label: selectedLesionObj.name}];
-        let hasSubLesion;
-        let childrenOptions = [];
-        let selectedChildrenOption = [];
-        let childrenLesionList;
-        if (selectedLesionObj && selectedLesionObj.children && selectedLesionObj.children.length > 0) {
-            childrenLesionList = selectedLesionObj.children;
-            if (childrenLesionList[0].children !== undefined && childrenLesionList[0].children.length > 0) {
-                // breast lesions
-                hasSubLesion = true;
-                // when Present value is not "Present", remove "Associated features" drop list
-                if (selectedLesionList[selectedLesionObj.name]['Present'] !== 'Present') {
-                    childrenLesionList = childrenLesionList.filter((v) => v.name !== 'Associated features');
-                }
-
-                // step by step select feature
-                const temp = childrenLesionList.filter((v) => selectedLesionList[selectedLesionObj.name][v.name] !== undefined);
-                if (temp.length < childrenLesionList.length) {
-                    // add select what did not set value
-                    temp.push(childrenLesionList[temp.length]);
-                }
-                childrenLesionList = temp;
-
-
-            } else {
-                hasSubLesion = false;
-                childrenOptions = childrenLesionList.map((v) => ({value: v.id, label: v.name}));
-                const selectedChildLesionObj = childrenLesionList.find((v) => v.name === selectedLesionList[selectedLesionObj.name]);
-                if (selectedChildLesionObj !== undefined) {
-                    selectedChildrenOption = [{value: selectedChildLesionObj.id, label: selectedChildLesionObj.name}];
-                }
-            }
-        }
 
         return (
             <div>
@@ -228,22 +165,8 @@ class MarkerPopupWBCT extends Component {
                     defaultMenuIsOpen={selectedOption.length === 0}
                 />
                 {
-                    hasSubLesion !== undefined && (hasSubLesion ?
-                        childrenLesionList && childrenLesionList.map((v, i) => this.renderSubLesion(selectedLesionObj.name, v)) :
-                        <Select
-                            isDisabled={this.state.complete || Number(this.state.selectedRating) < 3}
-                            placeholder={this.state.complete || Number(this.state.selectedRating) < 3 ? <IntlMessages id={"testView.cannotSelectLesion"}/> : 'Select option'}
-                            isSearchable={false}
-                            options={childrenOptions}
-                            value={selectedChildrenOption}
-                            styles={selectStyles}
-                            onChange={(option) => this.onChangeLesionList(selectedLesionObj.name, '', option)}
-                            defaultMenuIsOpen={selectedChildrenOption.length === 0}
-                        />)
-                }
-                {
                     // add input text when selected other option
-                    selectedChildrenOption.length > 0 && selectedChildrenOption[0].label.indexOf('Other') === 0 &&
+                    selectedOption.length > 0 && selectedOption[0].label.indexOf('Other') === 0 &&
                     <Input
                         type={'text'}
                         style={{backgroundColor: 'transparent', color: 'yellow'}}

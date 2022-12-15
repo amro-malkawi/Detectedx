@@ -98,7 +98,7 @@ const question = [
     },
     {
         id: 'wbctQ2',
-        label: 'Q2: Findings suggestive of: ',
+        label: 'Q3: Findings suggestive of: ',
         options: [
             'Rickets',
             'Renal disease',
@@ -112,8 +112,8 @@ const question = [
         ]
     },
     {
-        id: 'wbctQ3',
-        label: 'Q4: Confidence this case is suspicious for NAI',
+        id: 'wbctQ4',
+        label: 'Q4: Confidence this case is suspicious for NAI/SPA',
         options: [
             {value: "0", hover: 'Absolutely confident that this case is NOT suspicious for NAI'},
             {value: "1", hover: 'Very confident that this case is NOT suspicious for NAI'},
@@ -124,7 +124,7 @@ const question = [
         ]
     },
     {
-        id: 'wbctQ4',
+        id: 'wbctQ5',
         label: 'Q5: Confidence that no bony enjuries have been missed due to excessive noise',
         options: [
             {value: "0", hover: 'Absolutely confident that I have missed any bony enjuries due to excessive noise present in the bony images'},
