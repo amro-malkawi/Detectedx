@@ -77,9 +77,7 @@ function SeriesInfo({data, onClose, onSelect}) {
                         </div>
                         <div className={'fs-26 mt-30'}>Speaker</div>
                         <div className={classnames('fs-19 mt-10', {'presenter-info': !isMobile})} style={{textAlign: 'justify'}}>
-                            <div>
-                                {presenterInfo.presenterDesc}
-                            </div>
+                            <div dangerouslySetInnerHTML={{__html: (presenterInfo.presenterDesc || '')}}/>
                         </div>
                     </div>
                     {
@@ -101,7 +99,7 @@ function SeriesInfo({data, onClose, onSelect}) {
                     <div className={'fs-14 mt-1'}>{item.test_set_time || 0}MINS CME: {item.test_set_point} {item.test_set_code}</div>
                 </div>
                 <div className={'series-test-set-desc'}>
-                    {item.test_set_desc}
+                    {(item.test_set_desc || '').replace(/<[^>]+>/g, '')}
                 </div>
             </Button>
         )

@@ -27,7 +27,7 @@ function SignupFormComponent({onComplete}) {
     const [institution, setInstitution] = useState('');
     const [errorInstitution, setErrorInstitution] = useState(false);
     const [hasEnterpriseCode, setHasEnterpriseCode] = useState(false);
-    const [allowContactMe, setAllowContactMe] = useState(false);
+    const [allowContactMe, setAllowContactMe] = useState(true);
     const [checkTerms, setCheckTerms] = useState(false);
     const [errorCheckTerms, setErrorCheckTerms] = useState(false);
     const [positionList, setPositionList] = useState([]);
@@ -266,18 +266,18 @@ function SignupFormComponent({onComplete}) {
                             label={<span className={'signup-checkbox-label'}>I have enterprise code</span>}
                         />
                     </div>
-                    <div className={'signup-checkbox'}>
-                        <FormControlLabel
-                            control={
-                                <GreenCheckbox
-                                    checked={allowContactMe}
-                                    onChange={(e) => setAllowContactMe(e.target.checked )}
-                                    value=""
-                                />
-                            }
-                            label={<span className={'signup-checkbox-label'}>I allow DetectedX to contact me further about its services </span>}
-                        />
-                    </div>
+                    {/*<div className={'signup-checkbox'}>*/}
+                    {/*    <FormControlLabel*/}
+                    {/*        control={*/}
+                    {/*            <GreenCheckbox*/}
+                    {/*                checked={allowContactMe}*/}
+                    {/*                onChange={(e) => setAllowContactMe(e.target.checked )}*/}
+                    {/*                value=""*/}
+                    {/*            />*/}
+                    {/*        }*/}
+                    {/*        label={<span className={'signup-checkbox-label'}>I allow DetectedX to send me relevant marketing information about its products and services </span>}*/}
+                    {/*    />*/}
+                    {/*</div>*/}
                     <div className={'signup-checkbox'}>
                         <FormControlLabel
                             control={

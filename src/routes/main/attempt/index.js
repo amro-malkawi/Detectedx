@@ -771,6 +771,9 @@ class Attempt extends Component {
             if (percent < 75) {
                 disableDown = true;
             }
+        } else if(this.state.steps.indexOf('answer') === -1) {
+            // hide answer block
+            disableDown = false;
         } else {
             disableDown = attemptInfo.view_answer_time === null;
         }
@@ -1211,7 +1214,7 @@ class Attempt extends Component {
                             {this.renderCertificationDown()}
                             {this.renderVolparaScorePostBlock()}
                             {
-                                ['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 &&
+                                (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 && this.state.steps.indexOf('answer') !== -1) &&
                                 <div className={'score-extra'}>
                                     <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
                                     <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>

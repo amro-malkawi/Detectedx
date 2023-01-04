@@ -55,7 +55,7 @@ const RegisterForm = ({ onFinish}) => {
         postcodeInvalid: false,
         employer: '',
         employerInvalid: false,
-        allowContactMe: false,
+        allowContactMe: true,
         checkTerms: false,
         checkTermsInvalid: false,
 
@@ -361,18 +361,18 @@ const RegisterForm = ({ onFinish}) => {
                                         error={state.employerInvalid}
                                     />
                                 </FormGroup>
-                                <div className={'d-flex justify-content-left'}>
-                                    <FormControlLabel
-                                        control={
-                                            <GreenCheckbox
-                                                checked={state.allowContactMe}
-                                                onChange={(event) => onSetValue('allowContactMe', event.target.checked)}
-                                                value=""
-                                            />
-                                        }
-                                        label={<span><IntlMessages id={"user.signup.allowService"} values={{detectedx: <strong>DetectED-X</strong>}}/></span>}
-                                    />
-                                </div>
+                                {/*<div className={'d-flex justify-content-left'}>*/}
+                                {/*    <FormControlLabel*/}
+                                {/*        control={*/}
+                                {/*            <GreenCheckbox*/}
+                                {/*                checked={state.allowContactMe}*/}
+                                {/*                onChange={(event) => onSetValue('allowContactMe', event.target.checked)}*/}
+                                {/*                value=""*/}
+                                {/*            />*/}
+                                {/*        }*/}
+                                {/*        label={<span><IntlMessages id={"user.signup.allowService"} values={{detectedx: <strong>DetectED-X</strong>}}/></span>}*/}
+                                {/*    />*/}
+                                {/*</div>*/}
 
                                 <Divider variant="middle" className={'mt-5 mb-5'}/>
 

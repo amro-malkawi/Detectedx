@@ -113,7 +113,9 @@ function TestSetInfo({data, onClose, onBackSeries}) {
         if (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(modality_type) === -1) {
             const modalityDesc = JSONParseDefault(modality_desc === null ? {} : modality_desc, null, modality_desc);
             let descText = '';
-            if (typeof modalityDesc !== 'object') {
+            if(data.test_set_desc && data.test_set_desc.replace(/<[^>]+>/g, '').length > 0) {
+                descText = data.test_set_desc;
+            } else if (typeof modalityDesc !== 'object') {
                 // if desc is not JSON type, will be shown this text
                 descText = modality_desc;
             } else if (modalityDesc[locale] !== undefined) {
@@ -121,7 +123,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
             } else if (modalityDesc['en'] !== undefined) {
                 descText = modalityDesc['en'];
             }
-            return <div dangerouslySetInnerHTML={{__html: (data.test_set_desc || descText)}}/>
+            return <div dangerouslySetInnerHTML={{__html: descText}}/>
         } else {
             const presenterInfo = JSONParseDefault(data.test_set_presenter_info, null, {});
             if (!presenterInfo) return;
@@ -139,9 +141,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                     </div>
                     <div className={'fs-26 mt-30'}>Speaker</div>
                     <div className={classnames('fs-19 mt-10', {'presenter-info': !isMobile})} style={{textAlign: 'justify'}}>
-                        <div>
-                            {presenterInfo.presenterDesc}
-                        </div>
+                        <div dangerouslySetInnerHTML={{__html: (presenterInfo.presenterDesc || '')}}/>
                     </div>
                 </div>
             )
@@ -184,7 +184,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
             return (
                 <div className={'text-white'}>
                     <div className={'fs-26 mt-30'}>{title}</div>
-                    <div className={'fs-19 mt-10'}>{data.test_set_desc}</div>
+                    <div className={'fs-19 mt-10'} dangerouslySetInnerHTML={{__html: (data.test_set_desc || '')}}/>
                 </div>
             );
         } else if (test_set_inst_video || instruction_video) {
