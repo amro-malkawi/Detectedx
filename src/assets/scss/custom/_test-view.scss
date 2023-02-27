@@ -502,6 +502,14 @@ div.viewer {
       .MuiIconButton-root {
         padding: 4px;
       }
+
+      .MuiOutlinedInput-root {
+        .MuiOutlinedInput-notchedOutline {
+          border-color: white;
+        }
+        color: white;
+        border-radius: 8px;
+      }
     }
 
     .covid-question-container {
