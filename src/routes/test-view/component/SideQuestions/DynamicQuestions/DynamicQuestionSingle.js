@@ -10,7 +10,7 @@ export const DynamicQuestionSingle = ({
 }) => {
     return <div>
         <h2>{question.name}</h2>
-        <Box display="flex" flexDirection="column">
+        <Box className="dynamic-question-content" display="flex" flexDirection="column">
             {question.options.map((option) =>{
                 const isTruth = truth === option.id;
                 const isAnswer = answer === option.id;

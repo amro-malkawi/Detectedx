@@ -17,7 +17,7 @@ export const DynamicQuestionControl = ({
     isAnswer,
     isTruth
 }) => {
-    let color = undefined;
+    let color = '#ffffff';
     if (isAnswer && isTruth) {
         color = '#00ff00';
     } else if (isTruth) {

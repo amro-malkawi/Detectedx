@@ -27,8 +27,8 @@ export const DynamicQuestionMulti = ({
     }, [onChange, answer]);
 
     return <div>
-        <h2>{question.name}</h2>
-        <Box display="flex" flexDirection="column">
+        <h3>{question.name}</h3>
+        <Box className="dynamic-question-content" display="flex" flexDirection="column">
             {question.options.map((option) => {
                 const isTruth = Array.isArray(truth) && truth.includes(option.id);
                 const isAnswer = Array.isArray(answer) && answer.includes(option.id);

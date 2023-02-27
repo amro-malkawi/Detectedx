@@ -73,20 +73,20 @@ export const DynamicQuestions = ({
         saveAnswers(newAnswers);
     };
 
-    return <div className={'quality-question-data'} style={{ width: 300 }}>
+    return <div className="dynamic-questions">
         <Box px={1}>
-            {questions.map(question => <div key={question.id}>
+            {questions.map(question => <Box mb={2} key={question.id}>
                 <DynamicQuestion
                     question={question}
                     truth={truth[question.id]}
                     answer={answers[question.id]}
                     onChange={getOnQuestionChangeHandler(question.id)}
                 />
-            </div>)}
+            </Box>)}
         </Box>
-        {confidenceQuestion && answers && <Box position="sticky" bottom={0}>
+        {confidenceQuestion && answers && <div className="confidence-question">
             <Typography variant="h2">{confidenceQuestion.name}</Typography>
-            <Box>
+            <div className="confidence-question-options">
                 {[1, 2, 3, 4, 5].map((value) => <FormControlLabel
                     key={value}
                     label={value}
@@ -99,7 +99,7 @@ export const DynamicQuestions = ({
                     />
                     }
                 />)}
-            </Box>
-        </Box>}
+            </div>
+        </div>}
     </div>;
 };
