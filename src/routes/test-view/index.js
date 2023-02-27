@@ -142,8 +142,9 @@ class TestView extends Component {
             Apis.testSetsCaseList(that.state.test_sets_id, that.state.isPostTest),
             Apis.attemptsDetail(that.state.attempts_id, that.state.test_cases_id),
             Apis.testCasesAnswers(that.state.test_cases_id, that.state.attempts_id, that.state.isPostTest),
-            Apis.attemptsStartVideo(that.state.attempts_id)
-        ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers, startVideoInfo]) {
+            Apis.attemptsStartVideo(that.state.attempts_id),
+            Apis.testSetsDetail(that.state.test_sets_id)
+        ]).then(function ([testCaseViewInfo, testSetsCases, attemptsDetail, testCasesAnswers, startVideoInfo, testSet]) {
             let complete = false;
             let possiblePostTestReattempt = false;
             if (!attemptsDetail.test_sets.has_post) {
@@ -163,6 +164,12 @@ class TestView extends Component {
                 }
             }
             that.synchronizer.enabled = (testCaseViewInfo.images.every((v) => v.stack_count === 1) && ['chest', 'ultrasound'].indexOf(testCaseViewInfo.modalities.modality_type) === -1);
+
+            if(testSet) {
+                that.setState({
+                    test_set: testSet
+                })
+            }
 
             that.props.setModalityInfo(testCaseViewInfo.modalities);
             that.props.setAttemptInfo(attemptsDetail);
@@ -653,6 +660,8 @@ class TestView extends Component {
                                     complete={this.state.complete}
                                     isTruth={false}  // for covid question(truth left panel or answer right panel)
                                     isPostTest={this.state.isPostTest}
+                                    questions={this.state.test_case.questions}
+                                    confidenceQuestion={this.state.test_set ? this.state.test_set.confidence_question : null}
                                 />
                             </DndProvider>
                         </div>

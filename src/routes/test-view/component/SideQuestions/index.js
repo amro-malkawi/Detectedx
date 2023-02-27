@@ -10,9 +10,23 @@ import QuizQuestions from './QuizQuestions';
 import WBCTQuestions from './WBCTQuestions';
 import InteractiveVideoQuestion from './InteractiveVideoQuestion';
 import ChestMultiDiseaseQuestion from './ChestMultiDiseaseQuestion';
+import { DynamicQuestions } from 'Routes/test-view/component/SideQuestions/DynamicQuestions';
 
 const SideQuestions = React.forwardRef((props, ref) => {
     const {modality_type, name} = props.modalityInfo;
+
+    if (props.questions && props.questions.length > 0) {
+        return <DynamicQuestions
+            sideQuestionsRef={ref}
+            questions={props.questions}
+            testCaseId={props.test_case_id}
+            attemptId={props.attempts_id}
+            isPostTest={props.isPostTest}
+            confidenceQuestion={props.confidenceQuestion}
+            complete={props.complete}
+        />;
+    }
+
     switch (modality_type) {
         case 'covid':
             return <CovidQuestions ref={ref} {...props} />
