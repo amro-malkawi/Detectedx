@@ -7,12 +7,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {
     DynamicQuestionControl
 } from 'Routes/test-view/component/SideQuestions/DynamicQuestions/DynamicQuestionControl';
+import IntlMessages from 'Util/IntlMessages';
 
 export const DynamicQuestions = ({
     sideQuestionsRef,
     testCaseId,
     attemptId,
-    isPostTest, // TODO CHECK WORKS - HANDLE IS POST TEST
+    isPostTest,
     questions,
     confidenceQuestion,
     complete
@@ -38,9 +39,20 @@ export const DynamicQuestions = ({
     }, [fetchTruths]);
 
     useEffect(() => {
-        // TODO PROPER VALIDATION METHOD
-        sideQuestionsRef.current = {
-            checkQuestionValidate: () => true
+        if(confidenceQuestion) {
+            sideQuestionsRef.current = {
+                checkQuestionValidate: () => {
+                    if (!answers.rating) {
+                        NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
+                        return false;
+                    }
+                    return true;
+                }
+            }
+        } else {
+            sideQuestionsRef.current = {
+                checkQuestionValidate: () => true
+            }
         }
     }, [])
 

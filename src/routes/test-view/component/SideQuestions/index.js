@@ -15,7 +15,7 @@ import { DynamicQuestions } from 'Routes/test-view/component/SideQuestions/Dynam
 const SideQuestions = React.forwardRef((props, ref) => {
     const {modality_type, name} = props.modalityInfo;
 
-    if (props.questions && props.questions.length > 0) {
+    if ((props.questions && props.questions.length > 0) || props.confidenceQuestion) {
         return <DynamicQuestions
             sideQuestionsRef={ref}
             questions={props.questions}
