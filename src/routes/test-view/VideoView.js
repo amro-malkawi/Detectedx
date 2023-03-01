@@ -46,7 +46,6 @@ function VideoView(props) {
             setTestCaseInfo(testCaseViewInfo);
             setComplete(attemptsDetail.complete);
             setAllowSkip(completeList.attempts.filter((v) => v.complete).length > 0);
-            // setAllowSkip(true);
             setLoading(false);
 
             const fileExt = attemptsDetail.test_sets.test_set_discussion.split('.').pop();
@@ -216,7 +215,7 @@ function VideoView(props) {
                     </div>
                 </div>
                 {
-                    (testCaseInfo.modalities.modality_type === 'interactive_video' || allowSkip) &&
+                    (testCaseInfo.modalities.modality_type === 'interactive_video' || allowSkip || (testCaseInfo && testCaseInfo.questions)) &&
                     <SideQuestions
                         modalityInfo={testCaseInfo.modalities}
                         test_case_id={testCaseId}
@@ -227,6 +226,7 @@ function VideoView(props) {
                         isPostTest={false}
                         playerRef={playerRef} // for interactive video
                         onChangePlaying={(v) => setPlaying(v)}  // for interactive video
+                        questions={testCaseInfo ? testCaseInfo.questions : null}
                     />
                 }
             </div>

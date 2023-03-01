@@ -510,6 +510,10 @@ div.viewer {
         color: white;
         border-radius: 8px;
       }
+
+      pre {
+        overflow: unset;
+      }
     }
 
     .covid-question-container {

@@ -16,6 +16,7 @@ const SideQuestions = React.forwardRef((props, ref) => {
     const {modality_type, name} = props.modalityInfo;
 
     if ((props.questions && props.questions.length > 0) || props.confidenceQuestion) {
+        const quizMode = ['video_lecture', 'quiz'].includes(modality_type);
         return <DynamicQuestions
             sideQuestionsRef={ref}
             questions={props.questions}
@@ -24,6 +25,7 @@ const SideQuestions = React.forwardRef((props, ref) => {
             isPostTest={props.isPostTest}
             confidenceQuestion={props.confidenceQuestion}
             complete={props.complete}
+            quizMode={quizMode}
         />;
     }
 
