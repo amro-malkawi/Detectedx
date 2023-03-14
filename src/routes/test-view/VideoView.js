@@ -215,7 +215,7 @@ function VideoView(props) {
                     </div>
                 </div>
                 {
-                    (testCaseInfo.modalities.modality_type === 'interactive_video' || allowSkip || (testCaseInfo && testCaseInfo.questions)) &&
+                    (testCaseInfo.modalities.modality_type === 'interactive_video' || allowSkip) &&
                     <SideQuestions
                         modalityInfo={testCaseInfo.modalities}
                         test_case_id={testCaseId}
