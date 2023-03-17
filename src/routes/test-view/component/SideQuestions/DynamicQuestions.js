@@ -30,6 +30,10 @@ export const DynamicQuestions = ({
 
         if(quizMode) {
             return getAttemptQuizAnswer(attemptId, testCaseId, isPostTest).then(result => {
+                if (!result.value) {
+                    // No truth or answer is available
+                    return;
+                }
                 const answers = Object.fromEntries(
                     result.value.map(item => ([
                         item.question.id,
