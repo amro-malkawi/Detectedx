@@ -23,10 +23,9 @@ function TestSetItem({data, onClick, smallSize}) {
             type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
         } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
             type = 'LECTURE';
-            type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
+            type = data.isSeriesSameModality ? 'LECTURE SERIES' : 'LECTURE';
         } else if (data.modalityInfo.modality_type === 'viewer') {
-            type = 'IMAGE VIEWER';
-            type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
+            type = data.isSeriesSameModality ? type + 'IMAGE VIEWER SERIES' : 'IMAGE VIEWER';
         } else if(data.tileType === 'series') {
             type = 'SERIES';
         } else {
