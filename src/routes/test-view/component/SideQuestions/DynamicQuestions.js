@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@material-ui/core';
+import {Box, Button, Tooltip, Typography, withStyles} from '@material-ui/core';
 import { getAttemptImageQuality, getAttemptQuizAnswer, setAttemptImageQuality, submitQuizAnswer } from 'Api';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NotificationManager } from 'react-notifications';
@@ -149,19 +149,30 @@ export const DynamicQuestions = ({
         {confidenceQuestion && answers && <div className="confidence-question">
             <Typography variant="h2">{confidenceQuestion.name}</Typography>
             <div className="confidence-question-options">
-                {[1, 2, 3, 4, 5].map((value) => <FormControlLabel
-                    key={value}
-                    label={value}
-                    control={<DynamicQuestionControl
-                        checked={answers.rating === value || truths.rating === value}
-                        type="radio"
-                        isTruth={truths.rating === value}
-                        isAnswer={answers.rating === value}
-                        onChange={() => handleChangeConfidenceRating(value)}
-                    />
-                    }
-                />)}
+                {[1, 2, 3, 4, 5].map((value) =>
+                    <CustomTooltip title={confidenceQuestion[`rating_${value}_label`]}>
+                        <FormControlLabel
+                            key={value}
+                            label={value}
+                            control={<DynamicQuestionControl
+                                checked={answers.rating === value || truths.rating === value}
+                                type="radio"
+                                isTruth={truths.rating === value}
+                                isAnswer={answers.rating === value}
+                                onChange={() => handleChangeConfidenceRating(value)}
+                            />
+                            }
+                        />
+                    </CustomTooltip>)}
             </div>
         </div>}
     </div>;
 };
+
+const CustomTooltip = withStyles((theme) => ({
+    tooltip: {
+        backgroundColor: theme.palette.common.white,
+        color: theme.palette.common.black,
+        fontSize: '1rem'
+    }
+}))(Tooltip);
