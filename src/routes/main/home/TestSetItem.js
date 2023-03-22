@@ -20,7 +20,7 @@ function TestSetItem({data, onClick, smallSize}) {
         let type = '';
         if (data.modalityInfo.modality_type === 'quiz') {
             type = 'Quiz';
-            type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
+            type = data.isSeriesSameModality ? 'QUIZ SERIES' : 'QUIZ';
         } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
             type = 'LECTURE';
             type = data.isSeriesSameModality ? 'LECTURE SERIES' : 'LECTURE';
@@ -112,21 +112,17 @@ function TestSetItem({data, onClick, smallSize}) {
                     </div>
                 </div>
             }
-            {
-                !smallSize && data.tileType === 'series' &&
-                <div className={'d-flex flex-column align-items-start'}>
-                    <div className={'test-set-item-spec'}>
+            {!smallSize && data.tileType === 'series' &&
+                <div className="d-flex flex-column align-items-start">
+                    <div className="test-set-item-spec">
                         {data.difficulty &&
                             <React.Fragment>
                                 <span>DIFFICULTY</span>
-                                {
-                                    renderDifficult(data.difficulty)
-                                }
+                                {renderDifficult(data.difficulty)}
                             </React.Fragment>
                         }
                     </div>
-                </div>
-            }
+                </div>}
             {
                 data.demoTestSet &&
                 <div className={'test-set-item-demo'}>

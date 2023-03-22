@@ -59,31 +59,9 @@ function SeriesInfo({data, onClose, onSelect}) {
     }
 
     const renderDifficult = (difficult) => {
-        if (!difficult) {
-            return (<div className={'test-set-difficult'}>
-                <div/>
-                <div/>
-                <div/>
-            </div>)
-        } else if (difficult === 1) {
-            return (<div className={'test-set-difficult'}>
-                <div className={'active'}/>
-                <div/>
-                <div/>
-            </div>)
-        } else if (difficult === 2) {
-            return (<div className={'test-set-difficult'}>
-                <div className={'active'}/>
-                <div className={'active'}/>
-                <div/>
-            </div>)
-        } else {
-            return (<div className={'test-set-difficult'}>
-                <div className={'active'}/>
-                <div className={'active'}/>
-                <div className={'active'}/>
-            </div>)
-        }
+        return <div className="test-set-difficult">
+            {[1, 2, 3].map(i => <div className={difficult >= i ? 'active' : ''}/>)}
+        </div>
     }
 
     const renderLeftContent = () => {
