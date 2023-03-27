@@ -34,7 +34,7 @@ function SeriesInfo({data, onClose, onSelect}) {
         type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
         setTestSetType(type);
         try {
-            const learningObjStr = data.seriesTestSets[0].test_set_learning_obj || data.modalityInfo.modality_learning_obj || null;
+            const learningObjStr = data.learning_obj || data.seriesTestSets[0].test_set_learning_obj || data.modalityInfo.modality_learning_obj || null;
             setLearningObjectives(JSON.parse(learningObjStr));
         } catch (e) {
         }
@@ -58,37 +58,69 @@ function SeriesInfo({data, onClose, onSelect}) {
         })
     }
 
+    const renderDifficult = (difficult) => {
+        return <div className="test-set-difficult">
+            {[1, 2, 3].map(i => <div className={difficult >= i ? 'active' : ''}/>)}
+        </div>
+    }
+
     const renderLeftContent = () => {
         const presenterInfo = JSONParseDefault(data.seriesTestSets[0].test_set_presenter_info, null, {});
-        if (!data.isSeriesSameModality || !presenterInfo) return null;
-        return (
-            <div className={classnames({'pr-20': !isMobile})}>
-                <div className={'text-white fs-18 my-20'}>
-                    <div className={'d-flex flex-column'}>
-                        <div className={'d-flex flex-row'}>
-                            {
-                                presenterInfo.presenterPhoto && presenterInfo.presenterPhoto.length > 0 &&
-                                <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
-                            }
-                            <div className={'mt-2 ml-30 d-flex flex-column'}>
-                                <div className={'fs-14 mb-3'}>{presenterInfo.presenterName}</div>
-                                <img src={Apis.apiUploadAddress + presenterInfo.presenterLogo} alt={''} className={'presenter-logo'}/>
+        if(data.isSeriesSameModality && presenterInfo && Object.keys(presenterInfo).length > 0) {
+            return (
+                <div className={classnames({'pr-20': !isMobile})}>
+                    <div className={'text-white fs-18 my-20'}>
+                        <div className={'d-flex flex-column'}>
+                            <div className={'d-flex flex-row'}>
+                                {
+                                    presenterInfo.presenterPhoto && presenterInfo.presenterPhoto.length > 0 &&
+                                    <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
+                                }
+                                <div className={'mt-2 ml-30 d-flex flex-column'}>
+                                    <div className={'fs-14 mb-3'}>{presenterInfo.presenterName}</div>
+                                    <img src={Apis.apiUploadAddress + presenterInfo.presenterLogo} alt={''} className={'presenter-logo'}/>
+                                </div>
+                            </div>
+                            <div className={'fs-26 mt-30'}>Speaker</div>
+                            <div className={classnames('fs-19 mt-10', {'presenter-info': !isMobile})} style={{textAlign: 'justify'}}>
+                                <div dangerouslySetInnerHTML={{__html: (presenterInfo.presenterDesc || '')}}/>
                             </div>
                         </div>
-                        <div className={'fs-26 mt-30'}>Speaker</div>
-                        <div className={classnames('fs-19 mt-10', {'presenter-info': !isMobile})} style={{textAlign: 'justify'}}>
-                            <div dangerouslySetInnerHTML={{__html: (presenterInfo.presenterDesc || '')}}/>
-                        </div>
+                        {
+                            learningObjectives &&
+                            <div className={'w-100 d-flex flex-row justify-content-start mt-20'}>
+                                <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShowLearningObj(true)}>LEARNING OBJECTIVES</span>
+                            </div>
+                        }
                     </div>
-                    {
-                        learningObjectives &&
-                        <div className={'w-100 d-flex flex-row justify-content-start mt-20'}>
-                            <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShowLearningObj(true)}>LEARNING OBJECTIVES</span>
-                        </div>
-                    }
                 </div>
+            )
+        }
+
+        if (!data.difficulty && !data.description) {
+            return null
+        }
+
+        return <div className={classnames({ 'pr-20': !isMobile })}>
+            <div className={'test-set-item-spec'}>
+                <span>DIFFICULTY</span>
+                {renderDifficult(data.difficulty)}
             </div>
-        )
+            <div className={'text-white fs-18 my-20'}>
+                <div className={'d-flex flex-column'}>
+                    <div className={'d-flex flex-row'}>
+                        {data.description &&
+                            <div dangerouslySetInnerHTML={{ __html: data.description }}/>
+                        }
+                    </div>
+                </div>
+                {learningObjectives &&
+                    <div className={'w-100 d-flex flex-row justify-content-start mt-20'}>
+                        <span className={'text-primary1 fs-14 cursor-pointer'} onClick={() => setIsShowLearningObj(true)}>LEARNING OBJECTIVES</span>
+                    </div>
+                }
+            </div>
+        </div>
     }
 
     const renderTestSetItem = (item) => {
@@ -110,7 +142,7 @@ function SeriesInfo({data, onClose, onSelect}) {
             <div className={classnames({'pl-20': (!isMobile && data.isSeriesSameModality)})}>
                 <div className={'text-white'}>
                     <div className={'fs-26 mt-10'}>{data.isSeriesSameModality ? 'Multi-lecture series' : 'Multi-modal series'}</div>
-                    <div className={classnames('main-series-list', {'two-column': (!isMobile && !data.isSeriesSameModality)}, {'scroll': !isMobile})}>
+                    <div className={classnames('main-series-list', {'scroll': !isMobile})}>
                         {data.seriesTestSets.map((v) => renderTestSetItem(v))}
                     </div>
                 </div>
