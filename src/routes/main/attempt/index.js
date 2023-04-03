@@ -1113,7 +1113,7 @@ class Attempt extends Component {
                         style={{height: 480}}
                         style={{marginBottom: 1}}
                     >
-                        <div className={'bg-gray p-4'} dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}}/>
+                        <div className="p-4" dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}}/>
                     </Scrollbars>
                 </div>
             </div>
