@@ -73,7 +73,7 @@ export const DynamicQuestions = ({
         if(confidenceQuestion) {
             sideQuestionsRef.current = {
                 checkQuestionValidate: () => {
-                    if (!answers.rating) {
+                    if (answers.rating === undefined) {
                         NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
                         return false;
                     }
@@ -85,7 +85,7 @@ export const DynamicQuestions = ({
                 checkQuestionValidate: () => true
             }
         }
-    }, [])
+    }, [answers])
 
     const saveAnswers = (answers) => {
         setAttemptImageQuality(attemptId, testCaseId, answers, isPostTest).catch((error) => {

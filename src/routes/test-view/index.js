@@ -286,6 +286,12 @@ class TestView extends Component {
                     console.error('can not find question validation function');
                     valid = false;
                 }
+            } else if (
+                this.state.test_case.modalities.modality_type === 'normal' &&
+                this.sideQuestionRef.current &&
+                this.sideQuestionRef.current.checkQuestionValidate
+            ) {
+                valid = this.sideQuestionRef.current.checkQuestionValidate();
             }
         }
         return valid;
