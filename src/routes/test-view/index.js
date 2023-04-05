@@ -516,7 +516,7 @@ class TestView extends Component {
     }
 
     renderTestResult() {
-        const {isAnswerCancer, isTruthCancer} = this.state;
+        const {isAnswerCancer, isTruthCancer, test_set} = this.state;
         if (isAnswerCancer === undefined || isTruthCancer === undefined) {
             return null;
         } else if (['volpara', 'imaged_mammo', 'imaged_chest', 'quiz'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
@@ -533,6 +533,8 @@ class TestView extends Component {
                 } else {
                     resultStr = isTruthCancer ? 'Incorrect Position' : 'Correct Position';
                 }
+            } else if (test_set.confidence_question) {
+                resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.abnormalChest"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
             } else {
                 resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
             }
