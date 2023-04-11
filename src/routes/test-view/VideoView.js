@@ -1,33 +1,33 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Button} from "@material-ui/core";
-import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
+import {Button} from "@mui/material";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ReactPlayer from "react-player";
-import {useHistory} from 'react-router-dom';
-import IntlMessages from "Util/IntlMessages";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import HistoryOutlinedIcon from "@material-ui/icons/HistoryOutlined";
+import {useNavigate, useParams} from 'react-router-dom';
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import CommentInfo from "./component/CommentInfo";
 import SideQuestions from "./component/SideQuestions";
 import PowerPointViewer from "./component/PowerPointViewer";
 import * as Apis from 'Api';
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import {NotificationManager} from "react-notifications";
-import {attemptsUpdateComment} from "Api";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import InstructionModal from "Routes/instructions";
 
-function VideoView(props) {
-    const history = useHistory();
+function VideoView() {
+    const navigate = useNavigate();
+    const params = useParams();
     const sideQuestionRef = useRef();
     const playerRef = useRef();
     const playedSeconds = useRef();
-    const [testSetId, setTestSetId] = useState(props.match.params.test_sets_id);
-    const [testCaseId, setTestCaseId] = useState(props.match.params.test_cases_id);
-    const [attemptId, setAttemptId] = useState(props.match.params.attempts_id);
+    const [testSetId, setTestSetId] = useState(params.test_sets_id);
+    const [testCaseId, setTestCaseId] = useState(params.test_cases_id);
+    const [attemptId, setAttemptId] = useState(params.attempts_id);
     const [testSetInfo, setTestSetInfo] = useState({});
     const [testCaseInfo, setTestCaseInfo] = useState({});
     const [complete, setComplete] = useState(true);
     const [allowSkip, setAllowSkip] = useState(false);
+    const [isVideoEnd, setIsVideoEnd] = useState(false);
     const [playing, setPlaying] = useState(true);
     const [loading, setLoading] = useState(true);
     const [isShowInstructionModal, setIsShowInstructionModal] = useState(false);
@@ -45,8 +45,8 @@ function VideoView(props) {
             setTestSetInfo(attemptsDetail.test_sets);
             setTestCaseInfo(testCaseViewInfo);
             setComplete(attemptsDetail.complete);
-            setAllowSkip(completeList.attempts.filter((v) => v.complete).length > 0);
-            // setAllowSkip(true);
+            // setAllowSkip(completeList.attempts.filter((v) => v.complete).length > 0);
+            setAllowSkip(true);
             setLoading(false);
 
             const fileExt = attemptsDetail.test_sets.test_set_discussion.split('.').pop();
@@ -97,7 +97,7 @@ function VideoView(props) {
     const onFinish = () => {
         if (validateForNext()) {
             Apis.attemptsFinishTest(attemptId, window.screen.width, window.screen.height).then((nextStep) => {
-                history.push('/main/attempt/' + attemptId + '/' + nextStep + '?from=test');  // go to scores tab
+                navigate('/main/attempt/' + attemptId + '/' + nextStep + '?from=test');  // go to scores tab
             }).catch((e) => {
                 console.warn(e.response ? e.response.data.error.message : e.message);
             });
@@ -106,6 +106,7 @@ function VideoView(props) {
 
     const handleVideoEnded = () => {
         setAllowSkip(true);
+        setIsVideoEnd(true);
         if(testCaseInfo.modalities.modality_type === 'interactive_video') {
             if (sideQuestionRef.current && sideQuestionRef.current.onSubmitAnswer) {
                 sideQuestionRef.current.onSubmitAnswer().then(() => {
@@ -125,28 +126,28 @@ function VideoView(props) {
                 {
                     // can not submit "presentations" test because there is no questions. it's for only show
                     testCaseInfo.modalities.modality_type !== 'presentations' &&
-                    <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => onFinish()}>
-                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
+                    <Button className='me-10 test-previous-finish' variant="contained" color="primary" onClick={() => onFinish()}>
+                        <span className={'test-action-btn-label'}>Submit</span>
                         <CheckCircleOutlineIcon size="small"/>
                     </Button>
                 }
                 {
                     complete &&
-                    <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
-                            onClick={() => history.push('/main/attempt/' + attemptId + '/score')}>
-                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
+                    <Button className={'ms-20 me-10 test-previous-scores'} variant="contained" color="primary"
+                            onClick={() => navigate('/main/attempt/' + attemptId + '/score')}>
+                        <span className={'test-action-btn-label'}>Scores</span>
                         <HistoryOutlinedIcon size="small"/>
                     </Button>
                 }
                 {
                     (!complete && ['LBLT2202', 'LBLT22 04', 'LBLT22 01', 'LBLT22 03'].indexOf(testSetInfo.test_set_code) !== -1) &&
-                    <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => setIsShowInstructionModal(true)}>
+                    <Button className={'ms-20 me-10 test-previous-info'} variant="contained" color="primary" onClick={() => setIsShowInstructionModal(true)}>
                         <span className={'test-action-btn-label'}>LT Pathology Classification</span>
                         <InfoOutlinedIcon size="small"/>
                     </Button>
                 }
-                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => history.push('/main/home')}>
-                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.home"}/></span>
+                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => navigate('/main')}>
+                    <span className={'test-action-btn-label'}>Home</span>
                     <HomeOutlinedIcon size="small"/>
                 </Button>
             </nav>
@@ -216,7 +217,7 @@ function VideoView(props) {
                     </div>
                 </div>
                 {
-                    (testCaseInfo.modalities.modality_type === 'interactive_video' || allowSkip) &&
+                    (testCaseInfo.modalities.modality_type === 'interactive_video' || isVideoEnd) &&
                     <SideQuestions
                         modalityInfo={testCaseInfo.modalities}
                         test_case_id={testCaseId}

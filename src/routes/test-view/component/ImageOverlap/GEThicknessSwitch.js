@@ -1,11 +1,10 @@
 import React from 'react';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import {withStyles} from '@material-ui/core/styles';
-import {withRouter} from "react-router-dom";
+import ToggleButton from '@mui/lab/ToggleButton';
+import ToggleButtonGroup from '@mui/lab/ToggleButtonGroup';
+import { withStyles } from 'tss-react/mui';
+import withRouter from 'Components/WithRouter';
 import {connect} from "react-redux";
-import {changeThicknessType} from "Actions/TestViewAction";
-import IntlMessages from "Util/IntlMessages";
+import {changeThicknessType} from "Store/Actions";
 
 const GEThicknessSwitch = ({imageId, metaData, age, currentThicknessType, changeThicknessType, imageList}) => {
     // if(currentThicknessType === 'NOTHICKNESS' || (metaData.positionDesc !== 'GE-PLANES' && metaData.positionDesc !== 'GE-SLABS')) return null;
@@ -15,7 +14,7 @@ const GEThicknessSwitch = ({imageId, metaData, age, currentThicknessType, change
 
     const renderAge = () => {
         if(age !== 0) {
-            return <div className="age-info status fs-14 text-white"><IntlMessages id="testView.age"/>: {age}</div>
+            return <div className="age-info status fs-14 text-white">Age: {age}</div>
         } else {
             return null;
         }
@@ -66,14 +65,14 @@ export default withRouter(connect(mapStateToProps, {
 })(GEThicknessSwitch));
 
 
-const StyledToggleButtonGroup = withStyles((theme) => ({
+const StyledToggleButtonGroup = withStyles(ToggleButtonGroup, (theme) => ({
     root: {
         marginTop: 7,
         backgroundColor: 'grey'
     }
-}))(ToggleButtonGroup);
+}));
 
-const StyledToggleButton = withStyles((theme) => ({
+const StyledToggleButton = withStyles(ToggleButton, (theme) => ({
     root: {
         width: 66,
         padding: '0 7px',
@@ -84,7 +83,7 @@ const StyledToggleButton = withStyles((theme) => ({
         backgroundColor: 'rgba(0, 0, 0, 0.5) !important'
     },
     label: {}
-}))(ToggleButton);
+}));
 
 
 

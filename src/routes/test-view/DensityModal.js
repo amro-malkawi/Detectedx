@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-import {Button} from "reactstrap";
-import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
-import IntlMessages from "Util/IntlMessages";
+import {Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 
 export default class QualityModal extends Component {
@@ -18,10 +16,10 @@ export default class QualityModal extends Component {
     render() {
         const {isOpen, toggle} = this.props;
         return (
-            <Dialog open={isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md'>
+            <Dialog open={!!isOpen} onClose={toggle} aria-labelledby="alert-dialog-title" maxWidth='md'>
                 <div className={'quality-container'}>
                     <CustomDialogTitle onClose={toggle}>
-                        <span className={'quality-title'}><IntlMessages id={"testView.modal.selectBreastDensity"}/></span>
+                        <span className={'quality-title'}>Select breast density category</span>
                     </CustomDialogTitle>
                     <DialogContent>
                         <div data-cy="quality-button-container" className={'quality-button-container'}>

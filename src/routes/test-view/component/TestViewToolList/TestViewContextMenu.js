@@ -1,9 +1,8 @@
 import React from 'react';
 import {ContextMenu, MenuItem, ContextMenuTrigger} from "react-contextmenu";
 import CornerstoneToolIcon from "./CornerstoneToolIcon";
-import IntlMessages from "Util/IntlMessages";
 import {connect} from "react-redux";
-import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
+import {changeCurrentTool, changeHangingLayout} from "Store/Actions";
 
 const TestViewContextMenu = ({toolList, complete, currentTool, changeHangingLayout, changeCurrentTool}) => {
     const onClickMenuItem = (e, data) => {
@@ -17,144 +16,120 @@ const TestViewContextMenu = ({toolList, complete, currentTool, changeHangingLayo
         <ContextMenu id="images" className='test-view-context-menu'>
             {
                 toolList.indexOf('Pan') !== -1 &&
-                <MenuItem data={{tool: 'Pan'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Pan' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Pan'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Pan' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Pan'}/>
-                        <span><IntlMessages id={"testView.tool.pan"}/></span>
+                        <span>Pan></span>
                     </div>
                     <span className='shortcut-key'>[P]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Zoom') !== -1 &&
-                <MenuItem data={{tool: 'Zoom'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Zoom' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Zoom'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Zoom' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Zoom'}/>
-                        <span><IntlMessages id={"testView.tool.zoom"}/></span>
+                        <span>Zoom</span>
                     </div>
                     <span className='shortcut-key'>[Z]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Magnify') !== -1 &&
-                <MenuItem data={{tool: 'Magnify'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Magnify' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Magnify'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Magnify' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Magnify'}/>
-                        <span><IntlMessages id={"testView.tool.magnify"}/></span>
+                        <span>Magnify</span>
                     </div>
                     <span className='shortcut-key'>[G]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Wwwc') !== -1 &&
-                <MenuItem data={{tool: 'Wwwc'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Wwwc' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Wwwc'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Wwwc' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Wwwc'}/>
-                        <span><IntlMessages id={"testView.tool.window"}/></span>
+                        <span>Window</span>
                     </div>
                     <span className='shortcut-key'>[W]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Length') !== -1 && !complete &&
-                <MenuItem data={{tool: 'Length'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Length' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Length'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Length' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Length'}/>
-                        <span><IntlMessages id={"testView.tool.length"}/></span>
+                        <span>Length</span>
                     </div>
                     <span className='shortcut-key'>[L]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Angle') !== -1 && !complete &&
-                <MenuItem data={{tool: 'Angle'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Angle' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Angle'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Angle' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Angle'}/>
-                        <span><IntlMessages id={"testView.tool.angle"}/></span>
+                        <span>Angle</span>
                     </div>
                     <span className='shortcut-key'>[A]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('EllipticalRoi') !== -1 && !complete &&
-                <MenuItem data={{tool: 'EllipticalRoi'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'EllipticalRoi' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'EllipticalRoi'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'EllipticalRoi' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'EllipticalRoi'}/>
-                        <span><IntlMessages id={"testView.tool.ellipse"}/></span>
+                        <span>Ellipse</span>
                     </div>
                     <span className='shortcut-key'>[E]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('RectangleRoi') !== -1 && !complete &&
-                <MenuItem data={{tool: 'RectangleRoi'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'RectangleRoi' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'RectangleRoi'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'RectangleRoi' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'RectangleRoi'}/>
-                        <span><IntlMessages id={"testView.tool.rectangle"}/></span>
+                        <span>Rectangle</span>
                     </div>
                     <span className='shortcut-key'>[O]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('ArrowAnnotate') !== -1 && !complete &&
-                <MenuItem data={{tool: 'ArrowAnnotate'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'ArrowAnnotate' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'ArrowAnnotate'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'ArrowAnnotate' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'ArrowAnnotate'}/>
-                        <span><IntlMessages id={"testView.tool.arrow"}/></span>
+                        <span>Arrow</span>
                     </div>
                     <span className='shortcut-key'>[T]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Eraser') !== -1 && !complete &&
-                <MenuItem data={{tool: 'Eraser'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Eraser' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Eraser'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Eraser' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Eraser'}/>
-                        <span><IntlMessages id={"testView.tool.erase"}/></span>
+                        <span>Erase</span>
                     </div>
                     <span className='shortcut-key'>[X]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('Marker') !== -1 && !complete &&
-                <MenuItem data={{tool: 'Marker'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'Marker' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'Marker'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'Marker' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'Marker'}/>
-                        <span><IntlMessages id={"testView.tool.mark"}/></span>
+                        <span>Mark</span>
                     </div>
                     <span className='shortcut-key'>[M]</span>
                 </MenuItem>
             }
             {
                 toolList.indexOf('MarkerFreehand') !== -1 && !complete &&
-                <MenuItem data={{tool: 'MarkerFreehand'}} onClick={onClickMenuItem}
-                          attributes={{className: currentTool === 'MarkerFreehand' ? 'tool-selected' : ''}}
-                >
+                <MenuItem data={{tool: 'MarkerFreehand'}} onClick={onClickMenuItem} attributes={{className: currentTool === 'MarkerFreehand' ? 'tool-selected' : ''}}>
                     <div>
                         <CornerstoneToolIcon name={'MarkerFreehand'}/>
-                        <span><IntlMessages id={"testView.tool.freehand"}/></span>
+                        <span>Freehand</span>
                     </div>
                     <span className='shortcut-key'>[F]</span>
                 </MenuItem>
@@ -162,7 +137,7 @@ const TestViewContextMenu = ({toolList, complete, currentTool, changeHangingLayo
             <MenuItem data={{tool: 'Reset'}} onClick={onClickMenuItem}>
                 <div>
                     <CornerstoneToolIcon name={'Reset'}/>
-                    <span><IntlMessages id={"testView.tool.reset"}/></span>
+                    <span>Reset</span>
                 </div>
                 <span className='shortcut-key'>[R]</span>
             </MenuItem>

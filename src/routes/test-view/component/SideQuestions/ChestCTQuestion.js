@@ -1,12 +1,8 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip} from "@material-ui/core";
-import green from '@material-ui/core/colors/green';
-import {withStyles} from '@material-ui/core/styles';
-import yellow from "@material-ui/core/colors/yellow";
-import red from "@material-ui/core/colors/red";
+import {RadioGroup} from "@mui/material";
+import {QuestionLabel, QuestionRadio, QuestionCheckbox, RatingRadio, RatingLabel, CheckboxTooltip} from 'Components/SideQuestionComponents';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 
 
 const question = [
@@ -206,7 +202,7 @@ export default class ChestCTQuestion extends Component {
     checkQuestionValidate() {
         const {answerRating} = this.state;
         if (isNaN(answerRating) || Number(answerRating) < 0 || Number(answerRating) > 5) {
-            NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
+            NotificationManager.error('Please select confidence number');
             return false;
         } else {
             return true;
@@ -357,7 +353,7 @@ export default class ChestCTQuestion extends Component {
                     <div className={'question2-zone-title'} style={{width: 8, marginLeft: 83, fontSize: 12}}>R</div>
                     <div className={'question2-zone-title'} style={{width: 8, marginLeft: 111, fontSize: 12}}>L</div>
                 </div>
-                <div className={'ml-2'}>
+                <div className={'ms-2'}>
                     {
                         aOptions.map((v, i) =>
                             <div className={'question3-check-line'} key={i}>
@@ -432,7 +428,7 @@ export default class ChestCTQuestion extends Component {
         const q1Sub1Obj = questionObj.child.q1Sub1;
         const q1Sub2Obj = questionObj.child.q1Sub2;
         return (
-            <div className={'ml-4'}>
+            <div className={'ms-4'}>
                 <div>
                     <div style={{marginLeft: 97}}>
                         {
@@ -443,8 +439,8 @@ export default class ChestCTQuestion extends Component {
                     </div>
                     {
                         q1Sub1Obj.aOptions.map((v, i) =>
-                            <div className={'ml-3'} key={i}>
-                                <div className={'question2-zone-title mr-4'} style={{width: 87}}>{v}</div>
+                            <div className={'ms-3'} key={i}>
+                                <div className={'question2-zone-title me-4'} style={{width: 87}}>{v}</div>
                                 {
                                     this.renderCheckList(q1Sub1Obj.bOptions.map((vv) => ({label: '', value: v + vv})), 'mb-0', disabled, questionObj.id, 'q1Sub1Values')
                                 }
@@ -452,7 +448,7 @@ export default class ChestCTQuestion extends Component {
                         )
                     }
                 </div>
-                <div className={'ml-1'}>
+                <div className={'ms-1'}>
                     <div className={'mt-3'}>Zone Grade/Profusion</div>
                     {
                         this.renderCheckGroup(questionObj.id, 'q1Sub2', disabled, q1Sub2Obj.aOptions, q1Sub2Obj.bOptions, q1Sub2Obj.cOptions)
@@ -466,7 +462,7 @@ export default class ChestCTQuestion extends Component {
         const q2Sub1Obj = questionObj.child.q2Sub1;
         const q2Sub2Obj = questionObj.child.q2Sub2;
         return (
-            <div className={'ml-4'}>
+            <div className={'ms-4'}>
                 <div>
                     <div style={{marginLeft: 97}}>
                         {
@@ -477,8 +473,8 @@ export default class ChestCTQuestion extends Component {
                     </div>
                     {
                         q2Sub1Obj.aOptions.map((v, i) =>
-                            <div className={'ml-3'} key={i}>
-                                <div className={'question2-zone-title mr-4'} style={{width: 87}}>{v}</div>
+                            <div className={'ms-3'} key={i}>
+                                <div className={'question2-zone-title me-4'} style={{width: 87}}>{v}</div>
                                 {
                                     this.renderCheckList(q2Sub1Obj.bOptions.map((vv) => ({label: '', value: v + vv})), 'mb-0', disabled, questionObj.id, 'q2Sub1Values')
                                 }
@@ -486,7 +482,7 @@ export default class ChestCTQuestion extends Component {
                         )
                     }
                 </div>
-                <div className={'ml-1'}>
+                <div className={'ms-1'}>
                     <div className={'mt-3'}>Grade</div>
                     {
                         this.renderCheckGroup(questionObj.id, 'q2Sub2', disabled, q2Sub2Obj.aOptions, q2Sub2Obj.bOptions, q2Sub2Obj.cOptions)
@@ -500,7 +496,7 @@ export default class ChestCTQuestion extends Component {
         const q3Sub1Obj = questionObj.child.q3Sub1;
         const q3Sub2Obj = questionObj.child.q3Sub2;
         return (
-            <div className={'d-flex flex-row ml-4'}>
+            <div className={'d-flex flex-row ms-4'}>
                 <div className={'col-4 d-flex flex-column'}>
                     <span>Size</span>
                     {
@@ -514,8 +510,8 @@ export default class ChestCTQuestion extends Component {
                     </div>
                     {
                         q3Sub2Obj.aOptions.map((v, i) =>
-                            <div className={'ml-3'} key={i}>
-                                <div className={'question2-zone-title mr-4'} style={{width: 10}}>{v}</div>
+                            <div className={'ms-3'} key={i}>
+                                <div className={'question2-zone-title me-4'} style={{width: 10}}>{v}</div>
                                 {
                                     this.renderCheckList(q3Sub2Obj.bOptions.map((vv) => ({label: '', value: v + vv})), 'mb-0', disabled, questionObj.id, 'q1Sub2Values')
                                 }
@@ -530,7 +526,7 @@ export default class ChestCTQuestion extends Component {
     renderQuestion4Additional(questionObj, disabled) {
         const qChildObj = questionObj.child;
         return (
-            <div className={'ml-4'}>
+            <div className={'ms-4'}>
                 {
                     this.renderCheckGroup(questionObj.id, 'qSub', disabled, qChildObj.aOptions, qChildObj.bOptions, qChildObj.cOptions)
                 }
@@ -541,9 +537,9 @@ export default class ChestCTQuestion extends Component {
     renderQuestion8Additional(questionObj, disabled) {
         const qChildObj = questionObj.child;
         return (
-            <div className={'ml-2'}>
+            <div className={'ms-2'}>
                 <RadioGroup
-                    className={'ml-1 mt-1'}
+                    className={'ms-1 mt-1'}
                     aria-label="position"
                     name="position"
                     value={this.state.answerValue[questionObj.id]['qSubValues'] || ''}
@@ -562,7 +558,7 @@ export default class ChestCTQuestion extends Component {
     renderQuestion9Additional(questionObj, disabled) {
         const qChildObj = questionObj.child;
         return (
-            <div className={'ml-4'}>
+            <div className={'ms-4'}>
                 {
                     this.renderCheckList(qChildObj.map((v) => ({label: v, value: v})), 'mb-0', disabled, questionObj.id, 'qSubValues')
                 }
@@ -573,7 +569,7 @@ export default class ChestCTQuestion extends Component {
     renderQuestion10Additional(questionObj, disabled) {
         const qChildObj = questionObj.child;
         return (
-            <div className={'ml-4'}>
+            <div className={'ms-4'}>
                 <div style={{marginLeft: 63}}>
                     {
                         qChildObj.bOptions.map((v) =>
@@ -583,8 +579,8 @@ export default class ChestCTQuestion extends Component {
                 </div>
                 {
                     qChildObj.aOptions.map((v, i) =>
-                        <div className={'ml-3'} key={i}>
-                            <div className={'question2-zone-title mr-4'} style={{width: 47}}>{v}</div>
+                        <div className={'ms-3'} key={i}>
+                            <div className={'question2-zone-title me-4'} style={{width: 47}}>{v}</div>
                             {
                                 this.renderCheckList(qChildObj.bOptions.map((vv) => ({label: '', value: v + vv})), 'mb-0', disabled, questionObj.id, 'qSubValues')
                             }
@@ -598,7 +594,7 @@ export default class ChestCTQuestion extends Component {
     renderQuestion12Additional(questionObj, disabled) {
         const qChildObj = questionObj.child;
         return (
-            <div className={'ml-4 d-flex flex-column'}>
+            <div className={'ms-4 d-flex flex-column'}>
                 {
                     this.renderCheckList(qChildObj.map((v) => ({label: v, value: v})), 'mb-2', disabled, questionObj.id, 'qSubValues')
                 }
@@ -637,11 +633,11 @@ export default class ChestCTQuestion extends Component {
         return (
             <div key={questionObj.id} className={'chest-question'}>
                 <div className={'chest-question-title'}>
-                    <span className={'mr-1'}>{index + 1}.</span>
+                    <span className={'me-1'}>{index + 1}.</span>
                     <span>{questionObj.label}</span>
                 </div>
                 <RadioGroup
-                    className={'ml-4'}
+                    className={'ms-4'}
                     aria-label="position"
                     name="position"
                     value={answerValue[questionObj.id] ? answerValue[questionObj.id].value : ''}
@@ -694,7 +690,7 @@ export default class ChestCTQuestion extends Component {
         const {answerRating, truthRating} = this.state;
         const disabled = this.props.complete;
         return (
-            <div className={'pl-10 covid-question-container chest-data'}>
+            <div className={'ps-10 covid-question-container chest-data'}>
                 <div>
                     <div className={'covid-questions'}>
                         {
@@ -704,7 +700,7 @@ export default class ChestCTQuestion extends Component {
                     <div className={'covid-confidence'}>
                         {
                             this.props.modalityInfo.name !== 'CHESTsi CT' ?
-                                <p><IntlMessages id={"testView.chestCTQuestion.ratingTitle"}/></p> :
+                                <p>Confidence that the subject has Occupational Lung Disease</p> :
                                 <p>Confidence that the subject has Silicosis</p>
                         }
                         <RadioGroup
@@ -745,95 +741,3 @@ export default class ChestCTQuestion extends Component {
         )
     }
 }
-
-
-const QuestionLabel = withStyles(theme => ({
-    root: {
-        marginLeft: 0,
-    },
-    label: {
-        color: '#b3b3b3',
-        fontSize: 13,
-        '&$disabled': {
-            color: '#b3b3b3',
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const QuestionRadio = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: red[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-const QuestionCheckbox = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Checkbox);
-
-const RatingRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-
-const RatingLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const CheckboxTooltip = withStyles((theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 11,
-    },
-}))(Tooltip);

@@ -8,31 +8,31 @@ export default function() {
                 <img src={require("Assets/img/instruction/toolbar.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_next.png")} className={'mr-10'} height={40} alt={''}/>takes you to the next case.
+                <img src={require("Assets/img/instruction/btn_next.png")} className={'me-10'} height={40} alt={''}/>takes you to the next case.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'mr-10'} height={40} alt={''}/>Opens this document.
+                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'me-10'} height={40} alt={''}/>Opens this document.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>will take you to the Modules main page.
+                <img src={require("Assets/img/instruction/btn_home.png")} className={'me-10'} height={40} alt={''}/>will take you to the Modules main page.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_series.png")} className={'mr-10'} height={40} alt={''}/>Opens the images of a case as tumbnails on the right side of the screen.
+                <img src={require("Assets/img/instruction/icon_series.png")} className={'me-10'} height={40} alt={''}/>Opens the images of a case as tumbnails on the right side of the screen.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_reset.png")} className={'mr-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, images)
+                <img src={require("Assets/img/instruction/icon_reset.png")} className={'me-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, images)
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_hanging.png")} className={'mr-10'} height={40} alt={''}/>Change the hanging protocol for the case (different views and show priors if available)
+                <img src={require("Assets/img/instruction/icon_hanging.png")} className={'me-10'} height={40} alt={''}/>Change the hanging protocol for the case (different views and show priors if available)
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_eye.png")} className={'mr-10'} height={40} alt={''}/>View/hide cancer selection information
+                <img src={require("Assets/img/instruction/icon_eye.png")} className={'me-10'} height={40} alt={''}/>View/hide cancer selection information
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image
+                <img src={require("Assets/img/instruction/icon_cb.png")} className={'me-10'} height={40} alt={''}/>Invert image
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'mr-10'} height={40} alt={''}/>Delete cancer selection
+                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'me-10'} height={40} alt={''}/>Delete cancer selection
             </p>
             <hr/>
 

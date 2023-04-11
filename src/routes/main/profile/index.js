@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button, Tabs, Tab} from '@material-ui/core';
+import {Button, Tabs, Tab} from '@mui/material';
 import classNames from "classnames";
 import {useSelector} from "react-redux";
 import PersonalComponent from "./PersonalComponent";
@@ -7,7 +7,7 @@ import BillingComponent from "./BillingComponent";
 import CompletedComponent from "./CompletedComponent";
 import SettingComponent from "./SettingComponent";
 import QueryString from "query-string";
-import {useHistory, useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const tabList = [
     {value: 'personal', label: 'Personal Info', component: <PersonalComponent/>},
@@ -17,9 +17,9 @@ const tabList = [
 ];
 
 function Profile() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
-    const userName = useState(useSelector((state) => state.authUser.userName));
+    const userName = useSelector((state) => state.authUser.userName);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
     useEffect(() => {
@@ -32,13 +32,13 @@ function Profile() {
 
     const onChangeTab = (index) => {
         setSelectedTabIndex(index)
-        history.replace(QueryString.stringifyUrl({url: location.pathname, query: {tab: tabList[index].value}}));
+        navigate(QueryString.stringifyUrl({url: location.pathname, query: {tab: tabList[index].value}}), {replace: true});
     }
 
     return (
         <div className={'main-profile'}>
             <div className={'mb-20 d-flex flex-row align-items-center'}>
-                <span className={'fs-23 mr-2'}>Hi {userName}</span>
+                <span className={'fs-23 me-2'}>Hi {userName}</span>
                 <img src={require('Assets/img/main/icon_hand.png')} alt={''} width={27}/>
             </div>
             <div className={'main-profile-content'}>
@@ -69,13 +69,9 @@ function Profile() {
                     >
                         {
                             tabList.map((v, i) => (
-                                <Tab label={v.label} />
+                                <Tab key={i} label={v.label} />
                             ))
                         }
-                        {/*<Tab label="Personal Info" />*/}
-                        {/*<Tab label="Billing Info"  />*/}
-                        {/*<Tab label="Completed" />*/}
-                        {/*<Tab label="Settings" />*/}
                     </Tabs>
                 </div>
                 {

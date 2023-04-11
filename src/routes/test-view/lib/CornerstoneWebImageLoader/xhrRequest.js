@@ -98,8 +98,11 @@ function xhrRequest(url, imageId, headers = {}, params = {}) {
             // TODO: consider sending out progress messages here as we receive the pixel data
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
-                    // resolve(xhr.response, xhr);
-                    resolve(xorCrypt(new Uint8Array(xhr.response)), xhr);
+                    if(xhr.responseURL.split('.').pop() === 'png'){
+                        resolve(xhr.response, xhr);   // url is png
+                    } else {
+                        resolve(xorCrypt(new Uint8Array(xhr.response)), xhr); // url is dat
+                    }
                 } else {
                     errorInterceptor(xhr);
                     // request failed, reject the Promise

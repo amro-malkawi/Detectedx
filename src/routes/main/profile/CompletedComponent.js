@@ -1,14 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from 'reactstrap';
-import {Button} from '@material-ui/core';
-import {useHistory, useLocation} from "react-router-dom";
+import {Button} from '@mui/material';
+import {useLocation, useNavigate} from "react-router-dom";
 import moment from 'moment';
 import * as Apis from "Api";
 import QueryString from "query-string";
-import {testSetsCompletedPdf} from "Api";
 
 function CompletedComponent() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const [completeList, setCompleteList] = useState([]);
     const [totalAttempt, setTotalAttempt] = useState(0);
@@ -24,14 +23,14 @@ function CompletedComponent() {
         if(selectedTestSet) {
             Apis.attemptsCompletedList(selectedTestSet.id).then(resp => {
                 setAttemptList(resp.attempts);
-                history.replace(QueryString.stringifyUrl({url: location.pathname, query: {tab: 'completed', id: selectedTestSet.id}}));
+                navigate(QueryString.stringifyUrl({url: location.pathname, query: {tab: 'completed', id: selectedTestSet.id}}), {replace: true});
             }).catch(e => {
 
             });
 
         } else {
             setAttemptList([]);
-            history.replace(QueryString.stringifyUrl({url: location.pathname, query: {tab: 'completed'}}));
+            navigate(QueryString.stringifyUrl({url: location.pathname, query: {tab: 'completed'}}), {replace: true});
         }
     }, [selectedTestSet]);
 
@@ -72,7 +71,7 @@ function CompletedComponent() {
             } else {
                 path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
             }
-            history.push(path)
+            navigate(path)
         });
     }
 
@@ -102,8 +101,8 @@ function CompletedComponent() {
                 <td className={'text-center'}>{moment(v.created_at).format('MM/DD/YYYY')}</td>
                 <td className={'text-center'}>{moment(v.updated_at).format('MM/DD/YYYY')}</td>
                 <td>
-                    <Button className={'profile-attempt-view-btn'} onClick={() => history.push('/main/attempt/' + v.id + '/score')}>
-                        <img src={require('Assets/img/main/icon_eye.svg')} alt={''} />
+                    <Button className={'profile-attempt-view-btn'} onClick={() => navigate('/main/attempt/' + v.id + '/score')}>
+                        <img src={require('Assets/img/main/icon_eye.svg').default} alt={''} />
                         VIEW
                     </Button>
                 </td>
@@ -117,7 +116,7 @@ function CompletedComponent() {
                 <div className={'profile-completed-content'}>
                     <div className={'profile-completed-top'}>
                         <div className={'d-flex flex-row align-items-center'}>
-                            <div className={'fs-15 text-primary1 mr-40'} style={{paddingTop: 8}}>COMPLETED</div>
+                            <div className={'fs-15 text-primary1 me-40'} style={{paddingTop: 8}}>COMPLETED</div>
                             <Input type={'select'} className={'mt-1'}>
                                 <option>FILTER</option>
                                 <option>COMPLETED</option>
@@ -150,14 +149,14 @@ function CompletedComponent() {
                     <div className={'profile-completed-bottom fs-15'}>
                         <div className={'profile-completed-bottom-title'}>
                             <span>TOTAL</span>
-                            <div className={'d-flex flex-row mr-50'}>
-                                <div className={'mr-40 text-center'} style={{width: 70}}>POINTS</div>
-                                <div className={'mr-50 text-center'} style={{width: 70}}>ATTEMPTS</div>
+                            <div className={'d-flex flex-row me-50'}>
+                                <div className={'me-40 text-center'} style={{width: 70}}>POINTS</div>
+                                <div className={'me-50 text-center'} style={{width: 70}}>ATTEMPTS</div>
                             </div>
                         </div>
-                        <div className={'d-flex flex-row justify-content-end mr-50'}>
-                            <div className={'mr-40 text-center'} style={{width: 70}}>{totalPoint}</div>
-                            <div className={'mr-50 text-center'} style={{width: 70}}>{totalAttempt}</div>
+                        <div className={'d-flex flex-row justify-content-end me-50'}>
+                            <div className={'me-40 text-center'} style={{width: 70}}>{totalPoint}</div>
+                            <div className={'me-50 text-center'} style={{width: 70}}>{totalAttempt}</div>
                         </div>
                     </div>
                 </div>
@@ -169,12 +168,12 @@ function CompletedComponent() {
                 <div className={'profile-completed-content'}>
                     <div className={'profile-completed-top'}>
                         <div className={'d-flex flex-row align-items-center'}>
-                            <div className={'d-flex flex-row align-items-center fs-15 text-primary1 mr-40 cursor-pointer'} onClick={() => setSelectedTestSet(null)}>
-                                <i className="zmdi zmdi-chevron-left fs-23 mr-2"/>
+                            <div className={'d-flex flex-row align-items-center fs-15 text-primary1 me-40 cursor-pointer'} onClick={() => setSelectedTestSet(null)}>
+                                <i className="zmdi zmdi-chevron-left fs-23 me-2"/>
                                 BACK
                             </div>
                             <div className={'d-flex flex-row align-items-end'}>
-                                <div className={'fs-23 mr-20'}>{selectedTestSet.name}</div>
+                                <div className={'fs-23 me-20'}>{selectedTestSet.name}</div>
                                 <div className={'fs-15 mb-1'}>{selectedTestSet.test_set_code}</div>
                             </div>
                         </div>

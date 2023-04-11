@@ -71,7 +71,7 @@ export default class ZoomMouseWheelTool extends BaseTool {
     }
 
     mouseWheelCallback(evt) {
-        const { element, viewport, spinY } = evt.detail;
+        const { element, viewport, spinY, image } = evt.detail;
         const { invert, maxScale, minScale } = this.configuration;
         const ticks = invert ? spinY / 4 : -spinY / 4;
         const [startX, startY, imageX, imageY] = [
@@ -98,7 +98,8 @@ export default class ZoomMouseWheelTool extends BaseTool {
         // Apply the shift to the Viewport's translation setting
         viewport.translation.y -= shift.y;
         const hangingId = element.parentElement.dataset.hangingId;
-        const imageWidth = viewport.displayedArea.brhc.x;
+        // const imageWidth = viewport.displayedArea.brhc.x;
+        const imageWidth = image.width;
         const canvasWidth = element.clientWidth;
         if(hangingId && hangingId.split('-')[1]) {
             if(hangingId.split('-')[1] === 'L') {

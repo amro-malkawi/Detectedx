@@ -8,7 +8,7 @@ const drawHandles = cornerstoneTools.import('drawing/drawHandles');
 const drawJoinedLines = cornerstoneTools.import('drawing/drawJoinedLines');
 const drawTextBox = cornerstoneTools.import('drawing/drawTextBox');
 const pointInsideBoundingBox = cornerstoneTools.import('util/pointInsideBoundingBox');
-const FreehandMouseTool = cornerstoneTools.FreehandMouseTool;
+const FreehandMouseTool = cornerstoneTools.FreehandRoiTool;
 
 const style = {
     lineWidth: 1,

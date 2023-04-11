@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
 import {Col, Input} from 'reactstrap';
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
-import green from '@material-ui/core/colors/green';
-import {fade, withStyles} from '@material-ui/core/styles';
-import yellow from "@material-ui/core/colors/yellow";
-import red from "@material-ui/core/colors/red";
+import {RadioGroup} from "@mui/material";
+import {QuestionLabel, QuestionRadio, QuestionCheckbox, CheckboxTooltip} from 'Components/SideQuestionComponents';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 
@@ -13,8 +10,9 @@ const question = [
         id: 'ultrasoundQ1',
         label: '1. Appearance:',
         child: {
-            'Define lesion': {},
-            'Mass': {
+            'Define findings': {},
+            'Normal appearances': {},
+            'Mass / mass-like': {
                 label: '1 A. Mass description',
                 'a': {
                     label: 'a. Shape/Size',
@@ -52,7 +50,7 @@ const question = [
                     dropList: ['Architectural distortion', 'Duct changes', 'Vascularity']
                 }
             },
-            'Architectual distortion': {
+            'Architectural distortion': {
                 label: '1 A. Associated features',
                 rootOptions: ['Unifocal', 'Multifocal'],
                 'a': {
@@ -233,17 +231,17 @@ export default class UltrasoundQuestion extends Component {
     }
 
     renderQuestion1AdditionalMass(qId, disabled) {
-        const subChildId = 'Mass';
+        const subChildId = 'Mass / mass-like';
         const childAnswerObj = this.state.answerValue[qId];
         const childQuestionObj = question.find((v) => v.id === qId).child[subChildId];
         return (
             <div>
-                <div className={'ml-1'}>{childQuestionObj.label}</div>
+                <div className={'ms-1'}>{childQuestionObj.label}</div>
                 {/* a */}
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div>{childQuestionObj['a'].label}</div>
                     <RadioGroup
-                        className={'ml-3 mt-1'}
+                        className={'ms-3 mt-1'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['a'] ? childAnswerObj['a'] : ''}
@@ -257,10 +255,10 @@ export default class UltrasoundQuestion extends Component {
                     </RadioGroup>
                 </div>
                 {/* b */}
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div>{childQuestionObj['b'].label}</div>
                     <RadioGroup
-                        className={'ml-3 mt-1 flex-column'}
+                        className={'ms-3 mt-1 flex-column'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['b'] ? childAnswerObj['b'] : ''}
@@ -274,7 +272,7 @@ export default class UltrasoundQuestion extends Component {
                     </RadioGroup>
                     {
                         childAnswerObj['b'] === childQuestionObj['b'].options[1] &&
-                        <div className={'ml-50 mr-30 mb-2'}>
+                        <div className={'ms-50 me-30 mb-2'}>
                             <Input
                                 type="select" className="chest-question-select"
                                 value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
@@ -290,10 +288,10 @@ export default class UltrasoundQuestion extends Component {
                     }
                 </div>
                 {/* c */}
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div>{childQuestionObj['c'].label}</div>
                     <RadioGroup
-                        className={'ml-3 mt-1'}
+                        className={'ms-3 mt-1'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['c'] ? childAnswerObj['c'] : ''}
@@ -307,10 +305,10 @@ export default class UltrasoundQuestion extends Component {
                     </RadioGroup>
                 </div>
                 {/* d */}
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div>{childQuestionObj['d'].label}</div>
                     <RadioGroup
-                        className={'ml-3 mt-1'}
+                        className={'ms-3 mt-1'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['d'] ? childAnswerObj['d'] : ''}
@@ -327,10 +325,10 @@ export default class UltrasoundQuestion extends Component {
                     </RadioGroup>
                 </div>
                 {/* e */}
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div>{childQuestionObj['e'].label}</div>
                     <RadioGroup
-                        className={'ml-3 mt-1'}
+                        className={'ms-3 mt-1'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['e'] ? childAnswerObj['e'] : ''}
@@ -347,10 +345,10 @@ export default class UltrasoundQuestion extends Component {
                     </RadioGroup>
                 </div>
                 {/* f */}
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div>{childQuestionObj['f'].label}</div>
                     <RadioGroup
-                        className={'ml-3 mt-1 flex-column'}
+                        className={'ms-3 mt-1 flex-column'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['f'] ? childAnswerObj['f'] : ''}
@@ -364,7 +362,7 @@ export default class UltrasoundQuestion extends Component {
                     </RadioGroup>
                     {
                         childAnswerObj['f'] === childQuestionObj['f'].options[1] &&
-                        <div className={'ml-50 mr-30 mb-2'}>
+                        <div className={'ms-50 me-30 mb-2'}>
                             <Input
                                 type="select" className="chest-question-select"
                                 value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
@@ -389,10 +387,10 @@ export default class UltrasoundQuestion extends Component {
         const childQuestionObj = question.find((v) => v.id === qId).child[subChildId];
         return (
             <div>
-                <div className={'ml-1'}>{childQuestionObj.label}</div>
-                <div className={'ml-3'}>
+                <div className={'ms-1'}>{childQuestionObj.label}</div>
+                <div className={'ms-3'}>
                     <RadioGroup
-                        className={'ml-1 mt-1'}
+                        className={'ms-1 mt-1'}
                         aria-label="position"
                         name="position"
                         value={childAnswerObj['root'] ? childAnswerObj['root'] : ''}
@@ -405,10 +403,10 @@ export default class UltrasoundQuestion extends Component {
                         }
                     </RadioGroup>
 
-                    <div className={'ml-3'}>
+                    <div className={'ms-3'}>
                         <div>{childQuestionObj['a'].label}</div>
                         <RadioGroup
-                            className={'ml-3 mt-1 flex-column'}
+                            className={'ms-3 mt-1 flex-column'}
                             aria-label="position"
                             name="position"
                             value={childAnswerObj['a'] ? childAnswerObj['a'] : ''}
@@ -422,7 +420,7 @@ export default class UltrasoundQuestion extends Component {
                         </RadioGroup>
                         {
                             childAnswerObj['a'] === childQuestionObj['a'].options[1] &&
-                            <div className={'ml-50 mr-30 mb-2'}>
+                            <div className={'ms-50 me-30 mb-2'}>
                                 <Input
                                     type="select" className="chest-question-select"
                                     value={childAnswerObj['b_drop'] ? childAnswerObj['b_drop'] : ''}
@@ -446,9 +444,9 @@ export default class UltrasoundQuestion extends Component {
         const answerObj = this.state.answerValue;
         if (!answerObj[qId] || !answerObj[qId].value || answerObj[qId].value === 'Define lesion') {
             return null;
-        } else if (answerObj[qId].value === 'Mass') {
+        } else if (answerObj[qId].value === 'Mass / mass-like') {
             return this.renderQuestion1AdditionalMass(qId, disabled);
-        } else if (answerObj[qId].value === 'Calcification' || answerObj[qId].value === 'Architectual distortion') {
+        } else if (answerObj[qId].value === 'Calcifications' || answerObj[qId].value === 'Architectural distortion') {
             return this.renderQuestion1AdditionalCalc(qId, disabled, answerObj[qId].value);
         }
     }
@@ -461,7 +459,7 @@ export default class UltrasoundQuestion extends Component {
         return (
             <div className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
-                <div className={'ml-30 mr-30 mt-10 mb-10'}>
+                <div className={'ms-30 me-30 mt-10 mb-10'}>
                     <Input
                         type="select"
                         className="chest-question-select"
@@ -552,7 +550,7 @@ export default class UltrasoundQuestion extends Component {
         return (
             <div className={'chest-question'}>
                 <div className={'chest-question-title'}>{questionObj.label}</div>
-                <div className={'ml-20 mt-10'}>
+                <div className={'ms-20 mt-10'}>
                     <Input
                         type="select" className="chest-question-select"
                         value={answerValue[qId] ? answerValue[qId].value : ''}
@@ -572,7 +570,7 @@ export default class UltrasoundQuestion extends Component {
     render() {
         const disabled = this.props.complete;
         return (
-            <div className={'pl-10 pr-20 covid-question-container chest-data'}>
+            <div className={'ps-10 pe-20 covid-question-container chest-data'}>
                 <div className={'covid-questions'}>
                     {this.renderQuestion1(disabled)}
                     {this.renderQuestion2(disabled)}
@@ -583,120 +581,3 @@ export default class UltrasoundQuestion extends Component {
     }
 }
 
-
-const QuestionLabel = withStyles(theme => ({
-    root: {
-        marginLeft: 0,
-    },
-    label: {
-        color: '#b3b3b3',
-        fontSize: 13,
-        '&$disabled': {
-            color: '#b3b3b3',
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const QuestionRadio = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: red[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-const QuestionCheckbox = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Checkbox);
-
-const QuestionInput = withStyles((theme) => ({
-    root: {
-        'label + &': {
-            marginTop: 0,
-        },
-    },
-    input: {
-        width: 100,
-        color: 'white',
-        borderRadius: 2,
-        position: 'relative',
-        backgroundColor: 'transparent',
-        border: '1px solid #ced4da',
-        fontSize: 12,
-        padding: '2px 7px',
-        transition: theme.transitions.create(['border-color', 'box-shadow']),
-        '&:focus': {
-            boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-            borderColor: theme.palette.primary.main,
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(InputBase);
-
-const RatingRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-
-const RatingLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const CheckboxTooltip = withStyles((theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 11,
-    },
-}))(Tooltip);

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, TextField} from "@material-ui/core";
+import {FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, TextField} from "@mui/material";
 import {Col, Label, Input} from "reactstrap";
 
 export default class PostQuestionForm extends Component {
@@ -238,12 +238,22 @@ export default class PostQuestionForm extends Component {
                 <Label style={{height: 20, marginTop: 6, marginRight: 10}} className={this.state['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))] && 'text-red'}>
                     {title}:
                 </Label>
-                <TextField
+                <Input
                     disabled={complete}
-                    value={this.state[field]}
+                    type="text"
+                    name="name"
+                    id="other_text"
+                    placeholder=""
                     style={{flex: 1}}
+                    value={this.state[field]}
                     onChange={(e) => this.setState({[field]: e.target.value, ['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))]: false})}
                 />
+                {/*<TextField*/}
+                {/*    disabled={complete}*/}
+                {/*    value={this.state[field]}*/}
+                {/*    style={{flex: 1}}*/}
+                {/*    onChange={(e) => this.setState({[field]: e.target.value, ['invalid' + (field.charAt(0).toUpperCase() + field.slice(1))]: false})}*/}
+                {/*/>*/}
             </FormGroup>
         );
     }
@@ -327,45 +337,54 @@ export default class PostQuestionForm extends Component {
                             control={<Radio/>}
                             label={'Other'} onChange={(event) => this.onChangeTopQuestion(event.target.value)}
                         />
-                        <TextField
+                        <Input
                             id="standard-bare"
                             disabled={isTextDisable}
-                            margin="none"
+                            type="text"
+                            placeholder=""
+                            style={{width: 220}}
                             value={this.state.top.extra}
-                            inputProps={{
-                                style: {height: 20, marginTop: 7}
-                            }}
                             onChange={(e) => this.onChangeTopQuestion(e.target.value, true)}
                         />
+                        {/*<TextField*/}
+                        {/*    id="standard-bare"*/}
+                        {/*    disabled={isTextDisable}*/}
+                        {/*    margin="none"*/}
+                        {/*    value={this.state.top.extra}*/}
+                        {/*    inputProps={{*/}
+                        {/*        style: {height: 20, marginTop: 7}*/}
+                        {/*    }}*/}
+                        {/*    onChange={(e) => this.onChangeTopQuestion(e.target.value, true)}*/}
+                        {/*/>*/}
                     </RadioGroup>
                 </FormGroup>
-                <FormGroup className={'post-questionnaire'} row>
-                    <Col sm={5}>
+                <FormGroup className={'post-questionnaire mt-3'} row>
+                    <Col sm={6} className={'pe-3'}>
                         {this.renderTextItem('First Name', 'firstName', complete)}
                     </Col>
-                    <Col sm={7}>
+                    <Col sm={6}>
                         {this.renderTextItem('Last Name', 'lastName', complete)}
                     </Col>
                 </FormGroup>
-                <FormGroup className={'post-questionnaire'} row>
-                    <Col sm={5}>
+                <FormGroup className={'post-questionnaire mt-3'} row>
+                    <Col sm={5} className={'pe-3'}>
                         {this.renderTextItem('Address', 'address', complete)}
                     </Col>
-                    <Col sm={3}>
+                    <Col sm={3} className={'pe-3'}>
                         {this.renderTextItem('City', 'city', complete)}
                     </Col>
                     <Col sm={2}>
                         {this.renderTextItem('State', 'state', complete)}
                     </Col>
-                    <Col sm={2}>
+                    <Col sm={2} className={'ps-3'}>
                         {this.renderTextItem('Zip', 'zip', complete)}
                     </Col>
                 </FormGroup>
-                <FormGroup className={'post-questionnaire'} row>
+                <FormGroup className={'post-questionnaire mt-3'} row>
                     <Col sm={5}>
                         {this.renderTextItem('State & License #', 'stateLicense', complete)}
                     </Col>
-                    <Col sm={7}>
+                    <Col sm={7} className={'ps-4'}>
                         {this.renderTextItem('E-mail Address', 'email', complete)}
                     </Col>
                 </FormGroup>
@@ -583,17 +602,25 @@ export default class PostQuestionForm extends Component {
                     </Col>
                 </FormGroup>
                 <FormGroup row>
-                    <Label className={'sub-label mt-5 mr-5'}>If no, please explain: </Label>
-                    <TextField
+                    <Label className={'sub-label mt-5 me-5'}>If no, please explain: </Label>
+                    <Input
                         disabled={isTextDisable}
-                        id="standard-bare"
-                        margin="none"
+                        type="text"
+                        placeholder=""
+                        style={{width: 220}}
                         value={this.state.q8.extra}
-                        inputProps={{
-                            style: {height: 20, marginTop: 0}
-                        }}
                         onChange={(e) => this.onChangeQ8Question(e.target.value, true)}
                     />
+                    {/*<TextField*/}
+                    {/*    disabled={isTextDisable}*/}
+                    {/*    id="standard-bare"*/}
+                    {/*    margin="none"*/}
+                    {/*    value={this.state.q8.extra}*/}
+                    {/*    inputProps={{*/}
+                    {/*        style: {height: 20, marginTop: 0}*/}
+                    {/*    }}*/}
+                    {/*    onChange={(e) => this.onChangeQ8Question(e.target.value, true)}*/}
+                    {/*/>*/}
                 </FormGroup>
             </div>
         )
@@ -652,7 +679,7 @@ export default class PostQuestionForm extends Component {
                 />
                 <RadioGroup
                     disabled
-                    className={'ml-50'}
+                    className={'ms-50'}
                     value={this.state.q9.extra_option}
                     row
                 >
@@ -677,16 +704,24 @@ export default class PostQuestionForm extends Component {
                         onChange={(event) => this.onChangeQ9Question(event.target.value, true)}
                         label={'Other'}
                     />
-                    <TextField
+                    <Input
                         disabled={isDisableText}
-                        id="standard-bare"
-                        margin="none"
+                        type="text"
+                        placeholder=""
+                        style={{width: 220}}
                         value={this.state.q9.extra}
-                        inputProps={{
-                            style: {height: 20, marginTop: 7}
-                        }}
                         onChange={(e) => this.onChangeQ9Question(e.target.value, true, true)}
                     />
+                    {/*<TextField*/}
+                    {/*    disabled={isDisableText}*/}
+                    {/*    id="standard-bare"*/}
+                    {/*    margin="none"*/}
+                    {/*    value={this.state.q9.extra}*/}
+                    {/*    inputProps={{*/}
+                    {/*        style: {height: 20, marginTop: 7}*/}
+                    {/*    }}*/}
+                    {/*    onChange={(e) => this.onChangeQ9Question(e.target.value, true, true)}*/}
+                    {/*/>*/}
                 </RadioGroup>
             </div>
         )
@@ -728,15 +763,22 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <Label className={this.state.invalidQ11 && 'text-red'}>11. The most important takeaway I’ve learned from this activity: </Label>
                 <FormGroup className={'sub-label'}>
-                    <TextField
+                    <Input
                         disabled={complete}
-                        margin="none"
+                        type="text"
+                        placeholder=""
                         value={this.state.q11}
-                        inputProps={{
-                            style: {height: 20, marginTop: 0}
-                        }}
                         onChange={(event) => this.setState({q11: event.target.value, invalidQ11: false})}
                     />
+                    {/*<TextField*/}
+                    {/*    disabled={complete}*/}
+                    {/*    margin="none"*/}
+                    {/*    value={this.state.q11}*/}
+                    {/*    inputProps={{*/}
+                    {/*        style: {height: 20, marginTop: 0}*/}
+                    {/*    }}*/}
+                    {/*    onChange={(event) => this.setState({q11: event.target.value, invalidQ11: false})}*/}
+                    {/*/>*/}
                 </FormGroup>
             </div>
         )
@@ -748,15 +790,22 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <Label className={this.state.invalidQ12 && 'text-red'}>12. Please suggest any other future topics you would be interested in:</Label>
                 <FormGroup className={'sub-label'}>
-                    <TextField
+                    <Input
                         disabled={complete}
-                        margin="none"
+                        type="text"
+                        placeholder=""
                         value={this.state.q12}
-                        inputProps={{
-                            style: {height: 20, marginTop: 0}
-                        }}
                         onChange={(event) => this.setState({q12: event.target.value, invalidQ12: false})}
                     />
+                    {/*<TextField*/}
+                    {/*    disabled={complete}*/}
+                    {/*    margin="none"*/}
+                    {/*    value={this.state.q12}*/}
+                    {/*    inputProps={{*/}
+                    {/*        style: {height: 20, marginTop: 0}*/}
+                    {/*    }}*/}
+                    {/*    onChange={(event) => this.setState({q12: event.target.value, invalidQ12: false})}*/}
+                    {/*/>*/}
                 </FormGroup>
             </div>
         )
@@ -781,15 +830,23 @@ export default class PostQuestionForm extends Component {
                         label={'Yes, you can contact me at: '}
                         onChange={(event) => this.onChangeQ13Question(event.target.value)}
                     />
-                    <TextField
+                    <Input
                         disabled={isTextDisable}
+                        type="text"
+                        placeholder=""
+                        style={{marginRight: 50, width: 220}}
                         value={this.state.q13.extra}
-                        style={{marginRight: 50}}
-                        inputProps={{
-                            style: {height: 20, marginTop: 7}
-                        }}
                         onChange={(event) => this.onChangeQ13Question(event.target.value, true)}
                     />
+                    {/*<TextField*/}
+                    {/*    disabled={isTextDisable}*/}
+                    {/*    value={this.state.q13.extra}*/}
+                    {/*    style={{marginRight: 50}}*/}
+                    {/*    inputProps={{*/}
+                    {/*        style: {height: 20, marginTop: 7}*/}
+                    {/*    }}*/}
+                    {/*    onChange={(event) => this.onChangeQ13Question(event.target.value, true)}*/}
+                    {/*/>*/}
                     <FormControlLabel
                         disabled={complete}
                         value={'No'}
@@ -808,15 +865,22 @@ export default class PostQuestionForm extends Component {
             <div className={'post-questionnaire-container'}>
                 <Label className={this.state.invalidQ14 && 'text-red'}>14. Comments:</Label>
                 <FormGroup className={'sub-label'}>
-                    <TextField
+                    <Input
                         disabled={complete}
-                        margin="none"
+                        type="text"
+                        placeholder=""
                         value={this.state.q14}
-                        inputProps={{
-                            style: {height: 20, marginTop: 0}
-                        }}
                         onChange={(event) => this.setState({q14: event.target.value, invalidQ14: false})}
                     />
+                    {/*<TextField*/}
+                    {/*    disabled={complete}*/}
+                    {/*    margin="none"*/}
+                    {/*    value={this.state.q14}*/}
+                    {/*    inputProps={{*/}
+                    {/*        style: {height: 20, marginTop: 0}*/}
+                    {/*    }}*/}
+                    {/*    onChange={(event) => this.setState({q14: event.target.value, invalidQ14: false})}*/}
+                    {/*/>*/}
                 </FormGroup>
             </div>
         )

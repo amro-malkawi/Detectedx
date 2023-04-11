@@ -1,14 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Button, IconButton, Tooltip} from '@material-ui/core';
-import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import {Scrollbars} from 'react-custom-scrollbars';
+import {Button, IconButton, Tooltip} from '@mui/material';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import {Scrollbars} from 'react-custom-scrollbars-2';
 import classNames from 'classnames';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import QueryString from 'query-string';
-import * as selectors from "Selectors";
-import {useHistory, useLocation} from "react-router-dom";
-import {setUserCompletedCount, setUserCompletedPoint} from 'Actions';
+import {useLocation, useNavigate} from "react-router-dom";
+import {setUserCompletedCount, setUserCompletedPoint} from 'Store/Actions';
 import TestSetItem from "./TestSetItem";
 import TestSetModal from './TestSetModal';
 import * as Apis from 'Api';
@@ -23,10 +22,10 @@ const filterList = [
 ]
 
 function Home() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
-    const isLogin = selectors.getIsLogin(null);
+    const isLogin = useSelector((state) => state.authUser.isLogin);
     const searchTextRef = useRef();
     const [modalityList, setModalityList] = useState([]);
     const [filter, setFilter] = useState(''); // inProgress, saved, sam, lecture, quizzes
@@ -38,7 +37,6 @@ function Home() {
     const [filterValues, setFilterValues] = useState({inProgressCount: 0, savedCount: 0, samCount: 0, lectureCount: 0, quizCount: 0, presentationCount: 0, viewerCount: 0});
 
     useEffect(() => {
-        // history.replace({pathname: location.pathname});
         const param = QueryString.parse(location.search);
         if (param.filter) {
             setFilter(param.filter);
@@ -108,7 +106,6 @@ function Home() {
             setCategoryObj(categories);
             const param = QueryString.parse(location.search);
             if(param.selectedId) {
-                console.log(param.selectedId, 'param.selectedId')
                 const item = currentTestSets.testSetList.find((v) => v.id === param.selectedId);
                 if(item) setSelectedTestSet(item);
             }
@@ -210,7 +207,7 @@ function Home() {
         const categoryLabel = categoryInfo.label;
         const newCategoryObj = [...categoryObj];
         if (parentIndex === undefined) {
-            // root category
+            // nologin category
             const i = newCategoryObj.findIndex((v) => v.label === categoryLabel);
             if (i !== -1) newCategoryObj[i].expand = newCategoryObj[i].expand === undefined ? true : !newCategoryObj[i].expand;
         } else {
@@ -245,7 +242,7 @@ function Home() {
         setSelectedCategoryList(newSelected);
         const param = QueryString.parse(location.search);
         param.categories = newSelected.join(',');
-        history.replace({pathname: location.pathname, search: QueryString.stringify(param)});
+        navigate({pathname: location.pathname, search: QueryString.stringify(param)}, {replace: true});
     }
 
     const onChangeFilter = (val) => {
@@ -257,26 +254,18 @@ function Home() {
             setFilter(val.id);
             param.filter = val.id;
         }
-        history.replace({pathname: location.pathname, search: QueryString.stringify(param)});
+        navigate({pathname: location.pathname, search: QueryString.stringify(param)}, {replace: true});
     }
 
     const onOpenTestSetModal = (value) => {
         setSelectedTestSet(value);
-        // if (value) {
-        //     history.push({pathname: location.pathname, hash: 'modal', search: location.search});
-        // } else {
-        //     // history.replace({pathname: location.pathname});
-        //     history.goBack();
-        // }
         const param = QueryString.parse(location.search);
         if (value) {
             param.selectedId = value.id;
         } else {
             delete param.selectedId;
-            // history.replace({pathname: location.pathname});
-            // history.goBack();
         }
-        history.replace({pathname: location.pathname, search: QueryString.stringify(param)});
+        navigate({pathname: location.pathname, search: QueryString.stringify(param)}, {replace: true});
     }
 
     const renderCategoryItem = (subCategory) => {
@@ -300,15 +289,15 @@ function Home() {
             <div key={category.label}>
                 <div>
                     <Button className={classNames('category-item', {active: selected})}>
-                        <IconButton className={'category-expand-btn'} onClick={() => onCategoryExpand(category, parentIndex)}>
+                        <div className={'category-expand-btn'} onClick={() => onCategoryExpand(category, parentIndex)}>
                             <i className={classNames('zmdi fs-23', (category.expand ? 'zmdi-chevron-down' : 'zmdi-chevron-right'))}/>
-                        </IconButton>
+                        </div>
                         <span className={'fs-18 sub-category-item'} onClick={() => parentIndex !== undefined && onSelectCategory(category.id)}>
                             {category.label}
                         </span>
                     </Button>
                 </div>
-                <div className={'pl-3'}>
+                <div className={'ps-3'}>
                     {
                         (category.options && category.expand) && category.options.map((v, i) => (v.options ? renderCategories(v, i, selfIndex) : renderCategoryItem(v)))
                     }
@@ -336,7 +325,7 @@ function Home() {
         return filterList.filter((f) => (!isLogin ? !f.needLogin : true)).map((f) => (
             <span
                 key={f.id}
-                className={classNames('mr-40 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
+                className={classNames('me-40 cursor-pointer mb-10', {'text-primary1 text-underline': f.id === filter})}
                 onClick={() => onChangeFilter(f)}
             >
                 {f.label}({filterValues[f.valKey]})
@@ -434,10 +423,10 @@ function Home() {
     return (
         <div className={'main-home d-flex flex-row'}>
             <div className={'main-home-side'}>
-                <div className={'d-flex flex-row align-items-end mb-30'}>
+                <div className={'d-flex flex-row align-items-center mb-30'}>
                     <span className={'fs-23'}>Categories</span>
                     <Tooltip title={'Clear'}>
-                        <div className={'ml-10 cursor-pointer text-primary1'} onClick={() => setSelectedCategoryList([])}>
+                        <div className={'ms-10 cursor-pointer text-primary1'} onClick={() => setSelectedCategoryList([])}>
                             <DeleteOutlineRoundedIcon fontSize={'small'}/>
                         </div>
                     </Tooltip>
@@ -450,11 +439,11 @@ function Home() {
                 </div>
                 <div className={'mobile-filter-bar'}>
                     <div className={'d-flex flex-row align-items-center cursor-pointer'} onClick={() => setShowMobileCategoryType('category')}>
-                        <span className={'fs-17 fw-semi-bold mr-2'}>Categories{selectedCategoryList.length === 0 ? '' : `(${selectedCategoryList.length})`}</span>
+                        <span className={'fs-17 fw-semi-bold me-2'}>Categories{selectedCategoryList.length === 0 ? '' : `(${selectedCategoryList.length})`}</span>
                         <i className={'ti ti-angle-down'}/>
                     </div>
-                    <div className={'d-flex flex-row align-items-center ml-40 cursor-pointer'} onClick={() => setShowMobileCategoryType('filter')}>
-                        <span className={classNames('fs-17 fw-semi-bold mr-2', {'text-underline': filter !== ''})}>Filter</span>
+                    <div className={'d-flex flex-row align-items-center ms-40 cursor-pointer'} onClick={() => setShowMobileCategoryType('filter')}>
+                        <span className={classNames('fs-17 fw-semi-bold me-2', {'text-underline': filter !== ''})}>Filter</span>
                         <FilterListIcon/>
                     </div>
                     {

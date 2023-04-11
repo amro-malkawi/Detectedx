@@ -1,17 +1,9 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {Button, Dialog, Tooltip} from '@material-ui/core';
-import BookmarkIcon from '@material-ui/icons/Bookmark';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import ReactPlayer from "react-player";
+import React, {useEffect, useState} from 'react';
+import {Button} from '@mui/material';
 import JSONParseDefault from "json-parse-default";
-import {useSelector} from "react-redux";
-import {useHistory} from 'react-router-dom';
 import {NotificationManager} from "react-notifications";
 import {isMobile} from 'react-device-detect';
-import ReactGA from "react-ga4";
 import * as Apis from "Api";
-import * as selectors from "Selectors";
 import classnames from "classnames";
 
 function SeriesInfo({data, onClose, onSelect}) {
@@ -62,7 +54,7 @@ function SeriesInfo({data, onClose, onSelect}) {
         const presenterInfo = JSONParseDefault(data.seriesTestSets[0].test_set_presenter_info, null, {});
         if (!data.isSeriesSameModality || !presenterInfo) return null;
         return (
-            <div className={classnames({'pr-20': !isMobile})}>
+            <div className={classnames({'pe-20': !isMobile})}>
                 <div className={'text-white fs-18 my-20'}>
                     <div className={'d-flex flex-column'}>
                         <div className={'d-flex flex-row'}>
@@ -70,7 +62,7 @@ function SeriesInfo({data, onClose, onSelect}) {
                                 presenterInfo.presenterPhoto && presenterInfo.presenterPhoto.length > 0 &&
                                 <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
                             }
-                            <div className={'mt-2 ml-30 d-flex flex-column'}>
+                            <div className={'mt-2 ms-30 d-flex flex-column'}>
                                 <div className={'fs-14 mb-3'}>{presenterInfo.presenterName}</div>
                                 <img src={Apis.apiUploadAddress + presenterInfo.presenterLogo} alt={''} className={'presenter-logo'}/>
                             </div>
@@ -107,7 +99,7 @@ function SeriesInfo({data, onClose, onSelect}) {
 
     const renderRightContent = () => {
         return (
-            <div className={classnames({'pl-20': (!isMobile && data.isSeriesSameModality)})}>
+            <div className={classnames({'ps-20': (!isMobile && data.isSeriesSameModality)})}>
                 <div className={'text-white'}>
                     <div className={'fs-26 mt-10'}>{data.isSeriesSameModality ? 'Multi-lecture series' : 'Multi-modal series'}</div>
                     <div className={classnames('main-series-list', {'two-column': (!isMobile && !data.isSeriesSameModality)}, {'scroll': !isMobile})}>
@@ -125,11 +117,11 @@ function SeriesInfo({data, onClose, onSelect}) {
                     <div>
                         {
                             !isMobile ?
-                                <Button className={'learning-obj-back-btn'} onClick={() => setIsShowLearningObj(false)}><i className="zmdi zmdi-chevron-left fs-20 mr-10"/>BACK</Button> :
+                                <Button className={'learning-obj-back-btn'} onClick={() => setIsShowLearningObj(false)}><i className="zmdi zmdi-chevron-left fs-20 me-10"/>BACK</Button> :
                                 <i className="zmdi zmdi-chevron-left fs-20 text-primary1 p-2 fs-23" onClick={() => setIsShowLearningObj(false)}/>
                         }
                     </div>
-                    <div className={'flex-fill text-center fs-26 fw-bold pr-40'} style={{flex: 1}}>Learning Objectives</div>
+                    <div className={'flex-fill text-center fs-26 fw-bold pe-40'} style={{flex: 1}}>Learning Objectives</div>
                 </div>
                 <div className={'mt-20 mb-40 fs-19'}>At the end of this module, the user will be able to:</div>
                 <div className={'fs-19'} style={{whiteSpace: 'pre-line'}}>
@@ -160,7 +152,7 @@ function SeriesInfo({data, onClose, onSelect}) {
                             {
                                 data.is3D &&
                                 <div className={'mark-3d'}>
-                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                    <img src={require('Assets/img/main/icon_3d.svg').default} alt={''}/>
                                 </div>
                             }
                         </div>
@@ -193,7 +185,7 @@ function SeriesInfo({data, onClose, onSelect}) {
                             {
                                 data.is3D &&
                                 <div className={'mark-3d'}>
-                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                    <img src={require('Assets/img/main/icon_3d.svg').default} alt={''}/>
                                 </div>
                             }
                         </div>

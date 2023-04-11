@@ -1,20 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {Dialog, Button} from '@material-ui/core';
-import {withStyles} from '@material-ui/core/styles';
+import {Dialog, Button} from '@mui/material';
+import { withStyles } from 'tss-react/mui';
 import LoginForm from "Components/LoginComponent/LoginForm";
 import RegisterForm from "Components/LoginComponent/RegisterForm";
 import PropTypes from "prop-types";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
 
-const MyDialog = withStyles({
+const MyDialog = withStyles(Dialog, (theme) => ({
     paper: {
         color: 'white',
         padding: '30px 10px',
         backgroundColor: 'black',
         border: '1px solid #222'
     },
-})(Dialog);
+}));
 
 const GuestLoginModal = ({open, attemptId, onClose, onComplete}) => {
     const [status, setStatus] = useState('first');  // first, login, register
@@ -34,9 +34,9 @@ const GuestLoginModal = ({open, attemptId, onClose, onComplete}) => {
     const renderContent = () => {
         return (
             <div className={''} style={{width: 450}}>
-                <div className={'fs-19 text-white mb-30 ml-10'}>You have to login site to get score.</div>
+                <div className={'fs-19 text-white mb-30 ms-10'}>You have to login site to get score.</div>
                 <div className={'d-flex flex-row justify-content-center'}>
-                    <Button onClick={() => setStatus('login')} variant="contained" color="primary" className={'mr-20'}>
+                    <Button onClick={() => setStatus('login')} variant="contained" color="primary" className={'me-20'}>
                         Login
                     </Button>
                     <Button onClick={() => setStatus('register')} variant="contained" color="primary" >

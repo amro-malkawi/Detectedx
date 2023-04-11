@@ -1,8 +1,12 @@
 import React, {Component} from "react";
+import cornerstone from 'cornerstone-core';
 import {NotificationManager} from "react-notifications";
-import {Button} from '@material-ui/core';
+import {Button} from '@mui/material';
 import classNames from 'classnames';
 import * as Apis from 'Api';
+import withRouter from "Components/WithRouter";
+import {connect} from "react-redux";
+import {changeHangingLayout, setImageAnswer} from "Store/Actions";
 
 class QuizQuestions extends Component {
     constructor(props) {
@@ -43,7 +47,18 @@ class QuizQuestions extends Component {
 
     onSelectAnswer(qIndex, oId) {
         const {questionList} = this.state;
-        questionList[qIndex].answerOptionId = oId;
+        let answerOptions = questionList[qIndex].answerOptionId;
+        if(!answerOptions) answerOptions = [];
+        if(typeof answerOptions === 'string') {
+            answerOptions = [answerOptions];
+        }
+        const i = answerOptions.indexOf(oId);
+        if(i === -1) {
+            answerOptions.push(oId);
+        } else {
+            answerOptions.splice(i, 1);
+        }
+        questionList[qIndex].answerOptionId = answerOptions;
         this.setState({questionList: [...questionList]});
         const answerObj = {};
         questionList.forEach((v) => {
@@ -58,6 +73,13 @@ class QuizQuestions extends Component {
     onSubmitAnswer() {
         Apis.submitQuizAnswer(this.props.attempts_id, this.props.test_case_id).then((resp) => {
             this.getData();
+            return Apis.testCasesAnswers(this.props.test_case_id, this.props.attempts_id, false);
+        }).then((resp) => {
+            resp.images.forEach((i) => {
+                this.props.setImageAnswer(i.id, 'markList', i.truths.map((m) => ({...m, isTruth: true, lesionList: {}})));
+            });
+            // after add truths, call this func to redraw images
+            this.props.changeHangingLayout(this.props.selectedHangingType);
         }).catch(error => {
             NotificationManager.error(error.response ? error.response.data.error.message : error.message);
         });
@@ -75,15 +97,15 @@ class QuizQuestions extends Component {
                         question.optionList.map((option, optionIndex) => (
                             <div key={option.id}>
                                 <Button
-                                    className={classNames('quiz-option', {'selected': option.id === question.answerOptionId}, {'truth': option.id === question.truthOptionId})}
+                                    className={classNames('quiz-option', {'selected': question.answerOptionId && question.answerOptionId.includes(option.id)}, {'truth': question.truthOptionId && question.truthOptionId.includes(option.id)})}
                                     disabled={this.state.isSubmitted}
                                     onClick={() => this.onSelectAnswer(questionIndex, option.id)}
                                 >
                                     <div dangerouslySetInnerHTML={{__html: option.value}}/>
                                 </Button>
                                 {
-                                    (option.id === question.truthOptionId && question.matchPercent !== undefined) &&
-                                    <div className={'quiz-percent'}>{question.matchPercent}% of users chose this answer</div>
+                                    (question.truthOptionId && question.truthOptionId.includes(option.id) && option.matchPercent !== undefined) &&
+                                    <div className={'quiz-percent'}>{option.matchPercent}% of users chose this answer</div>
                                 }
                             </div>
                         ))
@@ -118,5 +140,13 @@ class QuizQuestions extends Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        selectedHangingType: state.testView.selectedHangingType,
+    };
+};
 
-export default QuizQuestions;
+export default connect(mapStateToProps, {
+    setImageAnswer,
+    changeHangingLayout
+}, null, {forwardRef: true})(QuizQuestions);

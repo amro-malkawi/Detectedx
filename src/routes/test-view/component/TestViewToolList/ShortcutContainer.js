@@ -1,7 +1,7 @@
 import React from 'react';
 import {HotKeys, GlobalHotKeys} from "react-hotkeys";
 import {connect} from "react-redux";
-import {changeCurrentTool, changeHangingLayout} from "Actions/TestViewAction";
+import {changeCurrentTool, changeHangingLayout} from "Store/Actions";
 
 const ShortcutContainer = ({className, complete, children, currentTool, changeHangingLayout, changeCurrentTool}) => {
     const keyMap = {

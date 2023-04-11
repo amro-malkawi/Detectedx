@@ -1,19 +1,19 @@
 import React, {useState, useEffect} from 'react';
-import {Button, FormControlLabel, Checkbox} from "@material-ui/core";
+import {Button, FormControlLabel} from "@mui/material";
 import {Input} from "reactstrap";
 import {NotificationManager} from "react-notifications";
 import {useDispatch} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import classNames from 'classnames';
 import {isMobile} from 'react-device-detect';
 import DeleteProfileModal from "./DeleteProfileModal";
-import {logoutUserFromEmail} from "Actions";
+import {GreenCheckbox} from 'Components/CustomMuiComponent';
+import {logoutUserFromEmail} from "Store/Actions";
 import * as Apis from "Api";
-import {withStyles} from "@material-ui/core/styles";
 
 function SettingComponent() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const history = useHistory();
     const [userInfo, setUserInfo] = useState({});
     const [oldPassword, setOldPassword] = useState('');
     const [errorOldPassword, setErrorOldPassword] = useState(false);
@@ -59,7 +59,7 @@ function SettingComponent() {
         Apis.userDeleteProfile().then((resp) => {
             NotificationManager.success('Your account was deleted permanently');
             dispatch(logoutUserFromEmail());
-            history.push('/');
+            navigate('/');
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         }).finally(() => {
@@ -97,7 +97,7 @@ function SettingComponent() {
                         <Input
                             type={'password'}
                             placeholder={'CURRENT PASSWORD'}
-                            className={!isMobile ? 'mr-20' : ''}
+                            className={!isMobile ? 'me-20' : ''}
                             autoComplete="new-password"
                             value={oldPassword}
                             invalid={errorOldPassword}
@@ -111,7 +111,7 @@ function SettingComponent() {
                         <Input
                             type={'password'}
                             placeholder={'NEW PASSWORD'}
-                            className={!isMobile ? 'mr-20' : ''}
+                            className={!isMobile ? 'me-20' : ''}
                             autoComplete="new-password"
                             value={newPassword}
                             invalid={errorNewPassword}
@@ -123,7 +123,7 @@ function SettingComponent() {
                         <Input
                             type={'password'}
                             placeholder={'CONFIRM PASSWORD'}
-                            className={!isMobile ? 'mr-20' : 'mt-2'}
+                            className={!isMobile ? 'me-20' : 'mt-2'}
                             value={confirmPassword}
                             invalid={errorConfirmPassword}
                             onChange={(e) => {
@@ -137,11 +137,11 @@ function SettingComponent() {
                 <div className={'divide-line mt-20 mb-4'}/>
                 <div className={'d-flex flex-row justify-content-between'}>
                     <div className={'d-flex'}>
-                        <div className={'d-flex flex-column mr-50'}>
+                        <div className={'d-flex flex-column me-50'}>
                             <span className={'fs-16 fw-semi-bold text-primary1'}>CURRENT CLINIC</span>
                             <span className={'fs-26 fw-semi-bold text-white mt-3'}>{userInfo.clinicName || 'NO CLINIC'}</span>
                         </div>
-                        {/*<div className={'d-flex flex-column ml-50'}>*/}
+                        {/*<div className={'d-flex flex-column ms-50'}>*/}
                         {/*    <span className={'fs-16 fw-semi-bold text-primary1'}>PLAN</span>*/}
                         {/*    <span className={'fs-23 fw-semi-bold text-white mt-3'}>Annual Team Plan</span>*/}
                         {/*    <span className={'fs-16 fw-semi-bold text-white mt-3 plan-paid'}>PAID</span>*/}
@@ -157,7 +157,7 @@ function SettingComponent() {
                         <Input
                             type={'text'}
                             placeholder={'ENTERPRISE CODE'}
-                            className={'mr-3'}
+                            className={'me-3'}
                             value={enterpriseCode}
                             onChange={(e) => {
                                 setEnterpriseCode(e.target.value);
@@ -167,7 +167,7 @@ function SettingComponent() {
                     </div>
                 </div>
                 <div className={'divide-line mt-20 mb-4'}/>
-                <div className={'ml-2'}>
+                <div className={'ms-2'}>
                     <FormControlLabel
                         control={
                             <GreenCheckbox
@@ -194,15 +194,3 @@ function SettingComponent() {
 }
 
 export default SettingComponent;
-
-const GreenCheckbox = withStyles({
-    root: {
-        color: '#B2B2B2',
-        margin: 0,
-        padding: 3,
-        '&$checked': {
-            color: '#54a9fb',
-        },
-    },
-    checked: {},
-})(props => <Checkbox color="default" {...props} />);

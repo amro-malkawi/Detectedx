@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button} from '@material-ui/core';
+import {Button} from '@mui/material';
 import PropTypes from "prop-types";
 import classNames from 'classnames';
 import * as Apis from 'Api';
@@ -87,7 +87,7 @@ function TestSetItem({data, onClick, smallSize}) {
                 {
                     data.is3D &&
                     <div className={'mark-3d'}>
-                        <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                        <img src={require('Assets/img/main/icon_3d.svg').default} alt={''}/>
                     </div>
                 }
             </div>

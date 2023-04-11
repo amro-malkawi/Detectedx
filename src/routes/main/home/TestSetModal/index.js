@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {Button, Dialog, Tooltip} from '@material-ui/core';
+import {Button, Dialog, Tooltip} from '@mui/material';
 import {isMobile} from 'react-device-detect';
 import SeriesInfo from "./SeriesInfo";
 import TestSetInfo from "./TestSetInfo";

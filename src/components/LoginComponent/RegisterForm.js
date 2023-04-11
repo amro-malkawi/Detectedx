@@ -2,36 +2,26 @@
  * Sign Up
  */
 import React, {useState, useEffect} from 'react';
-import Button from '@material-ui/core/Button';
+import {Button, FormControlLabel, FormControl, TextField, Divider, CircularProgress} from '@mui/material';
 import {connect, useDispatch, useSelector} from 'react-redux';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import {Link} from 'react-router-dom';
 import {Col, Form, FormGroup} from 'reactstrap';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import QueueAnim from 'rc-queue-anim';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import {withStyles, createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {GreenCheckbox} from 'Components/CustomMuiComponent';
 import {NotificationManager} from 'react-notifications';
-import {FormControl, TextField, Divider, CircularProgress} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import ConsentModal from "Routes/main/attempt/ConsentModal";
 import * as Apis from 'Api';
-import AppConfig from 'Constants/AppConfig';
-import IntlMessages from "Util/IntlMessages";
-import { login } from 'Actions';
-import * as selectors from "Selectors";
+import { login } from 'Store/Actions';
 
-const theme = createMuiTheme({
+const darkTheme = createTheme({
     palette: {
-        type: "dark"
+        mode: "dark"
     }
 });
 
 const RegisterForm = ({ onFinish}) => {
     const dispatch = useDispatch();
-    const isLogin = useSelector((state) => selectors.getIsLogin(state));
+    const isLogin = useSelector((state) => state.authUser.isLogin);
     const [state, setState] = useState({
         formType: 'email',
         email: '',
@@ -45,6 +35,8 @@ const RegisterForm = ({ onFinish}) => {
         firstNameInvalid: false,
         lastName: '',
         lastNameInvalid: false,
+        nameTitle: '',
+        nameTitleInvalid: false,
         position: undefined,
         positionInvalid: false,
         country: undefined,
@@ -99,7 +91,7 @@ const RegisterForm = ({ onFinish}) => {
 
 
     const validate = () => {
-        const {email, password, confirmPassword, checkTerms} = state;
+        const {email, password, confirmPassword, checkTerms, nameTitle} = state;
         let valid = true;
         let inValidObj = {};
         if (state.firstName.trim().length === 0) {
@@ -113,6 +105,10 @@ const RegisterForm = ({ onFinish}) => {
         if (email.length === 0 || !validateEmail(email)) {
             valid = false;
             inValidObj.emailInvalid = true;
+        }
+        if (nameTitle.length === 0) {
+            valid = false;
+            inValidObj.nameTitleInvalid = true;
         }
         if (password.length === 0) {
             valid = false;
@@ -165,6 +161,7 @@ const RegisterForm = ({ onFinish}) => {
                 password: state.password,
                 first_name: state.firstName,
                 last_name: state.lastName,
+                title: state.nameTitle,
                 country: state.country,
                 state: state.state,
                 postcode: state.postcode,
@@ -173,7 +170,7 @@ const RegisterForm = ({ onFinish}) => {
                 allow_contact_me: state.allowContactMe,
             }).then((resp) => {
                 //success register
-                NotificationManager.success(<IntlMessages id={"user.createSuccessful"}/>);
+                NotificationManager.success("Account Created Successfully.");
                 return Apis.login(state.email, state.password);
             }).then((result) => {
                 dispatch(login(result.userId, result.userName, result.userEmail, result.id, null, null, () => {
@@ -187,23 +184,45 @@ const RegisterForm = ({ onFinish}) => {
     }
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={darkTheme}>
         <div className="session-inner-wrapper pt-10" style={{width: 720}}>
             <div className="container">
                 <div className="row row-eq-height">
-                    <div className={"col-sm-12 col-md-12 col-lg-10"} style={{margin: 'auto'}}>
+                    <div className={"col-sm-12 col-md-12 col-lg-11"} style={{margin: 'auto'}}>
                         <div className="session-body text-center">
                             <div className="session-head mb-40">
-                                <h1 className="font-weight-bold">{AppConfig.brandName} Sign up</h1>
+                                <h1 className="font-weight-bold">DetectED-X Sign up</h1>
                             </div>
                             <div className={'signup-form'}>
                                 <FormGroup row className="has-wrapper">
-                                    <Col sm={6}>
+                                    <Col sm={2}>
+                                        <TextField
+                                            id="nameTitle"
+                                            select
+                                            label={"Title *"}
+                                            SelectProps={{native: true}}
+                                            variant="outlined"
+                                            className={'mb-10'}
+                                            margin="dense"
+                                            fullWidth
+                                            onChange={(e) => onSetValue('nameTitle', e.target.value)}
+                                            value={state.nameTitle}
+                                            error={state.nameTitleInvalid}
+                                        >
+                                            <option style={{display: 'none'}}/>
+                                            {
+                                                ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr', 'Prof'].map((v) => (
+                                                    <option value={v} key={v}>{v}</option>
+                                                ))
+                                            }
+                                        </TextField>
+                                    </Col>
+                                    <Col sm={5}>
                                         <TextField
                                             id="first_name"
                                             value={state.firstName}
                                             onChange={(event) => onSetValue('firstName', event.target.value)}
-                                            label={<IntlMessages id={"user.signup.firstName"}/>}
+                                            label={"First Name *"}
                                             className={'mb-10'}
                                             margin="dense"
                                             variant="outlined"
@@ -211,12 +230,12 @@ const RegisterForm = ({ onFinish}) => {
                                             error={state.firstNameInvalid}
                                         />
                                     </Col>
-                                    <Col sm={6}>
+                                    <Col sm={5}>
                                         <TextField
                                             id="last_name"
                                             value={state.lastName}
                                             onChange={(event) => onSetValue('lastName', event.target.value)}
-                                            label={<IntlMessages id={"user.signup.lastName"}/>}
+                                            label={"Last Name *"}
                                             className={'mb-10'}
                                             margin="dense"
                                             variant="outlined"
@@ -225,13 +244,14 @@ const RegisterForm = ({ onFinish}) => {
                                         />
                                     </Col>
                                 </FormGroup>
-                                <FormGroup className="has-wrapper">
+                                <FormGroup row className="has-wrapper">
+                                    <Col sm={12}>
                                     <TextField
                                         id="email"
                                         type="email"
                                         value={state.email}
                                         onChange={(event) => onSetValue('email', event.target.value)}
-                                        label={<IntlMessages id={"user.signup.email"}/>}
+                                        label={"Email *"}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -239,6 +259,7 @@ const RegisterForm = ({ onFinish}) => {
                                         error={state.emailInvalid}
                                     />
                                     <span className="has-icon mt-5"><i className="ti-email"/></span>
+                                    </Col>
                                 </FormGroup>
 
                                 <FormGroup row className="has-wrapper">
@@ -248,7 +269,7 @@ const RegisterForm = ({ onFinish}) => {
                                             type="password"
                                             value={state.password}
                                             onChange={(event) => onSetValue('password', event.target.value)}
-                                            label={<IntlMessages id={"user.signup.password"}/>}
+                                            label={"Password *"}
                                             className={'mb-10'}
                                             margin="dense"
                                             variant="outlined"
@@ -263,7 +284,7 @@ const RegisterForm = ({ onFinish}) => {
                                             type="password"
                                             value={state.confirmPassword}
                                             onChange={(event) => onSetValue('confirmPassword', event.target.value)}
-                                            label={<IntlMessages id={"user.signup.confirmPassword"}/>}
+                                            label={"Confirm Password *"}
                                             className={'mb-10'}
                                             margin="dense"
                                             variant="outlined"
@@ -278,7 +299,7 @@ const RegisterForm = ({ onFinish}) => {
                                     <TextField
                                         id="country"
                                         select
-                                        label={<IntlMessages id={"user.signup.country"}/>}
+                                        label={"Country *"}
                                         SelectProps={{native: true}}
                                         variant="outlined"
                                         className={'mb-10'}
@@ -302,7 +323,7 @@ const RegisterForm = ({ onFinish}) => {
                                             id="state"
                                             value={state.state}
                                             onChange={(event) => onSetValue('state', event.target.value)}
-                                            label={<IntlMessages id={"user.signup.state"}/>}
+                                            label={"State"}
                                             className={'mb-10'}
                                             margin="dense"
                                             variant="outlined"
@@ -316,7 +337,7 @@ const RegisterForm = ({ onFinish}) => {
                                             type="number"
                                             value={state.postcode}
                                             onChange={(event) => onSetValue('postcode', event.target.value)}
-                                            label={<IntlMessages id={"user.signup.postcode"}/>}
+                                            label={"Postcode"}
                                             className={'mb-10'}
                                             margin="dense"
                                             variant="outlined"
@@ -330,7 +351,7 @@ const RegisterForm = ({ onFinish}) => {
                                     <TextField
                                         id="position"
                                         select
-                                        label={<IntlMessages id={"user.signup.jobTitle"}/>}
+                                        label={"Job Title *"}
                                         SelectProps={{native: true}}
                                         variant="outlined"
                                         className={'mb-10'}
@@ -353,7 +374,7 @@ const RegisterForm = ({ onFinish}) => {
                                         id="employer"
                                         value={state.employer}
                                         onChange={(event) => onSetValue('employer', event.target.value)}
-                                        label={<IntlMessages id={"user.signup.institution"}/>}
+                                        label={"Institution *"}
                                         className={'mb-10'}
                                         margin="dense"
                                         variant="outlined"
@@ -388,9 +409,9 @@ const RegisterForm = ({ onFinish}) => {
                                         }
                                         label={
                                             <span>
-                                <IntlMessages id={"user.signup.agreeTerm"}/>
-                                <a href='https://detectedx.com/website-terms/' target="_blank"><IntlMessages id={"user.signup.term"}/></a>&nbsp;and&nbsp;
-                                                <a href="https://detectedx.com/privacy-policy/" target="_blank"><IntlMessages id={"user.signup.consentStatements"}/></a>
+                                I have read and agree to the
+                                <a href='https://detectedx.com/website-terms/' target="_blank">terms and conditions</a>&nbsp;and&nbsp;
+                                                <a href="https://detectedx.com/privacy-policy/" target="_blank">consent statements</a>
                                                 &nbsp;*
                             </span>
                                         }
@@ -405,7 +426,7 @@ const RegisterForm = ({ onFinish}) => {
                                         size="large"
                                     >
                                         {
-                                            state.loading ? <CircularProgress size={24}/> : <IntlMessages id={"user.signup"}/>
+                                            state.loading ? <CircularProgress size={24}/> : "Register"
                                         }
                                     </Button>
                                 </FormGroup>
@@ -424,15 +445,6 @@ const RegisterForm = ({ onFinish}) => {
 }
 
 
-const GreenCheckbox = withStyles({
-    root: {
-        color: '#66bb6a',
-        '&$checked': {
-            color: '#43a047',
-        },
-    },
-    checked: {},
-})(props => <Checkbox color="default" {...props} />);
 
 RegisterForm.propTypes = {
  onFinish: PropTypes.func

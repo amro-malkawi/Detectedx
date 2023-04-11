@@ -6,14 +6,13 @@ import {
     DialogContentText,
     DialogActions,
     Button
-} from "@material-ui/core";
-import {withStyles} from '@material-ui/core/styles';
-import IntlMessages from "Util/IntlMessages";
+} from "@mui/material";
+import {withStyles} from 'tss-react/mui';
 
 export default function ({open, score, onReattempt, onClose}) {
     return (
         <CustomDialog
-            open={open}
+            open={!!open}
             onClose={onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -24,10 +23,10 @@ export default function ({open, score, onReattempt, onClose}) {
                 </CustomDialogContentText>
             </DialogContent>
             <DialogActions className={'justify-content-center'}>
-                <Button data-cy="review-answers-button" variant="contained" onClick={onReattempt} color="primary" className={'mr-10 px-4'}>
+                <Button data-cy="review-answers-button" variant="contained" onClick={onReattempt} color="primary" className={'me-10 px-4'}>
                     Redo
                 </Button>
-                <Button data-cy="review-answers-button" variant="contained" onClick={onClose} color="secondary" className={'mr-10'}>
+                <Button data-cy="review-answers-button" variant="contained" onClick={onClose} color="secondary" className={'me-10'}>
                     Cancel
                 </Button>
             </DialogActions>
@@ -35,17 +34,21 @@ export default function ({open, score, onReattempt, onClose}) {
     )
 }
 
-const CustomDialog = withStyles((theme) => ({
+const CustomDialog = withStyles(
+    Dialog,
+    (theme) => ({
     paper: {
         marginBottom: 100,
         boxShadow: "2px 2px 4px #777",
         backgroundColor: '#424242'
     }
-}))(Dialog);
+}));
 
-const CustomDialogContentText = withStyles((theme) => ({
+const CustomDialogContentText = withStyles(
+    DialogContentText,
+    (theme) => ({
     root: {
         marginTop: 20,
         color: '#ffffff99'
     }
-}))(DialogContentText);
+}));

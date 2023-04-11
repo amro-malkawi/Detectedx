@@ -1,0 +1,20 @@
+
+// Custom Spacing
+$spacer:                                    1rem !default;
+$spacers: (
+        0:  0,
+        1: $spacer * .25,
+        2: $spacer * .5,
+        3: $spacer,
+        4: $spacer * 1.5,
+        5:  ($spacer * 0.3125),
+        10: ($spacer * .625),
+        15: ($spacer * 0.9375),
+        20: ($spacer * 1.25),
+        25: ($spacer * 1.563),
+        30: ($spacer * 1.875),
+        40: ($spacer * 2.5),
+        50: ($spacer * 3.125),
+        60: ($spacer * 3.75),
+        70: ($spacer * 4.375)
+) !default;

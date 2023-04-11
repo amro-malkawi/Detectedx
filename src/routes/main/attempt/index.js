@@ -10,49 +10,46 @@ import {
     FormControlLabel,
     Button,
     CircularProgress,
-    withStyles,
     Dialog,
     DialogTitle,
     DialogContent,
     DialogContentText,
     DialogActions,
     TextField
-} from '@material-ui/core';
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-import SchoolIcon from '@material-ui/icons/School';
-import MailIcon from '@material-ui/icons/Mail';
+} from '@mui/material';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { withStyles } from 'tss-react/mui';
+import SchoolIcon from '@mui/icons-material/School';
+import MailIcon from '@mui/icons-material/Mail';
 import {NotificationManager} from 'react-notifications';
 import QueryString from 'query-string';
-import {Scrollbars} from 'react-custom-scrollbars';
+import {Scrollbars} from 'react-custom-scrollbars-2';
 import PostQuestionForm from "./PostQuestionForm";
 import BoxplotChart from "Components/BoxplotChart";
-import IntlMessages from "Util/IntlMessages";
 import JSONParseDefault from 'json-parse-default';
 import validator from 'validator';
 import ExtraInfo from "./ExtraInfo";
 import ReattemptQuizModal from "./ReattemptQuizModal";
 import VideoLectureScore from './component/VideoLectureScore';
-import {setDarkMode} from 'Actions';
-import {withRouter} from "react-router-dom";
-import * as selectors from "Selectors";
+import withRouter from 'Components/WithRouter';
 import {connect} from "react-redux";
-import {attemptsStart} from "Api";
+import _ from "lodash";
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
     palette: {
-        type: 'dark',
+        mode: 'dark',
     },
 });
 
 const stepName = {
-    mainQuestions: <IntlMessages id="test.questionnaires"/>,
-    additionalQuestions: <IntlMessages id="test.additionalQuestions"/>,
-    test: <IntlMessages id="test.test"/>,
-    score: <IntlMessages id="test.results"/>,
-    answer: <IntlMessages id={"test.viewAnswer"}/>,
-    postTest: <IntlMessages id="test.postTest"/>,
-    postQuestions: <IntlMessages id="test.evaluationForm"/>,
-    postScore: <IntlMessages id="test.results"/>
+    mainQuestions: "Questionnaires",
+    additionalQuestions: 'Additional Questions',
+    test: 'Test',
+    score: 'Results',
+    answer: 'View Answer',
+    postTest: 'PostTest',
+    postQuestions: 'Evaluation Form',
+    postScore: 'Results',
 };
 
 class Attempt extends Component {
@@ -60,7 +57,7 @@ class Attempt extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            attempts_id: this.props.match.params.attempt_id,
+            attempts_id: this.props.params.attempt_id,
             attemptInfo: {},
             mainQuestions: [],
             post_stage: 0,
@@ -90,7 +87,6 @@ class Attempt extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.state.stepIndex !== nextState.stepIndex) {
-            console.log(nextState.steps[nextState.stepIndex])
             Apis.attemptsSetProgress(nextState.attempts_id, nextState.steps[nextState.stepIndex]);
         }
         return true;
@@ -124,8 +120,8 @@ class Attempt extends Component {
             steps = steps.filter((v) => (hiddenTabs.indexOf(v) === -1));
             let stepIndex;
             if (isFirstMount) {
-                if (that.props.match.params.step !== undefined && steps.indexOf(that.props.match.params.step) > -1) {
-                    stepIndex = steps.indexOf(that.props.match.params.step);
+                if (that.props.params.step !== undefined && steps.indexOf(that.props.params.step) > -1) {
+                    stepIndex = steps.indexOf(that.props.params.step);
                 } else if (detail.complete) {
                     stepIndex = steps.indexOf('score')
                 } else {
@@ -139,7 +135,7 @@ class Attempt extends Component {
             let reattemptQuizPercent = null;
             if (isFirstMount && detail.complete && steps[stepIndex] === 'score' && ['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(detail.test_sets.modalities.modality_type) !== -1) {
                 const percent = detail.scores[0].score === undefined ? 0 : detail.scores[0].score;
-                const param = QueryString.parse(that.props.location.search)
+                const param = QueryString.parse(that.props.location.search);
                 if (param && param.from === 'test' && percent < 75) {
                     reattemptQuizPercent = percent;
                 }
@@ -159,14 +155,14 @@ class Attempt extends Component {
                 reattemptQuizPercent
             });
         }).catch((e) => {
-            console.error(e.message);
+            console.error(e);
         })
     }
 
     onRestartTest() {
         Apis.attemptsStart(this.state.attemptInfo.test_set_id, undefined).then(resp => {
             let path = (['video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 ? '/test-view/' : '/video-view/') + resp.test_set_id + '/' + resp.id + '/' + resp.current_test_case_id;
-            this.props.history.replace(path);
+            this.props.navigate(path, {replace: true});
         });
     }
 
@@ -177,14 +173,14 @@ class Attempt extends Component {
         } else {
             nextPath += this.state.attemptInfo.test_sets.test_set_cases[0].test_case_id;
         }
-        this.props.history.push(nextPath);
+        this.props.navigate(nextPath);
     }
 
     onPostTest() {
         if (this.state.attemptInfo.complete) {
             let nextPath = '/test-view/' + this.state.attemptInfo.test_set_id + '/' + this.state.attempts_id + '/';
             nextPath += this.state.attemptInfo.test_sets.test_set_post_cases[0].test_case_id;
-            this.props.history.push(nextPath + '/post');
+            this.props.navigate(nextPath + '/post');
         }
     }
 
@@ -314,7 +310,7 @@ class Attempt extends Component {
                             updateValue.isChangeAdditionalQuestions = false;
                             this.setState({isChangeAdditionalQuestions: false});
                         } else if (type === 'post') {
-                            updateValue.post_stage === 2;
+                            updateValue.post_stage = 2;
                             updateValue.isChangePostQuestions = false;
                             this.setState({postQuestions: false});
                         }
@@ -572,7 +568,7 @@ class Attempt extends Component {
                             name="position"
                             value={item.answer}
                             row
-                            className={'ml-30'}
+                            className={'ms-30'}
                         >
                             {
                                 options.map((v, i) => {
@@ -615,7 +611,7 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
-                    <FormGroup row className={'ml-30'}>
+                    <FormGroup row className={'ms-30'}>
                         {
                             options.map((v, i) => {
                                 return (
@@ -656,7 +652,7 @@ class Attempt extends Component {
                 <FormGroup className={itemClass} key={index}>
                     <Label style={{marginTop: 6}}>{item.questionnaire.name}&nbsp;<span
                         className="text-danger">{item.questionnaire.required ? '*' : ''}</span></Label>
-                    <div className={'ml-30 mb-2'} style={{maxWidth: 250}}>
+                    <div className={'ms-30 mb-2'} style={{maxWidth: 250}}>
                         <Input
                             disabled={commponentDisable}
                             type={item.questionnaire.questionnaire_comment ? item.questionnaire.questionnaire_comment : 'text'}
@@ -677,7 +673,7 @@ class Attempt extends Component {
                     {
                         item.questionnaire.questionnaire_options.map((v, i) => {
                             return (
-                                <FormGroup className={'ml-10'} key={i}>
+                                <FormGroup className={'ms-10'} key={i}>
                                     <Label style={{fontSize: 14}}>{v.content.option}</Label>
                                     <RadioGroup
                                         disabled
@@ -758,6 +754,8 @@ class Attempt extends Component {
             return this.renderQuizScore();
         } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) !== -1) {
             return this.renderVideoLectureScore();
+        } else if(this.state.attemptInfo.test_sets.modalities.name === 'Chest Multi Disease') {
+            return this.renderChestMultiDiseaseScore();
         } else {
             return this.renderNormalScore();
         }
@@ -779,17 +777,17 @@ class Attempt extends Component {
         }
         return (
             <div className={'score-extra'}>
-                <p className={'extra-title'}><IntlMessages id="test.attempt.volparaCertTitle"/></p>
+                <p className={'extra-title'}>Certificate of Completion</p>
                 {
                     disableDown ?
                         <p className={'extra-desc'}>
                             {
                                 ['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(attemptInfo.test_sets.modalities.modality_type) !== -1 ?
                                     'The score must be greater than 75% to download the certificate.' :
-                                    <IntlMessages id="test.attempt.volparaCertDisabled"/>
+                                    "You must review your answers before receiving your certificate of completion"
                             }
                         </p> :
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaCertDesc"/></p>
+                        <p className={'extra-desc'}>Click below to download a certificate of completion</p>
                 }
                 <div className={'extra-button-container justify-content-start'}>
                     <Button
@@ -799,29 +797,28 @@ class Attempt extends Component {
                         onClick={() => this.onGetCertPdf('normal')}
                         disabled={disableDown}
                     >
-                        <SchoolIcon className={'mr-1'}/>
-                        <IntlMessages id="test.attempt.volparaCertTitle"/>
+                        <SchoolIcon className={'me-1'}/>
+                        Certificate of Completion
                     </Button>
                     <Button
                         variant="contained"
                         size="small"
-                        className={disableDown ? "text-white grey-btn ml-10" : "text-white green-btn ml-10"}
+                        className={disableDown ? "text-white grey-btn ms-10" : "text-white green-btn ms-10"}
                         onClick={() => this.setState({sendEmailModalType: 'certificate', sendPdfEmail: this.props.userEmail})}
                         disabled={disableDown}
                     >
-                        <MailIcon className={'mr-1'}/>
-                        <IntlMessages id="test.certificateSendEmail"/>
+                        <MailIcon className={'me-1'}/>
+                        Send via Email
                     </Button>
                 </div>
             </div>
         )
     }
 
-    renderNormalScore() {
-        let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity,
-            roc;
+    parseNormalScores(scores) {
+        let truePositives = 0, falsePositives = 0, trueNegatives = 0, falseNegatives = 0, specitifity = 0, sensitivity, roc;
         const scoresForShow = [];
-        this.state.attemptInfo.scores.forEach((v) => {
+        scores.forEach((v) => {
             if (v.metrics.name.indexOf('True Positive') > -1) {
                 truePositives = Number(v.score);
                 return;
@@ -849,7 +846,11 @@ class Attempt extends Component {
                 roc = Number(v.score);
             }
         });
+        return {truePositives, falsePositives, trueNegatives, falseNegatives, specitifity , sensitivity, roc, scoresForShow}
+    }
 
+    renderNormalScore() {
+        const {truePositives, falsePositives, trueNegatives, falseNegatives, specitifity , sensitivity, roc, scoresForShow} = this.parseNormalScores(this.state.attemptInfo.scores)
         return (
             <div className={'row'}>
                 <div className={'col-md-6 score-data-container'}>
@@ -912,6 +913,101 @@ class Attempt extends Component {
         )
     }
 
+    renderChestMultiDiseaseScore() {
+        const scores = _.cloneDeep(this.state.attemptInfo.scores);
+        scores.sort((a, b) => (a.metric_id > b.metric_id) ? 1 : ((b.metric_id > a.metric_id) ? -1 : 0))
+            .sort((a, b) => (a.created_at > b.created_at) ? 1 : ((b.created_at > a.created_at) ? -1 : 0));
+        // check dual scores
+        if(scores.length % 2 !== 0 || scores[0].metric_id !== scores[scores.length / 2].metric_id) return this.renderNormalScore();
+
+
+        const {truePositives, falsePositives, trueNegatives, falseNegatives, specitifity , sensitivity, roc, scoresForShow} = this.parseNormalScores(scores.splice(0, scores.length / 2));
+        const secondScores = this.parseNormalScores(scores);
+
+        return (
+            <div className={'row'}>
+                <div className={'col-md-6 score-data-container'}>
+                    <div className={'normal-score-data'}>
+                        <div className={'score-circle-container'}>
+                            <div className={'score-circle'} style={{width: 150, height: 150}}>
+                                <div className={'score-circle-title'}>POSITIVES</div>
+                                <div><span className={'text-green'}>True</span><span>{truePositives}</span></div>
+                                <div><span className={'text-red'}>False</span><span>{falsePositives}</span></div>
+                            </div>
+                            <div className={'score-circle'} style={{width: 150, height: 150}}>
+                                <div className={'score-circle-title'}>NEGATIVES</div>
+                                <div><span className={'text-green'}>True</span><span>{trueNegatives}</span></div>
+                                <div><span className={'text-red'}>False</span><span>{falseNegatives}</span></div>
+                            </div>
+                        </div>
+                        <div className={'score-table'}>
+                            {
+                                scoresForShow.map((v, i) => (
+                                    <div className={'score-row'} key={i}>
+                                        <span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                    <div className={'normal-score-data mt-30'}>
+                        <div className={'score-circle-container'}>
+                            <div className={'score-circle'} style={{width: 150, height: 150}}>
+                                <div className={'score-circle-title'}>POSITIVES</div>
+                                <div><span className={'text-green'}>True</span><span>{secondScores.truePositives}</span></div>
+                                <div><span className={'text-red'}>False</span><span>{secondScores.falsePositives}</span></div>
+                            </div>
+                            <div className={'score-circle'} style={{width: 150, height: 150}}>
+                                <div className={'score-circle-title'}>NEGATIVES</div>
+                                <div><span className={'text-green'}>True</span><span>{secondScores.trueNegatives}</span></div>
+                                <div><span className={'text-red'}>False</span><span>{secondScores.falseNegatives}</span></div>
+                            </div>
+                        </div>
+                        <div className={'score-table'}>
+                            {
+                                secondScores.scoresForShow.map((v, i) => (
+                                    <div className={'score-row'} key={i}>
+                                        <span>{v.metrics.name}</span><span>{v.score}</span></div>
+                                ))
+                            }
+                            {
+                                this.renderScoreDownload()
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div
+                    className={'col-md-6 score-chart-container'}
+                    style={this.state.attemptInfo.attempt_sub_type === 'screening' ? {marginTop: 26, marginBottom: 40} : {}}
+                >
+                    <BoxplotChart
+                        title={'Sensitivity compared to'}
+                        score_type={'Sensitivity'}
+                        showUserSelect={true}
+                        attempt_id={this.state.attempts_id}
+                        value={sensitivity}
+                    />
+                    <BoxplotChart
+                        title={'Specificity compared to'}
+                        score_type={'Specificity'}
+                        showUserSelect={true}
+                        attempt_id={this.state.attempts_id}
+                        value={specitifity}
+                    />
+                    {
+                        this.state.attemptInfo.attempt_sub_type !== 'screening' &&
+                        <BoxplotChart
+                            title={'ROC compared to'}
+                            score_type={'ROC'}
+                            showUserSelect={true}
+                            attempt_id={this.state.attempts_id}
+                            value={roc}
+                        />
+                    }
+                </div>
+            </div>
+        )
+    }
+
     renderVolparaScorePostBlock() {
         if (!this.state.attemptInfo.test_sets.has_post) return null;
         if (this.state.post_stage === 0) {
@@ -920,11 +1016,11 @@ class Attempt extends Component {
                 // faild post test
                 return (
                     <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostFailedTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostFailedDesc"/></p>
+                        <p className={'extra-title'}>AMA PRA Category 1 Credit(s)™ To many failed attempts</p>
+                        <p className={'extra-desc'}>You did not score over 75% in 3 tries. To reattempt the post test you will have to restart the activity</p>
                         <div className={'extra-button-container'}>
                             <DisableButton variant="contained" size="small" className="text-white grey-btn" disabled>
-                                <IntlMessages id="test.attempt.volparaPostFailedButton"/>
+                                Unavailable
                             </DisableButton>
                         </div>
                     </div>
@@ -932,12 +1028,13 @@ class Attempt extends Component {
             } else {
                 return (
                     <div className={'score-extra'}>
-                        <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostBeforeTitle"/></p>
-                        <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostBeforeDesc" values={{postTestCount: this.state.attemptInfo.test_sets.test_set_post_cases.length}}/></p>
+                        <p className={'extra-title'}>AMA PRA Category 1 Credit(s)™</p>
+                        <p className={'extra-desc'}>
+                            Complete {this.state.attemptInfo.test_sets.test_set_post_cases.length} more cases to receive AMA PRA Category 1 Credits and certificate. Click to Start
+                        </p>
                         <div className={'extra-button-container'}>
-                            <Button variant="contained" color="primary" size="small" className="text-white"
-                                    onClick={() => this.onPostTest()}>
-                                <IntlMessages id="test.attempt.volparaPostBeforeButton"/>
+                            <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.onPostTest()}>
+                                Start
                             </Button>
                         </div>
                     </div>
@@ -947,13 +1044,13 @@ class Attempt extends Component {
             // go to post answer
             return (
                 <div className={'score-extra'}>
-                    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostProgressTitle"/></p>
-                    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaPostProgressDesc"/></p>
+                    <p className={'extra-title'}>AMA PRA Category 1 Credit(s)™ In Progress</p>
+                    <p className={'extra-desc'}>Click below to continue with the post test</p>
                     <div className={'extra-button-container'}>
                         <Button variant="contained" color="primary" size="small" className="text-white"
                                 onClick={() => this.setState({stepIndex: this.state.steps.findIndex((v) => v === 'postQuestions')})}
                         >
-                            <IntlMessages id="test.attempt.volparaPostProgressButton"/>
+                            Continue
                         </Button>
                     </div>
                 </div>
@@ -963,20 +1060,20 @@ class Attempt extends Component {
             const postScore = this.state.attemptInfo.scores_post === undefined || this.state.attemptInfo.scores_post.length === 0 ? 0 : this.state.attemptInfo.scores_post[0].score;
             return (
                 <div className={'score-extra'}>
-                    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaPostCompleteTitle"/></p>
-                    <p className={'extra-desc'}><IntlMessages id={"test.attempt.volparaPostCompleteDesc"} values={{
-                        score: <span className={'text-primary'}>{postScore}%</span>
+                    <p className={'extra-title'}>AMA PRA Category 1 Credit(s)™ Complete</p>
+                    <p className={'extra-desc'}>
+                        You Scored <span className={'text-primary'}>{postScore}%</span> Click below to download your certificate
                     }}/></p>
                     <div className={'extra-button-container'}>
                         <Button variant="contained" size="small" className="text-white green-btn"
                                 onClick={() => this.onGetCertPdf('post_physicians')}>
-                            <SchoolIcon className={'mr-10'}/>
-                            <IntlMessages id="test.attempt.volparaPostCompleteButton1"/>
+                            <SchoolIcon className={'me-10'}/>
+                            Physicians
                         </Button>
                         <Button variant="contained" size="small" className="text-white green-btn"
                                 onClick={() => this.onGetCertPdf('post_other')}>
-                            <SchoolIcon className={'mr-10'}/>
-                            <IntlMessages id="test.attempt.volparaPostCompleteButton2"/>
+                            <SchoolIcon className={'me-10'}/>
+                            Non Physicians
                         </Button>
                     </div>
                 </div>
@@ -992,13 +1089,15 @@ class Attempt extends Component {
                 <div className={'col-md-6 score-data-container'}>
                     <div className={'volpara-score-data'}>
                         <div className={'score-title'}>
-                            <p><IntlMessages id="test.attempt.volparaScoreTitle1"/></p>
-                            <p><IntlMessages id="test.attempt.volparaScoreTitle2"/></p>
+                            <p>Agreement with Volpara</p>
+                            <p>Breast Density Score</p>
                         </div>
                         <p className={'score-value'}>
                             {this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                             <span>%</span></p>
-                        <p className={'score-desc'}><IntlMessages id="test.attempt.volparaScoreDesc"/></p>
+                        <p className={'score-desc'}>
+                            We find that after 6 months of reading alongside Volpara products, your volumetric reading scores will increase
+                        </p>
                         {
                             this.renderScoreDownload()
                         }
@@ -1006,14 +1105,14 @@ class Attempt extends Component {
                 </div>
                 <div className={'col-md-6 score-chart-container'}>
                     <BoxplotChart
-                        title={<IntlMessages id="test.attempt.volparaScoreForAll"/>}
+                        title="Compared to all others"
                         score_type={'volpara_all'}
                         showUserSelect={false}
                         attempt_id={this.state.attempts_id}
                         value={this.state.attemptInfo.scores[0].score === undefined ? 0 : this.state.attemptInfo.scores[0].score}
                     />
                     <BoxplotChart
-                        title={<IntlMessages id="test.attempt.volparaScoreForRegion"/>}
+                        title="Compared to others in your region"
                         score_type={'volpara_region'}
                         showUserSelect={false}
                         attempt_id={this.state.attempts_id}
@@ -1039,8 +1138,8 @@ class Attempt extends Component {
                 <div className={'col-md-6 score-data-container'}>
                     <div className={'image-score-data'}>
                         <div className={'quality-score-title'}>
-                            <span><IntlMessages id="test.attempt.imageQualityScoreCategory"/></span>
-                            <span><IntlMessages id="test.attempt.imageQualityScoreAgreeScore"/></span>
+                            <span>Category</span>
+                            <span>Agreement Score</span>
                         </div>
                         {
                             this.state.attemptInfo.scores.map((v, i) => (
@@ -1057,19 +1156,20 @@ class Attempt extends Component {
                     <div className={' score-data-container'}>
                         <div className={'volpara-score-data'}>
                             <div className={'score-title'}>
-                                <p><IntlMessages id="test.attempt.imageQualityScoreTitle"/></p>
+                                <p>Total Agreement</p>
                             </div>
                             <p className={'score-value'}>
                                 {scoreAverage}
                                 <span>%</span>
                             </p>
-                            <p className={'score-desc'}><IntlMessages id="test.attempt.imageQualityScoreTitleDesc"/>
+                            <p className={'score-desc'}>
+                                This is calculated using percentage agreement
                             </p>
                         </div>
                     </div>
                     <div className={'score-chart-container'}>
                         <BoxplotChart
-                            title={<IntlMessages id="test.attempt.imageQualityScoreTitle"/>}
+                            title="Total Agreement"
                             score_type={'imaged_average_percentile'}
                             showUserSelect={false}
                             attempt_id={this.state.attempts_id}
@@ -1110,8 +1210,7 @@ class Attempt extends Component {
                 </div>
                 <div className={'col-md-6'}>
                     <Scrollbars
-                        style={{height: 480}}
-                        style={{marginBottom: 1}}
+                        style={{height: 480, marginBottom: 1}}
                     >
                         <div className={'bg-gray p-4'} dangerouslySetInnerHTML={{__html: this.state.attemptInfo.test_sets.test_set_discussion}}/>
                     </Scrollbars>
@@ -1162,7 +1261,7 @@ class Attempt extends Component {
     renderScoreDownload() {
         return (
             <div className={'d-flex flex-row justify-content-center mt-10'}>
-                <Button variant="contained" color="primary" size="small" className="text-white mr-20" onClick={() => this.onScoreDownload()}>
+                <Button variant="contained" color="primary" size="small" className="text-white me-20" onClick={() => this.onScoreDownload()}>
                     Download Score
                 </Button>
                 <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => this.setState({sendEmailModalType: 'score', sendPdfEmail: this.props.userEmail})}>
@@ -1181,11 +1280,11 @@ class Attempt extends Component {
                         <div className={'text-center mt-70'}>
                             {
                                 this.state.stepIndex > 0 ?
-                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                            onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
+                                    <Button variant="contained" color="primary" className="me-10 mb-10 text-white"
+                                            onClick={() => this.onBack()}>Back</Button> : null
                             }
-                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                    onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
+                            <Button variant="contained" color="primary" className="me-10 mb-10 text-white"
+                                    onClick={() => this.onQuestionsNext()}>Next</Button>
                         </div>
                     </div>
                 );
@@ -1196,11 +1295,11 @@ class Attempt extends Component {
                         <div className={'text-center mt-70'}>
                             {
                                 this.state.stepIndex > 0 ?
-                                    <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                            onClick={() => this.onBack()}><IntlMessages id="test.back"/></Button> : null
+                                    <Button variant="contained" color="primary" className="me-10 mb-10 text-white"
+                                            onClick={() => this.onBack()}>Back</Button> : null
                             }
-                            <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                    onClick={() => this.onQuestionsNext()}><IntlMessages id="test.next"/></Button>
+                            <Button variant="contained" color="primary" className="me-10 mb-10 text-white"
+                                    onClick={() => this.onQuestionsNext()}>Next</Button>
                         </div>
                     </div>
                 );
@@ -1216,12 +1315,14 @@ class Attempt extends Component {
                             {
                                 (['quiz', 'video_lecture', 'presentations', 'interactive_video'].indexOf(this.state.attemptInfo.test_sets.modalities.modality_type) === -1 && this.state.steps.indexOf('answer') !== -1) &&
                                 <div className={'score-extra'}>
-                                    <p className={'extra-title'}><IntlMessages id="test.attempt.volparaAnswerTitle"/></p>
-                                    <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaAnswerDesc"/></p>
+                                    <p className={'extra-title'}>Answers</p>
+                                    <p className={'extra-desc'}>
+                                        Review your answers alongside our notes of why cases were scored in that way.
+                                    </p>
                                     <div className={'extra-button-container'}>
                                         <Button variant="contained" color="primary" size="small" className="text-white"
                                                 onClick={() => this.onTest()}>
-                                            <IntlMessages id="test.attempt.volparaAnswerTitle"/>
+                                            Answers
                                         </Button>
                                     </div>
                                 </div>
@@ -1238,7 +1339,7 @@ class Attempt extends Component {
             case 'answer':
                 return (
                     <div className="p-20 mt-50 text-center">
-                        <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.answerViewText"}/>
+                        <div className="mb-20 fs-17">To see your answers and compare with truth click button below
                         </div>
                         <Button
                             variant="contained"
@@ -1246,7 +1347,7 @@ class Attempt extends Component {
                             className="text-white"
                             onClick={() => this.onTest()}
                         >
-                            <IntlMessages id={"test.viewAnswer"}/>
+                            View Answer
                         </Button>
                     </div>
                 );
@@ -1254,8 +1355,10 @@ class Attempt extends Component {
                 if (this.state.attemptInfo.complete) {
                     return (
                         <div className={"p-20 mt-50 text-center"}>
-                            <p className="mb-5 fs-17"><IntlMessages id={"test.attempt.postTestText"}/></p>
-                            <div className="mb-20 fs-17"><IntlMessages id={"test.attempt.testText3"}/></div>
+                            <p className="mb-5 fs-17">
+                                Statements of credit will be awarded based on participation in the posttest and submission of the activity evaluation form. A passing score of 75% on the posttest is required to receive a statement of credit. Before starting please read the instructions by clicking on “Instructions button” in the top right hand corner of this page.
+                            </p>
+                            <div className="mb-20 fs-17">To proceed to the test click button below</div>
                             <DisableButton
                                 variant="contained"
                                 color="primary"
@@ -1264,9 +1367,7 @@ class Attempt extends Component {
                                 disabled={(this.state.attemptInfo.post_test_remain_count < 0) || (this.state.attemptInfo.post_test_remain_count === 0 && this.state.attemptInfo.post_test_complete)}
                             >
                                 {
-                                    this.state.post_stage === 0 ?
-                                        <IntlMessages id={"test.proceedPostTest"}/> :
-                                        <IntlMessages id={"test.viewPostTest"}/>
+                                    this.state.post_stage === 0 ? "Proceed to post test" : "View to post test"
                                 }
                             </DisableButton>
                         </div>
@@ -1279,11 +1380,9 @@ class Attempt extends Component {
                     const postScore = this.state.attemptInfo.scores_post === undefined || this.state.attemptInfo.scores_post.length === 0 ? 0 : this.state.attemptInfo.scores_post[0].score;
                     return (
                         <div>
-                            <div className={'mt-30 ml-20 mr-20'}>
-                                <IntlMessages id={"test.attempt.postScoreDesc1"} values={{
-                                    score: <span className={'text-primary'}>{postScore}%</span>
-                                }}/><br/>
-                                <IntlMessages id={"test.attempt.postScoreDesc2"}/>
+                            <div className={'mt-30 ms-20 me-20'}>
+                                You Passed! Your score is <span className={'text-primary'}>{postScore}%</span><br/>
+                                To receive your AMA PRA Category 1 Credit(s)™ we need you to fill out your details below. This is to facilitate accurate credit recording.
                             </div>
                             <hr className={'mb-0'}/>
                             <PostQuestionForm
@@ -1295,13 +1394,12 @@ class Attempt extends Component {
                             <div className={'text-center mt-70'}>
                                 {
                                     this.state.stepIndex > 0 ?
-                                        <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                                onClick={() => this.onBack()}><IntlMessages
-                                            id={"test.back"}/></Button> : null
+                                        <Button variant="contained" color="primary" className="me-10 mb-10 text-white" onClick={() => this.onBack()}>
+                                            Back
+                                        </Button> : null
                                 }
-                                <Button variant="contained" color="primary" className="mr-10 mb-10 text-white"
-                                        onClick={() => this.onQuestionsNext()}>
-                                    <IntlMessages id={"test.next"}/>
+                                <Button variant="contained" color="primary" className="me-10 mb-10 text-white" onClick={() => this.onQuestionsNext()}>
+                                    Next
                                 </Button>
                             </div>
                         </div>
@@ -1316,26 +1414,26 @@ class Attempt extends Component {
                         <div
                             className="p-20 mt-50 text-center"
                         >
-                            <p className="mb-50 fs-17"><IntlMessages id={"test.yourScore"}/> {postScore}%</p>
+                            <p className="mb-50 fs-17">Your score is {postScore}%</p>
                             {
                                 postScore >= 75 ?
                                     <div>
                                         <Button
                                             variant="contained"
                                             color="primary"
-                                            className={'mr-30'}
+                                            className={'me-30'}
                                             disabled={this.state.isDownCert}
                                             onClick={() => this.onGetCertPdf('post_physicians')}>
-                                            <SchoolIcon className={'mr-10'}/><IntlMessages
-                                            id={"test.certificatePhysicians"}/>
+                                            <SchoolIcon className={'me-10'}/>
+                                            Certificate for physicians
                                         </Button>
                                         <Button
                                             variant="contained"
                                             color="primary"
                                             disabled={this.state.isDownCert}
                                             onClick={() => this.onGetCertPdf('post_other')}>
-                                            <SchoolIcon className={'mr-10'}/><IntlMessages
-                                            id={"test.certificateNonPhysicians"}/>
+                                            <SchoolIcon className={'me-10'}/>
+                                            Certificate for non physicians
                                         </Button>
                                         {
                                             this.state.isDownCert &&
@@ -1360,7 +1458,7 @@ class Attempt extends Component {
             return (
                 <div className={'attempt-container'}>
                     <div className={'attempt-data'}>
-                        <h2 className={'ml-10 mb-20'}>{stepName[this.state.steps[this.state.stepIndex]]}</h2>
+                        <div className={'ms-10 mb-20 fs-19'}>{stepName[this.state.steps[this.state.stepIndex]]}</div>
                         {this.renderStepContent()}
                         <ReattemptQuizModal
                             open={this.state.reattemptQuizPercent !== null}
@@ -1369,7 +1467,7 @@ class Attempt extends Component {
                             onReattempt={() => this.onRestartTest()}
                         />
                         <ThemeProvider theme={darkTheme}>
-                            <Dialog open={this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
+                            <Dialog open={!!this.state.sendEmailModalType} onClose={() => this.setState({sendEmailModalType: null})} classes={{scrollPaper: {backgroundColor: 'black'}}}>
                                 <DialogTitle>
                                     {
                                         this.state.sendEmailModalType === 'score' ? 'Send Score' : 'Send certification'
@@ -1415,18 +1513,19 @@ class Attempt extends Component {
     }
 }
 
-const DisableButton = withStyles((theme) => ({
+const DisableButton = withStyles(
+    Button,
+    (theme) => ({
     disabled: {
         backgroundColor: '#3c3c3c !important'
     }
-}))(Button);
+}));
 
 // map state to props
 const mapStateToProps = (state) => {
     return {
-        locale: state.settings.locale.locale,
-        userEmail: selectors.getUserEmail(null)
+        userEmail: state.authUser.userEmail
     };
 };
 
-export default withRouter(connect(mapStateToProps, {setDarkMode})(Attempt));
+export default withRouter(connect(mapStateToProps, {})(Attempt));

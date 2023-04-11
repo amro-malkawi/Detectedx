@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
 import {Col, FormGroup, Label} from "reactstrap";
-import IntlMessages from "Util/IntlMessages";
-import {Button, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
+import {Button, RadioGroup} from "@mui/material";
 import Select from "react-select";
-import {withStyles} from "@material-ui/core/styles";
-import {yellow} from "@material-ui/core/colors";
-import chroma from "chroma-js";
 import {connect} from "react-redux";
+import {MarkerFormControlLabel, MarkerRadio, markerSelectStyles} from "Components/CustomMuiComponent";
 
 const lesionInfo = {
     lesions: {
@@ -95,7 +92,7 @@ class MarkerPopupLungED extends Component {
                 popupCancelHandler();
                 break;
             case 'delete':
-                if (!confirm('Are you sure you want to delete this mark?')) break;
+                if (!window.confirm('Are you sure you want to delete this mark?')) break;
                 popupDeleteHandler(this.state.selectedMarkData.id);
                 break;
             case 'save':
@@ -164,7 +161,7 @@ class MarkerPopupLungED extends Component {
                     isSearchable={false}
                     options={lesionOptions}
                     value={selectedLesionOption}
-                    styles={selectStyles}
+                    styles={markerSelectStyles}
                     onChange={(option) => this.onChangeLesionList('root', option)}
                     defaultMenuIsOpen={true}
                 />
@@ -176,7 +173,7 @@ class MarkerPopupLungED extends Component {
                         isSearchable={false}
                         options={sizeOptions}
                         value={selectedSizeOption}
-                        styles={selectStyles}
+                        styles={markerSelectStyles}
                         onChange={(option) => this.onChangeLesionList(selectedLesion, option)}
                         defaultMenuIsOpen={true}
                     />
@@ -187,8 +184,8 @@ class MarkerPopupLungED extends Component {
 
     renderRatings() {
         return (
-            <FormGroup className={'mb-0 d-flex pl-3 pt-3 pr-3'} row>
-                <Label style={{marginTop: 8}}><IntlMessages id="testView.rating"/></Label>
+            <FormGroup className={'mb-0 d-flex ps-3 pt-3 pe-3'} row>
+                <Label style={{marginTop: 8}}>Rating:</Label>
                 <Col >
                     <RadioGroup
                         disabled
@@ -201,10 +198,10 @@ class MarkerPopupLungED extends Component {
                         {
                             lesionInfo.ratings.map((v, i) => {   // [0, 1, 2, 3...]
                                 return (
-                                    <CustomFormControlLabel
+                                    <MarkerFormControlLabel
                                         disabled={true}
                                         value={v.value.toString()}
-                                        control={<CustomRadio/>}
+                                        control={<MarkerRadio/>}
                                         label={v.label}
                                         key={i}
                                     />
@@ -224,7 +221,7 @@ class MarkerPopupLungED extends Component {
                     e.stopPropagation()
                 }}>
                     <form>
-                        <Label><IntlMessages id={"testView.Lesions"}/>:</Label>
+                        <Label>Lesions:</Label>
                         {
                             this.renderLesion()
                         }
@@ -239,15 +236,14 @@ class MarkerPopupLungED extends Component {
                             {
                                 this.state.complete ?
                                     <div className="right">
-                                        <Button variant="contained" className="ok" onClick={() => this.handleClosePopup('ok')}>&nbsp;&nbsp;<IntlMessages id={"testView.ok"}/>&nbsp;&nbsp;</Button>
+                                        <Button variant="contained" className="ok" onClick={() => this.handleClosePopup('ok')}>&nbsp;&nbsp;Ok&nbsp;&nbsp;</Button>
                                     </div> :
                                     <div className="right">
                                         {
                                             this.state.isShowPopupDelete ?
-                                                <Button variant="contained" className="mr-15 delete" onClick={() => this.handleClosePopup('delete')}><IntlMessages
-                                                    id={"testView.delete"}/></Button> : null
+                                                <Button variant="contained" className="me-15 delete" onClick={() => this.handleClosePopup('delete')}>Delete</Button> : null
                                         }
-                                        <Button variant="contained" className="save" onClick={() => this.handleClosePopup('save')}><IntlMessages id={"testView.save"}/></Button>
+                                        <Button variant="contained" className="save" onClick={() => this.handleClosePopup('save')}>Save</Button>
                                     </div>
                             }
                         </div>
@@ -266,108 +262,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(MarkerPopupLungED);
-
-
-const CustomFormControlLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[600],
-        },
-        '&.green-label': {
-            color: '#2eff2e'
-        },
-        '&.red-label': {
-            color: 'red'
-        }
-    },
-    disabled: {},
-}))(FormControlLabel);
-
-const CustomRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[600],
-        },
-        '&.green-icon': {
-            color: '#2eff2e'
-        },
-        '&.red-icon': {
-            color: 'red'
-        }
-    },
-    checked: {},
-    disabled: {},
-}))(Radio);
-
-
-const selectStyles = {
-    container: (styles, {data}) => {
-        return {
-            ...styles,
-            marginBottom: 7,
-        };
-    },
-    control: styles => ({...styles, backgroundColor: 'black'}),
-    menu: styles => ({...styles, backgroundColor: 'black', borderColor: 'red', borderWidth: 10}),
-    option: (styles, {data, isDisabled, isFocused, isSelected}) => {
-        const color = chroma('yellow');
-        return {
-            ...styles,
-            backgroundColor: isDisabled
-                ? null
-                : isSelected
-                    ? 'yellow'
-                    : isFocused
-                        ? color.alpha(0.1).css()
-                        : null,
-            color: isDisabled
-                ? '#ccc'
-                : isSelected
-                    ? chroma.contrast(color, 'white') > 2
-                        ? 'white'
-                        : 'black'
-                    : 'yellow',
-            cursor: isDisabled ? 'not-allowed' : 'default',
-
-            ':active': {
-                ...styles[':active'],
-                backgroundColor: !isDisabled && (isSelected ? 'yellow' : color.alpha(0.3).css()),
-            },
-        };
-    },
-    singleValue: (styles, {data}) => {
-        return {
-            ...styles,
-            color: 'yellow',
-        };
-    },
-    multiValue: (styles, {data}) => {
-        const color = chroma('yellow');
-        return {
-            ...styles,
-            backgroundColor: color.alpha(0.1).css(),
-        };
-    },
-    multiValueLabel: (styles, {data}) => ({
-        ...styles,
-        color: 'yellow',
-    }),
-    multiValueRemove: (styles, {data}) => ({
-        ...styles,
-        color: 'yellow',
-        ':hover': {
-            backgroundColor: 'yellow',
-            color: 'black',
-        },
-    }),
-};
 
 

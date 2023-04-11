@@ -1,12 +1,8 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
-import green from '@material-ui/core/colors/green';
-import {fade, withStyles} from '@material-ui/core/styles';
-import yellow from "@material-ui/core/colors/yellow";
-import red from "@material-ui/core/colors/red";
+import {RadioGroup} from "@mui/material";
+import {QuestionLabel, QuestionRadio, CheckboxTooltip} from 'Components/SideQuestionComponents';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 
 
 const question = [
@@ -125,14 +121,14 @@ const question = [
     },
     {
         id: 'wbctQ5',
-        label: 'Q5: Confidence that no bony enjuries have been missed due to excessive noise',
+        label: 'Q5: Confidence that no bony injuries have been missed due to excessive noise',
         options: [
-            {value: "0", hover: 'Absolutely confident that I have missed any bony enjuries due to excessive noise present in the bony images'},
-            {value: "1", hover: 'Very confident that I have missed any bony enjuries due to excessive noise present in the bony images'},
-            {value: "2", hover: 'Quite confident that I have missed bony enjuries due to excessive noise present in the bony images'},
-            {value: "3", hover: 'Quite confident that I havent missed any bony enjuries due to excessive noise present in the bony images'},
-            {value: "4", hover: 'Very confident that I havent missed any bony enjuries due to excessive noise present in the bony images'},
-            {value: "5", hover: 'Absolutely confident that I havent missed any bony enjuries due to excessive noise present in the bony images'}
+            {value: "0", hover: 'Absolutely confident that I have missed any bony injuries due to excessive noise present in the bony images'},
+            {value: "1", hover: 'Very confident that I have missed any bony injuries due to excessive noise present in the bony images'},
+            {value: "2", hover: 'Quite confident that I have missed bony injuries due to excessive noise present in the bony images'},
+            {value: "3", hover: "Quite confident that I haven't missed any bony injuries due to excessive noise present in the bony images"},
+            {value: "4", hover: "Very confident that I haven't missed any bony injuries due to excessive noise present in the bony images"},
+            {value: "5", hover: 'Absolutely confident that I havent missed any bony injuries due to excessive noise present in the bony images'}
         ]
     },
 ]
@@ -203,7 +199,7 @@ export default class WBCTQuestions extends Component {
             <div key={questionObj.id} className={'chest-question'}>
                 <div className={'chest-question-title mb-2'}>{questionObj.label}</div>
                 <RadioGroup
-                    className={'ml-4 ' + (questionObj.options.length !== 6 ? 'flex-column' : 'flex-row')}
+                    className={'ms-4 ' + (questionObj.options.length !== 6 ? 'flex-column' : 'flex-row')}
                     aria-label="position"
                     name="position"
                     value={answerValue[questionObj.id] ? answerValue[questionObj.id].value : ''}
@@ -263,9 +259,9 @@ export default class WBCTQuestions extends Component {
                 {
                     questionObj.child.map((c, i) => (
                         <div className={c.id} key={c.id}>
-                            <div className={'mt-2 ml-4 fs-14'}>{c.label}</div>
+                            <div className={'mt-2 ms-4 fs-14'}>{c.label}</div>
                             <RadioGroup
-                                className={'ml-40'}
+                                className={'ms-40'}
                                 aria-label="position"
                                 name="position"
                                 value={(questionAnswer && questionAnswer[c.id]) ? questionAnswer[c.id].value : ''}
@@ -305,9 +301,9 @@ export default class WBCTQuestions extends Component {
     render() {
         const disabled = this.props.complete;
         return (
-            <div className={'pl-10 covid-question-container chest-data'}>
+            <div className={'ps-10 covid-question-container chest-data'}>
                 <div>
-                    <p className={'covid-question-title ml-3 mr-3'}>
+                    <p className={'covid-question-title ms-3 me-3'}>
                         Questions
                     </p>
                     <div className={'covid-questions'}>
@@ -321,120 +317,3 @@ export default class WBCTQuestions extends Component {
     }
 }
 
-
-const QuestionLabel = withStyles(theme => ({
-    root: {
-        marginLeft: 0,
-    },
-    label: {
-        color: '#b3b3b3',
-        fontSize: 13,
-        '&$disabled': {
-            color: '#b3b3b3',
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const QuestionRadio = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: red[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-const QuestionCheckbox = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Checkbox);
-
-const QuestionInput = withStyles((theme) => ({
-    root: {
-        'label + &': {
-            marginTop: 0,
-        },
-    },
-    input: {
-        width: 100,
-        color: 'white',
-        borderRadius: 2,
-        position: 'relative',
-        backgroundColor: 'transparent',
-        border: '1px solid #ced4da',
-        fontSize: 12,
-        padding: '2px 7px',
-        transition: theme.transitions.create(['border-color', 'box-shadow']),
-        '&:focus': {
-            boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-            borderColor: theme.palette.primary.main,
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(InputBase);
-
-const RatingRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-
-const RatingLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const CheckboxTooltip = withStyles((theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 11,
-    },
-}))(Tooltip);

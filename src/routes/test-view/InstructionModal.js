@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Dialog} from "@material-ui/core";
-import {withStyles} from "@material-ui/core/styles";
+import {Dialog} from "@mui/material";
+import { withStyles } from 'tss-react/mui';
 import Content from '../instructions/content';
 
 export default class InstructionModal extends Component{
@@ -18,9 +18,9 @@ export default class InstructionModal extends Component{
     }
 }
 
-const FullDialog = withStyles(theme => ({
+const FullDialog = withStyles(Dialog, (theme) => ({
     paper: {
         height: '100%',
         maxWidth: 1090
     }
-}))(Dialog);
+}));

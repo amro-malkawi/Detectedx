@@ -132,6 +132,36 @@ export default function ({name}) {
                 <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"/>
             </svg>
         )
+    }  else if (name === 'Crosshairs') {
+        return (
+            <svg className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <title>Crosshairs</title>
+                <g fill="none" fillRule="evenodd" strokeWidth="1.9">
+                    <path d="M12 11.631a.417.417 0 1 1 0 .835.417.417 0 0 1 0-.835M8.84 12H1.596M22.404 12H15.16M11.923 1.596V8.84M11.923 15.256V22.5"></path>
+                </g>
+            </svg>
+        )
+    } else if (name === 'RotateRight') {
+        return (
+            <svg name="rotate-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor">
+                <title>Rotate Right</title>
+                <path d="M16.875 15.469a5.509 5.509 0 0 0 1.031-2.484h2.016a8.11 8.11 0 0 1-1.594 3.891zm-3.891 2.437a5.527 5.527 0 0 0 2.484-1.031l1.453 1.453c-1.172.891-2.531 1.406-3.938 1.594v-2.016zm6.938-6.89h-2.016a5.527 5.527 0 0 0-1.031-2.484l1.453-1.406a8.107 8.107 0 0 1 1.594 3.891zm-4.359-5.485l-4.547 4.453V6.093C8.157 6.562 6 9.046 6 11.999s2.156 5.438 5.016 5.906v2.016c-3.938-.469-7.031-3.844-7.031-7.922s3.094-7.453 7.031-7.922V.983z"/>
+            </svg>
+        )
+    } else if (name === 'FlipH') {
+        return (
+            <svg name="ellipse-h" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 28" width="1em" height="1em" fill="currentColor">
+                <title>Ellipse Horizontal</title>
+                <path d="M6 11.5v3A1.5 1.5 0 0 1 4.5 16h-3A1.5 1.5 0 0 1 0 14.5v-3A1.5 1.5 0 0 1 1.5 10h3A1.5 1.5 0 0 1 6 11.5zm8 0v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 8 14.5v-3A1.5 1.5 0 0 1 9.5 10h3a1.5 1.5 0 0 1 1.5 1.5zm8 0v3a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5v-3a1.5 1.5 0 0 1 1.5-1.5h3a1.5 1.5 0 0 1 1.5 1.5z"/>
+            </svg>
+        )
+    } else if (name === 'FlipV') {
+        return (
+            <svg name="ellipse-v" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 28" width="1em" height="1em" fill="currentColor">
+                <title>Ellipse Vertical</title>
+                <path d="M6 19.5v3A1.5 1.5 0 0 1 4.5 24h-3A1.5 1.5 0 0 1 0 22.5v-3A1.5 1.5 0 0 1 1.5 18h3A1.5 1.5 0 0 1 6 19.5zm0-8v3A1.5 1.5 0 0 1 4.5 16h-3A1.5 1.5 0 0 1 0 14.5v-3A1.5 1.5 0 0 1 1.5 10h3A1.5 1.5 0 0 1 6 11.5zm0-8v3A1.5 1.5 0 0 1 4.5 8h-3A1.5 1.5 0 0 1 0 6.5v-3A1.5 1.5 0 0 1 1.5 2h3A1.5 1.5 0 0 1 6 3.5z"/>
+            </svg>
+        )
     } else {
         return null;
     }

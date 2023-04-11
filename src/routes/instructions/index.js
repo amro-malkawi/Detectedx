@@ -4,9 +4,9 @@
 
 import React, { Component } from 'react'
 import Content from './content';
-import PropTypes from "prop-types";
 import InstructionVideoLecture from "./InstructionVideoLecture";
-import {Dialog, withStyles} from "@material-ui/core";
+import {Dialog} from "@mui/material";
+import {withStyles} from "tss-react/mui";
 
 export default class instruction extends Component {
     static defaultProps = {
@@ -24,9 +24,9 @@ export default class instruction extends Component {
     }
 }
 
-const FullDialog = withStyles(theme => ({
+const FullDialog = withStyles(Dialog, (theme) => ({
     paper: {
         height: '100%',
         maxWidth: 1090
     }
-}))(Dialog);
+}));

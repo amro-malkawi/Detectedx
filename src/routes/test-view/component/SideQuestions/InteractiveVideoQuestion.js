@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {NotificationManager} from "react-notifications";
-import {Button, Dialog, DialogTitle} from '@material-ui/core';
+import {Button, Dialog, DialogTitle} from '@mui/material';
 import classNames from 'classnames';
 import * as Apis from 'Api';
 
@@ -128,20 +128,7 @@ class QuizQuestions extends Component {
     render() {
         return (
             <div>
-                {/*<div className={'covid-question-container chest-data'}>*/}
-                {/*    <div className={'d-flex flex-column'} style={{flex: 1}}>*/}
-                {/*        <div className={'quiz-question-container'}>*/}
-                {/*            {this.state.questionList.map((v, i) => this.renderQuestion(v, i))}*/}
-                {/*        </div>*/}
-                {/*        {*/}
-                {/*            this.checkShowSubmitButton() &&*/}
-                {/*            <div className={'quiz-submit-btn'}>*/}
-                {/*                <Button variant={'contained'} onClick={() => this.onSubmitAnswer()}>Submit</Button>*/}
-                {/*            </div>*/}
-                {/*        }*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                <Dialog open={this.state.showQuestionModal} maxWidth={'lg'} className={'interactive-video-dialog'} onClose={() => this.setState({showQuestionModal: false})}>
+                <Dialog open={!!this.state.showQuestionModal} maxWidth={'lg'} className={'interactive-video-dialog'} onClose={() => this.setState({showQuestionModal: false})}>
                     <div>
                         {this.state.matchQuestions.map((v, i) => this.renderQuestion(v, i))}
                         <div className={'d-flex flex-row my-2 mt-4'}>

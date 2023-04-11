@@ -1,11 +1,8 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
-import green from '@material-ui/core/colors/green';
-import {fade, withStyles} from '@material-ui/core/styles';
-import red from "@material-ui/core/colors/red";
+import {RadioGroup} from "@mui/material";
+import {QuestionLabel, QuestionRadio, QuestionCheckbox, } from 'Components/SideQuestionComponents';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 import {connect} from "react-redux";
 
 
@@ -122,7 +119,7 @@ class ImagEDChestQuestions extends Component {
         if (this.question.every((q) => answerValue[q.id] !== undefined)) {
             return true;
         } else {
-            NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
+            NotificationManager.error("Please select values for all questions.");
             return false;
         }
     }
@@ -205,7 +202,7 @@ class ImagEDChestQuestions extends Component {
             )
         ) {
             return (
-                <div className={'ml-3'}>
+                <div className={'ms-3'}>
                     <div className={'chest-question-sub-desc'}>{questionObj.desc}</div>
                     <div className={'d-flex flex-column'}>
                         {
@@ -223,10 +220,10 @@ class ImagEDChestQuestions extends Component {
         return (
             <div key={questionObj.id} className={'chest-question'}>
                 <div className={'chest-question-title d-flex'}>
-                    <span className={'mr-1'}>{index}.</span><span style={{flex: 1}}>{questionObj.label}</span>
+                    <span className={'me-1'}>{index}.</span><span style={{flex: 1}}>{questionObj.label}</span>
                 </div>
                 <RadioGroup
-                    className={'ml-4'}
+                    className={'ms-4'}
                     aria-label="position"
                     name="position"
                     value={answerValue[questionObj.id] ? answerValue[questionObj.id].value : ''}
@@ -261,7 +258,7 @@ class ImagEDChestQuestions extends Component {
     render() {
         const disabled = this.props.complete;
         return (
-            <div className={'pl-10 covid-question-container chest-data'}>
+            <div className={'ps-10 covid-question-container chest-data'}>
                 <div>
                     <div className={'covid-questions'}>
                         {
@@ -283,53 +280,3 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, null, null, {forwardRef: true})(ImagEDChestQuestions);
 
-
-const QuestionLabel = withStyles(theme => ({
-    root: {
-        marginLeft: 0,
-    },
-    label: {
-        color: '#b3b3b3',
-        fontSize: 13,
-        '&$disabled': {
-            color: '#b3b3b3',
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const QuestionRadio = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: red[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-const QuestionCheckbox = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Checkbox);

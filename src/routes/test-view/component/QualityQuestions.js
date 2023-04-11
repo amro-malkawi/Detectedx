@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import {setImageEDBreastQuality} from "Actions";
+import {setImageEDBreastQuality} from "Store/Actions";
 import {connect} from "react-redux";
 
 class QualityQuestions extends Component {

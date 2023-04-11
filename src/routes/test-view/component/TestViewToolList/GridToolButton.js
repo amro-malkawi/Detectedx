@@ -1,11 +1,11 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import {Menu, withStyles} from '@material-ui/core';
+import {Menu} from '@mui/material';
+import {withStyles} from 'tss-react/mui';
 import CornerstoneToolIcon from "./CornerstoneToolIcon";
-import IntlMessages from "Util/IntlMessages";
-import {withRouter} from "react-router-dom";
+import withRouter from 'Components/WithRouter';
 import {connect} from "react-redux";
-import {changeImageViewGrid} from "Actions/TestViewAction";
+import {changeImageViewGrid} from "Store/Actions";
 
 class GridToolButton extends PureComponent {
     static defaultProps = {
@@ -51,7 +51,7 @@ class GridToolButton extends PureComponent {
         return (
             <div data-cy="grid-tool" className={"tool option"} onClick={this.onClick}>
                 {<CornerstoneToolIcon name={'Grid'}/>}
-                <p><IntlMessages id={"testView.tool.grid"}/></p>
+                <p>Grid</p>
                 <LayoutMenu
                     anchorEl={this.state.menuTarget}
                     open={this.state.dropdownVisible}
@@ -199,10 +199,10 @@ class LayoutGrid extends PureComponent {
     }
 }
 
-const LayoutMenu = withStyles({
+const LayoutMenu = withStyles(Menu, (theme) => ({
     paper: {
         marginTop: 42,
         marginLeft: -13,
         backgroundColor: 'transparent',
     },
-})(Menu);
+}));

@@ -132,7 +132,7 @@ function findValuesHelper(obj, key, list) {
     }
     if (obj[key]) list.push(obj[key]);
 
-    if ((typeof obj == "object") && (obj !== null) ){
+    if ((typeof obj === "object") && (obj !== null) ){
         let children = Object.keys(obj);
         if (children.length > 0){
             for (let i = 0; i < children.length; i++ ){
@@ -153,11 +153,82 @@ function metaDataProvider(type, imageId) {
         return;
     }
 
-    if (type === 'imagePlaneModule') {
+    if (type === 'generalSeriesModule') {
         return {
+            modality: getValue(metaData['00080060']),
+            seriesInstanceUID: getValue(metaData['0020000E']),
+            seriesNumber: getNumberValue(metaData['00200011']),
+            studyInstanceUID: getValue(metaData['0020000D']),
+        };
+    }
+
+    if (type === 'imagePlaneModule') {
+        const imageOrientationPatient = getNumberValues(metaData['00200037'], 6);
+        const imagePositionPatient = getNumberValues(metaData['00200032'], 3);
+        const pixelSpacing = getNumberValues(metaData['00280030'], 2);
+
+        let columnPixelSpacing = null;
+
+        let rowPixelSpacing = null;
+
+        if (pixelSpacing) {
+            rowPixelSpacing = pixelSpacing[0];
+            columnPixelSpacing = pixelSpacing[1];
+        }
+
+        let rowCosines = null;
+
+        let columnCosines = null;
+
+        if (imageOrientationPatient) {
+            rowCosines = [
+                parseFloat(imageOrientationPatient[0]),
+                parseFloat(imageOrientationPatient[1]),
+                parseFloat(imageOrientationPatient[2]),
+            ];
+            columnCosines = [
+                parseFloat(imageOrientationPatient[3]),
+                parseFloat(imageOrientationPatient[4]),
+                parseFloat(imageOrientationPatient[5]),
+            ];
+        }
+        return {
+            frameOfReferenceUID: getValue(metaData['00200052']),
+            rows: getNumberValue(metaData['00280010']),
+            columns: getNumberValue(metaData['00280011']),
+            imageOrientationPatient,
+            rowCosines,
+            columnCosines,
+            imagePositionPatient,
+            sliceThickness: getNumberValue(metaData['00180050']),
+            sliceLocation: getNumberValue(metaData['00201041']),
+            pixelSpacing,
             rowPixelSpacing: getNumberString(recursiveFindTags('00280030', metaData)[0], 0, 0.1),
             columnPixelSpacing: getNumberString(recursiveFindTags('00280030', metaData)[0], 1, 0.1),
         }
+    }
+
+    if (type === 'imagePixelModule') {
+        return {
+            samplesPerPixel: getNumberValue(metaData['00280002']),
+            photometricInterpretation: 'RGB',
+            rows: getNumberValue(metaData['00280010']),
+            columns: getNumberValue(metaData['00280011']),
+            bitsAllocated: 24,
+            bitsStored: 24,
+            highBit: 24,
+            pixelRepresentation: getNumberValue(metaData['00280103']),
+            planarConfiguration: getNumberValue(metaData['00280006']),
+            pixelAspectRatio: getValue(metaData['00280034']),
+            smallestPixelValue: getNumberValue(metaData['00280106']),
+            largestPixelValue: getNumberValue(metaData['00280107']),
+            redPaletteColorLookupTableDescriptor: getNumberValues(metaData['00281101']),
+            greenPaletteColorLookupTableDescriptor: getNumberValues(metaData['00281102']),
+            bluePaletteColorLookupTableDescriptor: getNumberValues(metaData['00281103']),
+            redPaletteColorLookupTableData: getNumberValues(metaData['00281201']),
+            greenPaletteColorLookupTableData: getNumberValues(metaData['00281202']),
+            bluePaletteColorLookupTableData: getNumberValues(metaData['00281203']),
+        };
     }
 
     if (type === 'voiLutModule') {

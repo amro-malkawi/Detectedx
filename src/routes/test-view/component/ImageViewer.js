@@ -1,25 +1,18 @@
 import React, {Component} from 'react';
-import {withRouter} from "react-router-dom";
+import withRouter from 'Components/WithRouter';
 import {connect} from "react-redux";
-import {setImageAnswer, focusImageViewer} from "Actions";
+import {setImageAnswer, setFullImageViewer, setFocusImageId} from "Store/Actions";
 import ResizeDetector from 'react-resize-detector';
-import {IconButton, Switch} from "@material-ui/core";
 import cornerstone from 'cornerstone-core';
-import Tooltip from "@material-ui/core/Tooltip";
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneMath from 'cornerstone-math';
 import {NotificationManager} from "react-notifications";
-import {FloatingMenu, ChildButton} from 'Components/FloatingMenu';
 import * as Apis from "Api/index";
-import IntlMessages from "Util/IntlMessages";
 import {v4 as uuidv4} from 'uuid';
-import {isMobile} from 'react-device-detect';
 
 import DownloadTopBarProgress from "./DownloadTopBarProgress";
 import ImageOverlap from "./ImageOverlap";
 import _ from 'lodash';
-import WebWorker from "../worker/WebWorker";
-import WorkerProc from "../worker/WorkerProc";
 
 import stackPrefetch from '../lib/stackTools/stackPrefetch';
 import cornerstoneResize from "../lib/resize";
@@ -30,6 +23,7 @@ import LengthTool from "../lib/tools/LengthTool";
 import AngleTool from "../lib/tools/AngleTool";
 import TruthArrowTool from "../lib/tools/TruthArrowTool";
 import ZoomMouseWheelTool from "../lib/tools/ZoomMouseWheelTool";
+import CrosshairsTool from '../lib/tools/CrosshairsTool';
 
 // const ZoomMouseWheelTool = cornerstoneTools.ZoomMouseWheelTool;
 const ZoomTool = cornerstoneTools.ZoomTool;
@@ -80,7 +74,6 @@ class ImageViewer extends Component {
             loadedImage: false,
         };
         this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'TruthArrow', 'Eraser'];
-        // this.toolList = ['Magnify', 'Length', 'Angle', 'EllipticalRoi', 'RectangleRoi', 'ArrowAnnotate', 'FreehandMouse', 'Eraser'];
         this.imageElement = undefined;
         this.imageWidth = 0;
         this.imageHeight = 0;
@@ -90,7 +83,7 @@ class ImageViewer extends Component {
         this.imageElementRef = React.createRef();
         this.isComponentMount = false;
 
-        this.handleDoubleClickEvent = this.handleDoubleClickEvent.bind(this)
+        this.handleClickEvent = this.handleClickEvent.bind(this)
         this.handleDoubleClickEvent = this.handleDoubleClickEvent.bind(this)
         this.handleMouseMoveEvent = _.throttle(this.handleMouseMoveEvent.bind(this), 150);
         this.handleChangeStack = this.handleChangeStack.bind(this)
@@ -100,10 +93,14 @@ class ImageViewer extends Component {
         this.handleEditMark = this.handleEditMark.bind(this)
         this.handleMouseUp = this.handleMouseUp.bind(this)
         this.handlePrefecthDone = this.handlePrefecthDone.bind(this)
+
+
+
         this.handleDatasetsCacheChanged = this.handleDatasetsCacheChanged.bind(this)
     }
 
     componentDidMount() {
+        console.log('image viewer did mount')
         this.isComponentMount = true;
         this.getMetaInfo();
         this.imageElement = this.imageElementRef.current;
@@ -140,7 +137,6 @@ class ImageViewer extends Component {
     }
 
     componentWillUnmount() {
-        console.log('component unmount');
         this.isComponentMount = false;
         this.setupLoadHandlers(true);
         if (this.state.imageIds.length > 1) {
@@ -151,7 +147,7 @@ class ImageViewer extends Component {
         cornerstone.imageCache.purgeCache();
         cornerstoneTools.stopClip(this.imageElement);
         cornerstone.disable(this.imageElement);
-        if (this.webWorker) this.webWorker.terminate();
+        // if (this.webWorker) this.webWorker.terminate();
     }
 
     getInitialViewport() {
@@ -187,7 +183,7 @@ class ImageViewer extends Component {
                 }
                 initialViewport.translation = {x: offsetX, y: offsetY};
             } catch (e) {
-                console.log(e.message)
+                console.error(e.message)
             }
         }
 
@@ -269,6 +265,8 @@ class ImageViewer extends Component {
     }
 
     initEvents() {
+        this.imageElement.addEventListener('cornerstonetoolsmouseclick', this.handleClickEvent);
+        this.imageElement.addEventListener('cornerstonetoolstap', this.handleClickEvent);
         this.imageElement.addEventListener('cornerstonetoolsmousedoubleclick', this.handleDoubleClickEvent);
         this.imageElement.addEventListener('cornerstonetoolsdoubletap', this.handleDoubleClickEvent);
         this.imageElement.addEventListener('cornerstonetoolsmousemove', this.handleMouseMoveEvent);
@@ -287,6 +285,8 @@ class ImageViewer extends Component {
     }
 
     clearEvents() {
+        this.imageElement.removeEventListener('cornerstonetoolsmouseclick', this.handleClickEvent);
+        this.imageElement.removeEventListener('cornerstonetoolstap', this.handleClickEvent);
         this.imageElement.removeEventListener('cornerstonetoolsmousedoubleclick', this.handleDoubleClickEvent);
         this.imageElement.removeEventListener('cornerstonetoolsdoubletap', this.handleDoubleClickEvent);
         this.imageElement.removeEventListener('cornerstonetoolsmousemove', this.handleMouseMoveEvent);
@@ -311,6 +311,7 @@ class ImageViewer extends Component {
         cornerstoneTools.addToolForElement(this.imageElement, MarkerFreehandTool);
         cornerstoneTools.addToolForElement(this.imageElement, PanTool);
         cornerstoneTools.addToolForElement(this.imageElement, WwwcTool);
+        cornerstoneTools.addToolForElement(this.imageElement, CrosshairsTool);
         this.toolList.forEach(toolName => {
             // customized tool
             if (toolName === 'Length') {
@@ -367,18 +368,12 @@ class ImageViewer extends Component {
             cornerstoneTools[setToolElementFunc](this.imageElement, 'MarkerFreehand');
         }
 
-        // enable the current tool as well (used when adding a new image after
-        // the toolbar has been loaded)
-        cornerstoneTools.setToolActiveForElement(this.imageElement, this.props.currentTool, {
-            mouseButtonMask: 1
-        });
-
         //add synchronizer
         this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
 
         if (this.state.imageIds.length > 1) {
             //add image stack
-            cornerstoneTools.addStackStateManager(this.imageElement, ['stack']);
+            cornerstoneTools.addStackStateManager(this.imageElement, ['stack', 'Crosshairs']);
 
             cornerstoneTools.addToolState(this.imageElement, 'stack', {
                 imageIds: this.state.imageIds, currentImageIdIndex: this.state.currentStackIndex, preventCache: true
@@ -413,10 +408,12 @@ class ImageViewer extends Component {
                     if (!this.isComponentMount) {
                         return Promise.resolve();
                     } else {
+                        const downStatus = [...this.state.downStatus];
                         return Promise.all(idGroup.map((id) => cornerstone.loadImage(id, {type: 'prefetch'}).then(() => {
-                            const downStatus = [...this.state.downStatus];
                             const index = this.state.imageIds.indexOf(id);
-                            if (index !== -1) downStatus[index] = true;
+                            if (index !== -1) {
+                                downStatus[index] = true;
+                            }
                             this.setState({downStatus});
                         })));
                     }
@@ -437,6 +434,13 @@ class ImageViewer extends Component {
         // render shapes
         this.renderShapes();
         this.renderMarks();
+
+        // enable the current tool as well (used when adding a new image after
+        // the toolbar has been loaded)
+        cornerstoneTools.setToolActiveForElement(this.imageElement, this.props.currentTool, {
+            mouseButtonMask: 1,
+            synchronizationContext: this.props.synchronizer,   // for only crosshairs tool
+        });
     }
 
     setupLoadHandlers(clear = false) {
@@ -474,24 +478,25 @@ class ImageViewer extends Component {
         });
     }
 
-    handleDoubleClickEvent(event) {
-        // if (!this.props.complete && this.props.toolList.indexOf('Marker') !== -1 && this.props.currentTool !== 'MarkerFreehand') {
-        //     // disable double click when current tool is freehand
-        //     this.handleAddMark('Marker', {measurementData: {point: event.detail.currentPoints.image}})
-        // }
+    handleClickEvent(event) {
+        if(this.props.focusImageViewerIndex !== this.props.index) {
+            this.props.setFocusImageId(this.props.index);
+        }
+    }
 
+    handleDoubleClickEvent(event) {
         // disable double click when current tool is freehand
         if (this.props.index !== '-1_-1' && this.props.currentTool !== 'MarkerFreehand') {
             // index="-1_-1" disable focus image feature
             let viewerIndex;
-            if (this.props.focusImageViewerIndex === this.props.index) {
+            if (this.props.fullImageViewerIndex === this.props.index) {
                 viewerIndex = '-1_-1';
                 this.props.synchronizer && this.props.synchronizer.add(this.imageElement);
             } else {
                 viewerIndex = this.props.index;
                 this.props.synchronizer && this.props.synchronizer.remove(this.imageElement);
             }
-            this.props.focusImageViewer(viewerIndex);
+            this.props.setFullImageViewer(viewerIndex);
         }
     }
 
@@ -559,6 +564,7 @@ class ImageViewer extends Component {
     }
 
     handleMeasureCompleteEvent(event) {
+        console.log('measure added', event.detail.toolName);
         if (event.detail.toolName === 'Marker' || event.detail.toolName === 'MarkerFreehand') {
             this.tempMeasureToolData = null;
             if (event.detail.measurementData.id === undefined) {
@@ -567,6 +573,8 @@ class ImageViewer extends Component {
             } else {
                 this.handleEditMark(event);
             }
+        } else if(event.detail.toolName === 'Crosshairs') {
+            return;
         } else {
             this.handleAddShape(event);
         }
@@ -618,7 +626,7 @@ class ImageViewer extends Component {
         const markerData = eventDetail.measurementData;
         markerData.isNew = false;
         markerData.marker_tool_type = toolName;
-        this.props.onShowPopup(markerData, this.handleMarkCancel.bind(this), this.handleMarkDelete.bind(this), this.handleMarkSave.bind(this));
+        if(!markerData.isTruth) this.props.onShowPopup(markerData, this.handleMarkCancel.bind(this), this.handleMarkDelete.bind(this), this.handleMarkSave.bind(this));
     }
 
     handleMarkCancel() {
@@ -840,7 +848,8 @@ class ImageViewer extends Component {
         cornerstoneTools.setToolPassive(previousName);
         //active
         cornerstoneTools.setToolActive(nextName, {
-            mouseButtonMask: 1
+            mouseButtonMask: 1,
+            synchronizationContext: this.props.synchronizer,   // for only crosshairs tool
         });
     }
 
@@ -878,7 +887,7 @@ class ImageViewer extends Component {
 
     onResize() {
         let imagePosition = this.imagePosition;
-        if (this.props.showImageList[0].length <= 1 || this.props.index === this.props.focusImageViewerIndex) {
+        if (this.props.showImageList[0].length <= 1 || this.props.index === this.props.fullImageViewerIndex) {
             // if there is one image, don't need to change image position
             imagePosition = undefined;
         }
@@ -908,10 +917,11 @@ class ImageViewer extends Component {
     render() {
         const {imageInfo, dndRef, isDragOver, toolList} = this.props;
         const viewerStyle = {};
-        if (this.props.focusImageViewerIndex !== '-1_-1' && this.props.index !== '-1_-1' && this.props.focusImageViewerIndex !== this.props.index) {
+        if (this.props.fullImageViewerIndex !== '-1_-1' && this.props.index !== '-1_-1' && this.props.fullImageViewerIndex !== this.props.index) {
             // viewerStyle.flex = 0;
             viewerStyle.display = 'none';
         }
+        if(this.props.focusImageViewerIndex === this.props.index) viewerStyle.borderColor = '#1c556a';
         const canDrawMarker = toolList.filter((v) => (v === 'Marker' || v === 'MarkerFreehand')).length > 0;
         return (
             <div ref={dndRef}
@@ -925,6 +935,7 @@ class ImageViewer extends Component {
                  style={viewerStyle}
             >
                 <ResizeDetector
+                    targetRef={this.imageElementRef}
                     handleWidth
                     handleHeight
                     skipOnMount={true}
@@ -967,12 +978,17 @@ const mapStateToProps = (state) => {
         imageList: state.testView.imageList,
         showImageList: state.testView.showImageList,
         initialZoomLevel: state.testView.initialZoomLevel,
-        modalityInfo: state.testView.modalityInfo
+        modalityInfo: state.testView.modalityInfo,
+        toolList:state.testView.toolList,
+        currentTool: state.testView.currentTool,
+        fullImageViewerIndex: state.testView.fullImageViewerIndex,
+        focusImageViewerIndex: state.testView.focusImageViewerIndex,
     };
 };
 
 export default withRouter(connect(mapStateToProps, {
     setImageAnswer,
-    focusImageViewer
+    setFullImageViewer,
+    setFocusImageId
 })(ImageViewer));
 

@@ -1,16 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from "prop-types";
 import {Input} from 'reactstrap';
-import CircularProgress from '@material-ui/core/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import {
     select as d3Select,
-    quantile as d3Quantile,
-    ascending as d3Ascending,
     scaleLinear as d3ScaleLinear,
     line as d3Line,
-    axisLeft as d3AxisLeft,
     axisBottom as d3AxisBottom,
-    axisTop as d3AxisTop,
 } from "d3"
 import * as Apis from 'Api';
 
@@ -111,7 +107,6 @@ class BoxplotChart extends Component {
         if(q1 === median && median === q3) {
             min = -2;
             max = 102;
-            console.log(min, max, value)
         }
 
         // Show the x scale
@@ -255,9 +250,6 @@ class BoxplotChart extends Component {
 
 BoxplotChart.propTypes = {
     title: PropTypes.string || PropTypes.object,
-    quartile_25: PropTypes.number.isRequired,
-    quartile_50: PropTypes.number.isRequired,
-    quartile_75: PropTypes.number.isRequired,
     value: PropTypes.number.isRequired
 };
 

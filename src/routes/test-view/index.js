@@ -1,21 +1,22 @@
 import React, {Component} from 'react'
-import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity, setModalityInfo, setAttemptInfo} from 'Actions';
-import {Button, Switch, Dialog} from '@material-ui/core';
-import SkipPreviousOutlinedIcon from '@material-ui/icons/SkipPreviousOutlined';
-import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
-import HistoryOutlinedIcon from '@material-ui/icons/HistoryOutlined';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import CachedIcon from '@material-ui/icons/Cached';
+import {changeHangingLayout, setImageListAction, setShowImageBrowser, setCaseDensity, setModalityInfo, setAttemptInfo} from 'Store/Actions';
+import {Button, Switch, Dialog} from '@mui/material';
+import SkipPreviousOutlinedIcon from '@mui/icons-material/SkipPreviousOutlined';
+import SkipNextOutlinedIcon from '@mui/icons-material/SkipNextOutlined';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import CachedIcon from '@mui/icons-material/Cached';
 import {Input} from "reactstrap";
-import {withStyles} from '@material-ui/core/styles';
+import { styled } from '@mui/material/styles';
+import { withStyles } from 'tss-react/mui';
 import {NotificationManager} from "react-notifications";
+import withRouter from 'Components/WithRouter';
 import {DndProvider} from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import TouchBackend from 'react-dnd-touch-backend';
+import {HTML5Backend} from 'react-dnd-html5-backend';
+import {TouchBackend} from 'react-dnd-touch-backend';
 import {isMobile} from 'react-device-detect';
 
 import cornerstone from 'cornerstone-core';
@@ -24,6 +25,7 @@ import cornerstoneMath from 'cornerstone-math';
 import cornerstoneWebImageLoader from './lib/CornerstoneWebImageLoader';
 import Hammer from 'hammerjs';
 import ReactGA from "react-ga4";
+import ReactPlayer from "react-player";
 
 import RctSectionLoader from "Components/RctSectionLoader/RctSectionLoader";
 import LoadingIndicator from "./component/LoadingIndicator";
@@ -42,20 +44,18 @@ import HangingSelector from './component/HangingSelector';
 import MarkerPopup from "./lib/MarkerPopup";
 import ShortcutContainer from "./component/TestViewToolList/ShortcutContainer";
 import TestViewToolList from './component/TestViewToolList';
-import IntlMessages from "Util/IntlMessages";
 import * as Apis from 'Api';
 import VideoModal from "Routes/instructions/VideoModal";
-import * as selectors from "Selectors";
 
 class TestView extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            test_cases_id: this.props.match.params.test_cases_id,
-            test_sets_id: this.props.match.params.test_sets_id,
-            attempts_id: this.props.match.params.attempts_id,
-            isPostTest: this.props.match.params.is_post_test === 'post',
+            test_cases_id: this.props.params.test_cases_id,
+            test_sets_id: this.props.params.test_sets_id,
+            attempts_id: this.props.params.attempts_id,
+            isPostTest: this.props.params.is_post_test === 'post',
             loading: true,
             attemptDetail: {},
             test_case: {},
@@ -79,11 +79,9 @@ class TestView extends Component {
             isShowPostTestReattemptModal: false,
             reattemptScore: 0,
             postTestRemainCount: 0,
+            showTestCaseEndVideo: false,
         };
         this.sideQuestionRef = React.createRef();
-        this.covidQuestionRef = React.createRef();
-        this.qualityQuestionRef = React.createRef();
-        this.chestQuestionRef = React.createRef();
         this.popupCancelHandler = null;
         this.popupDeleteHandler = null;
         this.popupSaveHandler = null;
@@ -107,7 +105,6 @@ class TestView extends Component {
 
         cornerstone.events.addEventListener('cornerstoneimageviewthumbnaildone', this.handleImageViewThumbnailDone.bind(this));
         cornerstone.events.addEventListener('cornerstoneimageviewprefetchdone', this.handleImageViewPrefetchDone.bind(this));
-
     }
 
     componentDidMount() {
@@ -208,11 +205,12 @@ class TestView extends Component {
                         v.image_url_path
                     );
                 })
+                const toolList = testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(',');
                 const isShowImageBrowser = (window.innerWidth < 2560 && testCaseViewInfo.images.length >= 2 && ['chest', 'imaged_mammo'].indexOf(testCaseViewInfo.modalities.modality_type) === -1);
                 that.props.setImageListAction(
                     testCaseViewInfo.images,
                     testCasesAnswers.images,
-                    testCaseViewInfo.modalities.tools === null ? [] : testCaseViewInfo.modalities.tools.split(','),
+                    toolList,
                     testCaseViewInfo.modalities.number_of_slides,
                     complete,
                     isShowImageBrowser,
@@ -220,6 +218,25 @@ class TestView extends Component {
                 );
                 if (testCaseViewInfo.modalities.modality_type === 'volpara') {
                     that.props.setCaseDensity(testCasesAnswers.answerDensity === undefined ? -1 : Number(testCasesAnswers.answerDensity));
+                }
+
+                /**
+                 * load stack metadata for crosshair tools
+                 * check if crosshairs tool is possible or not.
+                 */
+                let firstImagePlane;
+                if(testCaseViewInfo.images.length > 0) {
+                    firstImagePlane = cornerstone.metaData.get(
+                        'imagePlaneModule',
+                        testCaseViewInfo.images[0].image_url_path
+                    );
+                }
+                if(toolList.includes('Crosshairs') && firstImagePlane && firstImagePlane.imageOrientationPatient && firstImagePlane.imagePositionPatient) {
+                    testCaseViewInfo.images.forEach((v) => {
+                        for(let i = 0; i < v.stack_count; i++) {
+                            cornerstoneWebImageLoader.dataSetCacheManager.loadMetaData(v.image_url_path + `${i}_stack`);
+                        }
+                    });
                 }
             });
             document.title = attemptsDetail.test_sets.name + (attemptsDetail.test_sets.test_set_code ? ` (${attemptsDetail.test_sets.test_set_code})` : '');
@@ -239,6 +256,8 @@ class TestView extends Component {
             if (this.state.isShowLoadingIndicator) {
                 this.setState({isShowLoadingIndicator: false});
             }
+            // active crosshair tool
+            // cornerstoneTools.addTool(CrosshairsTool);
         }
     }
 
@@ -288,7 +307,11 @@ class TestView extends Component {
         if (!this.state.complete && this.state.test_case.modalities.modality_type === 'volpara') {
             this.onSendCaseDensity();
         } else if (this.validateForNext()) {
-            this.onMove(1);
+            if(!this.state.test_case.test_case_end_video || this.state.showTestCaseEndVideo) {
+                this.onMove(1);
+            } else {
+                this.setState({showTestCaseEndVideo: true});
+            }
         }
     }
 
@@ -296,19 +319,24 @@ class TestView extends Component {
         if (!this.state.complete && this.state.test_case.modalities.modality_type === 'volpara') {
             this.onSendCaseDensity();
         } else if (this.validateForNext()) {
-            this.onComplete();
+            if(!this.state.test_case.test_case_end_video || this.state.showTestCaseEndVideo) {
+                this.onComplete();
+            } else {
+                this.setState({showTestCaseEndVideo: true});
+            }
         }
     }
 
     onViewerReset() {
         Apis.attemptsViewerReset(this.state.attempts_id).then((nextStep) => {
-            this.props.history.replace('/main/home');
+            this.props.navigate('/main', {replace: true});
         }).catch((e) => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
     }
 
     onMove(step) { // previous -1, next 1
+        this.setState({showTestCaseEndVideo: false});
         this.onSeek(this.state.testCaseIndex + step);
     }
 
@@ -322,10 +350,10 @@ class TestView extends Component {
             Apis.attemptsMoveTestCase(this.state.attempts_id, next_test_case_id).then((resp) => {
                 this.setState({test_cases_id: next_test_case_id}, () => {
                     this.getData();
-                    this.props.history.replace(url);
+                    this.props.navigate(url, {replace: true});
                 });
             }).catch((e) => {
-                NotificationManager.error(<IntlMessages id={"testView.cantMoveCase"}/>);
+                NotificationManager.error("Can not move case");
                 this.setState({loading: false})
             }).finally(() => {
                 // this.setState({loading: false})
@@ -344,7 +372,7 @@ class TestView extends Component {
             this.setState({loading: true}, () => {
                 if (!this.state.isPostTest) {
                     Apis.attemptsFinishTest(this.state.attempts_id, window.screen.width, window.screen.height).then((nextStep) => {
-                        this.props.history.push('/main/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
+                        this.props.navigate('/main/attempt/' + this.state.attempts_id + '/' + nextStep + '?from=test');  // go to scores tab
                     }).catch((e) => {
                         console.warn(e.response ? e.response.data.error.message : e.message);
                     });
@@ -358,7 +386,7 @@ class TestView extends Component {
                                 loading: false
                             });
                         } else {
-                            this.props.history.push('/main/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
+                            this.props.navigate('/main/attempt/' + this.state.attempts_id + '/postQuestions');  // go to scores tab
                         }
                     }).catch(e => {
                         console.warn(e.response ? e.response.data.error.message : e.message);
@@ -377,7 +405,7 @@ class TestView extends Component {
         if (this.state.postTestRemainCount > 0) {
             this.onSeek(0)
         } else {
-            this.props.history.push('/main/home');
+            this.props.navigate('/main');
         }
     }
 
@@ -405,7 +433,7 @@ class TestView extends Component {
 
     onSendCaseDensity() {
         if (this.props.caseDensity === -1) {
-            NotificationManager.error(<IntlMessages id={"testView.selectDensity"}/>);
+            NotificationManager.error("Please select density");
         } else {
             const test_case_length = this.state.test_set_cases.length;
             Apis.attemptsDensity(this.state.attempts_id, this.state.test_cases_id, this.props.caseDensity).then((resp) => {
@@ -453,55 +481,55 @@ class TestView extends Component {
                 {
                     this.state.testCaseIndex > 0 && (this.state.complete || !this.state.test_case.modalities.force_flow) ?
                         <Button className='test-previous-btn' variant="contained" color="primary" onClick={() => this.onMove(-1)}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.previous"}/></span>
+                            <span className={'test-action-btn-label'}>Previous</span>
                             <SkipPreviousOutlinedIcon size="small"/>
                         </Button> : null
                 }
                 {
                     (this.state.test_case.modalities.modality_type === 'viewer' || this.state.complete || this.state.testCaseIndex + 1 !== test_case_length) ? null :
-                        <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.submit"}/></span>
+                        <Button className='me-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onFinish()}>
+                            <span className={'test-action-btn-label'}>Submit</span>
                             <CheckCircleOutlineIcon size="small"/>
                         </Button>
                 }
                 {
                     this.state.testCaseIndex + 1 < test_case_length ?
-                        <Button className='mr-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext()}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.next"}/></span>
+                        <Button className='me-10 test-previous-next' variant="contained" color="primary" onClick={() => this.onNext()}>
+                            <span className={'test-action-btn-label'}>Next</span>
                             <SkipNextOutlinedIcon size="small"/>
                         </Button> : null
                 }
                 {
                     this.state.test_case.modalities.modality_type === 'viewer' &&
-                    <Button className='mr-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onViewerReset()}>
-                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.finish"}/></span>
+                    <Button className='me-10 test-previous-finish' variant="contained" color="primary" onClick={() => this.onViewerReset()}>
+                        <span className={'test-action-btn-label'}>Finish</span>
                         <CheckCircleOutlineIcon size="small"/>
                     </Button>
                 }
                 {
                     (!this.state.complete && !this.state.possiblePostTestReattempt) &&
-                    <Button className={'ml-20 mr-10 test-previous-info'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>
-                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.instructions"}/></span>
+                    <Button className={'ms-20 me-10 test-previous-info'} variant="contained" color="primary" onClick={() => this.setState({isShowInstructionModal: true})}>
+                        <span className={'test-action-btn-label'}>Instructions</span>
                         <InfoOutlinedIcon size="small"/>
                     </Button>
                 }
                 {
                     (this.state.complete && !this.state.possiblePostTestReattempt) &&
-                    <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary"
-                            onClick={() => this.props.history.push('/main/attempt/' + this.state.attempts_id + '/score')}>
-                        <span className={'test-action-btn-label'}><IntlMessages id={"testView.scores"}/></span>
+                    <Button className={'ms-20 me-10 test-previous-scores'} variant="contained" color="primary"
+                            onClick={() => this.props.navigate('/main/attempt/' + this.state.attempts_id + '/score')}>
+                        <span className={'test-action-btn-label'}>Scores</span>
                         <HistoryOutlinedIcon size="small"/>
                     </Button>
                 }
                 {
                     this.state.possiblePostTestReattempt ?
-                        <Button className={'ml-20 mr-10 test-previous-scores'} variant="contained" color="primary" onClick={() => this.onPostTestReattempt()}>
-                            <span className={'test-action-btn-label'}><IntlMessages id={"testView.viewer.reattempt"}/></span>
+                        <Button className={'ms-20 me-10 test-previous-scores'} variant="contained" color="primary" onClick={() => this.onPostTestReattempt()}>
+                            <span className={'test-action-btn-label'}>Reattempt</span>
                             <CachedIcon size="small"/>
                         </Button> : null
                 }
-                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => this.props.history.push('/main/home')}>
-                    <span className={'test-action-btn-label'}><IntlMessages id={"testView.home"}/></span>
+                <Button variant="contained" color="primary" className={'test-home-btn'} onClick={() => this.props.navigate('/main')}>
+                    <span className={'test-action-btn-label'}>Home</span>
                     <HomeOutlinedIcon size="small"/>
                 </Button>
             </nav>
@@ -519,15 +547,15 @@ class TestView extends Component {
             // let resultStr = (isCorrect ? 'Correct: ' : 'Wrong: ') + (isTruthCancer ? "Cancer Case" : "Normal Case");
             let resultStr;
             if (this.state.test_case.modalities.modality_type === 'covid') {
-                resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.covidSign"}/> : <IntlMessages id={"testView.truth.nonCovidSign"}/>
+                resultStr = isTruthCancer ? "COVID-19 SIGNS" : "NON-COVID-19"
             } else if (['chest', 'chest_ct'].indexOf(this.state.test_case.modalities.modality_type) !== -1) {
                 if (this.state.test_case.modalities.name !== 'LinED') {
-                    resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.abnormalChest"}/> : <IntlMessages id={"testView.truth.normalChest"}/>
+                    resultStr = isTruthCancer ? "Abnormal" : "Normal"
                 } else {
                     resultStr = isTruthCancer ? 'Incorrect Position' : 'Correct Position';
                 }
             } else {
-                resultStr = isTruthCancer ? <IntlMessages id={"testView.truth.cancerCase"}/> : <IntlMessages id={"testView.truth.normalCase"}/>
+                resultStr = isTruthCancer ? "Cancer Case" : "Normal Case"
             }
             return (
                 <div style={{display: 'inline-block'}}>
@@ -550,7 +578,7 @@ class TestView extends Component {
                                 <div className={'quality-icon quality-none-icon'}/> :
                                 <div className={'density-icon'}>{['a', 'b', 'c', 'd'][imageDensity]}</div>
                         }
-                        <span data-cy="density-icon" className={'quality-text'}><IntlMessages id={"testView.density"}/></span>
+                        <span data-cy="density-icon" className={'quality-text'}>Density</span>
                     </div>
                 )
             } else {
@@ -560,7 +588,7 @@ class TestView extends Component {
                     return (
                         <div className={'truth-quality'}>
                             <div className={'density-score ' + (this.state.isTruthCancer ? 'correct' : 'wrong')}>
-                                <span><IntlMessages id={"testView.youScored"}/>: {['a', 'b', 'c', 'd'][this.state.answerDensity]}</span>
+                                <span>You scored: {['a', 'b', 'c', 'd'][this.state.answerDensity]}</span>
                             </div>
                         </div>
                     );
@@ -580,7 +608,7 @@ class TestView extends Component {
                             <path d="M0 0h7v6H0zm8 0h7v6H8zM0 7h7v6H0zm8 0h7v6H8z"/>
                         </svg>
                     </div>
-                    <p><IntlMessages id={"testView.tool.series"}/></p>
+                    <p>Series</p>
                 </div>
                 <TestViewToolList
                     complete={this.state.complete}
@@ -595,7 +623,7 @@ class TestView extends Component {
                         onChange={(e) => (this.synchronizer.enabled = e.target.checked)}
                         value="checkedB"
                     />
-                    <p>&nbsp;<IntlMessages id={"testView.tool.sync"}/></p>
+                    <p>&nbsp;Sync</p>
                 </div>
                 <HangingSelector/>
                 {this.renderTestResult()}
@@ -655,13 +683,26 @@ class TestView extends Component {
                                     isPostTest={this.state.isPostTest}
                                 />
                             </DndProvider>
+                            {
+                                this.state.showTestCaseEndVideo &&
+                                <div className={'test-case-end-video'}>
+                                    <ReactPlayer
+                                        url={this.state.test_case.test_case_end_video}
+                                        playing={true}
+                                        controls
+                                        width={'100%'}
+                                        height={'100%'}
+                                        style={{backgroundColor: 'black'}}
+                                    />
+                                </div>
+                            }
                         </div>
                     </ShortcutContainer>
                     {this.state.isShowLoadingIndicator && <LoadingIndicator type={"test-view"}/>}
                     <div className={'rotate-error'}>
                         <img src={require('Assets/img/rotate.png')} alt=''/>
                     </div>
-                    <Dialog open={this.state.isShowToolModal} onClose={() => this.setState({isShowToolModal: false})} classes={{paper: 'test-view-toolbar-modal'}}>
+                    <Dialog open={!!this.state.isShowToolModal} onClose={() => this.setState({isShowToolModal: false})} classes={{paper: 'test-view-toolbar-modal'}}>
                         <div className={'test-view-toolbar tooltip-toolbar-overlay'}>
                             <TestViewToolList
                                 complete={this.state.complete}
@@ -732,7 +773,7 @@ const mapStateToProps = (state) => ({
     showImageList: state.testView.showImageList,
     isShowImageBrowser: state.testView.isShowImageBrowser,
     caseDensity: state.testView.caseDensity,
-    isLogin: selectors.getIsLogin(state),
+    isLogin: state.authUser.isLogin,
 });
 
 export default withRouter(connect(mapStateToProps, {
@@ -744,38 +785,48 @@ export default withRouter(connect(mapStateToProps, {
     setAttemptInfo,
 })(TestView));
 
-const AntSwitch = withStyles(theme => ({
-    root: {
-        width: 30,
-        height: 18,
-        marginBottom: 8,
-        marginLeft: 5,
-        padding: 0,
-        display: 'flex',
+const AntSwitch = styled(Switch)(({ theme }) => ({
+    width: 30,
+    height: 18,
+    marginBottom: 5,
+    padding: 0,
+    display: 'flex',
+    '&:active': {
+        '& .MuiSwitch-thumb': {
+            width: 14,
+        },
+        '& .MuiSwitch-switchBase.Mui-checked': {
+            transform: 'translateX(9px)',
+        },
     },
-    switchBase: {
+    '& .MuiSwitch-switchBase': {
         padding: 2,
-        color: theme.palette.grey[500],
-        '&$checked': {
+        '&.Mui-checked': {
             transform: 'translateX(12px)',
-            color: theme.palette.common.white,
-            '& + $track': {
+            color: '#fff',
+            '.MuiSwitch-thumb': {
+                backgroundColor: '#fff',
+            },
+            '& + .MuiSwitch-track': {
                 opacity: 1,
-                backgroundColor: theme.palette.primary.main,
-                borderColor: theme.palette.primary.main,
+                backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
             },
         },
     },
-    thumb: {
+    '& .MuiSwitch-thumb': {
+        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
         width: 14,
         height: 14,
-        boxShadow: 'none',
+        borderRadius: 7,
+        transition: theme.transitions.create(['width'], {
+            duration: 200,
+        }),
+        backgroundColor: '#9e9e9e'
     },
-    track: {
-        border: `1px solid ${theme.palette.grey[500]}`,
+    '& .MuiSwitch-track': {
         borderRadius: 18 / 2,
         opacity: 1,
-        backgroundColor: theme.palette.common.white,
+        backgroundColor: 'white',
+        boxSizing: 'border-box',
     },
-    checked: {},
-}))(Switch);
+}));

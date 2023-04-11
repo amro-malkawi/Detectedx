@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import Tooltip from '@material-ui/core/Tooltip';
+import {Tooltip} from '@mui/material';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import {setImageEDBreastQuality} from "Actions";
+import {setImageEDBreastQuality} from "Store/Actions";
 import {connect} from "react-redux";
 
 class ImagEDMammoQuestions extends Component {

@@ -9,34 +9,34 @@ export default function() {
                 <img src={require("Assets/img/instruction/toolbar_dentalED.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_next_previous.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the previous/next case.
+                <img src={require("Assets/img/instruction/btn_next_previous.png")} className={'me-10'} height={40} alt={''}/>Takes you to the previous/next case.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'mr-10'} height={40} alt={''}/>Opens this document.
+                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'me-10'} height={40} alt={''}/>Opens this document.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>Will take you to the Tests main page.
+                <img src={require("Assets/img/instruction/btn_home.png")} className={'me-10'} height={40} alt={''}/>Will take you to the Tests main page.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold, then move the mouse to move an image.
+                <img src={require("Assets/img/instruction/icon_pan.png")} className={'me-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold, then move the mouse to move an image.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'mr-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
+                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'me-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_window.png")} className={'mr-10'} height={40} alt={''}/>Changes contrast and brightness for an image, click and drag left/right for contrast or up/down for brightness.
+                <img src={require("Assets/img/instruction/icon_window.png")} className={'me-10'} height={40} alt={''}/>Changes contrast and brightness for an image, click and drag left/right for contrast or up/down for brightness.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_mark_freehand.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can mark a region of interest.
+                <img src={require("Assets/img/instruction/icon_mark_freehand.png")} className={'me-10'} height={40} alt={''}/>When selected, you can mark a region of interest.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_eye.png")} className={'mr-10'} height={40} alt={''}/>View/hide cancer selection information.
+                <img src={require("Assets/img/instruction/icon_eye.png")} className={'me-10'} height={40} alt={''}/>View/hide cancer selection information.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image.
+                <img src={require("Assets/img/instruction/icon_cb.png")} className={'me-10'} height={40} alt={''}/>Invert image.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'mr-10'} height={40} alt={''}/>Delete all cancer selections.
+                <img src={require("Assets/img/instruction/icon_recyle.png")} className={'me-10'} height={40} alt={''}/>Delete all cancer selections.
             </p>
             <hr/>
 

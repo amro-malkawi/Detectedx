@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Col} from "reactstrap";
-import {Dialog, DialogActions, DialogContent, DialogTitle, AppBar, Tabs, Tab} from "@material-ui/core";
+import {Dialog, DialogActions, DialogContent, DialogTitle, AppBar, Tabs, Tab} from "@mui/material";
 import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 import InstructionCovid from "./InstructionCovid";
 import InstructionMammo from "./InstructionMammo";
@@ -14,7 +14,8 @@ import InstructionImagEDMammo from "./InstructionImagEDMammo";
 import InstructionGECESM from "./InstructionGECESM";
 import InstructionCHEST from "./InstructionCHEST";
 import InstructionImagEDChest from "./InstructionImagEDChest";
-import {withRouter} from "react-router-dom";
+import InstructionWBCTSS from './InstructionWBCTSS';
+import withRouter from 'Components/WithRouter';
 import {connect} from "react-redux";
 
 class Content extends Component {
@@ -29,38 +30,40 @@ class Content extends Component {
     renderContent() {
         const {type} = this.props;
         if (type === 'Mammo') {
-            return <InstructionMammo instructionLocale={this.props.locale} />
+            return <InstructionMammo />
         } else if (type === 'DBT') {
-            return <InstructionDBT instructionLocale={this.props.locale}/>
+            return <InstructionDBT/>
         } else if (type === 'CT') {
-            return <InstructionCT instructionLocale={this.props.locale} />
+            return <InstructionCT />
         } else if (type === 'COVID-19') {
-            return <InstructionCovid instructionLocale={this.props.locale} />
+            return <InstructionCovid />
         } else if (type === 'LUNGED') {
-            return <InstructionLungED instructionLocale={this.props.locale} />
+            return <InstructionLungED />
         } else if (type === 'PCT') {
-            return <InstructionPCT instructionLocale={this.props.locale} />
+            return <InstructionPCT />
         } else if (type === 'VOLPARA') {
-            return <InstructionVolpara instructionLocale={this.props.locale} />
+            return <InstructionVolpara />
         } else if (type === 'DENTALED') {
-            return <InstructionDentalED instructionLocale={this.props.locale} />
+            return <InstructionDentalED />
         } else if (type === 'IMAGEDMAMMO') {
-            return <InstructionImagEDMammo instructionLocale={this.props.locale} />
+            return <InstructionImagEDMammo />
         } else if (type === 'GE-CESM') {
-            return <InstructionGECESM instructionLocale={this.props.locale} />
+            return <InstructionGECESM />
         } else if (type === 'CHEST') {
-            return <InstructionCHEST instructionLocale={this.props.locale} />
+            return <InstructionCHEST />
         } else if (type === 'IMAGED-CHEST') {
-            return <InstructionImagEDChest instructionLocale={this.props.locale} />
+            return <InstructionImagEDChest />
+        }  else if (type === 'WB-CT-SS') {
+            return <InstructionWBCTSS />
         } else if (type === 'all') {
             if (this.state.activeIndex === 1) {
-                return <InstructionMammo instructionLocale={this.props.locale} />
+                return <InstructionMammo />
             } else if (this.state.activeIndex === 2) {
-                return <InstructionDBT instructionLocale={this.props.locale} />
+                return <InstructionDBT />
             } else if (this.state.activeIndex === 3) {
-                return <InstructionCT instructionLocale={this.props.locale}/>
+                return <InstructionCT/>
             } else if (this.state.activeIndex === 0) {
-                return <InstructionCovid instructionLocale={this.props.locale}/>
+                return <InstructionCovid/>
             } else {
                 return null;
             }
@@ -108,7 +111,6 @@ class Content extends Component {
 // map state to props
 const mapStateToProps = (state) => {
     return {
-        locale: state.settings.locale.locale,
     };
 };
 

@@ -10,7 +10,7 @@ import {
     useStripe,
     useElements,
 } from '@stripe/react-stripe-js';
-import {Button, CircularProgress} from "@material-ui/core";
+import {Button, CircularProgress} from "@mui/material";
 import * as Apis from "Api";
 import {NotificationManager} from "react-notifications";
 
@@ -164,7 +164,7 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isT
             <div className={'pay-form-container'}>
                 <span className={'fs-13 pay-form-title'}>CARD DETAILS</span>
                 <div className={classNames('pay-form', {'error': errorCardNumber || errorCardExpiry || errorCardCvc})}>
-                    <div className={'d-flex flex-row align-items-center pl-2'} style={{minHeight: 36}}>
+                    <div className={'d-flex flex-row align-items-center ps-2'} style={{minHeight: 36}}>
                         <CardNumberElement
                             showIcon
                             placeholder={'Card Number'}
@@ -176,7 +176,7 @@ function StripeForm({initialEmail, onStripeSubscribe, discountCode, priceId, isT
                     <div className={'pay-form-row'}>
                         <div>
                             <CardExpiryElement
-                                className={'mr-10'}
+                                className={'me-10'}
                                 placeholder={'MM/YY'}
                                 onChange={onChangeCardExpiry}
                             />

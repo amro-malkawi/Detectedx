@@ -1,11 +1,8 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio} from "@material-ui/core";
-import green from '@material-ui/core/colors/green';
-import {withStyles} from '@material-ui/core/styles';
-import yellow from "@material-ui/core/colors/yellow";
+import {RadioGroup} from "@mui/material";
+import {QuestionLabel, QuestionRadio, QuestionCheckbox, RatingRadio, RatingLabel} from 'Components/SideQuestionComponents';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 import CommentInfo from "Routes/test-view/component/CommentInfo";
 
 export default class CovidQuestions extends Component {
@@ -142,7 +139,7 @@ export default class CovidQuestions extends Component {
     checkQuestionValidate() {
         const { selectedRating } = this.state;
         if (isNaN(selectedRating) || Number(selectedRating) < 0 || Number(selectedRating) > 5) {
-            NotificationManager.error(<IntlMessages id={"testView.selectSuspicionNumber"}/>);
+            NotificationManager.error("Please select suspicion number");
             return false;
         } else {
             return true;
@@ -191,7 +188,7 @@ export default class CovidQuestions extends Component {
         if (questionObj.type === 'option') {
             const value = this.state.selectedValue[parentId][questionObj.id] === undefined ? '' : this.state.selectedValue[parentId][questionObj.id];
             return (
-                <div className={'ml-30'} key={questionObj.id}>
+                <div className={'ms-30'} key={questionObj.id}>
                     <RadioGroup
                         aria-label="position"
                         name="position"
@@ -202,10 +199,10 @@ export default class CovidQuestions extends Component {
                     >
                         {
                             questionObj.items.map((v) => (
-                                <CustomFormControlLabel1
+                                <QuestionLabel
                                     value={v.id}
                                     control={
-                                        <CustomRadio1/>
+                                        <QuestionCheckbox/>
                                     }
                                     label={v.text}
                                     labelPlacement="end"
@@ -227,9 +224,9 @@ export default class CovidQuestions extends Component {
             const selected = this.state.selectedValue[questionObj.id] !== undefined;
             return (
                 <div key={questionObj.id} className={'mt-25'}>
-                    <CustomFormControlLabel1
+                    <QuestionLabel
                         control={
-                            <CustomCheckbox
+                            <QuestionCheckbox
                                 checked={selected}
                                 onChange={(event) => this.onChangeQuestion(questionObj.id, event.target.checked)}
                                 value="checkedG"
@@ -258,10 +255,10 @@ export default class CovidQuestions extends Component {
                     >
                         {
                             questionObj.items.map((v) => (
-                                <CustomFormControlLabel1
+                                <QuestionLabel
                                     value={v.id}
                                     control={
-                                        <CustomRadio1/>
+                                        <QuestionCheckbox/>
                                     }
                                     label={v.text}
                                     labelPlacement="end"
@@ -279,19 +276,19 @@ export default class CovidQuestions extends Component {
     renderTitle() {
         const {isTruth, complete} = this.props;
         if (isTruth) {
-            return <IntlMessages id={'testView.covidQuestion.expertJudgement'}/>;
+            return "Experts judgement";
         } else {
             if (!complete) {
-                return <IntlMessages id={"testView.covidQuestion.doyousee"}/>;
+                return "Do you see";
             } else {
-                return <IntlMessages id={"testView.covidQuestion.yourJudgement"}/>;
+                return "Your judgement";
             }
         }
     }
 
     render() {
         return (
-            <div className={'pl-10 covid-question-container '}>
+            <div className={'ps-10 covid-question-container '}>
                 <div>
                     <p className={'covid-question-title'}>
                         {
@@ -315,18 +312,18 @@ export default class CovidQuestions extends Component {
                         }
                     </div>
                     <div className={'covid-option-questions mb-20 mt-20'}>
-                        <p><IntlMessages id={"testView.covidQuestion.title1"}/></p>
+                        <p>Distribution of COVID appearances</p>
                         {
                             this.state.question.slice(3, 5).map(v => this.renderQuestion(v))
                         }
                     </div>
                     <div className={'covid-confidence'}>
-                        <p><IntlMessages id={"testView.covidQuestion.title2"}/></p>
+                        <p>Suspicion for COVID-19 infection</p>
                         <RadioGroup
                             data-cy="covid-confidence-position"
                             aria-label="position"
                             name="position"
-                            className={'ml-15'}
+                            className={'ms-15'}
                             value={this.state.selectedRating}
                             onChange={(event) => this.onChangeRating(event.target.value)}
                             row
@@ -334,9 +331,9 @@ export default class CovidQuestions extends Component {
                             {
                                 [0, 1, 2, 3, 4, 5].map((v, i) => {   // [0, 1, 2, 3...]
                                     return (
-                                        <CustomFormControlLabel2
+                                        <RatingLabel
                                             value={v.toString()}
-                                            control={<CustomRadio2/>}
+                                            control={<RatingRadio/>}
                                             label={v}
                                             key={i}
                                             disabled={this.props.complete}
@@ -356,75 +353,3 @@ CovidQuestions.defaultProps = {
     complete: false,
     isTruth: false,
 };
-
-const CustomRadio1 = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {},
-}))(Radio);
-
-const CustomFormControlLabel1 = withStyles(theme => ({
-    root: {
-        marginLeft: 0,
-    },
-    label: {
-        color: '#b3b3b3',
-        fontSize: 16,
-        '&$disabled': {
-            color: '#b3b3b3',
-        },
-    },
-    disabled: {},
-}))(FormControlLabel);
-
-const CustomCheckbox = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {},
-}))(Checkbox);
-
-const CustomRadio2 = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {},
-}))(Radio);
-
-
-const CustomFormControlLabel2 = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {},
-}))(FormControlLabel);

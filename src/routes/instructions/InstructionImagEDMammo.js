@@ -8,62 +8,62 @@ export default function ({instructionLocale}) {
                 <img src={require("Assets/img/instruction/img_imagedmammo1.png")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_next_previous.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the previous/next case.
+                <img src={require("Assets/img/instruction/btn_next_previous.png")} className={'me-10'} height={40} alt={''}/>Takes you to the previous/next case.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'mr-10'} height={40} alt={''}/>Opens this document.
+                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'me-10'} height={40} alt={''}/>Opens this document.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>Will take you to the Tests main page.
+                <img src={require("Assets/img/instruction/btn_home.png")} className={'me-10'} height={40} alt={''}/>Will take you to the Tests main page.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold, then move the mouse to move
+                <img src={require("Assets/img/instruction/icon_pan.png")} className={'me-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold, then move the mouse to move
                 an image.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'mr-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
+                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'me-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_reset.png")} className={'mr-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, Screen configuration)
+                <img src={require("Assets/img/instruction/icon_reset.png")} className={'me-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, Screen configuration)
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_rectangle.png")} className={'mr-10'} height={40} alt={''}/>Rectangle allows you to measure the breast in a rectangle shape when you click
+                <img src={require("Assets/img/instruction/icon_rectangle.png")} className={'me-10'} height={40} alt={''}/>Rectangle allows you to measure the breast in a rectangle shape when you click
                 and drag to your desired size.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_window.png")} className={'mr-10'} height={40} alt={''}/>Window can make you change the brightness by dragging up and down, and can make
+                <img src={require("Assets/img/instruction/icon_window.png")} className={'me-10'} height={40} alt={''}/>Window can make you change the brightness by dragging up and down, and can make
                 you change the contrast by dragging left to right on a breast.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_arrow.png")} className={'mr-10'} height={40} alt={''}/>Arrow allows you to point at a certain place and then place an annotation.
+                <img src={require("Assets/img/instruction/icon_arrow.png")} className={'me-10'} height={40} alt={''}/>Arrow allows you to point at a certain place and then place an annotation.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_length.png")} className={'mr-10'} height={40} alt={''}/>Length allows you to measure from one place to another with a straight line.
+                <img src={require("Assets/img/instruction/icon_length.png")} className={'me-10'} height={40} alt={''}/>Length allows you to measure from one place to another with a straight line.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_ellipse.png")} className={'mr-10'} height={40} alt={''}/>Ellipse allows you to click and drag a circle to your desired size on each
+                <img src={require("Assets/img/instruction/icon_ellipse.png")} className={'me-10'} height={40} alt={''}/>Ellipse allows you to click and drag a circle to your desired size on each
                 breast.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_angle.png")} className={'mr-10'} height={40} alt={''}/>Angle allows you to create an angle on the breast by clicking and then clicking in
+                <img src={require("Assets/img/instruction/icon_angle.png")} className={'me-10'} height={40} alt={''}/>Angle allows you to create an angle on the breast by clicking and then clicking in
                 a second position.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_erase.png")} className={'mr-10'} height={40} alt={''}/>Erase allows you to delete all the measurements you have made using the rectangle,
+                <img src={require("Assets/img/instruction/icon_erase.png")} className={'me-10'} height={40} alt={''}/>Erase allows you to delete all the measurements you have made using the rectangle,
                 length, angle and ellipse tool.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_hanging.png")} className={'mr-10'} height={40} alt={''}/>Change the hanging protocol for the case so you can view both the left CC and
+                <img src={require("Assets/img/instruction/icon_hanging.png")} className={'me-10'} height={40} alt={''}/>Change the hanging protocol for the case so you can view both the left CC and
                 right CC and the left MLO and right MLO.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image.
+                <img src={require("Assets/img/instruction/icon_cb.png")} className={'me-10'} height={40} alt={''}/>Invert image.
             </p>
 
             <hr/>
 
             <p className={'sub-menu-title'}>Assessment of Quality of Mammographic Positioning</p>
-            <div className={'ml-3 mr-3'}>
+            <div className={'ms-3 me-3'}>
                 <p>
                     Good quality mammography positioning is critical in supporting correct diagnosis.
                     It’s important that as much breast tissue as possible is included on the image and that it is optimally displayed.
@@ -78,7 +78,7 @@ export default function ({instructionLocale}) {
             </div>
             <hr/>
             <p className={'sub-menu-title'}>Definitions</p>
-            <div className={'ml-3 mr-3'}>
+            <div className={'ms-3 me-3'}>
                 <p>
                     On the CC view, the posterior nipple line, PNL, is a line drawn from the nipple perpendicularly to the posterior aspect of the image or the anterior
                     border of the pectoralis major muscle (if seen), whichever comes first.
@@ -97,7 +97,7 @@ export default function ({instructionLocale}) {
             <hr/>
 
             <p className={'sub-menu-title'}>How to assess a case in ImagED-Mammography</p>
-            <div className={'ml-3 mr-3'}>
+            <div className={'ms-3 me-3'}>
                 <p>Start on the 4 view display.</p>
                 <img src={require('Assets/img/instruction/img_imagedmammo3.png')} width={'70%'} alt={''} style={{margin: "auto", display: 'block'}}/>
                 <p className={'mt-40'}><strong>Using the Window tool</strong>, lighten the image so as to see the nipples clearly and the edges of the images </p>

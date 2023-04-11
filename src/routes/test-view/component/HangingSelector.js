@@ -1,25 +1,19 @@
 import React, {Component} from 'react'
-import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {changeHangingLayout} from "Actions";
-import Button from '@material-ui/core/Button';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import { withStyles } from '@material-ui/core/styles';
+import {changeHangingLayout} from "Store/Actions";
+import {Button, MenuItem, Menu} from '@mui/material';
+import withRouter from 'Components/WithRouter';
+import {withStyles} from 'tss-react/mui';
 
 
-const StyledMenu = withStyles({
+const StyledMenu = withStyles(Menu, (theme) => ({
     paper: {
         border: '1px solid #d3d4d5',
         backgroundColor: 'black',
     },
-})(props => (
-    <Menu
-        {...props}
-    />
-));
+}));
 
-const StyledMenuItem = withStyles(theme => ({
+const StyledMenuItem = withStyles(MenuItem, (theme) => ({
     root: {
         '&:focus': {
             backgroundColor: 'grey'
@@ -31,7 +25,7 @@ const StyledMenuItem = withStyles(theme => ({
     selected: {
         backgroundColor: '#1565C0 !important'
     }
-}))(MenuItem);
+}));
 
 
 class HangingSelector extends Component{
@@ -66,7 +60,7 @@ class HangingSelector extends Component{
                 <div className={'hanging-type-container'}>
                     <Button
                         onKeyUp={(e) => e.preventDefault()}
-                        variant="contained" color="default" className={'hanging-button'}
+                        variant="contained" className={'hanging-button'}
                         onClick={(event) => this.setState({type: event.currentTarget})}
                     >
                         {this.renderHangingIcon(this.props.selectedHangingType)}

@@ -72,7 +72,7 @@ export default function (imageId, image) {
     height: rows,
     width: columns,
     color: true,
-    rgba: false,
+    rgba: true,
     columnPixelSpacing: imagePlaneModule.columnPixelSpacing,
     rowPixelSpacing: imagePlaneModule.rowPixelSpacing,
     invert: false,

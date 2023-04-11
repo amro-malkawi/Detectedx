@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Button, Dialog, DialogContent} from "@material-ui/core";
+import {Button, Dialog, DialogContent} from "@mui/material";
 
 function DeleteProfileModal({onClose, onDelete}) {
     return (

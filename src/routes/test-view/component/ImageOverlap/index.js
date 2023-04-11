@@ -3,9 +3,7 @@ import cornerstone from "cornerstone-core";
 import AutosizeInput from 'react-input-autosize';
 import {Input} from 'reactstrap';
 import _ from 'lodash';
-import Tooltip from "@material-ui/core/Tooltip";
-import IntlMessages from "Util/IntlMessages";
-import {isMobile} from "react-device-detect";
+import Tooltip from "@mui/material/Tooltip";
 import GEThicknessSwitch from "./GEThicknessSwitch";
 import ImageScrollBar, {adjustSlideSize} from "./ImageScrollBar";
 import ImageEDMamoQuality from "../ImageEDMamoQuality";
@@ -135,16 +133,16 @@ class ImageOverlap extends Component {
         let containerClass = 'image-overlap-container ';
         if(!isRightBrestImage) {
             if(this.props.stackCount > 1) {
-                containerClass += 'pr-30';
+                containerClass += 'pe-30';
             } else {
-                containerClass += 'pr-10';
+                containerClass += 'pe-10';
             }
         } else {
             containerClass += 'right-brest-overlap ';
             if(this.props.stackCount > 1) {
-                containerClass += 'pl-30';
+                containerClass += 'ps-30';
             } else {
-                containerClass += 'pl-10';
+                containerClass += 'ps-10';
             }
         }
 
@@ -164,7 +162,7 @@ class ImageOverlap extends Component {
                             {/*    </a>*/}
                             {/*}*/}
                             <a data-cy="tool-invert" onClick={() => this.onInvert()}>
-                                <Tooltip title={<IntlMessages id={"testView.viewer.invert"}/>} placement="bottom">
+                                <Tooltip title={"Invert"} placement="bottom">
                                     <i className={"zmdi zmdi-brightness-6 fs-23"}/>
                                 </Tooltip>
                             </a>
@@ -172,7 +170,7 @@ class ImageOverlap extends Component {
                             {/*    (!this.props.complete && canDrawMarker) &&*/}
                             {/*    <a data-cy="tool-clear-symbols" onClick={() => onClearSymbols()}>*/}
                             {/*        <Tooltip title={<IntlMessages id={"testView.viewer.delete"}/>} placement="bottom">*/}
-                            {/*            <i className={"zmdi zmdi-delete fs-23 ml-2"}/>*/}
+                            {/*            <i className={"zmdi zmdi-delete fs-23 ms-2"}/>*/}
                             {/*        </Tooltip>*/}
                             {/*    </a>*/}
                             {/*}*/}
@@ -197,9 +195,9 @@ class ImageOverlap extends Component {
                             {/*</div>*/}
                             <div style={{marginRight: 3}}>Zoom: {imageZoomLevel}</div>
                             <div className={'ww-wl-input-container'}>
-                                <span className='mr-5'>WW/WL: </span>
+                                <span className='me-5'>WW/WL: </span>
                                 <AutosizeInput type='number' extraWidth={0} value={imageWW} onChange={(e) => this.onChangeVoi('imageWW', e.target.value)}/>
-                                <span className='ml-1 mr-1'>/</span>
+                                <span className='ms-1 me-1'>/</span>
                                 <AutosizeInput type='number' extraWidth={0} value={imageWL} onChange={(e) => this.onChangeVoi('imageWL', e.target.value)}/>
                                 <div>
                                     {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dialog, DialogContent} from "@material-ui/core";
+import {Dialog, DialogContent} from "@mui/material";
 import ReactPlayer from 'react-player';
 import PropTypes from "prop-types";
 
@@ -55,7 +55,7 @@ export default class VideoModal extends Component {
     render() {
         const {open, link} = this.props;
         return (
-            <Dialog open={open} onClose={() => this.onClose()} style={{backgroundColor: '#000000d0'}}
+            <Dialog open={!!open} onClose={() => this.onClose()} style={{backgroundColor: '#000000d0'}}
                     aria-labelledby="alert-dialog-title" maxWidth='xl'
                     PaperProps={{style: {padding: 10, backgroundColor: 'transparent', boxShadow: 'none'}}}
             >

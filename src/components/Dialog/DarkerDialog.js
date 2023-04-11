@@ -1,10 +1,11 @@
-import React from 'react';
 import {
     Dialog,
-    withStyles
-} from "@material-ui/core";
+} from "@mui/material";
+import { withStyles } from 'tss-react/mui';
 
-const DarkerDialog = withStyles({
+const DarkerDialog = withStyles(
+    Dialog,
+    {
     root: {
 
     },
@@ -12,11 +13,12 @@ const DarkerDialog = withStyles({
         backgroundColor: '#ffffff20'
     },
     paper: {
+
         backgroundColor: 'black',
         color: 'white',
         boxShadow: '1px 1px 7px 1px #555'
     }
-})(Dialog);
+});
 
 
 export default DarkerDialog;

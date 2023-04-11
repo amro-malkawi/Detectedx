@@ -1,14 +1,13 @@
 import React from 'react';
 import { useDrag } from 'react-dnd'
-import {withRouter} from "react-router-dom";
+import withRouter from 'Components/WithRouter';
 import {connect} from "react-redux";
-import {dropImage} from "Actions";
-import IntlMessages from "Util/IntlMessages";
+import {dropImage} from "Store/Actions";
 import ImageThumbnail from "./ImageThumbnail";
 
 const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
     const [{ isDragging }, drag] = useDrag({
-        item: { type: 'DicomImage' },
+        type: 'DicomImage',
         end: (dragItem, monitor) => {
             const dropResult = monitor.getDropResult();
             if (dragItem && dropResult) {
@@ -26,15 +25,6 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
             <div ref={drag} className="ThumbnailEntry">
                 <div className="p-x-1">
                     <div className="ImageThumbnail" style={{boxShadow: 'inset 0 0 0 1px ' + (item.type === 'test' ? '#72787d' : (item.type === 'prior' ? '#73730a' : '#672525'))}}>
-                        {/*<div className="image-thumbnail-canvas">*/}
-                        {/*    <img*/}
-                        {/*        className="static-image"*/}
-                        {/*        src={item.image_thumbnail}*/}
-                        {/*        height={123}*/}
-                        {/*        crossOrigin={'anonymous'}*/}
-                        {/*        alt={''}*/}
-                        {/*    />*/}
-                        {/*</div>*/}
                         <ImageThumbnail image_url_path={item.image_url_path} />
                         <div className="image-thumbnail-progress-bar">
                             <div className="image-thumbnail-progress-bar-inner" style={{width: 0}}/>
@@ -44,15 +34,15 @@ const ImageBrowserItem = ({item, imageList, showImageList, dropImage}) => {
                 <div className="series-details">
                     <div className="series-description">
                         {metaData.viewPosition ? metaData.viewPosition : ''}
-                        { metaData.positionDesc && <span className={'ml-20 fs-12'}>{metaData.positionDesc}</span> }
+                        { metaData.positionDesc && <span className={'ms-20 fs-12'}>{metaData.positionDesc}</span> }
                     </div>
                     <div className="series-information">
                         <div className="item item-series">
-                            <div className="icon"><IntlMessages id={"testView.browser.laterality"}/></div>
+                            <div className="icon">Laterality</div>
                             <div className="value">{metaData.imageLaterality ? metaData.imageLaterality : ''}</div>
                         </div>
                         <div className="item item-series">
-                            <div className="icon"><IntlMessages id={"testView.browser.type"}/></div>
+                            <div className="icon">Type:</div>
                             <div className="value">{item.type}</div>
                         </div>
                         <div className="item item-frames">

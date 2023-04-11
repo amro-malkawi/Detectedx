@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from "reactstrap";
-import {DialogActions, DialogContent} from "@material-ui/core";
+import {DialogActions, DialogContent} from "@mui/material";
 import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
 
 export default ({onClose, theme, type, video}) => {

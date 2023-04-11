@@ -1,12 +1,8 @@
 import React, {Component} from 'react'
-import {Checkbox, FormControlLabel, RadioGroup, Radio, Tooltip, InputBase} from "@material-ui/core";
-import green from '@material-ui/core/colors/green';
-import {fade, withStyles} from '@material-ui/core/styles';
-import yellow from "@material-ui/core/colors/yellow";
-import red from "@material-ui/core/colors/red";
+import {RadioGroup} from "@mui/material";
+import {QuestionLabel, QuestionRadio, QuestionCheckbox, RatingRadio, RatingLabel, CheckboxTooltip, QuestionInput} from 'Components/SideQuestionComponents';
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 
 
 const question = [
@@ -129,7 +125,7 @@ export default class ChestMultiDiseaseQuestion extends Component {
             isNaN(chest_rating) || Number(chest_rating) < 0 || Number(chest_rating) > 5 ||
             isNaN(answerRating2) || Number(answerRating2) < 0 || Number(answerRating2) > 5
         ) {
-            NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
+            NotificationManager.error("Please select confidence number");
             return false;
         } else {
             return true;
@@ -182,7 +178,7 @@ export default class ChestMultiDiseaseQuestion extends Component {
             <div key={questionObj.id} className={'chest-question'}>
                 <div className={'chest-question-title mb-2'}>{questionObj.label}</div>
                 <RadioGroup
-                    className={'ml-4'}
+                    className={'ms-4'}
                     aria-label="position"
                     name="position"
                     value={answerValue[questionObj.id] ? answerValue[questionObj.id] : ''}
@@ -217,7 +213,7 @@ export default class ChestMultiDiseaseQuestion extends Component {
     renderQuestion2(questionObj, disabled) {
         const {answerValue, truthValue} = this.state;
         const qTruth = truthValue[questionObj.id] || {};
-        if(!(answerValue && answerValue['chestMultiQ1'] === 'Yes') && !(truthValue && truthValue['chestMultiQ1'] === 'Yes')) return null;
+        if(!(answerValue && answerValue['chestMultiQ1'] === 'No') && !(truthValue && truthValue['chestMultiQ1'] === 'No')) return null;
         const questionAnswer = answerValue[questionObj.id];
         return (
             <div key={questionObj.id} className={'chest-question'}>
@@ -225,7 +221,7 @@ export default class ChestMultiDiseaseQuestion extends Component {
                 {
                     questionObj.child.map((c, i) => (
                         <div className={c.id} key={c.id}>
-                            <QuestionLabel key={i} className={'mt-2 ml-4'} disabled={disabled} control={
+                            <QuestionLabel key={i} className={'mt-2 ms-4'} disabled={disabled} control={
                                 <QuestionCheckbox
                                     icon={<span className={'chest-question-checkbox-icon ' + (qTruth[c.id] ? 'truth-icon' : '')}/>}
                                     checkedIcon={<span className={'chest-question-checkbox-icon checked ' + (qTruth[c.id] ? 'truth-icon' : '')}/>}
@@ -267,7 +263,7 @@ export default class ChestMultiDiseaseQuestion extends Component {
         return childOptions.map((co, i) => (
             <div className={'mb-2'} key={i}>
                 <RadioGroup
-                    className={'ml-40' + (childOptions.length === 1 ? ' flex-column' : '')}
+                    className={'ms-40' + (childOptions.length === 1 ? ' flex-column' : '')}
                     aria-label="position"
                     name="position"
                     value={(questionAnswer && questionAnswer[cId] && questionAnswer[cId][i]) ? questionAnswer[cId][i] : ''}
@@ -305,7 +301,7 @@ export default class ChestMultiDiseaseQuestion extends Component {
         return (
             <div className={'mb-2'}>
                 <RadioGroup
-                    className={'ml-40' + (childOptions.length === 1 ? ' flex-column' : '')}
+                    className={'ms-40' + (childOptions.length === 1 ? ' flex-column' : '')}
                     aria-label="position"
                     name="position"
                     value={(questionAnswer && questionAnswer[cId] && questionAnswer[cId][0]) ? questionAnswer[cId][0] : ''}
@@ -333,10 +329,10 @@ export default class ChestMultiDiseaseQuestion extends Component {
                         ))
                     }
                 </RadioGroup>
-                <div className={'ml-40'}>
+                <div className={'ms-40'}>
                     {
                         childOptions[1].map((v) => (
-                            <QuestionLabel key={v} className={'mr-1'} disabled={disabled} control={
+                            <QuestionLabel key={v} className={'me-1'} disabled={disabled} control={
                                 <QuestionCheckbox
                                     icon={<span className={'chest-question-checkbox-icon ' + ((qTruth[cId] && qTruth[cId][1] && qTruth[cId][1].indexOf(v) !== -1) ? 'truth-icon' : '')}/>}
                                     checkedIcon={<span className={'chest-question-checkbox-icon checked ' + ((qTruth[cId] && qTruth[cId][1] && qTruth[cId][1].indexOf(v) !== -1) ? 'truth-icon' : '')}/>}
@@ -358,8 +354,8 @@ export default class ChestMultiDiseaseQuestion extends Component {
         const questionAnswer = this.state.answerValue[qId];
         return childOptions.keys.map((co, i) => (
             <div className={'mb-2'} key={i}>
-                <div className={'ml-40'}>{co}</div>
-                <div className={'ml-40'}>
+                <div className={'ms-40'}>{co}</div>
+                <div className={'ms-40'}>
                     {
                         childOptions.values.map((v) => (
                             <QuestionLabel className={''} key={v} disabled={disabled} control={
@@ -383,14 +379,14 @@ export default class ChestMultiDiseaseQuestion extends Component {
         const qTruth = this.state.truthValue[qId] || {};
         const questionAnswer = this.state.answerValue[qId];
         return (
-            <div className={'ml-40'}>
+            <div className={'ms-40'}>
                 <QuestionInput
                     id="q1OtherText"
                     value={(questionAnswer && questionAnswer[cId] && questionAnswer[cId]['text']) ? questionAnswer[cId]['text'] : ''}
                     onChange={(e) => this.onChangeQuestion(qId, cId, 'text', e.target.value)}
                     disabled={disabled}
                 />
-                <span className={'text-red ml-1 fs-13'}>{qTruth[cId] && qTruth[cId]['text']}</span>
+                <span className={'text-red ms-1 fs-13'}>{qTruth[cId] && qTruth[cId]['text']}</span>
             </div>
         )
     }
@@ -399,9 +395,9 @@ export default class ChestMultiDiseaseQuestion extends Component {
         const {chest_rating, truthRating1, answerRating2, truthRating2} = this.state;
         const disabled = this.props.complete;
         return (
-            <div className={'pl-10 covid-question-container chest-data'}>
+            <div className={'ps-10 covid-question-container chest-data'}>
                 <div>
-                    <p className={'covid-question-title ml-3 mr-3'}>
+                    <p className={'covid-question-title ms-3 me-3'}>
                         Questions
                     </p>
                     <div className={'covid-questions'}>
@@ -479,121 +475,3 @@ export default class ChestMultiDiseaseQuestion extends Component {
         )
     }
 }
-
-
-const QuestionLabel = withStyles(theme => ({
-    root: {
-        marginLeft: 0,
-    },
-    label: {
-        color: '#b3b3b3',
-        fontSize: 13,
-        '&$disabled': {
-            color: '#b3b3b3',
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const QuestionRadio = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: red[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-const QuestionCheckbox = withStyles(theme => ({
-    root: {
-        color: green[600],
-        padding: 2,
-        '&$checked': {
-            color: green[500],
-        },
-        '&$disabled': {
-            color: green[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Checkbox);
-
-const QuestionInput = withStyles((theme) => ({
-    root: {
-        'label + &': {
-            marginTop: 0,
-        },
-    },
-    input: {
-        width: 100,
-        color: 'white',
-        borderRadius: 2,
-        position: 'relative',
-        backgroundColor: 'transparent',
-        border: '1px solid #ced4da',
-        fontSize: 12,
-        padding: '2px 7px',
-        transition: theme.transitions.create(['border-color', 'box-shadow']),
-        '&:focus': {
-            boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-            borderColor: theme.palette.primary.main,
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(InputBase);
-
-const RatingRadio = withStyles(theme => ({
-    root: {
-        color: yellow[600],
-        '&$checked': {
-            color: yellow[500],
-        },
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    checked: {},
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(Radio);
-
-
-const RatingLabel = withStyles(theme => ({
-    label: {
-        color: yellow[600],
-        fontSize: 15,
-        fontWeight: 600,
-        marginLeft: -10,
-        '&$disabled': {
-            color: yellow[200],
-        },
-    },
-    disabled: {
-        cursor: 'not-allowed'
-    },
-}))(FormControlLabel);
-
-const CheckboxTooltip = withStyles((theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 11,
-    },
-}))(Tooltip);

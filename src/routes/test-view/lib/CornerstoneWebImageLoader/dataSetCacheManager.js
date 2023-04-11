@@ -7,7 +7,8 @@ import xhrRequest from './xhrRequest';
  * image loader mechanism.  One reason a caller may need to do this is to determine the number of frames
  * in a multiframe sop instance so it can create the imageId's correctly.
  */
-const imageExt = 'dat';
+// const imageExt = 'dat';
+const imageExt = 'png';
 
 let cacheSizeInBytes = 0;
 
@@ -31,15 +32,37 @@ function get(uri) {
 }
 
 function getMetaDataSetUrl(uri) {
-    const basePathMatch = uri.match(/(.*[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}).*/);
-    if (basePathMatch === null) return '';
-    return basePathMatch[1] + '/meta.json';
+    if(uri.slice(-6) === ('_stack')) {
+        // request stack meta imageId
+        const basePathMatch = uri.match(/(.*[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/)([\d]+)_stack/);
+        if (basePathMatch === null) return '';
+        if(basePathMatch[2] === '0') {
+            return basePathMatch[1] + 'meta.json';
+        } else {
+            return basePathMatch[1] + basePathMatch[2] + '_meta.json';
+        }
+    } else {
+        const basePathMatch = uri.match(/(.*[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}).*/);
+        if (basePathMatch === null) return '';
+        return basePathMatch[1] + '/meta.json';
+    }
 }
 
 function getImageIdFromUrl(uri) {
-    const basePathMatch = uri.match(/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
-    if (basePathMatch === null) return '';
-    return basePathMatch[1];
+    if(uri.slice(-6) === ('_stack')) {
+        // request stack meta imageId
+        const basePathMatch = uri.match(/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\/([\d]+)_stack/);
+        if (basePathMatch === null) return '';
+        if(basePathMatch[2] === '0') {
+            return basePathMatch[1];
+        } else {
+            return basePathMatch[1] + '/' + basePathMatch[2];
+        }
+    } else {
+        const basePathMatch = uri.match(/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
+        if (basePathMatch === null) return '';
+        return basePathMatch[1];
+    }
 }
 
 function getMetaDataSet(uri) {

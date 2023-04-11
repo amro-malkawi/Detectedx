@@ -2,23 +2,31 @@
  * Test Routes
  */
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import PrivateRoute from "../../container/PrivateRoute";
+import {Navigate, Outlet, Routes, Route} from 'react-router-dom';
 import MainLayout from "Components/MainLayout";
 import HomeComponent from './home';
 import ProfileComponent from './profile';
 import AttemptComponent from './attempt';
+import {useSelector} from "react-redux";
 
-const Test = ({ match }) => (
-    <MainLayout>
-        <Switch>
-            <Redirect exact from={`${match.url}/`} to={`${match.url}/home`} />
-            <Route path={`${match.url}/home`} component={HomeComponent} />
-            <PrivateRoute path={`${match.url}/profile`} component={ProfileComponent} />
-            <PrivateRoute path={`${match.url}/attempt/:attempt_id/:step`} component={AttemptComponent} />
-            <PrivateRoute path={`${match.url}/attempt/:attempt_id`} component={AttemptComponent} />
-        </Switch>
-    </MainLayout>
-);
 
-export default Test;
+function PrivateOutlet() {
+    const isLogin = useSelector((state) => state.authUser.isLogin);
+    return isLogin ? <Outlet/> : <Navigate to="/signin"/>;
+}
+
+const Main = () => (
+        <MainLayout>
+            <Routes>
+                <Route path="/" element={<HomeComponent/>}/>
+                <Route element={<PrivateOutlet/>}>
+                    <Route path='profile' element={<ProfileComponent/>}/>
+                    <Route path='/attempt/:attempt_id/:step' element={<AttemptComponent/>}/>
+                    <Route path='/attempt/:attempt_id' element={<AttemptComponent/>}/>
+                </Route>
+            </Routes>
+        </MainLayout>
+    )
+;
+
+export default Main;

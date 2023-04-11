@@ -1,10 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {Input} from "reactstrap";
-import {Button, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
-import {Scrollbars} from "react-custom-scrollbars";
+import {Button, FormControlLabel, Radio, RadioGroup} from "@mui/material";
 import classNames from 'classnames';
-import {useHistory} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import TestSetItem from "Routes/main/home/TestSetItem";
 import ScrollContainer from './ScrollContainer';
 import {NotificationManager} from "react-notifications";
@@ -13,13 +11,15 @@ import * as Apis from "Api";
 
 
 function PersonalComponent() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [errorEmail, setErrorEmail] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [errorFirstName, setErrorFirstName] = useState(false);
     const [lastName, setLastName] = useState('');
     const [errorLastName, setErrorLastName] = useState(false);
+    const [nameTitle, setNameTitle] = useState('');
+    const [errorNameTitle, setErrorNameTitle] = useState(false);
     const [gender, setGender] = useState(null);
     const [country, setCountry] = useState('');
     const [state, setState] = useState('');
@@ -48,6 +48,7 @@ function PersonalComponent() {
             setEmail(info.email);
             setFirstName(info.first_name);
             setLastName(info.last_name);
+            setNameTitle(info.title);
             setGender(info.gender);
             setCountry(info.country);
             setState(info.state);
@@ -74,6 +75,10 @@ function PersonalComponent() {
             valid = false;
             setErrorEmail(true)
         }
+        if (nameTitle.length === 0) {
+            valid = false;
+            setErrorNameTitle(true);
+        }
         if (!jobTitle || jobTitle === '') {
             valid = false;
             setErrorJobTitle(true);
@@ -91,6 +96,7 @@ function PersonalComponent() {
             // email: email,
             first_name: firstName,
             last_name: lastName,
+            title: nameTitle,
             gender,
             country,
             state: state,
@@ -107,7 +113,7 @@ function PersonalComponent() {
     }
 
     const onGoAttempt = (id) => {
-        if (id) history.push('/main/attempt/' + id + '/score')
+        if (id) navigate('/main/attempt/' + id + '/score')
     }
 
     return (
@@ -123,7 +129,7 @@ function PersonalComponent() {
                         <span>Email *</span>
                         <Input
                             type={'email'}
-                            value={email}
+                            value={email || ''}
                             disabled
                             onChange={(e) => {
                                 setEmail(e.target.value);
@@ -131,11 +137,30 @@ function PersonalComponent() {
                             }}
                         />
                     </div>
+                    <div className={classNames('personal-item', {'error': errorNameTitle})}>
+                        <span>Title *</span>
+                        <Input
+                            type={'select'}
+                            invalid={errorNameTitle}
+                            value={nameTitle}
+                            onChange={(e) => {
+                                setNameTitle(e.target.value);
+                                setErrorNameTitle(false)
+                            }}
+                        >
+                            <option style={{display: 'none'}}/>
+                            {
+                                ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr', 'Prof'].map((v) => (
+                                    <option value={v} key={v}>{v}</option>
+                                ))
+                            }
+                        </Input>
+                    </div>
                     <div className={classNames('personal-item', {'error': errorFirstName})}>
                         <span>First Name *</span>
                         <Input
                             type={'text'}
-                            value={firstName}
+                            value={firstName || ''}
                             onChange={(e) => {
                                 setFirstName(e.target.value);
                                 setErrorFirstName(false)
@@ -146,7 +171,7 @@ function PersonalComponent() {
                         <span>Last Name *</span>
                         <Input
                             type={'text'}
-                            value={lastName}
+                            value={lastName || ''}
                             onChange={(e) => {
                                 setLastName(e.target.value);
                                 setErrorLastName(false)
@@ -196,7 +221,7 @@ function PersonalComponent() {
                         <span>State</span>
                         <Input
                             type={'text'}
-                            value={state}
+                            value={state || ''}
                             onChange={(e) => setState(e.target.value)}
                         />
                     </div>
@@ -204,7 +229,7 @@ function PersonalComponent() {
                         <span>Postcode</span>
                         <Input
                             type={'text'}
-                            value={postcode}
+                            value={postcode || ''}
                             onChange={(e) => setPostcode(e.target.value)}
                         />
                     </div>
@@ -232,7 +257,7 @@ function PersonalComponent() {
                         <span>Institution *</span>
                         <Input
                             type={'text'}
-                            value={institution}
+                            value={institution || ''}
                             onChange={(e) => {
                                 setInstitution(e.target.value);
                                 setErrorInstitution(false)
@@ -254,7 +279,7 @@ function PersonalComponent() {
                     <div className="personal-completed-test">
                         {
                             recentTestSetList.map((v) => (
-                                <TestSetItem smallSize data={v} onClick={() => onGoAttempt(v.lastAttemptId)}/>
+                                <TestSetItem smallSize key={v.id} data={v} onClick={() => onGoAttempt(v.lastAttemptId)}/>
                             ))
                         }
                     </div>

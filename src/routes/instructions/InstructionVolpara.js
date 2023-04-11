@@ -22,37 +22,37 @@ export default function () {
                 <img src={require("Assets/img/instruction/toolbar_volpara.jpg")} className={"mt-20 white-border"} width="100%" alt={''}/>
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_next.png")} className={'mr-10'} height={40} alt={''}/>Takes you to the next case.
+                <img src={require("Assets/img/instruction/btn_next.png")} className={'me-10'} height={40} alt={''}/>Takes you to the next case.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_previous.png")} className={'mr-10'} height={40} alt={''}/>Takes your to the previous case.
+                <img src={require("Assets/img/instruction/btn_previous.png")} className={'me-10'} height={40} alt={''}/>Takes your to the previous case.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'mr-10'} height={40} alt={''}/>Opens this document.
+                <img src={require("Assets/img/instruction/btn_instruction.png")} className={'me-10'} height={40} alt={''}/>Opens this document.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/btn_home.png")} className={'mr-10'} height={40} alt={''}/>will take you to the Tests main page.
+                <img src={require("Assets/img/instruction/btn_home.png")} className={'me-10'} height={40} alt={''}/>will take you to the Tests main page.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'mr-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
+                <img src={require("Assets/img/instruction/icon_zoom.png")} className={'me-10'} height={40} alt={''}/>Will allow you to zoom in and out of an image, user mouse scroll to zoom.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_window.png")} className={'mr-10'} height={40} alt={''}/>Changes contrast and brightness for an image, click and drag left/right for
+                <img src={require("Assets/img/instruction/icon_window.png")} className={'me-10'} height={40} alt={''}/>Changes contrast and brightness for an image, click and drag left/right for
                 contrast or up/down for brightness.
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_pan.png")} className={'mr-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold then move the mouse to move
+                <img src={require("Assets/img/instruction/icon_pan.png")} className={'me-10'} height={40} alt={''}/>When selected, you can use the mouse to click and hold then move the mouse to move
                 an image
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_reset.png")} className={'mr-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, Images),
+                <img src={require("Assets/img/instruction/icon_reset.png")} className={'me-10'} height={40} alt={''}/>Reset case screen settings (Zoom, Window, Images),
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_hanging.png")} className={'mr-10'} height={40} alt={''}/>Change the hanging protocol for the case (different views and show priors if
+                <img src={require("Assets/img/instruction/icon_hanging.png")} className={'me-10'} height={40} alt={''}/>Change the hanging protocol for the case (different views and show priors if
                 available)
             </p>
             <p>
-                <img src={require("Assets/img/instruction/icon_cb.png")} className={'mr-10'} height={40} alt={''}/>Invert image
+                <img src={require("Assets/img/instruction/icon_cb.png")} className={'me-10'} height={40} alt={''}/>Invert image
             </p>
             <hr/>
 
@@ -60,7 +60,7 @@ export default function () {
             <div className={'row'}>
                 <Col sm={6} className={'right-border'}>
                     <ul>
-                        <li>Click on <img src={require("Assets/img/instruction/icon_density.png")} className={'mr-10'} height={40} alt={''}/></li>
+                        <li>Click on <img src={require("Assets/img/instruction/icon_density.png")} className={'me-10'} height={40} alt={''}/></li>
                         <li>Select the breast density category from the popup window</li>
                     </ul>
                 </Col>

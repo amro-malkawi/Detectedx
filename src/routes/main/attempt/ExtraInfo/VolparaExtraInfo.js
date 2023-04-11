@@ -1,19 +1,16 @@
 import React, {useState} from 'react';
-import {Button, DialogContent} from "@material-ui/core";
-import CustomDialogTitle from "Components/Dialog/CustomDialogTitle";
-import DarkerDialog from "Components/Dialog/DarkerDialog";
-import IntlMessages from "Util/IntlMessages";
+import {Button, DialogContent} from "@mui/material";
 import VideoModal from "Routes/instructions/VideoModal";
 
 export default function () {
     const [showModal, setShowModal] = useState(false);
     return (
         <div className={'score-extra'}>
-            <p className={'extra-title'}><IntlMessages id="test.attempt.volparaExtraTitle"/></p>
-            <p className={'extra-desc'}><IntlMessages id="test.attempt.volparaExtraDesc"/></p>
+            <p className={'extra-title'}>Extra information</p>
+            <p className={'extra-desc'}>Learn more about volumetric reading with these educational videos.</p>
             <div className={'extra-button-container'}>
                 <Button variant="contained" color="primary" size="small" className="text-white" onClick={() => setShowModal(true)}>
-                    <IntlMessages id="test.attempt.volparaNext"/>
+                    Start Video
                 </Button>
             </div>
             <VideoModal

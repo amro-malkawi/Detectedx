@@ -1,0 +1,13 @@
+
+/*========== Buttons Scss ==========*/
+.btn *, a[role=button], button[type=button] {
+  outline: none;
+  letter-spacing: normal;
+  text-transform: capitalize;
+  font-weight: 400;
+}
+
+.btn-light {
+  background-color: #303030;
+}
+

@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import styledJss from 'styled-jss';
-import MdAdd from '@material-ui/icons/Menu';
-import MdClose from '@material-ui/icons/Clear';
+import MdAdd from '@mui/icons-material/Menu';
+import MdClose from '@mui/icons-material/Clear';
 import MainButton from "./MainButton";
-import IntlMessages from "Util/IntlMessages";
-import Tooltip from "@material-ui/core/Tooltip/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 
 export const DIRECTIONS = {
     up: 'column-reverse',
@@ -13,20 +11,6 @@ export const DIRECTIONS = {
     left: 'row-reverse',
     right: 'row',
 };
-
-const StyledUl = styledJss('ul')(
-    ({direction}) => ({
-        display: 'flex',
-        width: 'fit-content',
-        // maxHeight: 200,
-        listStyle: 'none',
-        margin: '0',
-        paddingTop: 30,
-        flexDirection: DIRECTIONS[direction],
-        justifyContent: 'center',
-        alignItems: 'left',
-    }),
-);
 
 class FloatingMenu extends Component {
     static propTypes = {
@@ -59,13 +43,22 @@ class FloatingMenu extends Component {
         );
 
         return (
-            <StyledUl
+            <ul
                 className={className}
                 onClick={this.toggleMenu}
-                direction={direction}
+                style={{
+                    display: 'flex',
+                    width: 'fit-content',
+                    listStyle: 'none',
+                    margin: '0',
+                    paddingTop: 30,
+                    flexDirection: DIRECTIONS[direction],
+                    justifyContent: 'center',
+                    alignItems: 'left',
+                }}
             >
                 <MainButton
-                    iconResting={<Tooltip title={<IntlMessages id={"testView.viewer.viewSlice"}/>}><MdAdd style={{fontSize: 20, color: '#FFB300'}}/></Tooltip>}
+                    iconResting={<Tooltip title={"View Slice"}><MdAdd style={{fontSize: 20, color: '#FFB300'}}/></Tooltip>}
                     iconActive={<MdClose style={{fontSize: 20, color: '#FFB300'}}/>}
                     background={"transparent"}
                     isOpen={isOpen}
@@ -83,7 +76,7 @@ class FloatingMenu extends Component {
                 >
                     {childrenWithProps}
                 </div>
-            </StyledUl>
+            </ul>
         );
     }
 }

@@ -62,7 +62,7 @@ function panZoomSync(synchronizer, sourceElement, targetElement, eventData) {   
 
     targetViewport.translation.y = sourceViewport.translation.y
 
-    if (sourceHangingId.includes('GE')) {
+    if (sourceHangingId && sourceHangingId.includes('GE')) {
         targetViewport.scale = sourceViewport.scale
     } else {
         targetViewport.scale = sourceViewport.scale * targetRatio

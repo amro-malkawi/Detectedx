@@ -1,14 +1,14 @@
 import React from 'react';
-import {changeCurrentTool, changeHangingLayout} from 'Actions';
+import cornerstone from "cornerstone-core";
 import {connect} from "react-redux";
-import IntlMessages from "Util/IntlMessages";
 import CornerstoneToolIcon from "./CornerstoneToolIcon";
 import GridToolButton from "./GridToolButton";
+import {changeCurrentTool, changeHangingLayout} from 'Store/Actions';
 
 const Toolbar = (props) => {
     const {
         complete, isShowToolModal, onClickShowToolModal, onClose,
-        toolList, currentTool, changeCurrentTool, changeHangingLayout
+        toolList, currentTool, changeCurrentTool, changeHangingLayout, focusImageViewerIndex
     } = props;
     //mobile-tool-container
     const toolsWidth = 61 * (toolList.length + 1);
@@ -25,103 +25,145 @@ const Toolbar = (props) => {
         setTimeout(() => changeHangingLayout('reset'), 500);
     }
 
+    const onToolExecute = (toolName) => {
+        if(!focusImageViewerIndex) return;
+        const viewerComponent = document.querySelector(`[data-index="${focusImageViewerIndex}"]`);
+        if(!viewerComponent) return;
+        const element = viewerComponent.querySelector("[class='dicom']");
+        if(!element) return;
+        const viewport = cornerstone.getViewport(element);
+        if(toolName === 'RotateRight') {
+            viewport.rotation += 90;
+        } else if(toolName === 'FlipH') {
+            viewport.hflip = !viewport.hflip;
+        } else if(toolName === 'FlipV') {
+            viewport.vflip = !viewport.vflip;
+        }
+        cornerstone.setViewport(element, viewport);
+        cornerstone.invalidate(element);
+    }
+
     return (
         <div className={toolContainerClass}>
             <div className={"tool option more-icon"} onClick={() => onClickShowToolModal()}>
                 <CornerstoneToolIcon name={currentTool}/>
-                <p><IntlMessages id={"testView.tool.moreTools"}/>{isShowToolModal ? '▲' : '▼'}</p>
+                <p>Tools{isShowToolModal ? '▲' : '▼'}</p>
             </div>
             {
                 toolList.indexOf('Pan') !== -1 ?
                     <div className={"tool option" + (currentTool === 'Pan' ? ' active' : '')} data-tool="Pan" onClick={() => onChangeTool('Pan')}>
                         <CornerstoneToolIcon name={'Pan'}/>
-                        <p><IntlMessages id={"testView.tool.pan"}/></p>
+                        <p>Pan</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Zoom') !== -1 ?
-                    <div className={"tool option" + (currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true"
-                         onClick={() => onChangeTool('Zoom')}>
+                    <div className={"tool option" + (currentTool === 'Zoom' ? ' active' : '')} data-tool="Zoom" data-synchronize="true" onClick={() => onChangeTool('Zoom')}>
                         <CornerstoneToolIcon name={'Zoom'}/>
-                        <p><IntlMessages id={"testView.tool.zoom"}/></p>
+                        <p>Zoom</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Magnify') !== -1 ?
                     <div className={"tool option" + (currentTool === 'Magnify' ? ' active' : '')} data-tool="Magnify" onClick={() => onChangeTool('Magnify')}>
                         <CornerstoneToolIcon name={'Magnify'}/>
-                        <p><IntlMessages id={"testView.tool.magnify"}/></p>
+                        <p>Magnify</p>
+                    </div> : null
+            }
+            {
+                toolList.indexOf('RotateRight') !== -1 ?
+                    <div className={"tool option" + (currentTool === 'RotateRight' ? ' active' : '')} data-tool="RotateRight" onClick={() => onToolExecute('RotateRight')}>
+                        <CornerstoneToolIcon name={'RotateRight'}/>
+                        <p>Rotate Right</p>
+                    </div> : null
+            }
+            {
+                toolList.indexOf('FlipH') !== -1 ?
+                    <div className={"tool option" + (currentTool === 'FlipH' ? ' active' : '')} data-tool="FlipH" onClick={() => onToolExecute('FlipH')}>
+                        <CornerstoneToolIcon name={'FlipH'}/>
+                        <p>Flip H</p>
+                    </div> : null
+            }
+            {
+                toolList.indexOf('FlipV') !== -1 ?
+                    <div className={"tool option" + (currentTool === 'FlipV' ? ' active' : '')} data-tool="FlipV" onClick={() => onToolExecute('FlipV')}>
+                        <CornerstoneToolIcon name={'FlipV'}/>
+                        <p>Flip V</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Wwwc') !== -1 ?
                     <div className={"tool option" + (currentTool === 'Wwwc' ? ' active' : '')} data-tool="Wwwc" onClick={() => onChangeTool('Wwwc')}>
                         <CornerstoneToolIcon name={'Wwwc'}/>
-                        <p><IntlMessages id={"testView.tool.window"}/></p>
+                        <p>Window</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Length') !== -1 && !complete ?
                     <div className={"tool option" + (currentTool === 'Length' ? ' active' : '')} data-tool="Length" onClick={() => onChangeTool('Length')}>
                         <CornerstoneToolIcon name={'Length'}/>
-                        <p><IntlMessages id={"testView.tool.length"}/></p>
+                        <p>Length</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Angle') !== -1 && !complete ?
                     <div className={"tool option" + (currentTool === 'Angle' ? ' active' : '')} data-tool="Angle" onClick={() => onChangeTool('Angle')}>
                         <CornerstoneToolIcon name={'Angle'}/>
-                        <p><IntlMessages id={"testView.tool.angle"}/></p>
+                        <p>Angle</p>
                     </div> : null
             }
             {
                 toolList.indexOf('EllipticalRoi') !== -1 && !complete ?
-                    <div className={"tool option" + (currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi"
-                         onClick={() => onChangeTool('EllipticalRoi')}>
+                    <div className={"tool option" + (currentTool === 'EllipticalRoi' ? ' active' : '')} data-tool="EllipticalRoi" onClick={() => onChangeTool('EllipticalRoi')}>
                         <CornerstoneToolIcon name={'EllipticalRoi'}/>
-                        <p><IntlMessages id={"testView.tool.ellipse"}/></p>
+                        <p>Ellipse</p>
                     </div> : null
             }
             {
                 toolList.indexOf('RectangleRoi') !== -1 && !complete ?
                     <div className={"tool option" + (currentTool === 'RectangleRoi' ? ' active' : '')} data-tool="RectangleRoi" onClick={() => onChangeTool('RectangleRoi')}>
                         <CornerstoneToolIcon name={'RectangleRoi'}/>
-                        <p><IntlMessages id={"testView.tool.rectangle"}/></p>
+                        <p>Rectangle</p>
                     </div> : null
             }
             {
                 toolList.indexOf('ArrowAnnotate') !== -1 && !complete ?
-                    <div className={"tool option" + (currentTool === 'ArrowAnnotate' ? ' active' : '')} data-tool="ArrowAnnotate"
-                         onClick={() => onChangeTool('ArrowAnnotate')}>
+                    <div className={"tool option" + (currentTool === 'ArrowAnnotate' ? ' active' : '')} data-tool="ArrowAnnotate" onClick={() => onChangeTool('ArrowAnnotate')}>
                         <CornerstoneToolIcon name={'ArrowAnnotate'}/>
-                        <p><IntlMessages id={"testView.tool.arrow"}/></p>
+                        <p>Arrow</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Eraser') !== -1 && !complete ?
                     <div className={"tool option" + (currentTool === 'Eraser' ? ' active' : '')} data-tool="Eraser" onClick={() => onChangeTool('Eraser')}>
                         <CornerstoneToolIcon name={'Eraser'}/>
-                        <p><IntlMessages id={"testView.tool.erase"}/></p>
+                        <p>Erase</p>
                     </div> : null
             }
             {
                 toolList.indexOf('Marker') !== -1 && !complete ?
                     <div className={"tool option" + (currentTool === 'Marker' ? ' active' : '')} data-tool="Marker" onClick={() => onChangeTool('Marker')}>
                         <CornerstoneToolIcon name={'Marker'}/>
-                        <p><IntlMessages id={"testView.tool.mark"}/></p>
+                        <p>Mark</p>
                     </div> : null
             }
             {
                 toolList.indexOf('MarkerFreehand') !== -1 && !complete ?
-                    <div className={"tool option" + (currentTool === 'MarkerFreehand' ? ' active' : '')} data-tool="MarkerFreehand"
-                         onClick={() => onChangeTool('MarkerFreehand')}>
+                    <div className={"tool option" + (currentTool === 'MarkerFreehand' ? ' active' : '')} data-tool="MarkerFreehand" onClick={() => onChangeTool('MarkerFreehand')}>
                         <CornerstoneToolIcon name={'MarkerFreehand'}/>
-                        <p><IntlMessages id={"testView.tool.freehand"}/></p>
+                        <p>Freehand</p>
+                    </div> : null
+            }
+            {
+                toolList.indexOf('Crosshairs') !== -1 ?
+                    <div className={"tool option" + (currentTool === 'Crosshairs' ? ' active' : '')} data-tool="Crosshairs" onClick={() => onChangeTool('Crosshairs')}>
+                        <CornerstoneToolIcon name={'Crosshairs'}/>
+                        <p>Crosshairs</p>
                     </div> : null
             }
             <div className={"tool option"} data-tool="Reset" onClick={() => onResetImageViewer()}>
                 <CornerstoneToolIcon name={'Reset'}/>
-                <p><IntlMessages id={"testView.tool.reset"}/></p>
+                <p>Reset</p>
             </div>
             {
                 toolList.indexOf('Grid') !== -1 && <GridToolButton/>
@@ -135,7 +177,8 @@ const Toolbar = (props) => {
 const mapStateToProps = (state) => {
     return {
         toolList: state.testView.toolList,
-        currentTool: state.testView.currentTool
+        currentTool: state.testView.currentTool,
+        focusImageViewerIndex: state.testView.focusImageViewerIndex,
     };
 };
 

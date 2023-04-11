@@ -1,23 +1,21 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {Button, Dialog, Tooltip} from '@material-ui/core';
-import BookmarkIcon from '@material-ui/icons/Bookmark';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import {Button, Dialog, Tooltip} from '@mui/material';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ReactPlayer from "react-player";
 import JSONParseDefault from "json-parse-default";
 import {useSelector} from "react-redux";
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {NotificationManager} from "react-notifications";
 import {isMobile} from 'react-device-detect';
 import ReactGA from "react-ga4";
 import * as Apis from "Api";
-import * as selectors from "Selectors";
 import classnames from "classnames";
 
 function TestSetInfo({data, onClose, onBackSeries}) {
-    const history = useHistory();
-    const isLogin = selectors.getIsLogin(null);
-    const locale = useSelector((state) => state.settings.locale.locale);
+    const navigate = useNavigate();
+    const isLogin = useSelector((state) => state.authUser.isLogin);
     const videoRef = useRef();
     const [isVideoPlay, setIsVideoPlay] = useState(false);
     const [isFirstPlay, setIsFirstPlay] = useState(true);
@@ -48,7 +46,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
             level_name: data.name
         });
         if (data.id.indexOf !== undefined && data.id.indexOf('/main/attempt/') === 0) {
-            history.push(data.id)
+            navigate(data.id)
         } else {
             Apis.attemptsStart(data.id, subType).then(attempt => {
                 let path;
@@ -57,7 +55,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                 } else {
                     path = '/main/attempt/' + attempt.id + '/' + attempt.progress;
                 }
-                history.push(path)
+                navigate(path)
             });
         }
     }
@@ -118,8 +116,6 @@ function TestSetInfo({data, onClose, onBackSeries}) {
             } else if (typeof modalityDesc !== 'object') {
                 // if desc is not JSON type, will be shown this text
                 descText = modality_desc;
-            } else if (modalityDesc[locale] !== undefined) {
-                descText = modalityDesc[locale];
             } else if (modalityDesc['en'] !== undefined) {
                 descText = modalityDesc['en'];
             }
@@ -134,7 +130,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                             presenterInfo.presenterPhoto && presenterInfo.presenterPhoto.length > 0 &&
                             <img src={Apis.apiUploadAddress + presenterInfo.presenterPhoto} alt={''} className={'presenter-photo'}/>
                         }
-                        <div className={'mt-2 ml-30 d-flex flex-column'}>
+                        <div className={'mt-2 ms-30 d-flex flex-column'}>
                             <div className={'fs-14 mb-3'}>{presenterInfo.presenterName}</div>
                             <img src={Apis.apiUploadAddress + presenterInfo.presenterLogo} alt={''} className={'presenter-logo'}/>
                         </div>
@@ -155,7 +151,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
         if (needSubscribe) {
             return (
                 <React.Fragment>
-                    <Button className={'test-set-start-btn'} onClick={() => history.push('/plan')}>
+                    <Button className={'test-set-start-btn'} onClick={() => navigate('/plan')}>
                         Subscribe To Access
                     </Button>
                     <span></span>
@@ -232,12 +228,12 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                         title={
                             <div className={'fs-13'}>
                                 <div className={'fs-14 fw-bold'}>Allows you to assign either:</div>
-                                <div className={'ml-2 mt-1'}>• BIRADS assessment category</div>
-                                <div className={'ml-2 mt-1'}>• 3-Probably benign, 4-Suspicious<br/>&nbsp;&nbsp; or 5-Highly suspicious</div>
-                                <div className={'ml-2 mt-1'}>• Abnormality appearances</div>
-                                <div className={'ml-2 mt-1'}>• BIRADS assessment category</div>
-                                <div className={'ml-2 mt-1'}>• 2-benign</div>
-                                <div className={'ml-2 mt-1'}>• Next case (1-Normal)</div>
+                                <div className={'ms-2 mt-1'}>• BIRADS assessment category</div>
+                                <div className={'ms-2 mt-1'}>• 3-Probably benign, 4-Suspicious<br/>&nbsp;&nbsp; or 5-Highly suspicious</div>
+                                <div className={'ms-2 mt-1'}>• Abnormality appearances</div>
+                                <div className={'ms-2 mt-1'}>• BIRADS assessment category</div>
+                                <div className={'ms-2 mt-1'}>• 2-benign</div>
+                                <div className={'ms-2 mt-1'}>• Next case (1-Normal)</div>
                             </div>
                         }
                         placement="bottom"
@@ -248,8 +244,8 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                         title={
                             <div className={'fs-13'}>
                                 <div className={'fs-14 fw-bold'}>Allows you to choose either:</div>
-                                <div className={'ml-2 mt-1'}>• Recall (BIRADS 0)</div>
-                                <div className={'ml-2 mt-1'}>• Next case (Normal)</div>
+                                <div className={'ms-2 mt-1'}>• Recall (BIRADS 0)</div>
+                                <div className={'ms-2 mt-1'}>• Next case (Normal)</div>
                             </div>}
                         placement="bottom"
                     >
@@ -267,11 +263,11 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                     <div>
                         {
                             !isMobile ?
-                                <Button className={'learning-obj-back-btn'} onClick={() => setIsShoWLearningObj(false)}><i className="zmdi zmdi-chevron-left fs-20 mr-10"/>BACK</Button> :
+                                <Button className={'learning-obj-back-btn'} onClick={() => setIsShoWLearningObj(false)}><i className="zmdi zmdi-chevron-left fs-20 me-10"/>BACK</Button> :
                                 <i className="zmdi zmdi-chevron-left fs-20 text-primary1 p-2 fs-23" onClick={() => setIsShoWLearningObj(false)}/>
                         }
                     </div>
-                    <div className={'flex-fill text-center fs-26 fw-bold pr-40'} style={{flex: 1}}>Learning Objectives</div>
+                    <div className={'flex-fill text-center fs-26 fw-bold pe-40'} style={{flex: 1}}>Learning Objectives</div>
                 </div>
                 <div className={'mt-20 mb-40 fs-19'}>At the end of this module, the user will be able to:</div>
                 <div className={'fs-19'} style={{whiteSpace: 'pre-line'}}>
@@ -314,7 +310,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                             {
                                 data.is3D &&
                                 <div className={'mark-3d'}>
-                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                    <img src={require('Assets/img/main/icon_3d.svg').default} alt={''}/>
                                 </div>
                             }
                         </div>
@@ -323,22 +319,22 @@ function TestSetInfo({data, onClose, onBackSeries}) {
 
                 {!isShoWLearningObj ?
                     <div className={'test-set-modal-content'}>
-                        <div className={'pr-20'}>
+                        <div className={'pe-20'}>
                             {renderBackSeries()}
                             <div className={'test-set-item-spec'}>
                                 <span>DIFFICULTY</span>
                                 {
                                     renderDifficult(data.difficulty)
                                 }
-                                <span className={'mr-20'}>{data.test_set_time || 0}MINS</span>
-                                <span className={'mr-20'}>CME: {data.test_set_point}</span>
+                                <span className={'me-20'}>{data.test_set_time || 0}MINS</span>
+                                <span className={'me-20'}>CME: {data.test_set_point}</span>
                                 <span className={''}>{data.test_set_code}</span>
                             </div>
                             <div className={'text-white fs-18 my-20'}>
                                 {renderLeftContent()}
                             </div>
                         </div>
-                        <div className={'pl-20'}>
+                        <div className={'ps-20'}>
                             <div className={'d-flex flex-row align-items-center'}>
                                 {
                                     renderStartButton()
@@ -396,7 +392,7 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                             {
                                 data.is3D &&
                                 <div className={'mark-3d'}>
-                                    <img src={require('Assets/img/main/icon_3d.svg')} alt={''}/>
+                                    <img src={require('Assets/img/main/icon_3d.svg').default} alt={''}/>
                                 </div>
                             }
                         </div>
@@ -413,8 +409,8 @@ function TestSetInfo({data, onClose, onBackSeries}) {
                             {
                                 renderDifficult(data.difficulty)
                             }
-                            <span className={'mr-10'}>{data.test_set_time || 0}MINS</span>
-                            <span className={'mr-20'}>CME: {data.test_set_point}</span>
+                            <span className={'me-10'}>{data.test_set_time || 0}MINS</span>
+                            <span className={'me-20'}>CME: {data.test_set_point}</span>
                             <span className={''}>{data.test_set_code}</span>
                         </div>
                         {renderLeftContent()}

@@ -3,11 +3,10 @@ import {
     DialogTitle,
     Typography,
     IconButton,
-    withStyles
-} from "@material-ui/core";
-import CloseIcon from '@material-ui/icons/Close';
+} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 
-const CustomDialogTitle = withStyles({})((props) => {
+const CustomDialogTitle = (props) => {
     const { children, onClose, ...other } = props;
     return (
         <DialogTitle disableTypography className={'dialog-title'} {...other}>
@@ -19,6 +18,6 @@ const CustomDialogTitle = withStyles({})((props) => {
             ) : null}
         </DialogTitle>
     );
-});
+};
 
 export default CustomDialogTitle;

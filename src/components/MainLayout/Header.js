@@ -1,25 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from 'reactstrap';
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useLocation} from 'react-router-dom';
-import {logoutUserFromEmail} from "Actions";
-import * as selectors from "Selectors";
-import QueryString from "query-string";
+import {useLocation, useNavigate, useSearchParams} from 'react-router-dom';
+import {IconButton} from "@mui/material";
+import {logoutUserFromEmail} from "Store/Actions";
 
 function Header(props) {
-    const history = useHistory();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const location = useLocation();
     const dispatch = useDispatch();
-    const isLogin = selectors.getIsLogin(null);
+    const isLogin = useSelector((state) => state.authUser.isLogin);
     const userName = useSelector((state) => state.authUser.userName);
     const userCompletedCount = useSelector((state) => state.authUser.completedCount);
     const userCompletedPoint = useSelector((state) => state.authUser.completedPoint);
     const [searchText, setSearchText] = useState('');
 
     useEffect(() => {
-        const param = QueryString.parse(location.search);
-        if(param.search) {
-            setSearchText(param.search);
+        const searchParam = searchParams.get('search');
+        if(searchParam) {
+            setSearchText(searchParam);
         }
     }, []);
 
@@ -35,17 +35,21 @@ function Header(props) {
 
     const onSearchKeyPress = (event) => {
         if (event.key === 'Enter') {
-            let path;
-            if(searchText.length > 0) {
-                path = '/main/home?search=' + searchText;
-            } else {
-                path = '/main/home';
-            }
-            if (history.location.pathname.indexOf('/main/home')) {
-                history.replace(path);
-            } else {
-                history.push(path);
-            }
+            onSearch();
+        }
+    }
+
+    const onSearch = () => {
+        let path;
+        if(searchText.length > 0) {
+            path = '/main?search=' + searchText;
+        } else {
+            path = '/main';
+        }
+        if (location.pathname.indexOf('/main')) {
+            navigate(path, {replace: true});
+        } else {
+            navigate(path);
         }
     }
 
@@ -61,8 +65,8 @@ function Header(props) {
                 </a>
             </div>
             <div className={'header-searchbar'}>
-                <div className={'home-icon'} onClick={() => history.push('/main')}>
-                    <img src={require('Assets/img/main/icon_home.svg')} alt={''}/>
+                <div className={'home-icon'} onClick={() => navigate('/main')}>
+                    <img src={require('Assets/img/main/icon_home.svg').default} alt={''}/>
                 </div>
                 <div className={'search-input'}>
                     <Input
@@ -70,11 +74,13 @@ function Header(props) {
                         onChange={(e) => setSearchText(e.target.value)}
                         onKeyPress={onSearchKeyPress}
                     />
-                    <img src={require('Assets/img/main/icon_search.svg')} alt={''}/>
+                    <IconButton className={'search-input-btn'} onClick={onSearch}>
+                        <img src={require('Assets/img/main/icon_search.svg').default} alt={''}/>
+                    </IconButton>
                 </div>
             </div>
             <div className={'header-user-info d-flex flex-row align-items-center'}>
-                <div className={'header-user-avatar'} onClick={() => history.push('/main/profile')}>
+                <div className={'header-user-avatar'} onClick={() => navigate('/main/profile')}>
                     {/*<img src={require('Assets/img/main/temp_user.png')} alt={''}/>*/}
                     {
                         isLogin ?
@@ -89,9 +95,9 @@ function Header(props) {
                                 <span className={'fs-23 fw-semi-bold'}>{userName}</span>
                                 <span className={'fs-16 fw-semi-bold text-primary1 cursor-pointer'} onClick={onLogout}>LOGOUT</span>
                             </div> :
-                            <span className={'fs-23 fw-semi-bold cursor-pointer'} onClick={() => history.push('/main/profile')}>Login</span>
+                            <span className={'fs-23 fw-semi-bold cursor-pointer'} onClick={() => navigate('/main/profile')}>Login</span>
                     }
-                    <div className={'fs-14 cursor-pointer'} onClick={() => history.push('/main/profile?tab=completed')}>
+                    <div className={'fs-14 cursor-pointer'} onClick={() => navigate('/main/profile?tab=completed')}>
                         <span>COMPLETED<span className={'hide-mobile'}> MODULES</span>:</span>
                         <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedCount) ? userCompletedCount : 0) : ''}</span>
                         <span><span className={'hide-mobile'}>THIS YEARS </span>CME POINTS:</span>

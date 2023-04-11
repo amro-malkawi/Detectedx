@@ -1,95 +1,57 @@
-/**
- * App.js Layout Start Here
- */
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {Redirect, Route, Switch} from 'react-router-dom';
-import {NotificationContainer} from 'react-notifications';
-import {browserName, isChrome, isFirefox, isSafari, isEdge} from 'react-device-detect';
+import React, {useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import {Navigate, Route, Routes, useLocation, Outlet} from 'react-router-dom';
+import {isChrome, isEdge, isFirefox, isSafari} from "react-device-detect";
 import ReactGA from "react-ga4";
-import RctThemeProvider from './RctThemeProvider';
-import AppSignIn from 'Routes/root/Signin';
-import AppSignUp from 'Routes/root/signup';
-import Terms from './Terms';
-import ForgotPassword from 'Routes/root/ForgotPassword';
-import ResetPassword from 'Routes/root/ResetPassword';
-import SendEmail from 'Routes/root/SendEmail';
-import Confirm from 'Routes/root/Confirm';
-import NoMatch from './NoMatch';
-import VideoView from 'Routes/test-view/VideoView';
 import MainPage from 'Routes/main';
-import ChromeError from './ChromeError';
+import AppSignIn from 'Routes/nologin/Signin';
+import AppSignUp from 'Routes/nologin/signup';
+import ForgotPassword from 'Routes/nologin/ForgotPassword';
+import ResetPassword from 'Routes/nologin/ResetPassword';
+import SendEmail from 'Routes/nologin/SendEmail';
+import Confirm from 'Routes/nologin/Confirm';
+import ChromeError from 'Routes/nologin/ChromeError';
+import NoMatch from 'Routes/nologin/NoMatch';
+import TestView from 'Routes/test-view/index';
+import VideoView from 'Routes/test-view/VideoView';
 
-// async components
-import {
-    AsyncAdvanceTestViewComponent,
-} from 'Components/AsyncComponent/AsyncComponent';
-import * as selectors from "Selectors";
 
-
-
-
-/**
- * Initial Path To Check Whether User Is Logged In Or Not
- */
-const PrivateRoute = ({component: Component, ...rest, authUser}) =>
-    <Route
-        {...rest}
-        render={props =>
-            authUser
-                ? <Component {...props} />
-                : <Redirect
-                    to={{
-                        pathname: '/signin',
-                        state: {from: props.location}
-                    }}
-                />}
-    />;
-
-class App extends Component {
-    render() {
-        ReactGA.initialize('G-JHV7X81227');
-
-        if(!isChrome && !isFirefox && !isSafari && !isEdge) {
-            return (<Route component={ChromeError}/>);
-        }
-        const {isLogin, location, match} = this.props;
-        if (location.pathname === '/') {
-            return (<Redirect to={'/main'}/>);
-            // if (!isLogin) {
-            //     return (<Redirect to={'/signin'}/>);
-            // } else {
-            //     return (<Redirect to={'/main'}/>);
-            // }
-        }
-        return (
-            <RctThemeProvider>
-                <NotificationContainer/>
-                <Switch>
-                    {/*<Route path={`${match.url}app`} component={RctDefaultLayout} />*/}
-                    <Route path="/main" component={MainPage}/>
-                    <PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
-                    <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>
-                    {/*<PrivateRoute path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" component={AsyncAdvanceTestViewComponent} authUser={isLogin}/>*/}
-                    <Route path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" component={VideoView} authUser={isLogin}/>
-                    <Route path="/signin" component={AppSignIn}/>
-                    <Route path="/signup" component={AppSignUp}/>
-                    <Route path="/plan" component={AppSignUp}/>
-                    <Route path="/terms" component={Terms}/>
-                    <Route path="/forgot-password" component={ForgotPassword}/>
-                    <Route path="/reset-password" component={ResetPassword}/>
-                    <Route path="/users/send-email/:user_id" component={SendEmail}/>
-                    <Route path="/users/confirm" component={Confirm}/>
-                    <Route component={NoMatch}/>
-                </Switch>
-            </RctThemeProvider>
-        );
-    }
+function PrivateOutlet() {
+    const authUser = useSelector(state => state.authUser);
+    const {isLogin} = authUser;
+    return isLogin ? <Outlet /> : <Navigate to="/signin" />;
 }
 
-// map state to props
-const mapStateToProps = (state) => ({
-    isLogin: selectors.getIsLogin(state),
-});
+function App(props) {
 
-export default connect(mapStateToProps)(App);
+    useEffect(() => {
+        ReactGA.initialize('G-JHV7X81227');
+    }, []);
+
+    if(!isChrome && !isFirefox && !isSafari && !isEdge) {
+        return <ChromeError/>
+    }
+
+    return (
+        <Routes>
+            <Route path="/main/*" element={<MainPage/>} />
+            <Route path="/signin" element={<AppSignIn/>}/>
+            <Route path="/signup" element={<AppSignUp/>}/>
+            <Route path="/plan" element={<AppSignUp/>}/>
+            <Route path="/forgot-password" element={<ForgotPassword/>}/>
+            <Route path="/reset-password" element={<ResetPassword/>}/>
+            <Route path="/users/send-email/:user_id" element={<SendEmail/>}/>
+            <Route path="/users/confirm" element={<Confirm/>}/>
+            <Route element={<PrivateOutlet/>}>
+                <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id/:is_post_test" element={<TestView />}/>
+            </Route>
+            <Route path="/test-view/:test_sets_id/:attempts_id/:test_cases_id" element={<TestView />}/>
+            <Route path="/video-view/:test_sets_id/:attempts_id/:test_cases_id" element={<VideoView />}/>
+
+            <Route path="/" element={<Navigate replace to="/main" />} />
+            <Route path='*' element={<NoMatch/>}/>
+        </Routes>
+    );
+}
+
+export default App;

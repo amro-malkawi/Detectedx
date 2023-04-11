@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {Dropdown, DropdownMenu, DropdownToggle, Input, Button} from "reactstrap";
-import Tooltip from "@material-ui/core/Tooltip";
-import {Scrollbars} from "react-custom-scrollbars";
+import {Tooltip} from "@mui/material";
+import {Scrollbars} from "react-custom-scrollbars-2";
 import * as Apis from 'Api';
 import {NotificationManager} from "react-notifications";
-import IntlMessages from "Util/IntlMessages";
 import $ from 'jquery';
 import PropTypes from "prop-types";
 import 'Assets/css/quill.snow.css'
@@ -87,7 +86,7 @@ class CommentInfo extends Component {
                         <DropdownToggle className="bg-primary">
                             {
                                 modality_type === 'covid' ?
-                                    <Button size={'small'} color="primary" onClick={() => null}><IntlMessages id={"testView.synopticComment"}/></Button> :
+                                    <Button size={'small'} color="primary" onClick={() => null}>Synoptic Comment</Button> :
                                     <Tooltip title="Comment" placement="right">
                                         <i className="zmdi zmdi-comment-text"/>
                                     </Tooltip>
@@ -98,8 +97,7 @@ class CommentInfo extends Component {
                                 <ul className="list-unstyled text-center mb-0">
                                     <li className="header-title mb-10">
                                         {
-                                            this.state.isGETestCase ? <IntlMessages id={"testView.comment.patient"}/> :
-                                                <IntlMessages id={"testView.comment"}/>
+                                            this.state.isGETestCase ? "Patient History" : "Comment"
                                         }
                                     </li>
                                     <li className={'comment-text'}>
