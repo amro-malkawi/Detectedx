@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from "reactstrap";
 import {Button, FormControlLabel} from "@mui/material";
-import {GreenCheckbox} from 'Components/CustomMuiComponent';
+import {GreenCheckbox, markerSelectStyles} from 'Components/CustomMuiComponent';
 import {NotificationManager} from "react-notifications";
+import Select from "react-select/creatable";
 import validator from "validator";
 import * as Apis from "Api";
 
@@ -24,7 +25,7 @@ function SignupFormComponent({onComplete}) {
     const [postcode, setPostcode] = useState('');
     const [jobTitle, setJobTitle] = useState('');
     const [errorJobTitle, setErrorJobTitle] = useState(false);
-    const [institution, setInstitution] = useState('');
+    const [institution, setInstitution] = useState(null);
     const [errorInstitution, setErrorInstitution] = useState(false);
     const [nameTitle, setNameTitle] = useState('');
     const [errorNameTitle, setErrorNameTitle] = useState(false);
@@ -34,6 +35,7 @@ function SignupFormComponent({onComplete}) {
     const [errorCheckTerms, setErrorCheckTerms] = useState(false);
     const [positionList, setPositionList] = useState([]);
     const [countryList, setCountryList] = useState([]);
+    const [clinicList, setClinicList] = useState([]);
 
     useEffect(() => {
         getData();
@@ -44,11 +46,13 @@ function SignupFormComponent({onComplete}) {
             Apis.userPositions(),
             Apis.userPlaceOfWorks(),
             Apis.countryList(),
+            Apis.clinicList(),
             // Apis.userInterests(),
-        ]).then(([positions, placeOfWorks, countries]) => {
+        ]).then(([positions, placeOfWorks, countries, clinics]) => {
             setPositionList(positions);
             // setPlaceOfWorkList(placeOfWorks);
             setCountryList(countries);
+            setClinicList(clinics);
         }).catch(e => {
             NotificationManager.error(e.response ? e.response.data.error.message : e.message);
         });
@@ -84,11 +88,11 @@ function SignupFormComponent({onComplete}) {
             valid = false;
             setErrorCountry(true);
         }
-        if(jobTitle === '') {
+        if (jobTitle === '') {
             valid = false;
             setErrorJobTitle(true);
         }
-        if(institution.trim().length === 0) {
+        if (!institution) {
             valid = false;
             setErrorInstitution(true);
         }
@@ -101,7 +105,7 @@ function SignupFormComponent({onComplete}) {
     }
 
     const onFinish = () => {
-        if(!checkValidate()) return;
+        if (!checkValidate()) return;
         Apis.userCheckEmail(email).then((resp) => {
             onComplete({
                 first_name: firstName,
@@ -119,7 +123,7 @@ function SignupFormComponent({onComplete}) {
                 state: state,
                 postcode: postcode,
                 position: jobTitle,
-                employer: institution,
+                employer: institution.value,
                 allow_contact_me: allowContactMe,
             }, hasEnterpriseCode);
         }).catch((e) => {
@@ -140,7 +144,10 @@ function SignupFormComponent({onComplete}) {
                                 type={'select'}
                                 invalid={errorNameTitle}
                                 value={nameTitle}
-                                onChange={(e) => {setNameTitle(e.target.value); setErrorNameTitle(false)}}
+                                onChange={(e) => {
+                                    setNameTitle(e.target.value);
+                                    setErrorNameTitle(false)
+                                }}
                             >
                                 <option style={{display: 'none'}}/>
                                 {
@@ -157,7 +164,10 @@ function SignupFormComponent({onComplete}) {
                                 type={'text'}
                                 invalid={errorFirstName}
                                 value={firstName}
-                                onChange={(e) => {setFirstName(e.target.value); setErrorFirstName(false)}}
+                                onChange={(e) => {
+                                    setFirstName(e.target.value);
+                                    setErrorFirstName(false)
+                                }}
                             />
                         </div>
                         <div className={'col-sm-12 col-md-5 input-item'}>
@@ -167,7 +177,10 @@ function SignupFormComponent({onComplete}) {
                                 type={'text'}
                                 invalid={errorLastName}
                                 value={lastName}
-                                onChange={(e) => {setLastName(e.target.value); setErrorLastName(false)}}
+                                onChange={(e) => {
+                                    setLastName(e.target.value);
+                                    setErrorLastName(false)
+                                }}
                             />
                         </div>
                     </div>
@@ -179,7 +192,10 @@ function SignupFormComponent({onComplete}) {
                                 type={'text'}
                                 invalid={errorEmail}
                                 value={email}
-                                onChange={(e) => {setEmail(e.target.value); setErrorEmail(false)}}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setErrorEmail(false)
+                                }}
                             />
                         </div>
                         <div className={'col-sm-12 col-md-6 input-item'}>
@@ -201,7 +217,10 @@ function SignupFormComponent({onComplete}) {
                                 autoComplete="new-password"
                                 invalid={errorPassword}
                                 value={password}
-                                onChange={(e) => {setPassword(e.target.value); setErrorPassword(false)}}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    setErrorPassword(false)
+                                }}
                             />
                         </div>
                         <div className={'col-sm-12 col-md-6 input-item'}>
@@ -211,7 +230,10 @@ function SignupFormComponent({onComplete}) {
                                 type={'password'}
                                 invalid={errorConfirmPassword}
                                 value={confirmPassword}
-                                onChange={(e) => {setConfirmPassword(e.target.value); setErrorConfirmPassword(false)}}
+                                onChange={(e) => {
+                                    setConfirmPassword(e.target.value);
+                                    setErrorConfirmPassword(false)
+                                }}
                             />
                         </div>
                     </div>
@@ -222,7 +244,10 @@ function SignupFormComponent({onComplete}) {
                             type={'select'}
                             invalid={errorCountry}
                             value={country}
-                            onChange={(e) => {setCountry(e.target.value); setErrorCountry(false)}}
+                            onChange={(e) => {
+                                setCountry(e.target.value);
+                                setErrorCountry(false)
+                            }}
                         >
                             <option style={{display: 'none'}}/>
                             {
@@ -257,7 +282,10 @@ function SignupFormComponent({onComplete}) {
                                 type={'select'}
                                 invalid={errorJobTitle}
                                 value={jobTitle}
-                                onChange={(e) => {setJobTitle(e.target.value); setErrorJobTitle(false)}}
+                                onChange={(e) => {
+                                    setJobTitle(e.target.value);
+                                    setErrorJobTitle(false)
+                                }}
                             >
                                 <option style={{display: 'none'}}/>
                                 {
@@ -269,12 +297,29 @@ function SignupFormComponent({onComplete}) {
                         </div>
                         <div className={'col-sm-12 col-md-6 input-item'}>
                             <span>INSTITUTION *</span>
-                            <Input
-                                type={'text'}
-                                invalid={errorInstitution}
+                            <Select
+                                placeholder={''}
+                                name="institution"
+                                isClearable
+                                isSearchable={true}
+                                options={clinicList.map((v) => ({label: v.name, value: v.id}))}
                                 value={institution}
-                                onChange={(e) => {setInstitution(e.target.value); setErrorInstitution(false)}}
+                                styles={{
+                                    control: styles => ({...styles, borderRadius: 7, borderColor: (errorInstitution ? 'red' : '#ced4da')}),
+                                    singleValue: styles => ({...styles, paddingTop: 5}),
+                                }}
+                                onChange={(option) => {
+                                    setInstitution(option);
+                                    setErrorInstitution(false)
+                                }}
+                                defaultMenuIsOpen={false}
                             />
+                            {/*<Input*/}
+                            {/*    type={'text'}*/}
+                            {/*    invalid={errorInstitution}*/}
+                            {/*    value={institution}*/}
+                            {/*    onChange={(e) => {setInstitution(e.target.value); setErrorInstitution(false)}}*/}
+                            {/*/>*/}
                         </div>
                     </div>
                     <div className={'signup-checkbox'}>
@@ -282,7 +327,7 @@ function SignupFormComponent({onComplete}) {
                             control={
                                 <GreenCheckbox
                                     checked={hasEnterpriseCode}
-                                    onChange={(e) => setHasEnterpriseCode(e.target.checked )}
+                                    onChange={(e) => setHasEnterpriseCode(e.target.checked)}
                                     value=""
                                 />
                             }
@@ -306,18 +351,21 @@ function SignupFormComponent({onComplete}) {
                             control={
                                 <GreenCheckbox
                                     checked={checkTerms}
-                                    onChange={(e) => {setCheckTerms(e.target.checked ); setErrorCheckTerms(false)}}
-                                    style={errorCheckTerms ? {color: 'red'} : {} }
+                                    onChange={(e) => {
+                                        setCheckTerms(e.target.checked);
+                                        setErrorCheckTerms(false)
+                                    }}
+                                    style={errorCheckTerms ? {color: 'red'} : {}}
                                     value=""
                                 />
                             }
                             label={
-                            <span className={'signup-checkbox-label'}>I have read and agree to the
+                                <span className={'signup-checkbox-label'}>I have read and agree to the
                                 <strong onClick={() => window.open('https://detectedx.com/website-terms/', "_self")}>terms and conditions</strong>
                                 and
                                 <strong onClick={() => window.open('https://detectedx.com/privacy-policy/', "_self")}>consent statements</strong>
                                 *</span>
-                        }
+                            }
                         />
                     </div>
                     <div>

@@ -629,3 +629,11 @@ export function bookTestSetCancel(test_set_id) {
     const url = 'test_set_books/book_cancel?test_set_id=' + test_set_id + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
 }
+
+/**
+ * clinics functions
+ */
+export function clinicList() {
+    const url = 'clinics/list';
+    return instance.get(url).then((response) => response.data);
+}

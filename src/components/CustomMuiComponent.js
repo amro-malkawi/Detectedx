@@ -114,3 +114,53 @@ export const markerSelectStyles = {
         },
     }),
 };
+
+export const institutionSelectStyles = {
+    container: (styles, {data}) => {
+        return {
+            ...styles,
+        };
+    },
+    control: styles => ({...styles, backgroundColor: 'transparent'}),
+    menu: styles => ({...styles, backgroundColor: '#292929'}),
+    option: (styles, {data, isDisabled, isFocused, isSelected}) => {
+        const color = chroma('yellow');
+        return {
+            ...styles,
+            backgroundColor: isDisabled
+                ? null
+                : isSelected
+                    ? 'yellow'
+                    : isFocused
+                        ? color.alpha(0.1).css()
+                        : null,
+            color: isDisabled
+                ? '#ccc'
+                : isSelected
+                    ? chroma.contrast(color, 'white') > 2
+                        ? 'white'
+                        : 'black'
+                    : 'yellow',
+            cursor: isDisabled ? 'not-allowed' : 'default',
+
+            ':active': {
+                ...styles[':active'],
+                backgroundColor: !isDisabled && (isSelected ? 'yellow' : color.alpha(0.3).css()),
+            },
+        };
+    },
+    singleValue: (styles, {data}) => {
+        return {
+            ...styles,
+            textAlign: 'left',
+            color: '#ffffffcc',
+        };
+    },
+    placeholder: (styles, {data}) => {
+        return {
+            ...styles,
+            textAlign: 'left',
+            color: '#ffffffcc',
+        };
+    },
+};
