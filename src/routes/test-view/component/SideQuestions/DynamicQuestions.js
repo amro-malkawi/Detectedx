@@ -149,7 +149,7 @@ export const DynamicQuestions = ({
         {confidenceQuestion && answers && <div className="confidence-question">
             <Typography variant="h2">{confidenceQuestion.name}</Typography>
             <div className="confidence-question-options">
-                {[1, 2, 3, 4, 5].map((value) =>
+                {[0, 1, 2, 3, 4, 5].map((value) =>
                     <CustomTooltip title={confidenceQuestion[`rating_${value}_label`]}>
                         <FormControlLabel
                             key={value}
