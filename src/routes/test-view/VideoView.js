@@ -228,6 +228,7 @@ function VideoView() {
                         isPostTest={false}
                         playerRef={playerRef} // for interactive video
                         onChangePlaying={(v) => setPlaying(v)}  // for interactive video
+                        questions={testCaseInfo ? testCaseInfo.questions : null}
                     />
                 }
             </div>

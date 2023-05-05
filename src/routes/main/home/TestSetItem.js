@@ -20,15 +20,16 @@ function TestSetItem({data, onClick, smallSize}) {
         let type = '';
         if (data.modalityInfo.modality_type === 'quiz') {
             type = 'Quiz';
+            type = data.isSeriesSameModality ? 'QUIZ SERIES' : 'QUIZ';
         } else if (['video_lecture', 'presentations', 'interactive_video'].indexOf(data.modalityInfo.modality_type) !== -1) {
             type = 'LECTURE';
+            type = data.isSeriesSameModality ? 'LECTURE SERIES' : 'LECTURE';
         } else if (data.modalityInfo.modality_type === 'viewer') {
-            type = 'IMAGE VIEWER';
+            type = data.isSeriesSameModality ? type + 'IMAGE VIEWER SERIES' : 'IMAGE VIEWER';
+        } else if(data.tileType === 'series') {
+            type = 'SERIES';
         } else {
             type = 'SELF ASSESSMENT MODULE';
-        }
-        if(data.tileType === 'series') {
-            type = data.isSeriesSameModality ? type + ' SERIES' : 'SERIES';
         }
         setTestSetType(type);
         try {
@@ -111,6 +112,17 @@ function TestSetItem({data, onClick, smallSize}) {
                     </div>
                 </div>
             }
+            {!smallSize && data.tileType === 'series' &&
+                <div className="d-flex flex-column align-items-start">
+                    <div className="test-set-item-spec">
+                        {data.difficulty &&
+                            <React.Fragment>
+                                <span>DIFFICULTY</span>
+                                {renderDifficult(data.difficulty)}
+                            </React.Fragment>
+                        }
+                    </div>
+                </div>}
             {
                 data.demoTestSet &&
                 <div className={'test-set-item-demo'}>

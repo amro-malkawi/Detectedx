@@ -172,6 +172,11 @@ export function countryList() {
  * test sets operation
  */
 
+export function testSetsDetail(id) {
+    const url = '/test_sets/' + id + '/detail?access_token=' + getAccessToken();
+    return instance.get(url).then((response) => response.data);
+}
+
 export function testSetsCaseList(id, isPost) {
     const url = '/test_sets/' + id + '/test_case_list?is_post=' + isPost + '&access_token=' + getAccessToken();
     return instance.get(url).then((response) => response.data);
