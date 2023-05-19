@@ -1,4 +1,4 @@
-import { Box, OutlinedInput, Typography } from '@material-ui/core';
+import { Box, OutlinedInput, Typography } from '@mui/material';
 import React from 'react';
 
 export const DynamicQuestionFreetext = ({
