@@ -1,11 +1,13 @@
 import {useTranslation} from "react-i18next";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {FormControl, MenuItem, Select} from "@mui/material";
 import {SupportedLanguages} from "../../i18n";
 
 export const LanguageSelect = () => {
     const { i18n } = useTranslation();
     const [language, setLanguage] = useState(i18n.language);
+
+    useEffect(() => localStorage.setItem('language', i18n.language), [i18n.language]);
 
     const handleChange = (event) => {
         setLanguage(event.target.value);

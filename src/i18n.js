@@ -10,6 +10,10 @@ const i18nConfig = {
         en: {
             languageName: 'English',
             translation: require('./Assets/i18n/en.json')
+        },
+        bg: {
+            languageName: 'Български',
+            translation: require('./Assets/i18n/bg.json')
         }
     }
 };
