@@ -1,13 +1,12 @@
-import {Box, Button, Tooltip, Typography, withStyles} from '@material-ui/core';
+import {Box, Button, Tooltip, Typography, FormControlLabel} from '@mui/material';
 import { getAttemptImageQuality, getAttemptQuizAnswer, setAttemptImageQuality, submitQuizAnswer } from 'Api';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { DynamicQuestion } from './DynamicQuestions/DynamicQuestion';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {
     DynamicQuestionControl
 } from 'Routes/test-view/component/SideQuestions/DynamicQuestions/DynamicQuestionControl';
-import IntlMessages from 'Util/IntlMessages';
+import {withStyles} from "tss-react/mui";
 
 export const DynamicQuestions = ({
     sideQuestionsRef,
@@ -63,6 +62,7 @@ export const DynamicQuestions = ({
         }).catch((error) => {
             NotificationManager.error(error.response ? error.response.data.error.message : error.message);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [testCaseId]);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ export const DynamicQuestions = ({
             sideQuestionsRef.current = {
                 checkQuestionValidate: () => {
                     if (answers.rating == null) {
-                        NotificationManager.error(<IntlMessages id={"testView.selectConfidenceNumber"}/>);
+                        NotificationManager.error('Please answer the confidence question.');
                         return false;
                     }
                     return true;
@@ -85,6 +85,7 @@ export const DynamicQuestions = ({
                 checkQuestionValidate: () => true
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [answers])
 
     const saveAnswers = (answers) => {
@@ -121,8 +122,9 @@ export const DynamicQuestions = ({
             return submitQuizAnswer(attemptId, testCaseId).then(() => {
                 fetchTruths();
             });
+        } else {
+            NotificationManager.error('Please select values for all questions.');
         }
-        NotificationManager.error(<IntlMessages id={"testView.selectImageQuality"}/>);
     }
 
     return <div className="dynamic-questions">
@@ -169,10 +171,10 @@ export const DynamicQuestions = ({
     </div>;
 };
 
-const CustomTooltip = withStyles((theme) => ({
+const CustomTooltip = withStyles(Tooltip, (theme) => ({
     tooltip: {
         backgroundColor: theme.palette.common.white,
         color: theme.palette.common.black,
         fontSize: '1rem'
     }
-}))(Tooltip);
+}));

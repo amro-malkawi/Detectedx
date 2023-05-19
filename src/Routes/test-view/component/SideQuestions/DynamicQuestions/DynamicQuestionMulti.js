@@ -1,7 +1,7 @@
 import {
     Box,
     FormControlLabel
-} from '@material-ui/core';
+} from '@mui/material';
 import React, { useCallback } from 'react';
 import { DynamicQuestionControl } from './DynamicQuestionControl';
 
