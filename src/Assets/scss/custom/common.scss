@@ -1,0 +1,70 @@
+/*======== App Global (Main Structure) Mention Here =======*/
+$html-font-size: 16px;
+html {
+  font-size: $html-font-size + 5;
+}
+
+@media(max-width: 3840px) {
+  html {
+    font-size: ($html-font-size + 4);
+  }
+}
+
+@media(max-width: 3100px) {
+  html {
+    font-size: ($html-font-size + 3);
+  }
+}
+
+@media(max-width: 2600px) {
+  html {
+    font-size: ($html-font-size + 2);
+  }
+}
+
+@media(max-width: 2048px) {
+  html {
+    font-size: ($html-font-size + 1);
+  }
+}
+
+@media(max-width: 1960px) {
+  html {
+    font-size: $html-font-size;
+  }
+}
+
+@media(max-width: 1700px) {
+  html {
+    font-size: ($html-font-size - 1);
+  }
+}
+
+@media(max-width: 1366px) {
+  html {
+    font-size: ($html-font-size - 1);
+  }
+}
+
+@media(max-width: 1280px) {
+  html {
+    font-size: ($html-font-size - 1);
+  }
+}
+
+@media(max-width: 991px) {
+  html {
+    font-size: ($html-font-size - 2);
+  }
+}
+
+body, html {
+  height: 100%;
+  background-color: black;
+}
+
+#root, .app {
+  height: 100%;
+  width: 100%;
+}
+

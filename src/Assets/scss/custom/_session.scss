@@ -1,0 +1,47 @@
+
+.error-wrapper {
+  left: 0;
+  position: fixed;
+  right: 0;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #180f15;
+  background-image: radial-gradient(ellipse at 95% 95%, #4260d877, #180f15 55%);;
+  overflow-x: hidden;
+}
+
+.session-header {
+  background: none !important;
+  box-shadow: none !important;
+
+  > div {
+    padding: 0;
+  }
+}
+
+.error-body {
+  color: white;
+  h2 {
+    font-weight: 900;
+    text-shadow: 9px 10px 1px #ffffff10;
+  }
+
+  .oops {
+    font-size: 3.75rem; //60px;
+  }
+
+  .bold {
+    font-size: 13.75rem; //220px;
+  }
+
+  .error-msg {
+    font-size: 4.375rem; //70px;
+  }
+
+  .error-desc-msg {
+    text-shadow: none !important;
+    font-weight: 400 !important;
+    font-size: 1.7rem; //70px;
+  }
+}
+

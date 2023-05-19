@@ -3,32 +3,32 @@
  */
 import React from 'react';
 import {Provider} from 'react-redux';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import MomentUtils from '@date-io/moment';
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
-import {PersistGate} from 'redux-persist/integration/react';
-import './lib/reactifyCss';
-import App from './container/App';
-import ErrorBoundary from './container/ErrorBoundary';
+import {BrowserRouter} from 'react-router-dom';
+import {NotificationContainer} from "react-notifications";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import App from 'Container/App';
+import {configureStore} from 'Store';
 
-import {configureStore} from './store';
+//css
+import 'Assets/scss';
 
-const {store, persistor} = configureStore();
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+    },
+});
 
-const MainApp = () => (
-    <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-            <MuiPickersUtilsProvider utils={MomentUtils}>
-                <Router>
-                    <Switch>
-                        <ErrorBoundary>
-                            <Route path="/" component={App}/>
-                        </ErrorBoundary>
-                    </Switch>
-                </Router>
-            </MuiPickersUtilsProvider>
-        </PersistGate>
-    </Provider>
-);
+function MainApp() {
+    return (
+        <Provider store={configureStore()}>
+            <ThemeProvider theme={darkTheme}>
+                <NotificationContainer/>
+                <BrowserRouter>
+                    <App/>
+                </BrowserRouter>
+            </ThemeProvider>
+        </Provider>
+    )
+}
 
 export default MainApp;

@@ -1,0 +1,17 @@
+/*======== Material UI Component Customize =======*/
+button {
+  &.MuiButton-containedPrimary {
+    color: white;
+    background-color: #1976d2;
+  }
+
+  &.MuiButton-containedSecondary {
+    color: white;
+    background-color: #f50057;
+  }
+
+}
+
+label {
+  margin-bottom: 0.3rem;
+}
