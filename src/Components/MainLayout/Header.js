@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {IconButton} from "@mui/material";
 import {logoutUserFromEmail} from "Store/Actions";
+import {LanguageSelect} from "../LanguageSelect/LanguageSelect";
 
 function Header(props) {
     const navigate = useNavigate();
@@ -103,6 +104,7 @@ function Header(props) {
                         <span><span className={'hide-mobile'}>THIS YEARS </span>CME POINTS:</span>
                         <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedPoint) ? Number(userCompletedPoint).toFixed(2) : 0) : ''}</span>
                     </div>
+                    <LanguageSelect />
                 </div>
             </div>
         </div>
