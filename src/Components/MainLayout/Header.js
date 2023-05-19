@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {IconButton} from "@mui/material";
 import {logoutUserFromEmail} from "Store/Actions";
-import {LanguageSelect} from "../LanguageSelect/LanguageSelect";
+import {LanguageSelect} from "Components/LanguageSelect/LanguageSelect";
 
 function Header(props) {
     const navigate = useNavigate();
