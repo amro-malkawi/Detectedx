@@ -7,8 +7,10 @@ import MainLayout from "Components/MainLayout";
 import {login} from 'Store/Actions';
 import {useDispatch, useSelector} from "react-redux";
 import * as Apis from "Api";
+import { useTranslation } from "react-i18next";
 
 function Signin() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const isLogin = useSelector((state) => state.authUser.isLogin);
@@ -46,33 +48,33 @@ function Signin() {
         <MainLayout>
             <div className={'main-signup'}>
                 <div className={'main-signup-content'} style={{width: 800}}>
-                    <div className={'signup-title mb-4'}>DetectedX Login</div>
+                    <div className={'signup-title mb-4'}>{t('user.detectedx_login')}</div>
                     <div className={'input-item'}>
-                        <span>EMAIL</span>
+                        <span>{t('user.signup.email')}</span>
                         <Input type={'text'} value={email} onChange={(e) => setEmail(e.target.value)} onKeyPress={onKeyPress}/>
                     </div>
                     <div className={'input-item'}>
-                        <span>PASSWORD</span>
+                        <span>{t('user.signup.password')}</span>
                         <Input type={'password'} value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={onKeyPress}/>
                     </div>
                     <div>
                         <Button className={'signup-submit'} disabled={loading} onClick={onLogin}>
                             {
-                                !loading ? 'Login' : <CircularProgress size={28}/>
+                                !loading ? t('user.login') : <CircularProgress size={28}/>
                             }
                         </Button>
                     </div>
                     <div className={'d-flex justify-content-center mt-1'} style={{height: 22}}>
                         {
-                            errorMsg !== '' && <span className={'text-red'}>Username or password is not correct!</span>
+                            errorMsg !== '' && <span className={'text-red'}>{t('user.incorrect_credentials')}</span>
                         }
                     </div>
                     <div className={'d-flex justify-content-end mt-1 fs-14'}>
-                        <Link to="/forgot-password">Forgot Password</Link>
+                        <Link to="/forgot-password">{t('user.forgot_password')}</Link>
                     </div>
                     <div className={'d-flex align-items-center mt-2'}>
                         <div className={'signin-sso-bar'}/>
-                        <span>or</span>
+                        <span>{t('common.or')}</span>
                         <div className={'signin-sso-bar'}/>
                     </div>
                     <div className={'d-flex justify-content-center mt-4'}>
@@ -85,21 +87,21 @@ function Signin() {
                         {/*</div>*/}
                         <div className={'sso-button'}>
                             <Button onClick={() => window.location.href = "/sso/ge_login"}>
-                                <Tooltip title={'Sign in with GE Healthcare'}>
+                                <Tooltip title={t('user.sign_in_with_ge_healthcare')}>
                                     <img src={require('Assets/img/sso/ge_healthineers_logo.png')} className="" alt=""/>
                                 </Tooltip>
                             </Button>
                         </div>
                         <div className={'sso-button'}>
                             <Button onClick={() => window.location.href = "/sso/sydney_uni_login"}>
-                                <Tooltip title={'Sign in with Sydney University'}>
+                                <Tooltip title={t('user.sign_in_with_sydney_university')}>
                                     <img src={require('Assets/img/sso/sydney_uni_logo.png')} className="" alt=""/>
                                 </Tooltip>
                             </Button>
                         </div>
                     </div>
                     <div className={'d-flex justify-content-center mt-30 fs-14'}>
-                        <span>You don't have an account? <Link to="/signup">Register</Link></span>
+                        <span>{t('user.signup.you_dont_have_an_account')} <Link to="/signup">{t('user.register')}</Link></span>
                     </div>
                 </div>
             </div>

@@ -1,3 +1,19 @@
 {
-
+  "user": {
+    "detectedx_login": "Влизане в DetectedX",
+    "signup": {
+      "email": "електронна поща",
+      "password": "Парола",
+      "you_dont_have_an_account": "Нямате акаунт?"
+    },
+    "login": "Влизам",
+    "forgot_password": "Забравена парола",
+    "register": "Регистрирам",
+    "sign_in_with_sydney_university": "Влезте с университета в Сидни",
+    "sign_in_with_ge_healthcare": "Влезте с GE Healthcare",
+    "incorrect_credentials": "Потребителското име или паролата не са правилни!"
+  },
+  "common": {
+    "or": "или"
+  }
 }
