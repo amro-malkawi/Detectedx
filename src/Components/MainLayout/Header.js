@@ -104,7 +104,6 @@ function Header(props) {
                         <span><span className={'hide-mobile'}>THIS YEARS </span>CME POINTS:</span>
                         <span className={'info-num'}>{isLogin ? (!isNaN(userCompletedPoint) ? Number(userCompletedPoint).toFixed(2) : 0) : ''}</span>
                     </div>
-                    <LanguageSelect />
                 </div>
             </div>
         </div>
